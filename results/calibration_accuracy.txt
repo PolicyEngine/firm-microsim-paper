@@ -1,0 +1,45 @@
+Calibration report — synthetic UK firm populations
+
+================================================================
+  Vintage 2023-24  |  threshold £85k
+================================================================
+  rows (firm types):   2,941,232
+  weighted population: 2,480,760 firms
+  (validator total):   2,480,760 firms
+----------------------------------------------------------------
+  Dimension                     accuracy       error
+----------------------------------------------------------------
+  HMRC Turnover Bands              93.0%        7.0%
+  ONS Population                   91.0%        9.0%
+  Employment Bands                 78.2%       21.8%
+  Sector Distribution              92.5%        7.5%
+  VAT Liability by Band            94.5%        5.5%
+----------------------------------------------------------------
+  Overall (5 calibrated dims)       89.9%       10.1%
+----------------------------------------------------------------
+  Informational diagnostic (not a calibration target):
+  VAT Liability by Sector          47.7%       52.3%
+================================================================
+
+================================================================
+  Vintage 2024-25  |  threshold £90k
+================================================================
+  rows (firm types):   2,945,974
+  weighted population: 2,567,282 firms
+  (validator total):   2,567,282 firms
+----------------------------------------------------------------
+  Dimension                     accuracy       error
+----------------------------------------------------------------
+  HMRC Turnover Bands              92.6%        7.4%
+  ONS Population                   93.9%        6.1%
+  Employment Bands                 80.3%       19.7%
+  Sector Distribution              94.4%        5.6%
+  VAT Liability by Band            81.3%       18.7%
+----------------------------------------------------------------
+  Overall (5 calibrated dims)       88.5%       11.5%
+----------------------------------------------------------------
+  Informational diagnostic (not a calibration target):
+  VAT Liability by Sector          18.8%       81.2%
+================================================================
+
+Done: 2/2 vintage(s) reported.
