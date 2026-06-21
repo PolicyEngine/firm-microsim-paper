@@ -1,0 +1,8 @@
+# Core dependencies for the firm-microsim synthetic data + figures pipeline.
+# Pinned to lower bounds verified against the versions used in development.
+torch>=2.0           # weight-calibration optimizer (Adam) in firm_microsim.calibration
+pandas>=1.5          # tabular IO for processed inputs and synthetic output
+numpy>=1.23          # numerical core
+matplotlib>=3.6      # figures (figures/*.py)
+odfpy>=1.4           # read HMRC .ods source tables (data extraction)
+openpyxl>=3.0        # read ONS .xlsx source workbooks (data extraction)
