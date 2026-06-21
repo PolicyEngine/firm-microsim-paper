@@ -2,15 +2,19 @@
 <style>body{font-family:-apple-system,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#222}
 h1{font-size:20px}h2{font-size:15px;color:#1b485e;margin:28px 0 6px}
 img{width:100%;border:1px solid #ddd;border-radius:6px}
-.note{color:#666;font-size:13px;margin:2px 0 0}</style></head><body>
-<h1>Static VAT-threshold figures — firm-microsim-paper (smooth-counterfactual method)</h1>
-<h2>1. vat_threshold_revenue_impact.png — anchor reform £85k→£90k, model vs HMRC</h2>
+.note{color:#555;font-size:13px;margin:4px 0 0}.tag{color:#888;font-size:12px}</style></head><body>
+<h1>Static VAT-threshold figures — firm-microsim-paper</h1>
+<p class="tag">Anchor reform on the £85k / 2023-24 vintage (HMRC's pre-reform basis at the March 2024 costing); forward sweep on the £90k / 2024-25 vintage.</p>
+
+<h2>1. vat_threshold_revenue_impact.png — £85k→£90k anchor reform, model vs HMRC (£85k vintage)</h2>
 <img src="vat_threshold_revenue_impact.png">
-<p class="note">PolicyEngine −177/−177/−110/−38/+79 vs HMRC −150/−185/−125/−50/+65 (£m). Both turn positive by 2028-29.</p>
-<h2>2. revenue_impact_2025_26.png — static revenue vs threshold</h2>
+<p class="note">PolicyEngine −171/−175/−110/−38/+72.5 vs HMRC −150/−185/−125/−50/+65 (£m). Both turn positive by 2028-29. Affected-firm count 32.6k registered ≈ HMRC's 28k.</p>
+
+<h2>2. revenue_impact_2025_26.png — static revenue vs threshold (£90k baseline)</h2>
 <img src="revenue_impact_2025_26.png">
 <p class="note">+665m at £70k → −1205m at £120k, zero at the current £90k. Paper: +657.7 → −1156.</p>
-<h2>3. firms_impact_2025_26.png — change in VAT-paying firms vs threshold</h2>
+
+<h2>3. firms_impact_2025_26.png — change in VAT-paying firms vs threshold (£90k baseline)</h2>
 <img src="firms_impact_2025_26.png">
-<p class="note">Same shape as the paper; magnitudes ~75% (our regenerated data has lower near-threshold firm density).</p>
+<p class="note">Forward sweep relative to the current £90k threshold; smooth-counterfactual method.</p>
 </body></html>

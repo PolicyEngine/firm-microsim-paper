@@ -171,17 +171,24 @@ class StaticVATModel:
     def anchor_reform(self) -> pd.DataFrame:
         """£85k→£90k anchor-reform impact (£m) per year: model vs HMRC.
 
-        For each fiscal year, the affected firms lie in the band between the
-        (uprated, frozen) baseline and the £90k policy. When baseline < policy
-        the reform removes them from the net (revenue loss, negative); when
-        fiscal drag lifts the baseline above £90k it adds them (gain, positive).
+        Simple band-sum on the loaded vintage. Use the £85k (2023-24) vintage —
+        the basis HMRC actually had at the 6 March 2024 costing (the threshold
+        was still £85k until 1 April 2024). There the affected [baseline, £90k)
+        firms sit ABOVE the £85k registration threshold, so the band is cleanly
+        populated with registered firms (no de-bunching needed). For each year
+        the affected firms lie between the (uprated, frozen) £85k baseline and
+        the £90k policy; liability is scaled to the year by the growth factor.
+        When fiscal drag lifts the baseline above £90k (2028-29) the band flips
+        and the reform adds firms (a revenue gain).
         """
-        centres, _cf_firms, cf_liab = self._counterfactual_bins(POLICY_THRESHOLD)
+        tk = self.firms["annual_turnover_k"].to_numpy()
+        liab = self.firms["vat_liability_k"].to_numpy() * 1000.0
+        w = self.firms["weight"].to_numpy()
         rows = []
         for fy in FISCAL_YEARS:
             lo_k, hi_k = sorted((fy["baseline"] / 1000.0, fy["policy"] / 1000.0))
-            band = (centres >= lo_k) & (centres < hi_k)
-            mass_m = float((cf_liab[band] * fy["firm_growth"]).sum()) / 1e6
+            band = (tk >= lo_k) & (tk < hi_k)
+            mass_m = float((liab[band] * w[band]).sum()) * fy["firm_growth"] / 1e6
             pe_impact = mass_m if fy["baseline"] > fy["policy"] else -mass_m
             rows.append(
                 {

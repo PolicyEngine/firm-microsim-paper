@@ -155,17 +155,23 @@ python -m static          # -> results/{vat_threshold_revenue_impact,revenue_imp
 ```
 
 - `vat_threshold_revenue_impact.png` — the £85k→£90k anchor reform vs HMRC's
-  published costing, by fiscal year (model −177/−177/−110/−38/+79 vs HMRC
-  −150/−185/−125/−50/+65 £m; both turn positive by 2028-29).
-- `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the static sweep
-  of registration thresholds (£70k–£120k) vs the £90k baseline.
+  published costing, by fiscal year. **Built on the £85k / 2023-24 vintage** —
+  the pre-reform basis HMRC actually had at the 6 March 2024 costing (the
+  threshold was still £85k until 1 April 2024). Model −171/−175/−110/−38/+72.5
+  vs HMRC −150/−185/−125/−50/+65 £m; both turn positive by 2028-29. Affected
+  firms ≈ 32.6k registered, next to HMRC's published 28,000.
+- `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the forward static
+  sweep of registration thresholds (£70k–£120k) vs the current £90k baseline,
+  **on the £90k / 2024-25 vintage**.
 
-**Smooth-counterfactual method.** The synthetic population carries a
-registration step at the threshold (the bunching + calibration concentrate firm
-weight just below it). For the *static* counterfactual the sweep fits the clean
-above-threshold firm/liability profile and extrapolates it across the threshold
-(`StaticVATModel._counterfactual_bins`), computed on unaged turnover and scaled
-to the fiscal year by a nominal-growth factor. Revenue and the anchor reform
-match the paper closely; firm-count magnitudes run ~25% low because the
-regenerated population has a lower near-threshold VAT-paying-firm density than
-the paper's original data (same shape).
+**Two vintages, two exercises.** The anchor reform uses the £85k vintage, where
+the affected `[85,90)k` band sits *above* the £85k registration threshold and is
+cleanly populated with registered firms — so a **simple band-sum** suffices (no
+de-bunching). The forward sweep uses the current £90k vintage; there the
+`[85,90)k` firms are *below* threshold and the calibration concentrates weight
+on them, so the sweep instead fits the clean above-threshold firm/liability
+profile and extrapolates it across the threshold
+(`StaticVATModel._counterfactual_bins`, unaged turnover scaled to the fiscal
+year by a nominal-growth factor). Revenue and the anchor reform match the paper
+and HMRC closely; the forward-sweep firm-count magnitudes run low because the
+regenerated population has a lower near-threshold VAT-paying-firm density.

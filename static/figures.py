@@ -96,15 +96,26 @@ def plot_hmrc_comparison(model: StaticVATModel) -> None:
     _save(fig, "vat_threshold_revenue_impact.png")
 
 
-def generate_all(vintage: str = "2024-25", year: str = "2025-26") -> None:
-    """Generate all three static figures for the given vintage / fiscal year."""
-    model = StaticVATModel(vintage)
+def generate_all(
+    sweep_vintage: str = "2024-25",
+    anchor_vintage: str = "2023-24",
+    year: str = "2025-26",
+) -> None:
+    """Generate all three static figures.
+
+    The HMRC anchor-reform figure uses the £85k (``anchor_vintage``) data — the
+    pre-reform basis HMRC had at the March 2024 costing, where the affected band
+    is clean. The forward-looking sweep figures use the current £90k
+    (``sweep_vintage``) data, relative to the £90k baseline.
+    """
+    anchor_model = StaticVATModel(anchor_vintage)
+    sweep_model = StaticVATModel(sweep_vintage)
     print(
-        f"Static figures (vintage {vintage}); "
-        f"total VAT revenue at £90k, {year}: "
-        f"£{model.total_revenue_bn(year):.1f}bn"
+        f"Static figures — anchor on {anchor_vintage} (£85k basis), "
+        f"sweep on {sweep_vintage} (£90k baseline, {year}); "
+        f"total VAT revenue at £90k: £{sweep_model.total_revenue_bn(year):.1f}bn"
     )
-    plot_hmrc_comparison(model)
-    plot_revenue_impact(model, year)
-    plot_firms_impact(model, year)
+    plot_hmrc_comparison(anchor_model)
+    plot_revenue_impact(sweep_model, year)
+    plot_firms_impact(sweep_model, year)
     print("  done.")
