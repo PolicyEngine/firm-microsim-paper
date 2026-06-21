@@ -86,6 +86,37 @@ Output is written to `data/synthetic/synthetic_firms.csv`
 (`sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
 weight, vat_registered`).
 
+## Calibration accuracy
+
+The population is calibrated to official ONS + HMRC targets; the validator scores
+each dimension as `accuracy = 1 − relative error` (0–1). Reproduce with:
+
+```bash
+python scripts/report_calibration.py
+```
+
+| Dimension | 85k (2023-24) | 90k (2024-25) |
+| --- | ---: | ---: |
+| HMRC turnover bands | 90.4% | 91.1% |
+| ONS population | 92.5% | 94.8% |
+| Employment bands | 79.4% | 94.6% |
+| Sector distribution | 88.6% | 89.7% |
+| VAT liability by band | 95.3% | 81.8% |
+| **Headline (5 core dimensions)** | **89.2%** | **90.4%** |
+| VAT liability by sector † | 43.9% | −121.1% |
+| Overall (all 6 dimensions) | 81.7% | 55.1% |
+
+The **headline** accuracy is the mean of the five dimensions the analysis relies
+on (turnover bands, population, employment, sector counts, VAT liability by
+band). It excludes **VAT liability by *sector*** (†), which is the least-
+calibrated dimension: the model fixes firm inputs and sets liability =
+turnover − input but does not yet calibrate the **input/output tax structure**,
+so it structurally over/under-shoots net liability for individual sectors
+(amplified, for small sectors, by the sign-aware per-sector error metric). This
+dimension is not central to the threshold/bunching/revenue results; tightening
+it (HMRC input/output tax `T9`, ONS ABS intermediate consumption) is tracked in
+issue [#1](https://github.com/PolicyEngine/firm-microsim-paper/issues/1).
+
 ## Figures
 
 Figures follow the project house style: single clean panels (no embedded titles,

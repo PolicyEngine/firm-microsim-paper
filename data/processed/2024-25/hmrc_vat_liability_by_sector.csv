@@ -4,12 +4,12 @@ Trade_Sector,Trade_Sub_Sector,2024-25
 00003,Fishing and aquaculture,-100
 00005,Mining of coal and lignite,0
 00006,Extraction of crude petroleum and natural gas,-460
-00007,Mining of metal ores,0
+00007,Mining of metal ores,-10
 00008,Other mining and quarrying,290
 00009,Mining and support service activities,-320
 00010,Manufacture of food products,-2060
 00011,Manufacture of beverages,1840
-00012,Manufacture of tobacco products,0
+00012,Manufacture of tobacco products,1700
 00013,Manufacture of textiles,440
 00014,Manufacture of wearing apparel,290
 00015,Manufacture of leather and related products,130
@@ -33,7 +33,7 @@ Trade_Sector,Trade_Sub_Sector,2024-25
 00033,Repair and installation of machinery and equipment,1050
 00035,"Electricity, gas, steam and air conditioning supply",3940
 00036,"Water collection, treatment and supply",-2490
-00037,Sewerage,0
+00037,Sewerage,-10
 00038,"Waste collection, treatment and disposal activities; materials recovery",600
 00039,Remediation activities and other waste management services,350
 00041,Construction of buildings,2630
@@ -51,7 +51,7 @@ Trade_Sector,Trade_Sub_Sector,2024-25
 00056,Food and beverage service activities,8800
 00058,Publishing activities,800
 00059,"Motion picture, video and television programme production, sound recording and music publishing activities",470
-00060,Programming and broadcasting activities,0
+00060,Programming and broadcasting activities,-20
 00061,Telecommunications,4250
 00062,"Computer programming, consultancy and related activities",15700
 00063,Information service activities,430

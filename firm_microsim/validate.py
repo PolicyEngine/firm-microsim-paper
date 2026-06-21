@@ -48,6 +48,29 @@ class ValidationReport:
             + self.vat_liability_band
         ) / 6.0
 
+    @property
+    def headline(self) -> float:
+        """Mean accuracy across the five *core* calibration dimensions.
+
+        Excludes ``vat_liability_sector``. Sector-level VAT liability is the
+        least-calibrated dimension (it carries a low optimizer weight) and is
+        not central to the threshold / bunching / revenue analysis the paper
+        relies on, so the headline figure leaves it out. The all-six
+        :attr:`overall` mean is retained for full transparency.
+
+        Formula::
+
+            (hmrc_bands + ons_population + employment
+             + sector + vat_liability_band) / 5
+        """
+        return (
+            self.hmrc_bands
+            + self.ons_population
+            + self.employment
+            + self.sector
+            + self.vat_liability_band
+        ) / 5.0
+
 
 def _accuracy(synthetic: float, target: float) -> float:
     """Accuracy = 1 - relative absolute error (with sign-aware handling)."""
@@ -215,6 +238,7 @@ def validate(
     logger.info("VAT Liability by Sector: %.1f%%", report.vat_liability_sector * 100)
     logger.info("VAT Liability by Band:   %.1f%%", report.vat_liability_band * 100)
     logger.info("Overall Accuracy:        %.1f%%", report.overall * 100)
+    logger.info("Headline accuracy (5 core dims): %.1f%%", report.headline * 100)
     logger.info("Total Population:        %s firms", f"{total_weighted:,.0f}")
 
     return report
