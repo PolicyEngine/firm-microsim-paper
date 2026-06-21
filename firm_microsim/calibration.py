@@ -176,9 +176,14 @@ def build_target_matrix(
     n_firms = len(turnover_values)
 
     sector_rows = hmrc_sector_df[hmrc_sector_df["Trade_Sector"] != "Total"].copy()
-    vat_liability_sector_rows = vat_liability_sector_df[
-        vat_liability_sector_df["Trade_Sector"] != "Total"
-    ].copy()
+    if config.calibrate_vat_liability_sector:
+        vat_liability_sector_rows = vat_liability_sector_df[
+            vat_liability_sector_df["Trade_Sector"] != "Total"
+        ].copy()
+    else:
+        # Excluded from calibration: empty -> contributes zero target rows.
+        # (Still reported as an informational diagnostic by validate.py.)
+        vat_liability_sector_rows = vat_liability_sector_df.iloc[0:0].copy()
 
     spec = TargetSpec(len(sector_rows), len(vat_liability_sector_rows))
     target_matrix = torch.zeros(spec.n_targets, n_firms, device=device)

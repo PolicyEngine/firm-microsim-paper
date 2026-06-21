@@ -122,6 +122,14 @@ class Config:
     vat_liability_sector_importance: float = 1.0
     vat_liability_band_importance: float = 2.0
 
+    # Whether to include VAT-liability-by-sector as a calibration target.
+    # Disabled by default: the model does not yet calibrate the input/output
+    # tax structure, so this target is structurally unhittable and competes
+    # with the dimensions the analysis relies on. It is still REPORTED as an
+    # informational diagnostic (see validate.py). Restore once input/output
+    # calibration exists — tracked in the GitHub issues.
+    calibrate_vat_liability_sector: bool = False
+
     # --- Paths (overridable) ---------------------------------------------
     data_dir: Path = DATA_DIR
     processed_dir: Path = PROCESSED_DATA_DIR / DEFAULT_VINTAGE

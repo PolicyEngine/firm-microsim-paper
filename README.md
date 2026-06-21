@@ -88,34 +88,33 @@ weight, vat_registered`).
 
 ## Calibration accuracy
 
-The population is calibrated to official ONS + HMRC targets; the validator scores
-each dimension as `accuracy = 1 − relative error` (0–1). Reproduce with:
+The population is calibrated to **five** official ONS + HMRC targets; the
+validator scores each dimension as `accuracy = 1 − relative error` (0–1).
+Reproduce with:
 
 ```bash
 python scripts/report_calibration.py
 ```
 
-| Dimension | 85k (2023-24) | 90k (2024-25) |
+| Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
-| HMRC turnover bands | 90.4% | 91.1% |
-| ONS population | 92.5% | 94.8% |
-| Employment bands | 79.4% | 94.6% |
-| Sector distribution | 88.6% | 89.7% |
-| VAT liability by band | 95.3% | 81.8% |
-| **Headline (5 core dimensions)** | **89.2%** | **90.4%** |
-| VAT liability by sector † | 43.9% | −121.1% |
-| Overall (all 6 dimensions) | 81.7% | 55.1% |
+| HMRC turnover bands | 93.0% | 92.6% |
+| ONS population | 91.0% | 93.9% |
+| Employment bands | 78.2% | 80.3% |
+| Sector distribution | 92.5% | 94.4% |
+| VAT liability by band | 94.5% | 81.3% |
+| **Overall (5 calibrated dimensions)** | **89.9%** | **88.5%** |
 
-The **headline** accuracy is the mean of the five dimensions the analysis relies
-on (turnover bands, population, employment, sector counts, VAT liability by
-band). It excludes **VAT liability by *sector*** (†), which is the least-
-calibrated dimension: the model fixes firm inputs and sets liability =
-turnover − input but does not yet calibrate the **input/output tax structure**,
-so it structurally over/under-shoots net liability for individual sectors
-(amplified, for small sectors, by the sign-aware per-sector error metric). This
-dimension is not central to the threshold/bunching/revenue results; tightening
-it (HMRC input/output tax `T9`, ONS ABS intermediate consumption) is tracked in
-issue [#1](https://github.com/PolicyEngine/firm-microsim-paper/issues/1).
+**VAT liability by *sector*** is **not** a calibration target — it is reported as
+an informational diagnostic only (47.7% / 18.8%). The model fixes firm inputs
+and sets liability = turnover − input but does not yet calibrate the
+**input/output tax structure**, so per-sector net liability is structurally
+unhittable and, while targeted, competed with the dimensions above (it scored
+43.9% / −121.1% and dragged the naive mean down). It is gated off via
+`Config.calibrate_vat_liability_sector = False`. Restoring it after input/output
+calibration is tracked in issues
+[#1](https://github.com/PolicyEngine/firm-microsim-paper/issues/1) and
+[#2](https://github.com/PolicyEngine/firm-microsim-paper/issues/2).
 
 ## Figures
 

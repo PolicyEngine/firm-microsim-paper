@@ -45,14 +45,12 @@ from firm_microsim.config import VINTAGES, Config  # noqa: E402
 from firm_microsim.data_loader import load_data  # noqa: E402
 from firm_microsim.validate import validate  # noqa: E402
 
-# Each tuple is (attribute on ValidationReport, human-friendly label).
-# Order matches the original calibration summary.
-_DIMENSIONS = [
+# The five dimensions that are calibration targets (drive `overall`).
+_CALIBRATED_DIMENSIONS = [
     ("hmrc_bands", "HMRC Turnover Bands"),
     ("ons_population", "ONS Population"),
     ("employment", "Employment Bands"),
     ("sector", "Sector Distribution"),
-    ("vat_liability_sector", "VAT Liability by Sector"),
     ("vat_liability_band", "VAT Liability by Band"),
 ]
 
@@ -87,31 +85,22 @@ def _report_vintage(vintage: str) -> bool:
     print("-" * 64)
     print(f"  {'Dimension':<26}{'accuracy':>12}{'error':>12}")
     print("-" * 64)
-    for attr, label in _DIMENSIONS:
+    for attr, label in _CALIBRATED_DIMENSIONS:
         acc = getattr(rep, attr) * 100.0
         err = 100.0 - acc
         print(f"  {label:<26}{acc:>11.1f}%{err:>11.1f}%")
     print("-" * 64)
 
     overall = rep.overall * 100.0
-    # Compute the 5-dim headline locally (exclude vat_liability_sector) so the
-    # script does not depend on the report class exposing a `headline` property.
-    headline = (
-        (
-            rep.hmrc_bands
-            + rep.ons_population
-            + rep.employment
-            + rep.sector
-            + rep.vat_liability_band
-        )
-        / 5.0
-        * 100.0
-    )
-    print(f"  {'Overall (all 6 dims)':<26}{overall:>11.1f}%{100.0 - overall:>11.1f}%")
     print(
-        f"  {'Headline (5 core dims)':<26}{headline:>11.1f}%"
-        f"{100.0 - headline:>11.1f}%"
+        f"  {'Overall (5 calibrated dims)':<26}{overall:>11.1f}%"
+        f"{100.0 - overall:>11.1f}%"
     )
+    print("-" * 64)
+    # vat_liability_sector is reported but NOT calibrated (see config flag).
+    diag = rep.vat_liability_sector * 100.0
+    print(f"  Informational diagnostic (not a calibration target):")
+    print(f"  {'VAT Liability by Sector':<26}{diag:>11.1f}%{100.0 - diag:>11.1f}%")
     print("=" * 64)
     return True
 

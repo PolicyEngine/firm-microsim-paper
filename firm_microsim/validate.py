@@ -26,37 +26,28 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ValidationReport:
-    """Accuracy scores (0-1) for each calibration dimension."""
+    """Accuracy scores (0-1) for each dimension.
+
+    Five dimensions are calibration targets; ``vat_liability_sector`` is an
+    *informational diagnostic only* — it is no longer fed to the optimizer
+    (see ``Config.calibrate_vat_liability_sector``), because the model does not
+    yet calibrate the input/output tax structure, so it is structurally
+    unhittable and competed with the dimensions the analysis relies on.
+    """
 
     hmrc_bands: float
     ons_population: float
     employment: float
     sector: float
-    vat_liability_sector: float
+    vat_liability_sector: float  # informational diagnostic, NOT calibrated
     vat_liability_band: float
     total_population: float
 
     @property
     def overall(self) -> float:
-        """Mean accuracy across the six calibration dimensions."""
-        return (
-            self.hmrc_bands
-            + self.ons_population
-            + self.employment
-            + self.sector
-            + self.vat_liability_sector
-            + self.vat_liability_band
-        ) / 6.0
+        """Mean accuracy across the five *calibrated* dimensions.
 
-    @property
-    def headline(self) -> float:
-        """Mean accuracy across the five *core* calibration dimensions.
-
-        Excludes ``vat_liability_sector``. Sector-level VAT liability is the
-        least-calibrated dimension (it carries a low optimizer weight) and is
-        not central to the threshold / bunching / revenue analysis the paper
-        relies on, so the headline figure leaves it out. The all-six
-        :attr:`overall` mean is retained for full transparency.
+        Excludes the informational ``vat_liability_sector`` diagnostic.
 
         Formula::
 
@@ -235,10 +226,12 @@ def validate(
     logger.info("ONS Population:          %.1f%%", report.ons_population * 100)
     logger.info("Employment Bands:        %.1f%%", report.employment * 100)
     logger.info("Sector Distribution:     %.1f%%", report.sector * 100)
-    logger.info("VAT Liability by Sector: %.1f%%", report.vat_liability_sector * 100)
     logger.info("VAT Liability by Band:   %.1f%%", report.vat_liability_band * 100)
-    logger.info("Overall Accuracy:        %.1f%%", report.overall * 100)
-    logger.info("Headline accuracy (5 core dims): %.1f%%", report.headline * 100)
+    logger.info("Overall Accuracy (5 calibrated dims): %.1f%%", report.overall * 100)
+    logger.info(
+        "VAT Liability by Sector: %.1f%%  [informational, NOT calibrated]",
+        report.vat_liability_sector * 100,
+    )
     logger.info("Total Population:        %s firms", f"{total_weighted:,.0f}")
 
     return report
