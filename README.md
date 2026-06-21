@@ -98,15 +98,15 @@ python scripts/report_calibration.py
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
-| HMRC turnover bands | 93.0% | 92.6% |
-| ONS population | 91.0% | 93.9% |
-| Employment bands | 78.2% | 80.3% |
-| Sector distribution | 92.5% | 94.4% |
-| VAT liability by band | 94.5% | 81.3% |
-| **Overall (5 calibrated dimensions)** | **89.9%** | **88.5%** |
+| HMRC turnover bands | 93.0% | 92.7% |
+| ONS population | 91.1% | 94.2% |
+| Employment bands | 78.2% | 89.7% |
+| Sector distribution | 92.5% | 94.5% |
+| VAT liability by band | 94.6% | 81.4% |
+| **Overall (5 calibrated dimensions)** | **89.9%** | **90.5%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
-an informational diagnostic only (47.7% / 18.8%). The model fixes firm inputs
+an informational diagnostic only (47.1% / 21.7%). The model fixes firm inputs
 and sets liability = turnover − input but does not yet calibrate the
 **input/output tax structure**, so per-sector net liability is structurally
 unhittable and, while targeted, competed with the dimensions above (it scored
@@ -143,3 +143,29 @@ The turnover-distribution figures require the matching synthetic CSV
 > **Note on ONS counts:** firm-count figures sum the per-SIC rows only — the ONS
 > band tables include a `Total` summary row that must be excluded, or every firm
 > is counted twice (a bug present in earlier drafts that doubled the ONS panel).
+
+## Static threshold reform results
+
+The `static/` module costs VAT-threshold reforms mechanically (turnover held
+fixed; only registration status changes), reproducing the paper's static
+results. Run:
+
+```bash
+python -m static          # -> results/{vat_threshold_revenue_impact,revenue_impact_2025_26,firms_impact_2025_26}.png
+```
+
+- `vat_threshold_revenue_impact.png` — the £85k→£90k anchor reform vs HMRC's
+  published costing, by fiscal year (model −177/−177/−110/−38/+79 vs HMRC
+  −150/−185/−125/−50/+65 £m; both turn positive by 2028-29).
+- `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the static sweep
+  of registration thresholds (£70k–£120k) vs the £90k baseline.
+
+**Smooth-counterfactual method.** The synthetic population carries a
+registration step at the threshold (the bunching + calibration concentrate firm
+weight just below it). For the *static* counterfactual the sweep fits the clean
+above-threshold firm/liability profile and extrapolates it across the threshold
+(`StaticVATModel._counterfactual_bins`), computed on unaged turnover and scaled
+to the fiscal year by a nominal-growth factor. Revenue and the anchor reform
+match the paper closely; firm-count magnitudes run ~25% low because the
+regenerated population has a lower near-threshold VAT-paying-firm density than
+the paper's original data (same shape).

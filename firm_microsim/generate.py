@@ -164,7 +164,13 @@ def generate_input_values(
     scaled = scaled + neg_t.float() * (torch.rand(n_firms, device=device) * 0.3)
     scaled = scaled - high_t.float() * (torch.rand(n_firms, device=device) * 0.2)
 
-    final_ratios = torch.clamp(scaled + sector_noise, 0.1, 1.5)
+    # Floor the input/output ratio at 0.6 (value-added <= 40% of turnover).
+    # A lower floor lets a few firms get implausibly low input (VA up to 90%
+    # of turnover), which both produces unrealistic per-firm VAT liabilities
+    # and lets the weight optimiser concentrate huge weights on those outliers
+    # to hit the liability targets — distorting the near-threshold density and
+    # the static threshold sweep. 0.6 matches the documented 60-95% intent.
+    final_ratios = torch.clamp(scaled + sector_noise, 0.6, 1.5)
     input_values = torch.where(
         turnover_values > 0, turnover_values * final_ratios, torch.zeros_like(turnover_values)
     )
