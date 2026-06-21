@@ -1,0 +1,85 @@
+\section{Calibration and Estimation}
+\label{sec:calibration}
+
+This section describes how the calibrated notch model of Section~\ref{sec:model}
+is taken to the data. I proceed in three steps: estimate the curvature
+parameter $\alpha$ of the cost specification from firms away from the notch;
+assign each firm a cost/productivity parameter $A_i$ as a calibration input; and
+extract the headline behavioural elasticity, reporting bootstrap standard errors
+for the bunching estimates.
+
+\subsection{Estimating the cost-function curvature}
+
+The cost specification is Cobb--Douglas, $Y = A\,X^{\alpha}$, so that in logs
+\(\ln Y = \ln A + \alpha \ln X\). I estimate $\alpha$ by a weighted regression
+of $\ln Y$ on $\ln X$ across firms. To avoid contaminating the estimate with the
+behavioural response the model is meant to explain, the estimation sample excludes
+firms in the manipulation region around the data-year threshold
+$T^{*}=\pounds85{,}000$, retaining firms with turnover below \pounds75{,}000 or
+above \pounds95{,}000, which face no marginal registration incentive.
+
+The estimated curvature is $\alpha \approx 0.989$ on the \pounds85{,}000 synthetic
+data (precisely $0.9888$; an earlier hardcoded value of $0.9864$ is no longer
+used)---near-constant returns.\footnote{This is an un-instrumented OLS slope of
+$\ln Y$ on $\ln X$ with a single input, with no control-function or
+proxy-variable correction (Levinsohn--Petrin, Olley--Pakes, ACF). If more
+productive firms purchase more inputs, the estimate is biased upward towards
+unity, so any object that turns on the gap between $\alpha$ and $1$ is fragile.
+I therefore route the load-bearing objects away from $\alpha$: the dominated
+region is the exact Kleven--Waseem width, the marginal buncher is evaluated in the
+iso-elastic representation with the behavioural elasticity
+(Section~\ref{ssec:buncher}), and the schedule-reform revenue counterfactuals turn
+on the schedule and turnover, not on the precise value of $\alpha$.}
+
+\subsection{Assigning the firm-level cost parameter}
+
+Given $\alpha$, I assign each firm the cost/productivity parameter
+$A_i = Y_i / X_i^{\alpha}$, the production residual implied by its observed
+turnover $Y_i$ and inputs $X_i$. This is a \emph{calibration input} for the
+forward re-solution of Section~\ref{sec:model}, not a claim of structural
+identification: it is whatever cost level rationalises the firm's observed
+allocation at the \pounds85{,}000 schedule, held fixed when the schedule changes.
+I do not pre-process turnover with any ``unbunching'' rule or inject uncertainty
+before forming $A_i$, so the same residual is carried unchanged into the forward
+solution. The assignment is available for the $91.5\%$ of firms with strictly
+positive observed inputs and turnover; the values are heterogeneous and broadly
+increasing in firm size.
+
+\subsection{The headline behavioural elasticity}
+\label{ssec:elasticities}
+
+The behavioural object of interest is the elasticity of reported turnover with
+respect to the net-of-tax rate. I obtain it by perturbing the VAT rate by a
+small $\Delta\tau$, re-solving each firm's problem, and computing
+\[
+  \varepsilon
+  = \frac{\ln y^{*}(\tau_{\max}+\Delta\tau) - \ln y^{*}(\tau_{\max})}
+         {\ln(1-\tau_{\max}-\Delta\tau) - \ln(1-\tau_{\max})} .
+\]
+Computed firm by firm near the threshold, this local turnover elasticity has a
+median of approximately $\mathbf{0.17}$ and a weighted mean of approximately
+$0.32$ (the mean pulled up by a thin tail of very responsive firms). As a loose
+magnitude check, the median is of the same order as the $0.09$--$0.18$
+VAT-\emph{base} elasticity reported by \citet{liuetal2021} for the UK; this is
+only a magnitude comparison, since their object is a value-added (base) elasticity
+for which they decline to back out a turnover elasticity, whereas mine is a
+turnover elasticity. \emph{This is the elasticity I carry into the policy
+analysis.} Alongside it I report the descriptive bunching ratio $b=0.061$
+(SE $0.005$)---the excess-mass \emph{width} $\Delta y^{*}/y^{*}$, not an
+elasticity.\footnote{The bunching estimator also implies a substitution
+(CES-wedge) elasticity $\sigma\approx5.10$ (SE $0.12$), which reads the full
+excess span as a response; it is not comparable to the local turnover elasticity
+and is not used in the policy analysis. See Appendix~\ref{app:inference}.}
+
+The mass-conservation constraint (Appendix~\ref{app:inference}) raises $b$ (from
+$0.054$) and the excess mass $E$ (from $8{,}179$ to $9{,}160$) relative to the
+unconstrained fit, and forces excess and missing mass into agreement ($E=9{,}160$
+versus $\Delta_{R}=9{,}938$, against $8{,}179$ versus $17{,}792$ unconstrained);
+the implied displaced share $\Pi=0.220$ is robust even where the wedge level is
+not. The sigmoid steepness $k$ does not affect these data-side magnitudes but
+governs the width of the structural schedule's dominated region; I set
+$k=0.001$, whose implied band ($\pounds19.7$k) is closest to the exact
+\citet{klevenwaseem2013} notch region $T^{*}\tau/(1-\tau)=\pounds21.25$k.
+Re-solving the calibrated model reproduces the observed near-threshold
+distribution closely, but this is true essentially by construction (the model is
+fitted to that distribution) and I do not treat the fit as an independent result.

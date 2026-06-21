@@ -1,0 +1,120 @@
+\subsection{The sigmoid as a smoothed-notch approximation}
+\label{app:notch}
+
+The calibrated model of Section~\ref{sec:model} treats the registration
+threshold as a true notch and characterises its analytic objects---the
+dominated region and the marginal buncher---exactly. For the forward solution at
+the level of two million firms, I operationalise the notch with a smooth
+(logistic) approximation to the tax schedule. This appendix sets out that
+approximation and establishes when it is faithful: the smooth schedule
+reproduces the notch---including its dominated region---when its steepness $k$ is
+calibrated to the Kleven--Waseem width, and degenerates towards a smoothed
+\emph{kink} only when $k$ is mis-set. I calibrate $k$ accordingly and report all
+exact analytic objects from the true notch, so the smoothing affects only the
+numerics of the forward solution, not the paper's quantitative claims.
+
+\subsubsection*{The smoothing device}
+
+The exact notch makes the effective average rate a step function of turnover,
+non-differentiable at $T^{*}$. To obtain a smooth schedule, I replace the step
+by a logistic effective-rate schedule,
+\begin{equation}
+  \tau(y_i) \;=\; \tau_{\max}\,\frac{1}{1+e^{-k(y_i - T^{*})}},
+  \qquad
+  \frac{\partial \tau(y_i)}{\partial y_i}
+  \;=\; k\,\tau(y_i)\!\left(1-\frac{\tau(y_i)}{\tau_{\max}}\right),
+  \label{eq:tau-smooth}
+\end{equation}
+where $k>0$ governs the steepness: as $k\to\infty$ the sigmoid converges
+pointwise to the exact step at $T^{*}$, and its derivative peaks at $T^{*}$ and
+decays away from it. The corresponding optimality condition equates marginal
+after-tax revenue $(1-\tau(y_i))-y_i\,\partial\tau/\partial y_i$ to marginal cost.
+I do not solve this condition as a root-find: with $\alpha\approx0.989$ the
+near-constant-returns specification makes a continuous interior optimum
+ill-conditioned, so the operational solver maximises after-tax profit directly
+over a bounded grid (described below), which does not rely on the optimality
+condition having a well-defined interior root.
+
+\subsubsection*{Fidelity of the smooth approximation}
+
+Equation~\eqref{eq:tau-smooth} smooths the \emph{average} rate $\tau(y_i)$
+applied to the firm's entire turnover, so after-tax revenue is
+$R(y_i)=(1-\tau(y_i))y_i$. Whether this reproduces the institutional notch
+depends on the steepness $k$. Under the true notch, after-tax revenue drops
+discretely by $\tau_{\max}T^{*}=\pounds17{,}000$ at the threshold; under the
+smooth schedule the drop is spread over a transition whose width falls as $k$
+rises, and whether $R(y_i)$ decreases over a neighbourhood of $T^{*}$---the
+structural analogue of the output-dominated region---holds for steep $k$ and
+fails for shallow $k$, where the schedule collapses to a smoothed kink that
+merely perturbs the marginal rate locally.
+
+The consequences for the dominated region are stark.
+Table~\ref{tab:notch-vs-sigmoid} reports the width of the locally
+output-dominated region implied by the sigmoid (the band where marginal
+after-tax revenue $(1-\tau)-y\tau'$ turns negative) against the exact
+Kleven--Waseem width $a=T^{*}\tau_{\max}/(1-\tau_{\max})=\pounds21{,}250$
+of~\eqref{eq:dominated}. Only at a steepness close to $k=0.001$ does the implied
+band approach the exact width; at the larger $k=0.01$ used in earlier code the
+sigmoid captures barely a tenth of it, and for very small $k$ the schedule is
+monotone and exhibits \emph{no} dominated region at all---a pure kink. The full
+$k$ grid and its reconciliation with the empirical excess span are reported in
+Appendix~\ref{app:inference}.
+
+\begin{table}[t]
+  \centering
+  \caption{Sigmoid steepness $k$ and the implied output-dominated region,
+    compared to the exact Kleven--Waseem notch width
+    $a=T^{*}\tau_{\max}/(1-\tau_{\max})=\pounds21{,}250$ at
+    $T^{*}=\pounds85{,}000$, $\tau_{\max}=0.20$. The true notch is
+    $k$-independent.}
+  \label{tab:notch-vs-sigmoid}
+  \begin{tabular}{lcc}
+    \hline
+    Schedule & Dominated-region width & Character \\
+    \hline
+    Sigmoid, $k=0.001$      & $\approx\pounds19.7$k     & notch-like \\
+    Sigmoid, $k=0.01$       & $\approx\pounds2.5$k      & narrow, near-kink \\
+    Sigmoid, $k=0.0001$     & none (monotone $R$)       & pure kink \\
+    True notch (this paper) & $\pounds21{,}250$ (exact) & notch \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Two points reinforce the message. First, the sigmoid's dominated-region width is
+almost entirely a function of $k$, which was not calibrated to any data moment in
+earlier drafts and took inconsistent values across paper and code ($k=0.01$
+versus $k=0.001$); any bunching prediction read off the sigmoid inherits this
+arbitrariness. Second, for the questions this paper asks---the size of the
+bunching band, the location of the marginal buncher, and the revenue
+consequences of moving the notch---these discrepancies are first-order, which is
+why the main text models the notch exactly.
+
+\subsubsection*{Recommended use and reconciliation}
+
+I use the smooth schedule of~\eqref{eq:tau-smooth} as the effective-rate
+schedule in the forward firm-by-firm re-optimisation, but the firm's optimum is
+located by \emph{bounded grid maximisation of after-tax profit}, not by an
+interior root-find. For each firm I evaluate after-tax profit on a fine turnover
+grid over a bounded neighbourhood ($\pm\pounds20$k on a \pounds200 step) of its
+observed turnover and select the profit-maximising point. I adopt direct profit
+maximisation precisely because the near-constant-returns specification
+($\alpha\approx0.989$) makes the interior optimum degenerate, so the global
+maximiser is well-defined while an interior root is not. The
+$\pm\pounds20$k window is itself a modelling assumption, motivated by the
+documented localisation of the realised response within roughly \pounds20{,}000
+of the threshold (Section~\ref{sec:results_structural}); I note that this choice
+mechanically bounds how far firms can move, so the ``localised, partial'' response
+partly reflects the window rather than being a free output of the exercise.
+
+I adopt two further safeguards throughout. (i) I calibrate $k$ to the exact
+dominated-region width $a=T^{*}\tau_{\max}/(1-\tau_{\max})$ ($k\approx0.001$,
+which reproduces the band to within about $7\%$;
+Table~\ref{tab:notch-vs-sigmoid}) rather than asserting it, and use a single value
+consistently. (ii) I report every exact analytic object---the
+$\sim\pounds21$k dominated region and the marginal buncher of
+Section~\ref{ssec:buncher}---from the true notch of Section~\ref{sec:model}, not
+from the smoothing. Consistent with this posture, I headline the taper's robust
+revenue effect and its analytic efficiency mechanism (the removal of the dominated
+region and the discrete wedge); the \emph{simulated} change in the near-threshold
+turnover distribution depends on both $k$ and the re-optimisation window and is
+not reported as a magnitude (Section~\ref{sec:results_taper}).

@@ -1,0 +1,123 @@
+\subsubsection{Related literature}
+\label{sec:literature}
+
+My paper connects three strands of the public-finance literature: the methodology of
+bunching and notches, the empirical study of VAT registration thresholds, and the
+estimation of VAT incidence and behavioural responses.
+
+\subsubsection{Bunching and notch methodology}
+
+The empirical analysis of behavioural responses to discontinuities in tax schedules
+begins with \citet{saez2010}, who shows that excess mass (``bunching'') at a kink point
+identifies the structural elasticity of the tax base. \citet{chettyetal2011} extend the
+framework to account for optimisation frictions and adjustment costs, which attenuate
+observed bunching relative to the frictionless benchmark. \citet{klevenwaseem2013} adapt
+the approach to \emph{notches}---discrete jumps in tax liability rather than in the
+marginal rate---and use the ``missing mass'' in the dominated region above a notch to
+recover both structural elasticities and the extent of optimisation frictions.
+\citet{kleven2016} surveys this rapidly growing literature, and \citet{best2015} apply
+notch-based identification to firm behaviour under turnover taxation. The VAT
+registration threshold is a notch in exactly this sense: once a firm registers, output
+VAT is due on its entire turnover, not merely the amount above the threshold. My
+reduced-form analysis (Section~\ref{sec:bunching}) implements the standard polynomial
+counterfactual estimator from this literature, and my structural model
+(Section~\ref{sec:model}) makes explicit the firm-side optimisation that generates the
+observed bunching.
+
+\subsubsection{Structural models of size-threshold discontinuities}
+
+A separate literature fits firm models to size-contingent policy discontinuities and
+\emph{identifies} policy-invariant primitives from them. The leading examples are
+\citet{garicano2016} and \citet{gourioroys2014}, who study the French regulatory
+threshold at 50 employees. \citet{garicano2016} embed size-contingent labour regulation
+in a Lucas span-of-control model, fit it to the distortion in the firm-size distribution,
+and recover the regulation's implicit-tax equivalent (about a $2.3\%$ tax on labour) and
+welfare cost (about $3.4\%$ of GDP under partial real-wage rigidity).
+\citet{gourioroys2014} fit a related model by indirect inference and decompose the
+regulation into a sunk cost---about one year of an average salary---and a small recurring
+payroll tax. I do \emph{not} make claims of this kind. My notch model is a
+\emph{calibration device}: I assign each firm a cost parameter consistent with its
+observed turnover and inputs and re-solve under counterfactual schedules, but I do not
+claim to identify a policy-invariant productivity distribution or to recover structural
+primitives. This is a deliberate difference from \citet{garicano2016} and
+\citet{gourioroys2014}, who do, and it is reinforced by my setting: I work with
+synthetic rather than administrative microdata, and the returns-to-scale parameter I use
+to form the calibration residual is an un-instrumented OLS slope likely biased towards
+unity, with no control-function correction of the kind \citet{garicano2016} employ. I
+therefore lean on the behavioural turnover elasticity, not on any recovered technological
+primitive, for the reported responses (Section~\ref{sec:calibration}), and my headline
+results---static costs and the analytic distortion measure---do not depend on identifying
+primitives at all.
+
+International evidence offers a cautionary counterpoint on what drives bunching at VAT
+thresholds, and I engage it as a set of alternative mechanisms. \citet{harju2019}, using
+the universe of Finnish firms, find sharp bunching below the VAT exemption threshold that
+is driven mainly by the \emph{compliance costs} of VAT reporting rather than by the level
+of the tax rate, since easing reporting requirements reduced bunching. This is an
+alternative mechanism to the pure tax-wedge optimisation my structural model embeds: if
+the response is compliance-driven, a model with no fixed cost of registration may
+misattribute part of it to the tax wedge, and the productivity I recover would be
+correspondingly contaminated. \citet{onji2009} documents a distinct margin in Japan,
+where firms split into multiple entities to remain below the consumption-tax threshold,
+so that excess mass reflects organisational restructuring rather than genuine turnover
+suppression. \citet{asatryanpeichl2017}, using Armenian corporate-tax data, find
+\emph{no} bunching at the VAT notch---though strong responses at accounting and
+administrative notches---and attribute much of the bunching that does occur elsewhere to
+income under-reporting. Together these papers caution that a VAT-notch response is neither
+universal nor necessarily a real turnover response; I assume bunching is predominantly
+real (Section~\ref{sec:bunching}) and flag the reporting and firm-splitting margins as
+limitations.
+
+\subsubsection{The VAT registration threshold}
+
+The paper closest to mine is \citet{liuetal2021}, who develop the theory of bunching
+at a VAT notch with voluntary registration and estimate it on UK firm data. They report
+an elasticity of the VAT \emph{base} with respect to the tax rate in the range of roughly
+$0.09$ to $0.18$, and explicitly decline to back out a turnover elasticity in the VAT
+setting, noting that it is difficult to identify credibly. I adopt their
+counterfactual-estimation methodology as my reduced-form benchmark. My headline object
+is a local turnover elasticity (median $\approx 0.17$), a \emph{different} quantity from
+their VAT-base elasticity: theirs measures how the aggregate taxable base responds to the
+rate, mine how an individual firm's chosen turnover responds to the net-of-tax return,
+the two linked through the cross-firm distribution of responses and registration
+behaviour. I therefore treat the coincidence of magnitudes as a broad comparability check
+rather than a validation of my estimate against theirs.
+
+\citet{liulockwoodtam2024} extend this work to document how the threshold suppresses
+small-firm growth, finding that turnover growth slows by about one percentage point
+for firms approaching the threshold, the central policy concern motivating reform. \citet{waseem2024} make a related point in
+Pakistan, showing that the growth-suppression distortion from size-based turnover taxes
+is \emph{dynamic} and extends well beyond the static bunching window. I emphasise that
+my ``modest and localised'' characterisation of the response is a \emph{static,
+contemporaneous} statement about the cross-sectional excess mass within roughly
+\pounds 20{,}000 of the threshold; it is not in tension with the dynamic
+growth-suppression channel these papers identify, which my static framework does not
+attempt to measure and which I flag as a limitation in Section~\ref{sec:conclusion}.
+In the Indian VAT context, \citet{nandiwarwick2020} examine whether firms respond to
+the threshold through real output decisions or through the timing and reporting of
+turnover---a distinction that matters for whether a higher threshold raises growth or
+merely shifts paperwork.
+
+Relative to this literature my contribution, set out in Section~\ref{sec:intro}, is
+twofold and practical: an open, reproducible microsimulation for costing UK VAT
+threshold reforms, and a \emph{menu} of reforms---raising the threshold, a graduated
+taper, and a banded reduced rate---costed on a common footing and ranked by the
+misallocation each removes. The two schedule reforms, in particular, the bunching
+estimator cannot evaluate and none of the papers above costs. I claim no methodological
+priority: identifying primitives at a size threshold is what \citet{garicano2016} and
+\citet{gourioroys2014} do, and I do not. My value-added is the venue (a VAT turnover
+notch, modelled as a calibrated \citet{klevenwaseem2013} notch model), the reform menu
+with its efficiency ranking, and an open-source, reproducible pipeline.
+
+\subsubsection{VAT incidence and behavioural responses}
+
+A separate literature studies who bears the burden of VAT and how firms adjust.
+\citet{benedek2015} estimate VAT pass-through to consumer prices across European
+countries, and \citet{belloncopestake2022} document substantial heterogeneity in
+pass-through across firms and products. \citet{almunialopezrodriguez2018} show that
+firms bunch below size-based monitoring thresholds, distinguishing real responses from
+evasion---a margin directly relevant to interpreting bunching at the VAT threshold as
+optimisation rather than non-compliance. I take the reduced-form bunching as
+predominantly a real (turnover-suppression) response, consistent with the structural
+model, but note that the reporting margin is a limitation I return to in
+Section~\ref{sec:conclusion}.

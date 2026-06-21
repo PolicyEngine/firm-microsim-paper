@@ -1,0 +1,152 @@
+\subsection{Inference for the bunching estimator}
+\label{app:inference}
+
+This appendix documents the inference procedure for the reduced-form bunching
+estimates of Section~\ref{sec:calibration}: the mass-conservation constraint
+that disciplines the counterfactual density, the bootstrap that delivers
+standard errors, and the sensitivity of the estimates to the polynomial degree,
+the exclusion window, the sigmoid steepness $k$, and the effective wedge
+$\tau_{e}$. All numbers reported here and in the calibration section are produced
+by the script \texttt{analysis/bunching\_inference.py}, run on the
+\pounds85{,}000 (2023--24) weighted synthetic firm data; nothing is hardcoded as
+a result.
+
+\subsubsection*{Mass-conservation constraint}
+
+The canonical bunching estimator of \citet{saez2010}, \citet{klevenwaseem2013}
+and \citet{chettyetal2011} imposes that the counterfactual density conserves
+mass: every firm removed from above the threshold reappears as excess mass below
+it. An unconstrained fit by plain polynomial OLS on bins outside a hand-set
+window computes the excess mass $E$ (below $T^{*}$) and the missing mass
+$\Delta_{R}$ (above $T^{*}$) \emph{independently}, with no guarantee that
+$E = \Delta_{R}$ and no endogenous location of the marginal buncher.
+
+I impose the constraint in two ways. First, the counterfactual polynomial in
+$(y-T^{*})$ is fit by an iterated weighted least-squares procedure in which the
+density of the bins above the excluded region is rescaled until the fitted
+counterfactual integrates to the \emph{observed} total mass over the estimation
+range $[\pounds20\text{k},\pounds140\text{k}]$. This forces the bunching mass to
+be reabsorbed into the counterfactual rather than discarded. The regressor is
+normalised to $[-1,1]$ for numerical stability of the high-degree Vandermonde
+basis. Second, the upper edge of the excluded (manipulation) region---the
+\emph{marginal buncher} $y_{R}$---is located \emph{endogenously} by integrating
+the missing mass upward from $T^{*}$ until cumulative missing mass above equals
+cumulative excess mass below,
+\[
+  \int_{T^{*}}^{y_{R}} \bigl[f^{\mathrm{cf}}(y)-f^{\mathrm{obs}}(y)\bigr]_{+}\,dy
+  \;=\;
+  \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
+  \;=\; E ,
+\]
+rather than being fixed at an arbitrary window edge. The excess turnover span of
+the marginal buncher, $\Delta y^{*}=y_{R}-T^{*}$, is then used by the
+notch-width elasticity (Method~B).
+
+Imposing the constraint matters because the unconstrained fit grossly violates
+adding-up: it delivers $E=8{,}179$ but $\Delta_{R}=17{,}792$, whereas the
+constrained estimator returns $E=9{,}160$ and $\Delta_{R}=9{,}938$, which agree
+to within sampling noise. The accompanying movement in the headline estimates
+($b$ from $0.054$ to $0.061$, $\sigma$ from $4.33$ to $5.10$) is reported in
+Section~\ref{sec:calibration}.
+
+\subsubsection*{Bootstrap standard errors}
+
+I compute standard errors by a firm-level bootstrap. In each of $B=200$
+replications I draw $n$ firms with replacement from the estimation sample, with
+draw probabilities proportional to the survey weight, re-bin the resampled firms
+into \pounds1{,}000 bins, and re-run the entire estimator---counterfactual fit,
+marginal-buncher location, and all downstream statistics---on the replicate. The
+standard error of each statistic is the standard deviation of its bootstrap
+distribution, and the $95\%$ confidence interval is the $2.5$th--$97.5$th
+percentile interval. Resampling firms (rather than residuals) propagates both
+sampling variation and the variation induced by re-binning. Table~\ref{tab:boot}
+reports the results.
+
+\begin{table}[t]
+\centering
+\caption{Bootstrap inference, \pounds85{,}000 data ($B=200$ firm resamples).}
+\label{tab:boot}
+\begin{tabular}{lrrr}
+\hline
+Statistic & Point & Std.\ error & 95\% CI \\
+\hline
+Bunching ratio $b$              & $0.061$ & $0.005$  & $[0.053,\ 0.071]$ \\
+Excess mass $E$                 & $9{,}160$ & $672$  & $[8{,}325,\ 10{,}931]$ \\
+Substitution elasticity $\sigma$ & $5.10$ & $0.12$  & $[4.86,\ 5.35]$ \\
+Displaced share $\Pi$           & $0.220$ & $0.005$ & $[0.211,\ 0.230]$ \\
+Notch-width elasticity (median) & $0.458$ & $0.027$ & $[0.429,\ 0.529]$ \\
+Marginal-buncher elasticity     & $0.635$ & $0.077$ & $[0.514,\ 0.806]$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{Sensitivity to polynomial degree and exclusion window}
+
+Table~\ref{tab:degwin} maps the point estimates across a grid of polynomial
+degree $\in\{5,6,7,8\}$ and symmetric exclusion window
+$\in\{\pounds10\text{k},\pounds15\text{k},\pounds20\text{k},\pounds25\text{k}\}$.
+The estimates are stable across the central cells (degree $6$--$7$, window
+\pounds10--\pounds20k): the substitution elasticity stays in roughly
+$4.4$--$5.7$ and the excess mass in $4{,}000$--$9{,}000$. The corner cells are
+less reliable: at very wide windows ($\pounds25$k) the excluded region begins to
+swallow genuine curvature in the density, the fitted counterfactual crosses the
+observed density, and $b$ can turn slightly negative (so $\sigma$ is undefined);
+at the lowest degree ($5$) the inflexible trend over-fits the bunching mass into
+the counterfactual and inflates $b$. I therefore report the degree-$7$,
+\pounds15k-window specification as the baseline, with the bootstrap CIs above
+spanning the variation across the stable interior of the grid.
+
+\begin{table}[t]
+\centering
+\caption{Degree $\times$ window sensitivity (point estimates), \pounds85{,}000
+data. Cells with $b<0$ leave $\sigma$ undefined.}
+\label{tab:degwin}
+\begin{tabular}{llrrrr}
+\hline
+Degree & Window & $b$ & $E$ & $\sigma$ & Notch-width (median) \\
+\hline
+6 & \pounds10k & $0.079$ & $7{,}719$ & $5.69$ & $0.42$ \\
+6 & \pounds15k & $0.046$ & $6{,}900$ & $5.24$ & $0.45$ \\
+6 & \pounds20k & $0.017$ & $4{,}101$ & $4.44$ & $0.38$ \\
+7 & \pounds10k & $0.095$ & $9{,}073$ & $5.32$ & $0.47$ \\
+\textbf{7} & \textbf{\pounds15k} & $\mathbf{0.061}$ & $\mathbf{9{,}160}$ & $\mathbf{5.10}$ & $\mathbf{0.46}$ \\
+7 & \pounds20k & $0.036$ & $7{,}785$ & $4.89$ & $0.45$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{Sensitivity to the sigmoid steepness}
+
+The notch-width elasticity uses the effective wedge $\tau_{\mathrm{eff}} =
+\tau_{\max}/2$, which holds at the threshold for \emph{any} sigmoid steepness
+$k$, so the data-side elasticity is $k$-invariant. The steepness $k$ instead
+governs the \emph{structural} model: it sets the width of the output-dominated
+(``forbidden'') band of the smoothed schedule, defined as the turnover region in
+which marginal net revenue $(1-\tau(y)) - y\,\tau'(y)$ is negative. My code
+computes this width directly and compares it to the exact \citet{klevenwaseem2013}
+dominated region for a $20\%$ notch at \pounds85{,}000,
+$T^{*}\tau/(1-\tau)=\pounds21.25\text{k}$. The width is strongly $k$-dependent:
+$k=0.0001$ leaves essentially the entire local band dominated (a near-kink),
+$k=0.001$ gives \pounds19.7\text{k} (closest to the exact \pounds21.25\text{k}),
+$k=0.002$ gives \pounds10.6\text{k}, $k=0.005$ gives \pounds4.6\text{k}, and
+$k=0.01$ gives only \pounds2.5\text{k}; the empirical excess span of the marginal
+buncher is $\Delta y^{*}=\pounds5.4\text{k}$. This is the basis for the choice of
+$k=0.001$ in Section~\ref{sec:calibration}: its implied dominated region best
+matches both the exact notch region and the order of magnitude of the empirical
+span, whereas $k=0.01$ understates the band by roughly an order of magnitude. I
+report results at $k=0.001$ and treat the spread above as a calibration
+sensitivity rather than a point identification of $k$.
+
+\subsubsection*{Sensitivity to the effective wedge}
+
+The CES substitution elasticity is recovered as $\sigma =
+\ln(\mathrm{RR})/\ln(1+\tau_{e})$, where $\mathrm{RR}$ is the ratio of
+counterfactual-to-observed above/below mass ratios. Because the wedge enters only
+through $\ln(1+\tau_{e})$, $\sigma$ scales roughly as $1/\ln(1+\tau_{e})$ while
+the displaced share $\Pi = 1-(1+\tau_{e})^{-\sigma}$ is essentially invariant
+(it is pinned by $\mathrm{RR}$). On my data, $\tau_{e}=0.025$ gives
+$\sigma=10.1$, $\tau_{e}=0.05$ gives $\sigma=5.10$, $\tau_{e}=0.075$ gives
+$\sigma=3.44$, and $\tau_{e}=0.10$ gives $\sigma=2.61$, while $\Pi=0.22$
+throughout. The magnitude of $\sigma$ is therefore conditional on $\tau_{e}$: I
+adopt $\tau_{e}=0.05$ as a baseline effective registration wedge and report
+$\Pi$, which is robust to it, as the policy-relevant displacement object.

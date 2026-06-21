@@ -1,0 +1,13 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.xdv
+*.synctex.gz
+
+# Preview build (scaffolding, not the submission)
+main_preview.pdf

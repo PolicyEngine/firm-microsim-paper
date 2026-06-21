@@ -29,8 +29,8 @@ from .config import PROCESSED_DATA_DIR, RESULTS_DIR, SYNTHETIC_DATA_DIR, VINTAGE
 # House-style constants
 # ---------------------------------------------------------------------------
 # Teal palette (primary -> light) shared across the project's figures.
-PALETTE = ["#1b485e", "#122740", "#326b77", "#568b87", "#80ae9a", "#b5d1ae"]
-PRIMARY = "#1b485e"
+PALETTE = ["#326b77", "#122740", "#1b485e", "#568b87", "#80ae9a", "#b5d1ae"]
+PRIMARY = "#326b77"
 ACCENT = "#d62728"  # red accent for reference lines
 
 LABEL_SIZE = 15
@@ -106,8 +106,8 @@ def plot_firms_by_turnover_band(vintage: str) -> None:
     ax.bar(range(len(ONS_LABELS)), values, color=PRIMARY, width=0.8, zorder=3)
     ax.set_xticks(range(len(ONS_LABELS)))
     ax.set_xticklabels(ONS_LABELS, rotation=30, ha="right")
-    ax.set_xlabel("Turnover band", fontsize=LABEL_SIZE)
-    ax.set_ylabel("Number of firms (thousands)", fontsize=LABEL_SIZE)
+    ax.set_xlabel("Turnover band", fontsize=LABEL_SIZE, labelpad=14)
+    ax.set_ylabel("Number of firms (thousands)", fontsize=LABEL_SIZE, labelpad=14)
     _style_ax(ax)
     _save(fig, f"firms_by_turnover_band_{regime}.png")
 
@@ -123,8 +123,8 @@ def plot_vat_firms_by_turnover_band(vintage: str) -> None:
     ax.bar(range(len(labels)), values, color=PRIMARY, width=0.8, zorder=3)
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels, rotation=30, ha="right")
-    ax.set_xlabel("Turnover band", fontsize=LABEL_SIZE)
-    ax.set_ylabel("Number of firms (thousands)", fontsize=LABEL_SIZE)
+    ax.set_xlabel("Turnover band", fontsize=LABEL_SIZE, labelpad=14)
+    ax.set_ylabel("Number of firms (thousands)", fontsize=LABEL_SIZE, labelpad=14)
     _style_ax(ax)
     _save(fig, f"vat_firms_by_turnover_band_{regime}.png")
 
@@ -156,12 +156,13 @@ def plot_turnover_distribution(vintage: str) -> None:
     ax.bar(centres, counts, width=1.0, color=PRIMARY, zorder=3)
 
     ymax = ax.get_ylim()[1]
-    for x, label in ((threshold, f"VAT threshold (£{int(threshold)}k)"),
-                     (frs_ceiling, "Flat Rate Scheme (£150k)")):
+    for x, label in ((threshold, f"VAT threshold\n(£{int(threshold)}k)"),
+                     (frs_ceiling, "Flat Rate Scheme\n(£150k)")):
         ax.axvline(x, color=ACCENT, linestyle="--", linewidth=1.5, zorder=4)
-        # Vertical label just right of the line so the two never overlap.
-        ax.text(x + 4, ymax * 0.97, label, color=ACCENT, fontsize=TICK_SIZE,
-                rotation=90, ha="center", va="top")
+        # Horizontal label at the top, just right of the line, wrapped to two
+        # lines so the two annotations never overlap.
+        ax.text(x + 3, ymax * 0.97, label, color=ACCENT, fontsize=TICK_SIZE,
+                ha="left", va="top")
 
     ax.set_xlim(0, 300)
     ax.set_xlabel("Annual turnover (£k)", fontsize=LABEL_SIZE)

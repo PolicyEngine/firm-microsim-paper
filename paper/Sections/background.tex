@@ -1,0 +1,63 @@
+\section{Institutional background}
+\label{sec:background}
+
+\paragraph{Registration and the notch.} The United Kingdom levies a value-added
+tax at a standard rate of 20\% on most goods and services. A business must
+register once its taxable turnover over any rolling twelve-month period exceeds
+the registration threshold, after which it charges VAT on its taxable sales and
+reclaims VAT paid on inputs. Because registration makes VAT due on the firm's
+\emph{entire} taxable turnover rather than only the amount above the cutoff, the
+threshold is a \emph{notch}---a discrete jump in liability---and not a kink. The
+cost of crossing is largest for consumer-facing firms with limited pass-through
+and small reclaimable input shares, for whom the incentive is to restrain
+turnover and locate just below the threshold \citep{liuetal2021,klevenwaseem2013}.
+
+\paragraph{Value added, input reclaim, and voluntary registration.} Real VAT is a
+tax on \emph{value added}, not on turnover: a registered firm charges output VAT
+on its sales but reclaims input VAT on its purchases. A large share of
+below-threshold firms therefore register \emph{voluntarily}---roughly $45\%$ of
+eligible UK firms \citep{liuetal2021}, driven by input-VAT reclaim and
+business-to-business sales---and for them the incentive to bunch is weak. My
+one-input model taxes \emph{turnover} rather than value added, so it is a
+\emph{turnover-tax-notch approximation} for the consumer-facing, limited-reclaim
+firms for whom the bunching incentive is sharpest; it abstracts from input reclaim
+and voluntary registration. I treat this as a first-order scope restriction and
+return to it in Section~\ref{sec:conclusion}.
+
+\paragraph{Threshold history.} The registration threshold was held at
+\pounds85{,}000 from 1~April 2017 to 31~March 2024---a seven-year nominal freeze,
+the longest in the history of the tax---before being raised to \pounds90{,}000 on
+1~April 2024, with the deregistration threshold rising from \pounds83{,}000 to
+\pounds88{,}000 \citep{hmrc_threshold,hoc_vat}. Because nominal turnover grows
+with inflation and real activity, freezing the threshold lowers it in real terms
+and draws an increasing number of firms towards the registration margin; this
+fiscal-drag mechanism was a central motivation for the April~2024 increase. My
+data year is 2023--24, so the prevailing statutory threshold throughout my
+analysis is \pounds85{,}000. Figure~\ref{fig:obr_bunching} shows the pattern in
+the turnover distribution: the number of firms rises towards \pounds84{,}000 and
+falls sharply above \pounds85{,}000, and the projected 2025--26 distribution is
+more sharply bunched than the 2019--20 outturn as fiscal drag draws more firms
+towards the frozen threshold.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\textwidth]{figures/obr_vat_bunching_85k.png}
+\caption{Bunching below the \pounds85{,}000 VAT registration threshold: number of
+businesses by \pounds1{,}000 turnover band. Source:
+\href{https://obr.uk/box/the-impact-of-the-frozen-vat-registration-threshold/}{OBR,
+\emph{Economic and Fiscal Outlook} March 2023}, Chart C (Open Government Licence).}
+\label{fig:obr_bunching}
+\end{figure}
+
+\paragraph{The reform debate.} The UK threshold is among the highest in the OECD,
+and there is debate over whether to raise it---to reduce the compliance burden on
+small firms---or lower it, to broaden the base and reduce the growth distortion at
+the margin. Three families of reform feature, and I evaluate all three: a change in
+the threshold's \emph{level} (the \pounds85{,}000 to \pounds90{,}000 increase
+of April~2024 and further moves around it); a change in its \emph{shape} (a
+\emph{graduated taper} that phases the effective rate in over a band, replacing the
+notch with a continuous profile); and a change in its \emph{rate} (a \emph{reduced
+rate} for small firms in a band above the threshold, with the standard 20\% rate
+retained above). A banded reduced rate introduces a smaller \emph{secondary} notch
+at the band top, which the continuous taper avoids. I cost all three by the same
+machinery in Section~\ref{sec:results}.

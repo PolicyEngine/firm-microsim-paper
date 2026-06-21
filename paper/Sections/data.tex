@@ -1,0 +1,85 @@
+\section{Data}
+\label{sec:data}
+
+Studying firm responses at the threshold needs firm-level turnover near the
+cutoff, which the official statistics publish only in coarse turnover bands. I
+therefore build a synthetic firm population calibrated to those aggregates: it
+reproduces the official totals while resolving the individual firm that the
+authorities do not release, opening the analysis to anyone. The same
+calibrate-to-published-aggregates approach underlies open household-level
+tax-benefit microsimulation \citep{policyengine}; here I apply it at the firm
+level. The generator takes the registration threshold as a parameter and is
+documented in Appendix~\ref{app:data}.
+
+\paragraph{Construction.} Index firms by $i$. For each sector $s$ and ONS
+turnover band $b=[\underline{b},\overline{b}]$, the \emph{UK Business: Activity,
+Size and Location} table gives a firm count $N_{s,b}$, and I draw $N_{s,b}$ firms
+with within-band turnover
+\[
+  y_i \;=\; \underline{b} + (\overline{b}-\underline{b})\,u_i + \varepsilon_i,
+  \qquad u_i \sim \mathcal{U}(0,1), \;\; \varepsilon_i \sim \mathcal{N}(0,\sigma_b^2),
+\]
+truncated below at zero, where $\varepsilon_i$ smooths the within-band
+distribution. Each firm is given input expenditure $x_i = \rho_i\,y_i$, with the
+input--output ratio $\rho_i$ drawn from a rescaled Beta distribution with
+sector-specific shifts and bounded to $\rho_i \in [0.6,1.5]$; its value added, the
+net VAT base, is $v_i = y_i - x_i$. Employment is assigned from the ONS
+employment-band shares.
+
+The base population reproduces the ONS structure but not
+the HMRC VAT-registered totals, so I re-weight it. Each firm receives a strictly
+positive weight $w_i = e^{\theta_i}$, and for a vector of official targets
+$T=(T_k)_{k=1}^{K}$ the weighted synthetic counterpart of target $k$ is
+\[
+  \widehat{T}_k(\theta) \;=\; \sum_i a_{ki}\, w_i ,
+\]
+where $a_{ki}$ is firm $i$'s contribution to target $k$: an indicator of band or
+sector membership for a count target, and the firm's liability $v_i$ for a
+VAT-liability target. I choose $\theta$ to minimise a symmetric relative-error
+loss with per-target importance weights $\lambda_k$,
+\[
+  L(\theta) \;=\; \frac{1}{K}\sum_{k} \lambda_k
+    \min\!\Big\{ \big(\widehat{T}_k/T_k - 1\big)^2,\; \big(T_k/\widehat{T}_k - 1\big)^2 \Big\}
+    \;+\; \alpha \sum_i \lvert \theta_i \rvert ,
+\]
+the final term an $L_1$ penalty on the log-weights. The targets are the HMRC
+VAT-registered counts by turnover band and by sector, the HMRC net VAT liability
+by band and by sector, and the ONS employment-band totals; turnover-band targets
+carry the largest $\lambda_k$, followed by VAT liability by band. The problem is
+solved by gradient descent, and the symmetric loss keeps targets of very different
+magnitudes on a common scale.
+
+A firm is registered with certainty
+when its turnover exceeds the threshold $T^{*}$. Below the threshold it registers
+voluntarily with probability $r = M / n_{<}$, the HMRC count of registered firms
+in the \pounds1--threshold band, $M$, divided by the synthetic number of
+below-threshold firms, $n_{<}$, so the synthetic voluntary-registration rate
+matches the HMRC aggregate. The resulting dataset comprises approximately
+$2.94$~million firm records, weighted to represent roughly $2.0$~million UK firms;
+validated against the official sources along every calibrated dimension, it attains
+an overall calibration accuracy of about $87\%$, reproducing the aggregates closely
+while supplying the firm-level resolution they lack.
+
+\paragraph{The registration threshold in the data.} My data are for the 2023--24
+year, in which the statutory threshold was \pounds85{,}000. The firm density steps
+down at the threshold---from roughly $10{,}400$ to $6{,}700$ firms per
+\pounds1{,}000 turnover band---reflecting the incentive to remain below the
+registration cutoff, with a second, smaller step at \pounds150{,}000, the ceiling
+of the VAT Flat Rate Scheme (Figure~\ref{fig:turnover_dist}). Counterfactual
+policies---including the \pounds85{,}000 to \pounds90{,}000 reform and the forward
+threshold sweep of Section~\ref{sec:results}---are evaluated on these firms, by
+re-applying the registration rule to the microdata for the static costings and by
+re-solving firm optimisation for the behavioural exercise
+(Section~\ref{sec:counterfactuals}). I hold the empirical turnover distribution
+fixed and let behaviour respond to the reform, rather than imposing a bunching
+pattern at the counterfactual threshold, which would presuppose the response the
+analysis sets out to measure.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\textwidth]{figures/turnover_distribution_85k.png}
+\caption{Synthetic firm turnover distribution (weighted firm counts,
+\pounds1{,}000 bins), 2023--24. The density steps down at the \pounds85{,}000
+registration threshold and again at the \pounds150{,}000 Flat Rate Scheme ceiling.}
+\label{fig:turnover_dist}
+\end{figure}
