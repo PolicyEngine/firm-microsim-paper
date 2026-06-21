@@ -242,8 +242,9 @@ def build_target_matrix(
     ]
 
     # VAT liability targets are in £m in the source; convert to £k.
+    # Value column is the (single) year column, always last — year-agnostic.
     vat_liability_sector_targets = [
-        float(r["2023-24"]) * 1000.0 for _, r in vat_liability_sector_rows.iterrows()
+        float(r.iloc[-1]) * 1000.0 for _, r in vat_liability_sector_rows.iterrows()
     ]
     vat_liability_band_targets = [
         float(vat_liability_bands[band]) * 1000.0 for band in VAT_LIABILITY_BANDS

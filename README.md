@@ -17,16 +17,15 @@ firm-microsim-paper/
 │   ├── raw/              # pristine ONS + HMRC source workbooks
 │   ├── processed/        # derived band tables, by vintage (2023-24, 2024-25)
 │   └── synthetic/        # generated synthetic population (regenerated, not committed)
-├── firm_microsim/        # the data-generation package
+├── firm_microsim/        # the data-generation package + figures
 │   ├── config.py         # single source of truth: vintage, VAT threshold, paths, hyperparams
 │   ├── data_loader.py    # load processed ONS + HMRC tables -> calibration targets
 │   ├── calibration.py    # target matrix + torch weight optimisation
 │   ├── generate.py       # full pipeline orchestrator
 │   ├── validate.py       # calibration-accuracy report vs official targets
+│   ├── figures.py        # house-style paper figures -> results/
 │   └── __main__.py       # CLI: python -m firm_microsim
-├── figures/              # standalone figure scripts
-│   ├── plot_band_distributions.py    # two-panel ONS + HMRC firm counts by band
-│   └── plot_turnover_distribution.py # full-range weighted turnover histogram
+├── results/              # generated figures (snake_case PNGs, both vintages)
 └── requirements.txt
 ```
 
@@ -89,14 +88,27 @@ weight, vat_registered`).
 
 ## Figures
 
-```bash
-# Firm counts by turnover band (two panels: ONS + HMRC). Defaults to 2024-25/£90k.
-python figures/plot_band_distributions.py                 # -> figures/band_distributions.png
-python figures/plot_band_distributions.py --vintage 2023-24
+Figures follow the project house style: single clean panels (no embedded titles,
+source notes, or logos — captions and side-by-side layouts are composed in
+LaTeX), teal palette, saved as snake_case PNGs to `results/` at 300 dpi. They are
+produced by the in-package `firm_microsim.figures` module and generated for
+**both vintages** (two full sets, suffixed `_85k` / `_90k`):
 
-# Full-range weighted turnover distribution (needs the synthetic CSV).
-python figures/plot_turnover_distribution.py              # -> figures/turnover_distribution_full.png
+```bash
+python -m firm_microsim.figures          # regenerate every figure, both vintages
 ```
+
+`results/` then contains:
+
+| Figure | 85k (2023-24) | 90k (2024-25) | Source |
+| --- | --- | --- | --- |
+| All UK firms by turnover band | `firms_by_turnover_band_85k.png` | `firms_by_turnover_band_90k.png` | ONS |
+| VAT-registered firms by turnover band | `vat_firms_by_turnover_band_85k.png` | `vat_firms_by_turnover_band_90k.png` | HMRC |
+| Full-range turnover distribution | `turnover_distribution_85k.png` | `turnover_distribution_90k.png` | synthetic |
+
+The turnover-distribution figures require the matching synthetic CSV
+(`data/synthetic/synthetic_firms_<vintage>.csv`); generate it first with
+`python -m firm_microsim --vintage <vintage> --output synthetic_firms_<vintage>.csv`.
 
 > **Note on ONS counts:** firm-count figures sum the per-SIC rows only — the ONS
 > band tables include a `Total` summary row that must be excluded, or every firm

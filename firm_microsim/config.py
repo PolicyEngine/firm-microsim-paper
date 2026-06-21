@@ -30,6 +30,12 @@ RAW_DATA_DIR: Path = DATA_DIR / "raw"
 PROCESSED_DATA_DIR: Path = DATA_DIR / "processed"
 SYNTHETIC_DATA_DIR: Path = DATA_DIR / "synthetic"
 
+# Figure outputs live in a top-level results/ directory (snake_case PNGs),
+# and the paper sources in paper/ — mirroring the project house style.
+RESULTS_DIR: Path = REPO_ROOT / "results"
+PAPER_DIR: Path = REPO_ROOT / "paper"
+RESULTS_DIR.mkdir(exist_ok=True)
+
 # ---------------------------------------------------------------------------
 # Data vintages
 # ---------------------------------------------------------------------------
