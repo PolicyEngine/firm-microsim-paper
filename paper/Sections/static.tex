@@ -1,0 +1,114 @@
+\section{Static costing of threshold reforms}
+\label{sec:static}
+
+A static costing measures the first-order revenue effect of a reform by re-applying
+the tax rule to a fixed firm population, with no behavioural response. Let firm $i$
+have turnover $y_i$, calibrated net VAT liability $v_i$ (output less input VAT;
+Section~\ref{sec:data}), and weight $w_i$. A firm remits VAT only once registered,
+that is once its turnover exceeds the threshold $T$, so total VAT revenue at
+threshold $T$ is the weighted sum of liabilities over registered firms,
+\[
+  R(T) \;=\; \sum_i w_i\, v_i \,\mathbf{1}\{y_i \ge T\}.
+\]
+Because turnover is held fixed, moving the threshold from $T_0$ to $T$ changes
+revenue only through the firms whose registration status flips---those with turnover
+in the band between the two thresholds:
+\[
+  \Delta R \;=\; R(T) - R(T_0) \;=\; -\,\operatorname{sign}(T - T_0)
+  \sum_i w_i\, v_i \,\mathbf{1}\{\,T_{\min} \le y_i < T_{\max}\,\},
+\]
+where $T_{\min}=\min(T,T_0)$ and $T_{\max}=\max(T,T_0)$: lowering the threshold draws
+firms into the net and raises revenue, while raising it releases firms and loses
+revenue. The estimate is therefore the mechanical reclassification effect and
+excludes the behavioural response of Section~\ref{sec:bunching}. The calibrated
+weights reproduce HMRC's net VAT-liability totals (Section~\ref{sec:data}), and I
+age the microdata to a given fiscal year by a cumulative nominal-growth factor. At
+the \pounds90{,}000 threshold this puts total VAT revenue at \pounds203.8bn in
+2025--26 and \pounds210.0bn in 2026--27.
+
+\paragraph{Validation against HMRC.} I first check the static pipeline against
+HMRC's own costing of the April~2024 increase from \pounds85{,}000 to
+\pounds90{,}000. Because my microdata are calibrated to HMRC VAT aggregates
+(Section~\ref{sec:data}), a close match confirms internal consistency rather than
+out-of-sample accuracy. Figure~\ref{fig:hmrc_validation} compares the two costings
+year by year: they share sign and profile throughout---a loss that narrows as
+fiscal drag lifts the frozen baseline towards the reformed threshold, turning to a
+small gain by 2028--29---and agree to within \pounds7m--\pounds21m per year (for
+2025--26, \(-\)\pounds175m against HMRC's \(-\)\pounds185m). The model reproduces
+both the magnitude and the turning point of the official costing.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/vat_threshold_revenue_impact.png}
+\caption{Anchor reform: revenue impact of raising the VAT registration threshold
+from \pounds85{,}000 to \pounds90{,}000 (the April~2024 change), my estimate versus
+HMRC's published costing, 2024--25 to 2028--29. The two series share sign and
+profile, both turning positive in 2028--29 as fiscal drag lifts the frozen baseline
+above the reformed threshold. Because the microdata are calibrated to HMRC
+aggregates, this is a consistency check, not an out-of-sample validation.}
+\label{fig:hmrc_validation}
+\end{figure}
+
+\paragraph{A menu of threshold locations.} Having checked the method, I use it to
+cost a menu of further threshold locations, taking the post-reform \pounds90{,}000
+threshold as the baseline. Each row of Table~\ref{tab:static_revenue} costs a move
+of the threshold to a new location for 2025--26, holding the turnover distribution
+fixed, so the revenue change reflects only the reclassification of firms into or out
+of the VAT net. Because the calibration places extra weight on high-liability firms
+just below the threshold, I evaluate the reclassified band from a smooth
+extrapolation of the clean above-threshold profile rather than the raw
+below-threshold mass. Lowering the threshold draws firms in and raises revenue;
+raising it loses revenue. The schedule is close to linear---each \pounds5{,}000 step changes
+revenue by roughly \pounds150m--\pounds220m, with the marginal effect growing as the
+threshold sweeps across denser parts of the distribution. Even a \pounds30{,}000
+rise to \pounds120{,}000 costs about \pounds1.2bn, under $0.6\%$ of the
+\pounds203.8bn base, because the threshold governs many small firms whose individual
+liabilities are small. Figure~\ref{fig:static_sweep} shows the sweep graphically.
+These are \emph{static} results: they bound the first-order fiscal effect of a
+threshold change but abstract from the behavioural response of
+Section~\ref{sec:bunching}.
+
+\begin{table}[htbp]
+\centering
+\caption{Static revenue and VAT-paying-firm effects of moving the VAT registration
+threshold, 2025--26, relative to the post-reform \pounds90{,}000 baseline (total VAT
+revenue \pounds203.8bn). Figures are mechanical, holding firm turnover fixed (no
+behavioural response). This sweep is distinct from the anchor reform of
+Figure~\ref{fig:hmrc_validation}.}
+\label{tab:static_revenue}
+\begin{tabular}{lrrr}
+\toprule
+Threshold & Revenue change (\pounds m) & Change (\%) & VAT-paying firms (000s) \\
+\midrule
+\pounds70{,}000  & $+664.9$  & $+0.33$ & $+79.3$ \\
+\pounds75{,}000  & $+509.0$  & $+0.25$ & $+58.7$ \\
+\pounds80{,}000  & $+346.3$  & $+0.17$ & $+38.7$ \\
+\pounds85{,}000  & $+176.6$  & $+0.09$ & $+19.1$ \\
+\pounds90{,}000 (baseline) & $0$ & $0$ & $0$ \\
+\pounds95{,}000  & $-183.5$  & $-0.09$ & $-18.6$ \\
+\pounds100{,}000 & $-374.0$  & $-0.18$ & $-36.8$ \\
+\pounds105{,}000 & $-571.4$  & $-0.28$ & $-54.5$ \\
+\pounds110{,}000 & $-775.7$  & $-0.38$ & $-71.7$ \\
+\pounds115{,}000 & $-987.0$  & $-0.48$ & $-88.5$ \\
+\pounds120{,}000 & $-1{,}205.1$ & $-0.59$ & $-104.7$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\subfigure[Revenue impact (\pounds m)]{
+    \includegraphics[width=0.48\textwidth]{figures/revenue_impact_2025_26.png}
+}
+\hfill
+\subfigure[Change in VAT-paying firms (000s)]{
+    \includegraphics[width=0.48\textwidth]{figures/firms_impact_2025_26.png}
+}
+\caption{Static effect of moving the VAT registration threshold, 2025--26, relative
+to the \pounds90{,}000 baseline (dashed line). Panel (a): revenue impact---lowering
+the threshold raises revenue, raising it loses revenue, and the schedule is
+approximately linear over the \pounds70{,}000--\pounds120{,}000 range. Panel (b): the
+change in the number of VAT-paying firms, tracking the local density of firms on each
+side of the threshold.}
+\label{fig:static_sweep}
+\end{figure}

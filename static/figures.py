@@ -29,7 +29,7 @@ from firm_microsim.figures import (
     _style_ax,
 )
 
-from .model import POLICY_THRESHOLD, StaticVATModel
+from .model import FISCAL_YEARS, POLICY_THRESHOLD, StaticVATModel
 
 REF_GREY = "#888888"      # current-threshold reference line
 HMRC_COLOR = PALETTE[4]   # lighter teal for the HMRC series
@@ -83,15 +83,32 @@ def plot_hmrc_comparison(model: StaticVATModel) -> None:
     w = 0.4
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(x - w / 2, df["hmrc_impact_m"], w, label="HMRC", color=HMRC_COLOR, zorder=3)
-    ax.bar(x + w / 2, df["policyengine_impact_m"], w, label="PolicyEngine",
-           color=PRIMARY, zorder=3)
+    b1 = ax.bar(x - w / 2, df["hmrc_impact_m"], w, label="HMRC", color=HMRC_COLOR, zorder=3)
+    b2 = ax.bar(x + w / 2, df["policyengine_impact_m"], w, label="PolicyEngine",
+                color=PRIMARY, zorder=3)
     ax.axhline(0, color="black", linewidth=0.8, zorder=2)
+    ax.set_ylim(-265, 110)
+
+    # Value label on each bar (£m), padded clear of the bar end.
+    for bars in (b1, b2):
+        for bar in bars:
+            h = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2, h + (5 if h > 0 else -5),
+                    f"£{int(round(h))}m", ha="center",
+                    va="bottom" if h > 0 else "top", fontsize=TICK_SIZE - 2)
+
+    # Baseline / policy threshold values under each fiscal-year group.
+    for i, fy in enumerate(FISCAL_YEARS):
+        ax.text(i, -220,
+                f"Baseline: £{fy['baseline'] / 1000:.0f}k\n"
+                f"Policy: £{fy['policy'] / 1000:.0f}k",
+                ha="center", va="top", fontsize=TICK_SIZE - 3, color="#666666")
+
     ax.set_xticks(x)
     ax.set_xticklabels(df["year"])
-    ax.set_xlabel("Fiscal year", fontsize=LABEL_SIZE)
     ax.set_ylabel("Revenue impact (£m)", fontsize=LABEL_SIZE)
-    ax.legend(frameon=False, fontsize=LABEL_SIZE)
+    ax.legend(frameon=False, fontsize=LABEL_SIZE, loc="upper center",
+              bbox_to_anchor=(0.5, -0.14), ncol=2)
     _style_ax(ax)
     _save(fig, "vat_threshold_revenue_impact.png")
 

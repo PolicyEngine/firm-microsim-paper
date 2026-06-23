@@ -9,133 +9,17 @@ efficiency}: how much of the notch's distortion each reform removes relative to
 its fiscal cost. The efficiency ranking (Table~\ref{tab:efficiency}) is the
 paper's central policy result, and it rests on a robust, analytic object---the
 notch's dominated region---rather than on any fragile simulation. I build to it
-in stages: a short consistency check of the static method against HMRC's costing
-of the April~2024 reform; a static sweep of threshold locations; the modest,
-localised behavioural response from the calibrated model; the graduated taper;
-the reduced rate; and the efficiency ranking that orders the menu.
+in stages: the modest, localised behavioural response from the calibrated model;
+the graduated taper; the reduced rate; and the efficiency ranking that orders the
+menu. The static costing of location moves, which serves as the cost benchmark, is
+in Section~\ref{sec:static}.
 
 \input{Sections/counterfactuals}
-
-\subsection{A sanity check against HMRC costings}
-\label{sec:results_validation}
-
-As a first sanity check on the static pipeline, I confirm that it reproduces HM
-Revenue and Customs' own costing of the April~2024
-\pounds85{,}000 to \pounds90{,}000 increase. This is a \emph{sanity
-check}, not a validation: my microdata are calibrated to HMRC VAT aggregates
-(Section~\ref{sec:data}), so a close match confirms only that the microdata and
-revenue calculation are internally aligned with the official tax base.
-Figure~\ref{fig:hmrc_validation} shows the two series share sign and profile
-throughout: in 2025--26 I estimate \(-\)\pounds184m against HMRC's
-\(-\)\pounds185m, and by 2028--29 both turn positive (\(+\)\pounds72m versus
-\(+\)\pounds65m) as fiscal drag lifts the frozen baseline above the reformed
-threshold, the largest gap being \pounds33m in 2024--25.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\textwidth]{figures/vat_threshold_revenue_impact.png}
-\caption{Anchor reform: revenue impact of raising the VAT registration threshold
-from \pounds85{,}000 to \pounds90{,}000 (the actual April~2024 change), my
-estimate (PolicyEngine) versus HMRC's published costing, 2024--25 to 2028--29.
-Year-by-year (PolicyEngine vs HMRC, \pounds m): 2024--25 \(-\)183 vs \(-\)150;
-2025--26 \(-\)184 vs \(-\)185; 2026--27 \(-\)114 vs \(-\)125; 2027--28 \(-\)40 vs
-\(-\)50; 2028--29 \(+\)72 vs \(+\)65. The two series share sign and profile
-throughout; agreement is tightest in 2025--26 (\pounds1m) and 2028--29
-(\pounds7m), with a larger \pounds33m gap in 2024--25. Because the microdata are
-calibrated to HMRC aggregates, this is a consistency check rather than an
-out-of-sample validation.}
-\label{fig:hmrc_validation}
-\end{figure}
-
-\subsection{Static threshold sweep}
-\label{sec:results_static}
-
-Having checked the static method against the April~2024 reform, I use it to map a
-menu of further threshold-location changes. This is a forward-looking
-counterfactual exercise, distinct from the anchor reform above: each row of
-Table~\ref{tab:static_revenue} costs a hypothetical move of the threshold to a new
-location, taking the post-reform \pounds90{,}000 threshold as the baseline. In
-this static exercise each firm's turnover is held at its observed level and the new
-threshold is applied to the existing distribution, so that the revenue change
-reflects only the reclassification of firms into or out of the VAT net. Against the
-\pounds90{,}000 baseline, total VAT revenue is \pounds181.4bn in 2025--26 and
-\pounds186.1bn in 2026--27.
-
-Table~\ref{tab:static_revenue} reports the full 2025--26 sweep. Lowering the
-threshold draws additional firms into registration and raises revenue; raising it
-loses revenue. The relationship is close to linear in the threshold over the range
-considered---each \pounds5{,}000 step changes revenue by roughly
-\pounds150m--\pounds200m, with the marginal effect growing modestly as the
-threshold sweeps across denser parts of the turnover distribution. The 2026--27
-figures are similar in pattern and slightly larger in level. The \pounds85{,}000
-row (\(+\)\pounds184.5m) is the mirror image of the anchor reform: lowering the
-threshold back to \pounds85{,}000 \emph{raises} revenue by essentially the same
-magnitude (\pounds184m) that the April~2024 increase \emph{lost}
-(Figure~\ref{fig:hmrc_validation}).
-
-\begin{table}[htbp]
-\centering
-\caption{Static revenue and firm-count effects of changing the VAT registration
-threshold, 2025--26, relative to the post-reform \pounds90{,}000 baseline (VAT
-revenue \pounds181.4bn). Figures are mechanical, holding firm turnover fixed (no
-behavioural response). This sweep is distinct from the anchor reform of
-Figure~\ref{fig:hmrc_validation}.}
-\label{tab:static_revenue}
-\begin{tabular}{lrrr}
-\toprule
-Threshold & Revenue change (\pounds m) & Change (\%) & Firms affected \\
-\midrule
-\pounds70{,}000  & $+657.7$  & $+0.36$ & 111{,}261 \\
-\pounds75{,}000  & $+519.0$  & $+0.29$ & 83{,}040 \\
-\pounds80{,}000  & $+359.7$  & $+0.20$ & 55{,}081 \\
-\pounds85{,}000  & $+184.5$  & $+0.10$ & 27{,}356 \\
-\pounds90{,}000 (baseline) & $0$ & $0$ & 0 \\
-\pounds95{,}000  & $-193.1$  & $-0.11$ & 25{,}906 \\
-\pounds100{,}000 & $-371.1$  & $-0.20$ & 44{,}881 \\
-\pounds105{,}000 & $-561.8$  & $-0.31$ & 63{,}386 \\
-\pounds110{,}000 & $-753.3$  & $-0.42$ & 81{,}023 \\
-\pounds115{,}000 & $-957.0$  & $-0.53$ & 97{,}920 \\
-\pounds120{,}000 & $-1{,}156.0$ & $-0.64$ & 113{,}834 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Two features deserve emphasis. First, the magnitudes are modest relative to the
-\pounds181.4bn base: even a \pounds30{,}000 increase to \pounds120{,}000 costs
-less than two-thirds of one percent of total VAT revenue, because the threshold
-governs many small firms whose individual liabilities are small. Second, the
-firm-count column is roughly symmetric around the baseline, tracking the local
-density of firms on each side of the threshold, while the revenue effect is mildly
-asymmetric because firms entering the net at lower thresholds carry different
-average turnover than those leaving at higher ones. Figures~\ref{fig:rev_impact}
-and~\ref{fig:firms_impact} display the same sweep graphically. I stress that
-these are \emph{static} results: they bound the first-order fiscal effect of a
-threshold change but abstract from the behavioural response below.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/revenue_impact_2025_26.png}
-\caption{Static revenue impact of changing the VAT registration threshold,
-2025--26, relative to the \pounds90{,}000 baseline. Lowering the threshold raises
-revenue; raising it loses revenue. The schedule is approximately linear over the
-\pounds70{,}000--\pounds120{,}000 range.}
-\label{fig:rev_impact}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/firms_impact_2025_26.png}
-\caption{Number of firms affected by changing the VAT registration threshold,
-2025--26, relative to the \pounds90{,}000 baseline. The count is roughly symmetric
-around the baseline, tracking the local density of firms on each side of the
-current threshold.}
-\label{fig:firms_impact}
-\end{figure}
 
 \subsection{The behavioural response is modest and localised}
 \label{sec:results_structural}
 
-The static figures above assume firms do not respond to the changed schedule. The
+The static figures of Section~\ref{sec:static} assume firms do not respond to the changed schedule. The
 calibrated model relaxes that assumption and quantifies how much firms actually
 reposition; the central finding is that the realised response is small. The
 headline behavioural object is the local turnover elasticity of
@@ -272,7 +156,7 @@ optimally locates there, so its width is a clean, $k$-free,
 $\alpha$-free index of the discrete distortion the notch imposes. For each reform
 I ask how much of this zone it removes. Raising the threshold to \pounds100{,}000
 simply \emph{relocates} the same \pounds21{,}250 zone to the new cutoff, removing
-essentially none of it at a static cost of \pounds371m. A reduced rate
+essentially none of it at a static cost of \pounds374m. A reduced rate
 \emph{shrinks} the zone: to \pounds15{,}000 at $15\%$ (removing \pounds6{,}250)
 and to \pounds9{,}444 at $10\%$ (removing \pounds11{,}806). The graduated taper
 \emph{eliminates} it: a continuous schedule has no dominated region, so the whole
@@ -293,7 +177,7 @@ and caveated as directional in the relevant subsections.}
 \toprule
 Reform & Lever & Static revenue (\pounds m) \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-371$ \\
+Raise threshold to \pounds100{,}000 & Location & $-374$ \\
 Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-335$ \\
 Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-357$ \\
 Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-178$ \\
@@ -317,7 +201,7 @@ to most distortion removed.}
 \toprule
 Reform & Lever & Static rev. (\pounds m) & Dominated region & Distortion removed \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-371$ & \pounds21{,}250 (relocated) & $\approx\pounds0$ \\
+Raise threshold to \pounds100{,}000 & Location & $-374$ & \pounds21{,}250 (relocated) & $\approx\pounds0$ \\
 Reduced rate $15\%$ & Rate & $-178$ & \pounds15{,}000 & \pounds6{,}250 \\
 Reduced rate $10\%$ & Rate & $-357$ & \pounds9{,}444 & \pounds11{,}806 \\
 Graduated taper & Shape & $-335$ & \pounds0 (no notch) & \pounds21{,}250 (whole zone) \\
