@@ -1,26 +1,27 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper contributes an open, reproducible microsimulation for costing UK VAT
-registration-threshold reforms, and uses it to price and \emph{rank} a menu of
-reforms by efficiency. The framework---a synthetic firm dataset calibrated to HMRC
-VAT aggregates, a reduced-form bunching estimator, and a calibrated
-\citet{klevenwaseem2013} notch model used to re-solve firm behaviour under
-alternative schedules---is released in full for replication. Its value is as
-usable policy infrastructure rather than as a structural identification result: the
-recovered cost parameters are a calibration input for re-solving reforms, not
-claimed structural primitives, and papers such as \citet{garicano2016} and
-\citet{gourioroys2014}, which do identify such primitives at a size threshold, are
-the precedent I differ from precisely by not making that claim. The analysis is
-anchored to the 2023--24 data year, in which the statutory threshold was
-\pounds85{,}000. Table~\ref{tab:summary} collects the headline objects.
+This paper contributes an open, reproducible firm-level microsimulation for
+analysing the UK VAT registration threshold, released in full---including its
+synthetic-data generator---for replication. The framework assembles four
+components: a synthetic firm dataset built from ONS business-structure counts and
+calibrated to HMRC VAT aggregates; a static costing of threshold-location and
+schedule-shape reforms; a reduced-form bunching estimator; and a
+\citet{klevenwaseem2013} notch model whose \emph{exact dominated region}
+characterises the distortion the threshold imposes and how each reform changes it.
+Its value is as usable policy infrastructure rather than a structural
+identification result: I make no claim to recover policy-invariant firm
+primitives, unlike \citet{garicano2016} and \citet{gourioroys2014}, which identify
+such primitives at a size threshold. The analysis is anchored to the 2023--24
+data year, in which the statutory threshold was \pounds85{,}000.
+Table~\ref{tab:summary} collects the headline objects.
 
 \begin{table}[t]
 \centering
 \caption{Summary of headline estimates. This table consolidates results reported
 and defined in the body sections cross-referenced below; it is a reference summary,
-not a new analysis. All quantities refer to the \pounds85{,}000 data-year baseline
-unless a reform threshold is stated. Static revenue figures are 2025--26.}
+not a new analysis. All quantities refer to the \pounds85{,}000 data-year baseline.
+Static revenue figures are 2025--26.}
 \label{tab:summary}
 \small
 \begin{tabular}{@{}llll@{}}
@@ -28,56 +29,54 @@ unless a reform threshold is stated. Static revenue figures are 2025--26.}
 Object & Symbol / definition & Value & Source \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Reduced-form bunching (\pounds85k data year)}} \\
-Bunching ratio (geometry, \emph{not} an elasticity) & $b=\Delta y^{*}/y^{*}$ & $0.061$ & \S\ref{sec:bunching} \\
-Aggregate displaced share & $\Pi$ & $0.220$ & \S\ref{sec:calibration} \\
+Bunching ratio (geometry, \emph{not} an elasticity) & $b=\Delta y^{*}/y^{*}$ & $0.060$ & \S\ref{sec:bunching} \\
+Aggregate displaced share & $\Pi$ & $0.211$ & \S\ref{sec:bunching} \\
+Bunching-implied turnover elasticity (descriptive) & $\varepsilon$ (notch width) & $\approx 0.45$ & \S\ref{sec:bunching} \\
 \midrule
-\multicolumn{4}{@{}l}{\textit{Behavioural response (headline object)}} \\
-Local turnover elasticity (median) & $\tilde{\varepsilon}$ & $\approx 0.17$ & \S\ref{sec:calibration} \\
-Near-threshold firms repositioning & --- & $\approx 15\%$ & \S\ref{sec:calibration} \\
-\midrule
-\multicolumn{4}{@{}l}{\textit{Policy costing and efficiency}} \\
-Static cost, \pounds85k to \pounds90k anchor & --- & $\approx-\pounds175$m & \S\ref{sec:results} \\
+\multicolumn{4}{@{}l}{\textit{Static costing and structural distortion}} \\
+Static cost, \pounds85k to \pounds90k anchor & --- & $\approx-\pounds175$m & \S\ref{sec:static} \\
 Static sweep, \pounds90k baseline & per \pounds5k step & $\sim\pounds150$--$220$m & Table~\ref{tab:static_revenue} \\
-Graduated-taper reform, revenue (static) & --- & $-\pounds335$m & Table~\ref{tab:reform_menu} \\
-Reduced-rate band, revenue static (10\% / 15\%) & --- & $-\pounds357$m\,/\,$-\pounds178$m & Table~\ref{tab:reform_menu} \\
 Dominated region (misallocation zone) & $a=T^{*}\tau/(1-\tau)$ & \pounds21{,}250 & \S\ref{ssec:dominated} \\
-Most efficient reform & taper removes whole zone & --- & Table~\ref{tab:efficiency} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Findings.} First, \emph{the distortion is modest and localised}. Firms
-bunch below the notch, but the headline behavioural object---the local turnover
-elasticity (median $\approx 0.17$)---is small, broadly comparable to the UK
-VAT-\emph{base} elasticity of \citet{liuetal2021}, though the two are distinct
-objects, so the comparison is an order-of-magnitude sanity check. Only a minority
-of near-threshold firms reposition, and within a narrow band.
+\paragraph{Findings.} First, \emph{the pipeline reproduces HMRC's static costing}.
+My static costing of the real \pounds85{,}000 to \pounds90{,}000 threshold move
+agrees with HMRC's published figures to within \pounds1m in 2025--26, and a
+threshold sweep (Table~\ref{tab:static_revenue}) shows that moving the threshold is
+approximately linear in revenue and adequately costed by a static calculation. This
+is the validation anchor for the rest of the framework.
 
-Second, \emph{threshold-location moves are fiscally small and just relocate the
-notch}. Moving the threshold is approximately linear in revenue
-(Table~\ref{tab:static_revenue}) and adequately costed by a static calculation; as
-a pipeline sanity check, my static costing of the real
-\pounds85{,}000 to \pounds90{,}000 reform agrees with HMRC's published figures
-to within \pounds1m in 2025--26. But raising the threshold does not remove the
-notch's distortion---it transports the same \pounds21{,}250 dominated region to the
-new cutoff at a comparable fiscal cost.
+Second, \emph{the behavioural response at the notch is modest}. Firms bunch below
+the threshold---a bunching ratio $b=0.060$, which once normalised to the
+\citet{liuetal2021} excess-bunching statistic is of the same order as their
+estimate. The bunching-implied turnover elasticity ($\approx 0.45$ from the notch
+width) is modest, but I report it descriptively rather than as a structural
+estimate: \citet{liuetal2021} decline to convert their bunching mass into an
+elasticity at a notch, and a turnover notch confounds an output-supply response
+with a demand-side one, so the number is an upper envelope rather than a
+welfare-sufficient statistic.
 
-Third---and centrally---\emph{schedule reforms remove the distortion, and the taper
-is the efficiency winner}. The notch creates a dominated region of width
-$a=T^{*}\tau/(1-\tau)=\pounds21{,}250$, a pure misallocation zone in which no firm
-optimally locates. Ranking the menu on how much of this zone each reform removes per
-pound of static cost (Table~\ref{tab:efficiency}), a location move removes
-essentially none; a banded reduced rate shrinks it (to \pounds9{,}444 at $10\%$);
-and the graduated taper eliminates it entirely, at a static cost
-(\(-\)\pounds335m) below that of the \pounds85{,}000 to \pounds100{,}000
-threshold move (\(-\)\pounds374m). Schedule reforms thus dominate location moves on
-efficiency, and the taper---a continuous phase-in that leaves no discrete wedge and
-no secondary notch---is the most efficient option in the menu. This is a robust,
-analytic deadweight/misallocation comparison based on the dominated region; the
-static revenue figures are robust to the smoothing parameter, while the behavioural
-re-optimised magnitudes are sensitive to it and are reported only as directional.
-Because a smooth or banded schedule leaves no single point of excess mass, these
-reforms are exactly what the calibrated model is needed for.
+Third, \emph{the structural notch model characterises the distortion exactly}. The
+notch creates a dominated region of width $a=T^{*}\tau/(1-\tau)=\pounds21{,}250$, a
+pure misallocation zone in which no firm optimally locates. This object is exact: it
+depends on $\tau$ and $T^{*}$ alone, independent of the cost specification, the
+returns-to-scale parameter $\alpha$, and any smoothing parameter, and it is the
+structural counterpart of the missing mass measured just above the threshold. It is
+the clean, robust index of the distortion the threshold imposes.
+
+Fourth, \emph{I cost a menu of schedule reforms statically and state exactly how
+each changes that distortion}. Re-applying each candidate schedule to the fixed
+turnover distribution (Section~\ref{ssec:schedule_costs}) gives static revenue
+effects of \(-\)\pounds374m for raising the threshold to \pounds100{,}000,
+\(-\)\pounds335m for a graduated taper over $[\pounds85\text{k},\pounds105\text{k}]$,
+and \(-\)\pounds357m and \(-\)\pounds178m for $10\%$ and $15\%$ banded reduced rates.
+The dominated region responds analytically: raising the threshold relocates the
+\pounds21{,}250 zone unchanged, a $10\%$ band shrinks it to \pounds9{,}444, a $15\%$
+band to \pounds15{,}000, and a graduated taper removes it altogether. These are the
+two robust objects---the static cost and the exact change in the misallocation
+zone---that I report for each reform.
 
 \paragraph{Limitations.} The model is a \emph{turnover-tax-notch approximation},
 and this is its first-order limitation. It
@@ -89,21 +88,27 @@ net-reclaim firms, can reverse sign) than my flat treatment implies. The microda
 are \emph{synthetic}---ONS business-structure counts calibrated to HMRC aggregates---
 so agreement with HMRC totals is a consistency check, not external validation. The
 analysis is \emph{partial-equilibrium}, abstracting from VAT pass-through into prices
-\citep{benedek2015, belloncopestake2022}. And while the dominated-region efficiency
-ranking is robust and analytic, the \emph{behavioural} revenue and distributional
-magnitudes are parameter-sensitive (to the smoothing parameter $k$ and the
-re-optimisation window), which is why I headline the static costs and the analytic
-distortion measures rather than the re-optimised numbers.
+\citep{benedek2015, belloncopestake2022}. And while the dominated-region distortion
+measure is exact and analytic, any \emph{behavioural} revenue or distributional
+magnitudes from re-solving firm behaviour would be parameter-sensitive (to the
+smoothing parameter $k$ and the re-optimisation window), which is why I headline the
+static costs and the analytic distortion measure rather than re-optimised numbers.
 
-\paragraph{Future work.} The most direct extension is a full \emph{welfare/MVPF
-analysis} that models value added and input reclaim, converting the
-dominated-region distortion measures into the cost--benefit terms policy needs, and
-the design of \emph{revenue-neutral} variants of the taper and reduced rate that
-neutralise the notch at no net fiscal cost. Modelling \emph{voluntary registration}
+\paragraph{Future work.} The static reform costs and the analytic dominated-region
+results are robust, but two natural extensions remain. First, a fuller
+\emph{behavioural} treatment that headlines re-optimised revenue and distributional
+magnitudes from re-solving firm behaviour under each schedule. Such an exercise
+requires calibrating firm-level cost parameters and a turnover elasticity, and the
+resulting magnitudes are sensitive to the smoothing parameter $k$ and the
+re-optimisation window, so I leave a disciplined treatment to future work. Second, a full \emph{welfare/MVPF analysis} that models value added and
+input reclaim would convert the dominated-region distortion measure into the
+cost--benefit terms policy needs, and support the design of \emph{revenue-neutral}
+schedule variants that neutralise the notch at no net fiscal cost. Modelling
+\emph{voluntary registration}
 and the input-VAT margin explicitly would let the framework represent the full UK
 VAT population rather than the consumer-facing subpopulation it currently best
 describes. Allowing sector heterogeneity and linking the microdata to
-\citet{policyengine} would refine both the bunching estimates and the
+\citet{policyengine} would refine both the bunching estimates and any
 counterfactuals. Above all, \emph{validation against administrative firm-level data}
 would replace the present internal-consistency checks with genuine out-of-sample
 tests.

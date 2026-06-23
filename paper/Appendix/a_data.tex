@@ -20,7 +20,7 @@ consistency checks on the pipeline rather than out-of-sample tests of firm
 behaviour.
 
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
-counterfactual density of Section~\ref{sec:model} is fitted by polynomial
+counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial
 regression on the observed density outside a manipulation window around the
 threshold. The baseline excludes $[T^{*}-15\text{k}, T^{*}+15\text{k}]$ and fits
 a cubic. Widening the window guards against contamination of the counterfactual
@@ -31,7 +31,7 @@ degree, with associated uncertainty, is reported in
 Appendix~\ref{app:inference}.
 
 \paragraph{Subsample for dynamic plots.} The dynamic re-optimisation figures
-(Figure~\ref{fig:foc_dynamic}) are generated on a $20\%$ random subsample of the
+of the companion structural step are generated on a $20\%$ random subsample of the
 firm rows, to keep the firm-by-firm FOC inversion and re-solution tractable,
 while the static revenue sweep and the calibration use the full dataset. The
 $20\%$ subsample reproduces the full-dataset density step and bunching mass to

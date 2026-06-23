@@ -2,11 +2,11 @@
 \label{app:inference}
 
 This appendix documents the inference procedure for the reduced-form bunching
-estimates of Section~\ref{sec:calibration}: the mass-conservation constraint
+estimates of Section~\ref{sec:bunching}: the mass-conservation constraint
 that disciplines the counterfactual density, the bootstrap that delivers
 standard errors, and the sensitivity of the estimates to the polynomial degree,
 the exclusion window, the sigmoid steepness $k$, and the effective wedge
-$\tau_{e}$. All numbers reported here and in the calibration section are produced
+$\tau_{e}$. All numbers reported here and in the calibration step are produced
 by the script \texttt{analysis/bunching\_inference.py}, run on the
 \pounds85{,}000 (2023--24) weighted synthetic firm data; nothing is hardcoded as
 a result.
@@ -44,10 +44,10 @@ notch-width elasticity (Method~B).
 
 Imposing the constraint matters because the unconstrained fit grossly violates
 adding-up: it delivers $E=8{,}179$ but $\Delta_{R}=17{,}792$, whereas the
-constrained estimator returns $E=9{,}160$ and $\Delta_{R}=9{,}938$, which agree
+constrained estimator returns $E=8{,}712$ and $\Delta_{R}=9{,}938$, which agree
 to within sampling noise. The accompanying movement in the headline estimates
-($b$ from $0.054$ to $0.061$, $\sigma$ from $4.33$ to $5.10$) is reported in
-Section~\ref{sec:calibration}.
+($b$ from $0.054$ to $0.060$, $\sigma$ from $4.33$ to $4.85$) is reported in
+the calibration step.
 
 \subsubsection*{Bootstrap standard errors}
 
@@ -70,12 +70,12 @@ reports the results.
 \hline
 Statistic & Point & Std.\ error & 95\% CI \\
 \hline
-Bunching ratio $b$              & $0.061$ & $0.005$  & $[0.053,\ 0.071]$ \\
-Excess mass $E$                 & $9{,}160$ & $672$  & $[8{,}325,\ 10{,}931]$ \\
-Substitution elasticity $\sigma$ & $5.10$ & $0.12$  & $[4.86,\ 5.35]$ \\
-Displaced share $\Pi$           & $0.220$ & $0.005$ & $[0.211,\ 0.230]$ \\
-Notch-width elasticity (median) & $0.458$ & $0.027$ & $[0.429,\ 0.529]$ \\
-Marginal-buncher elasticity     & $0.635$ & $0.077$ & $[0.514,\ 0.806]$ \\
+Bunching ratio $b$              & $0.060$ & $0.005$  & $[0.050,\ 0.068]$ \\
+Excess mass $E$                 & $8{,}712$ & $662$  & $[7{,}877,\ 10{,}483]$ \\
+Substitution elasticity $\sigma$ & $4.85$ & $0.12$  & $[4.61,\ 5.10]$ \\
+Displaced share $\Pi$           & $0.211$ & $0.005$ & $[0.202,\ 0.221]$ \\
+Notch-width elasticity (median) & $0.448$ & $0.027$ & $[0.419,\ 0.519]$ \\
+Marginal-buncher elasticity     & $0.657$ & $0.082$ & $[0.536,\ 0.828]$ \\
 \hline
 \end{tabular}
 \end{table}
@@ -109,7 +109,7 @@ Degree & Window & $b$ & $E$ & $\sigma$ & Notch-width (median) \\
 6 & \pounds15k & $0.046$ & $6{,}900$ & $5.24$ & $0.45$ \\
 6 & \pounds20k & $0.017$ & $4{,}101$ & $4.44$ & $0.38$ \\
 7 & \pounds10k & $0.095$ & $9{,}073$ & $5.32$ & $0.47$ \\
-\textbf{7} & \textbf{\pounds15k} & $\mathbf{0.061}$ & $\mathbf{9{,}160}$ & $\mathbf{5.10}$ & $\mathbf{0.46}$ \\
+\textbf{7} & \textbf{\pounds15k} & $\mathbf{0.060}$ & $\mathbf{8{,}712}$ & $\mathbf{4.85}$ & $\mathbf{0.45}$ \\
 7 & \pounds20k & $0.036$ & $7{,}785$ & $4.89$ & $0.45$ \\
 \hline
 \end{tabular}
@@ -131,7 +131,7 @@ $k=0.001$ gives \pounds19.7\text{k} (closest to the exact \pounds21.25\text{k}),
 $k=0.002$ gives \pounds10.6\text{k}, $k=0.005$ gives \pounds4.6\text{k}, and
 $k=0.01$ gives only \pounds2.5\text{k}; the empirical excess span of the marginal
 buncher is $\Delta y^{*}=\pounds5.4\text{k}$. This is the basis for the choice of
-$k=0.001$ in Section~\ref{sec:calibration}: its implied dominated region best
+$k=0.001$ in the calibration step: its implied dominated region best
 matches both the exact notch region and the order of magnitude of the empirical
 span, whereas $k=0.01$ understates the band by roughly an order of magnitude. I
 report results at $k=0.001$ and treat the spread above as a calibration
@@ -145,8 +145,8 @@ counterfactual-to-observed above/below mass ratios. Because the wedge enters onl
 through $\ln(1+\tau_{e})$, $\sigma$ scales roughly as $1/\ln(1+\tau_{e})$ while
 the displaced share $\Pi = 1-(1+\tau_{e})^{-\sigma}$ is essentially invariant
 (it is pinned by $\mathrm{RR}$). On my data, $\tau_{e}=0.025$ gives
-$\sigma=10.1$, $\tau_{e}=0.05$ gives $\sigma=5.10$, $\tau_{e}=0.075$ gives
-$\sigma=3.44$, and $\tau_{e}=0.10$ gives $\sigma=2.61$, while $\Pi=0.22$
+$\sigma=9.61$, $\tau_{e}=0.05$ gives $\sigma=4.85$, $\tau_{e}=0.075$ gives
+$\sigma=3.27$, and $\tau_{e}=0.10$ gives $\sigma=2.48$, while $\Pi=0.211$
 throughout. The magnitude of $\sigma$ is therefore conditional on $\tau_{e}$: I
 adopt $\tau_{e}=0.05$ as a baseline effective registration wedge and report
 $\Pi$, which is robust to it, as the policy-relevant displacement object.

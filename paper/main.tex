@@ -15,7 +15,7 @@
 \maketitle
 
 \begin{abstract}
-I present an open, reproducible firm-level microsimulation for pricing reforms to the UK VAT registration threshold, released in full---including its synthetic data generator---as open-source code. The threshold is a \emph{notch}: once turnover crosses \pounds85{,}000, 20\% VAT falls due on a firm's entire turnover rather than only the excess, creating an incentive to bunch below. I build synthetic firm-level records from ONS business-structure counts (sector $\times$ turnover band $\times$ employment), calibrate them to HMRC VAT statistics for 2023--24, and apply three tools: a static costing of threshold-location reforms, a reduced-form bunching estimator, and a calibrated Kleven--Waseem notch model for schedule-shape reforms the reduced form cannot price. I treat the model as a turnover-tax-notch approximation for consumer-facing, limited-reclaim firms, abstracting from input reclaim and voluntary registration. Static costing reproduces HMRC's published figure for the \pounds85{,}000 to \pounds90{,}000 reform ($-$\pounds175m versus $-$\pounds185m in 2025--26). Behavioural responses are small: bunching ratio $b\approx0.061$; median local turnover elasticity $\approx0.17$. I report each reform's static cost and how much of the \pounds21{,}250 dominated region it removes: raising the threshold to \pounds100k ($-$\pounds374m) leaves the \pounds21{,}250 zone, relocated; a banded 10\% reduced rate ($-$\pounds357m) reduces it to \pounds9{,}444; a 15\% reduced rate ($-$\pounds178m) reduces it to \pounds15{,}000; and a graduated taper over $[\pounds85\text{k},\pounds105\text{k}]$ ($-$\pounds335m) removes it.
+I present an open, reproducible firm-level microsimulation for costing reforms to the UK VAT registration threshold, released in full---including its synthetic data generator---as open-source code. The threshold is a \emph{notch}: once turnover crosses \pounds85{,}000, 20\% VAT falls due on a firm's entire turnover rather than only the excess, creating an incentive to bunch below. I build synthetic firm-level records from ONS business-structure counts (sector $\times$ turnover band $\times$ employment), calibrate them to HMRC VAT statistics for 2023--24, and use them to do three things on a common static basis. First, I cost threshold-location reforms and schedule reforms (a graduated taper and a reduced-rate band) statically; the static costing reproduces HMRC's published figure for the \pounds85{,}000 to \pounds90{,}000 reform ($-$\pounds175m versus $-$\pounds185m in 2025--26). Second, I document firm bunching at the \pounds85{,}000 notch, estimating a bunching ratio of $b\approx0.060$, consistent with \citet{liuetal2021} once normalised; a bunching-implied turnover elasticity of $\approx0.45$ follows from the notch-width relation, which I report descriptively and with caveats. Third, I characterise the notch's distortion through its \emph{dominated region}---the exact, model-free range of turnover above the threshold in which no firm locates---which is \pounds21{,}250 wide (\pounds85{,}000--\pounds106{,}250), and show how each reform changes it. I treat the model as a turnover-tax-notch approximation for consumer-facing, limited-reclaim firms, abstracting from input reclaim and voluntary registration; here the notch model supplies the exact dominated region rather than a behavioural pricing engine. For each reform I report the static cost together with the portion of the dominated region it removes: raising the threshold to \pounds100k ($-$\pounds374m) relocates the \pounds21{,}250 zone without removing it; a banded 10\% reduced rate ($-$\pounds357m) shrinks it to \pounds9{,}444; a 15\% reduced rate ($-$\pounds178m) shrinks it to \pounds15{,}000; and a graduated taper over $[\pounds85\text{k},\pounds105\text{k}]$ ($-$\pounds335m) removes it. Behavioural firm re-optimisation under counterfactual schedules is left to future work.
 \end{abstract}
 
 \vspace{0.3cm}
@@ -31,8 +31,13 @@ I present an open, reproducible firm-level microsimulation for pricing reforms t
 \input{Sections/static}
 \input{Sections/bunching}
 \input{Sections/model}
-\input{Sections/calibration}
-\input{Sections/results}
+% Deferred to future work (kept in paper/future/): the structural calibration
+% (calibration.tex), the behavioural notch model + forward solve
+% (notch_model_dynamic.tex), the reform-menu/ranking results (results.tex), and
+% the smooth-notch appendix (a_notch.tex). The paper keeps the open microsim,
+% static costing, bunching evidence, and the exact dominated region.
+% \input{Sections/calibration}
+% \input{Sections/results}
 \input{Sections/conclusion}
 
 \newpage
