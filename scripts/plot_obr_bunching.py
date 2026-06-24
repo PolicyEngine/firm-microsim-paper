@@ -49,26 +49,32 @@ OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
 df.to_csv(OUT_CSV, index=False)
 
 TEAL = "#326b77"
-ORANGE = "#c44e1a"
+ACCENT = "#80ae9a"  # house-palette light teal for the second series
 
-fig, ax = plt.subplots(figsize=(7.2, 4.4))
+LABEL_SIZE = 15
+TICK_SIZE = 13
+
+fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(df["turnover"] / 1000, df["2019-20"], color=TEAL, lw=2,
         marker="o", ms=3, label="2019–20 (outturn)")
-ax.plot(df["turnover"] / 1000, df["2025-26"], color=ORANGE, lw=2,
+ax.plot(df["turnover"] / 1000, df["2025-26"], color=ACCENT, lw=2,
         ls="--", marker="s", ms=3, label="2025–26 (projection)")
 ax.axvline(85, color="0.35", lw=1, ls=":")
 ax.text(85, ax.get_ylim()[1] * 0.97, " Registration\n threshold (£85k)",
-        ha="left", va="top", fontsize=9, color="0.3")
+        ha="left", va="top", fontsize=TICK_SIZE, color="0.3")
 
-ax.set_xlabel("Annual turnover (£000s)")
-ax.set_ylabel("Number of businesses (thousands)")
+ax.set_xlabel("Annual turnover (£k)", fontsize=LABEL_SIZE)
+ax.set_ylabel("Number of businesses (thousands)", fontsize=LABEL_SIZE)
 ax.set_xlim(65, 90)
 ax.set_ylim(0, None)
-ax.grid(True, ls="--", lw=0.5, alpha=0.4)
+ax.tick_params(axis="both", labelsize=TICK_SIZE)
+ax.grid(True, ls="--", alpha=0.3)
+ax.set_axisbelow(True)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
-ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=2)
+ax.legend(frameon=False, fontsize=TICK_SIZE, loc="upper center",
+          bbox_to_anchor=(0.5, -0.18), ncol=2)
 fig.tight_layout()
-fig.savefig(OUT_FIG, dpi=200, bbox_inches="tight")
+fig.savefig(OUT_FIG, dpi=300, bbox_inches="tight")
 print("wrote", OUT_FIG)
 print("wrote", OUT_CSV)

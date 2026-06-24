@@ -1,20 +1,19 @@
 \subsection{Data construction detail}
 \label{app:data}
 
-Section~\ref{sec:data} describes the two-stage synthetic-population pipeline
-(\texttt{analysis/gen\_full\_param.py}, parameterised by \texttt{VAT\_THRESHOLD})
-and its calibration to HMRC and ONS aggregates. This appendix records the
-implementation detail deferred from that account.
+Section~\ref{sec:data} describes the two-stage synthetic-population pipeline,
+parameterised by the registration threshold, and its calibration to HMRC and ONS
+aggregates. This appendix records the implementation detail deferred from that
+account.
 
-Each of the approximately $2.94$ million firm rows carries the fields
-\texttt{annual\_turnover\_k}, \texttt{annual\_input\_k}, \texttt{weight}, and
-\texttt{vat\_registered}; calibration weights are chosen so the weighted totals
-reproduce the official targets while the population sums to about $2.0$ million
-firms. Because the population is calibrated \emph{to} the HMRC aggregates,
+Each of the approximately $2.94$ million firm rows carries a turnover, an input
+expenditure, a calibration weight, and a registration status; the weights are
+chosen so the weighted totals reproduce the official targets while the population
+sums to about $2.5$ million firms. Because the population is calibrated \emph{to} the HMRC aggregates,
 agreement between my weighted outputs and those aggregates is a check of
 \emph{internal consistency}, not external validation: any target used in
 calibration is reproduced by construction. I therefore read the
-$\sim\!87\%$ calibration accuracy, and the close match of the static
+$\sim\!90\%$ calibration accuracy, and the close match of the static
 \pounds85{,}000\,\(\to\)\,\pounds90{,}000 costing to HMRC's published figures, as
 consistency checks on the pipeline rather than out-of-sample tests of firm
 behaviour.
@@ -29,11 +28,3 @@ the degree improves in-sample fit but risks over-fitting the tails. The
 sensitivity of the excess-mass and bunching-ratio estimates to window width and
 degree, with associated uncertainty, is reported in
 Appendix~\ref{app:inference}.
-
-\paragraph{Subsample for dynamic plots.} The dynamic re-optimisation figures
-of the companion structural step are generated on a $20\%$ random subsample of the
-firm rows, to keep the firm-by-firm FOC inversion and re-solution tractable,
-while the static revenue sweep and the calibration use the full dataset. The
-$20\%$ subsample reproduces the full-dataset density step and bunching mass to
-within sampling error, so subsampling affects only the smoothness of the plotted
-curves, not the substantive conclusions.

@@ -1,0 +1,36 @@
+PLACEBO BUNCHING TEST — £85k UK VAT threshold (vintage 2023-24)
+======================================================================
+
+Method
+------
+The HMRC turnover-band targets are coarse: one count for <= £85k
+(£1_to_Threshold = 678,350) and one for £85k-£150k
+(£Threshold_to_£150k = 305,320). Their average per-£1k densities differ
+(7,981 vs 4,697 firms/£1k), so the calibration target ITSELF contains a
+density step at exactly £85k. The generator has no firm location-choice,
+so any density discontinuity is inherited from this target.
+
+PLACEBO A (reweight): rescale the existing synthetic firms' weights so
+the per-£1k turnover density follows a single smooth log-quadratic trend
+across £85k (fit on the wings, |y-85|>20k, then applied inside the
+window). Total mass over [20k,140k] preserved. No regeneration.
+
+PLACEBO B (regenerate): replace the two HMRC band counts straddling £85k
+with a split implied by a SINGLE common per-£1k density (combined mass
+spread uniformly over £1-£150k), so the calibration target has NO step,
+then re-run the full generator + multi-objective calibration and the
+estimator on the resulting weighted population.
+
+
+Results
+-------
+population                         b            E   b_llat     y_R
+------------------------------------------------------------------
+ACTUAL (control)             +0.0599        8,712    0.941   90.58
+PLACEBO A (reweight)         -0.0626            0    0.000   84.00
+PLACEBO B (regenerate)       -0.0161           99    0.010   84.33
+
+Density step at £85k (80-85 vs 85-90 per £1k):
+  ACTUAL   below=10,186 above=6,520 step=+56.2%
+  PLACEBO A below=8,792 above=8,042 step=+9.3%
+

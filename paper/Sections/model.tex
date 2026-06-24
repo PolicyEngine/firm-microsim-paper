@@ -1,23 +1,27 @@
-\section{The VAT Notch and Its Dominated Region}
+\section{The notch and its dominated region}
 \label{sec:model}
 
-The reduced-form evidence in Section~\ref{sec:bunching} establishes that firms
-respond to the VAT registration notch. To characterise that notch precisely I
-set out its firm-level structure, following the framework of
+The behavioural response to the registration notch is documented in
+administrative data by \citet{liuetal2021}; on my synthetic data the reduced-form
+bunching is not behaviourally identified (Section~\ref{sec:bunching}). To
+characterise the notch precisely I therefore turn to its analytic structure,
+which yields an exact distortion measure that needs no behavioural calibration. I
+set out the firm-level structure following the framework of
 \citet{klevenwaseem2013}, \citet{saez2010}, and \citet{kleven2016}, as applied
 to UK VAT by \citet{liuetal2021}. The UK registration threshold is a
 \emph{notch}, not a kink: once turnover crosses the threshold the firm becomes
 liable for VAT on its \emph{entire} turnover, not merely on the increment above
 it. I model this notch exactly. The section's central deliverable is the notch's
-\emph{dominated region}---the exact, model-free measure of the distortion the
-threshold imposes (Section~\ref{ssec:dominated}), whose analytic response to each
-schedule reform complements the static reform costs of
-Section~\ref{ssec:schedule_costs}. The dominated region is the robust, headline
-structural object: it depends on the rate and threshold alone and is therefore
-exact. A behavioural re-optimisation of firms under counterfactual schedules---a
-forward solve that prices the response in turnover to reforms the data never
-observe---would require additional, parameter-sensitive assumptions about the
-firm's technology and elasticity, and I leave that dynamic layer to future work.
+\emph{dominated region}---an exact, model-free accounting identity that indexes the
+distortion the threshold imposes (Section~\ref{ssec:dominated}), whose analytic
+response to each schedule reform complements the static reform costs of
+Section~\ref{ssec:schedule_costs}. The dominated region is a transparent,
+parameter-free distortion index: it depends on the rate and threshold alone and is
+therefore exact. Section~\ref{sec:behavioural} prices the behavioural response to
+each reform conditional on an assumed turnover elasticity, re-solving firm choices
+under each counterfactual schedule; here the dominated region remains the exact,
+elasticity-free distortion measure, requiring no assumption about the firm's
+technology or elasticity.
 
 \paragraph{Scope: a turnover-tax notch.} The structure here taxes \emph{turnover}.
 Real VAT is levied on \emph{value added} with input-tax reclaim, and a substantial
@@ -27,7 +31,7 @@ registration: it is a turnover-tax-notch approximation. This is a scope limitati
 I state up front; it bounds the welfare claims I make and is one I return to in the
 concluding discussion.
 
-\subsection{The firm's problem with a VAT notch}
+\subsection{The firm's problem}
 
 Each firm $i$ chooses turnover $y_i$ to maximise after-tax profit. Let $c_i(y_i)$
 denote the cost of producing turnover $y_i$, $T^{*}$ the registration threshold,
@@ -69,17 +73,26 @@ across this narrow band is negligible---the upper edge of the dominated region i
 This is the Kleven--Waseem dominated-region width \citep{klevenwaseem2013}. At
 my parameters it gives $a = \pounds85{,}000\times 0.20/0.80 = \pounds21{,}250$,
 so the dominated region is
-$(T^{*},\,T^{*}+a)=(\pounds85{,}000,\ \pounds106{,}250)$. Two properties make
-this $\sim\pounds21$k band the load-bearing analytic object of the paper. First,
-it is \emph{exact}: it depends on $\tau$ and $T^{*}$ alone and is independent of
-the cost specification, of any behavioural elasticity, and of any smoothing
-parameter. Second, it is an order of magnitude wider than the $\sim\pounds1$k
-region implied by a smoothed \emph{kink} approximation. The dominated region is
-the structural counterpart of the missing mass measured just above the threshold
-in Section~\ref{sec:bunching}: the reduced-form deficit and the model-free empty
-band are the same object viewed two ways. The contrast with a smoothed-kink
-approximation, and a robustness check that a smooth schedule reproduces this
-width, are taken up in a separate robustness appendix.
+$(T^{*},\,T^{*}+a)=(\pounds85{,}000,\ \pounds106{,}250)$, shown in
+Figure~\ref{fig:notch_fit}. Two properties make
+this $\sim\pounds21$k band a transparent, parameter-free index of the distortion.
+First, it is \emph{exact}: it depends on $\tau$ and $T^{*}$ alone and is
+independent of the cost specification, of any behavioural elasticity, and of any
+smoothing parameter. Second, it is an order of magnitude wider than the
+$\sim\pounds1$k region implied by a smoothed \emph{kink} approximation. The band
+also spans a populous part of the firm distribution: about $137{,}000$ weighted
+firms in the synthetic population lie in the $\pounds85{,}000$--$\pounds106{,}250$
+dominated band, so the identity ranges over a heavily populated stretch of
+turnover rather than an empty tail. The $15\%$ and $10\%$ reduced-rate bands
+shrink the dominated zone to ranges containing about $96{,}500$ and $66{,}100$
+firms respectively. The dominated region stands alone as a theoretical property of
+the schedule, independent of any reduced-form pattern in the data.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.78\textwidth]{figures/dynamic_notch_fit_e017.png}
+\caption{The \pounds85{,}000 notch and its dominated region. The observed synthetic turnover density is shown with the dominated region $(\pounds85{,}000,\,\pounds106{,}250)$ shaded; no firm optimally locates there. The marginal buncher at an assumed turnover elasticity $e=0.17$ sits at $n_H=\pounds127{,}382$ (Section~\ref{sec:behavioural}). The dominated-region width $a=\pounds21{,}250$ is exact and independent of any elasticity.}
+\label{fig:notch_fit}
+\end{figure}
 
 \paragraph{How each reform changes the dominated region.} Because the width
 $a=T^{*}\tau/(1-\tau)$ depends on the threshold and the rate alone, the effect of

@@ -4,12 +4,13 @@
 This appendix documents the inference procedure for the reduced-form bunching
 estimates of Section~\ref{sec:bunching}: the mass-conservation constraint
 that disciplines the counterfactual density, the bootstrap that delivers
-standard errors, and the sensitivity of the estimates to the polynomial degree,
-the exclusion window, the sigmoid steepness $k$, and the effective wedge
-$\tau_{e}$. All numbers reported here and in the calibration step are produced
-by the script \texttt{analysis/bunching\_inference.py}, run on the
-\pounds85{,}000 (2023--24) weighted synthetic firm data; nothing is hardcoded as
-a result.
+standard errors, the sensitivity of the estimates to the polynomial degree,
+the exclusion window, and the effective wedge $\tau_{e}$, and a placebo test
+demonstrating that the synthetic bunching is mechanical rather than behavioural.
+All numbers reported here and in the calibration step are produced by the
+released estimator (fixed seed, $B=200$ bootstrap replications), run on the
+\pounds85{,}000 (2023--24) weighted synthetic firm data; the seed and $B$ are
+fixed so the table is reproducible, and nothing is hardcoded as a result.
 
 \subsubsection*{Mass-conservation constraint}
 
@@ -40,14 +41,16 @@ cumulative excess mass below,
 \]
 rather than being fixed at an arbitrary window edge. The excess turnover span of
 the marginal buncher, $\Delta y^{*}=y_{R}-T^{*}$, is then used by the
-notch-width elasticity (Method~B).
+notch-width elasticity.
 
 Imposing the constraint matters because the unconstrained fit grossly violates
-adding-up: it delivers $E=8{,}179$ but $\Delta_{R}=17{,}792$, whereas the
-constrained estimator returns $E=8{,}712$ and $\Delta_{R}=9{,}938$, which agree
-to within sampling noise. The accompanying movement in the headline estimates
-($b$ from $0.054$ to $0.060$, $\sigma$ from $4.33$ to $4.85$) is reported in
-the calibration step.
+adding-up: it delivers $E=7{,}820$ but $\Delta_{R}=16{,}524$, whereas the
+constrained estimator returns $E=8{,}712$ and $\Delta_{R}=9{,}214$, which agree
+to within sampling noise. Imposing the constraint thus reconciles the excess
+mass below the threshold with the missing mass above it, which the
+unconstrained estimator computes independently and which would otherwise diverge
+by roughly a factor of two; the resulting movement in the headline estimates is
+reported in the calibration step.
 
 \subsubsection*{Bootstrap standard errors}
 
@@ -71,14 +74,31 @@ reports the results.
 Statistic & Point & Std.\ error & 95\% CI \\
 \hline
 Bunching ratio $b$              & $0.060$ & $0.005$  & $[0.050,\ 0.068]$ \\
-Excess mass $E$                 & $8{,}712$ & $662$  & $[7{,}877,\ 10{,}483]$ \\
-Substitution elasticity $\sigma$ & $4.85$ & $0.12$  & $[4.61,\ 5.10]$ \\
-Displaced share $\Pi$           & $0.211$ & $0.005$ & $[0.202,\ 0.221]$ \\
-Notch-width elasticity (median) & $0.448$ & $0.027$ & $[0.419,\ 0.519]$ \\
-Marginal-buncher elasticity     & $0.657$ & $0.082$ & $[0.536,\ 0.828]$ \\
+Excess mass $E$                 & $8{,}712$ & $662$  & $[7{,}920,\ 10{,}516]$ \\
+Substitution elasticity $\sigma$ & $4.85$ & $0.12$  & $[4.58,\ 5.08]$ \\
+Displaced share $\Pi$           & $0.211$ & $0.005$ & $[0.200,\ 0.219]$ \\
+Notch-width elasticity (median) & $0.448$ & $0.027$ & $[0.405,\ 0.496]$ \\
+Marginal-buncher elasticity     & $0.657$ & $0.082$ & $[0.510,\ 0.821]$ \\
 \hline
 \end{tabular}
 \end{table}
+
+\subsubsection*{Non-identification: the elasticities are not behavioural}
+
+The bunching-implied elasticities in Table~\ref{tab:boot}---the notch-width
+elasticity ($\approx 0.45$) and the marginal-buncher elasticity
+($\approx 0.66$)---together with the CES substitution elasticity
+$\sigma = 4.85$ are \emph{not} behaviourally identified on these data. The
+synthetic firm population is calibrated to coarse aggregate HMRC turnover-band
+counts, and the generator contains no firm location-choice: firms do not respond
+to the threshold, so the excess mass below it is mechanical, inherited from the
+density step in the calibration targets rather than from any behavioural
+response (the placebo test below makes this precise). The elasticities are
+therefore reported only as a record of what the estimator returns when applied
+to these data; the paper draws no behavioural conclusion from them. This is an
+instance of the general non-identification of bunching elasticities absent
+exogenous variation or strong functional-form assumptions
+\citep{blomquistetal2021, bertanhaetal2023}.
 
 \subsubsection*{Sensitivity to polynomial degree and exclusion window}
 
@@ -105,37 +125,15 @@ data. Cells with $b<0$ leave $\sigma$ undefined.}
 \hline
 Degree & Window & $b$ & $E$ & $\sigma$ & Notch-width (median) \\
 \hline
-6 & \pounds10k & $0.079$ & $7{,}719$ & $5.69$ & $0.42$ \\
-6 & \pounds15k & $0.046$ & $6{,}900$ & $5.24$ & $0.45$ \\
-6 & \pounds20k & $0.017$ & $4{,}101$ & $4.44$ & $0.38$ \\
-7 & \pounds10k & $0.095$ & $9{,}073$ & $5.32$ & $0.47$ \\
+6 & \pounds10k & $0.077$ & $7{,}262$ & $5.42$ & $0.41$ \\
+6 & \pounds15k & $0.045$ & $6{,}575$ & $4.99$ & $0.44$ \\
+6 & \pounds20k & $0.015$ & $3{,}822$ & $4.21$ & $0.35$ \\
+7 & \pounds10k & $0.091$ & $8{,}539$ & $5.07$ & $0.47$ \\
 \textbf{7} & \textbf{\pounds15k} & $\mathbf{0.060}$ & $\mathbf{8{,}712}$ & $\mathbf{4.85}$ & $\mathbf{0.45}$ \\
-7 & \pounds20k & $0.036$ & $7{,}785$ & $4.89$ & $0.45$ \\
+7 & \pounds20k & $0.034$ & $7{,}313$ & $4.62$ & $0.43$ \\
 \hline
 \end{tabular}
 \end{table}
-
-\subsubsection*{Sensitivity to the sigmoid steepness}
-
-The notch-width elasticity uses the effective wedge $\tau_{\mathrm{eff}} =
-\tau_{\max}/2$, which holds at the threshold for \emph{any} sigmoid steepness
-$k$, so the data-side elasticity is $k$-invariant. The steepness $k$ instead
-governs the \emph{structural} model: it sets the width of the output-dominated
-(``forbidden'') band of the smoothed schedule, defined as the turnover region in
-which marginal net revenue $(1-\tau(y)) - y\,\tau'(y)$ is negative. My code
-computes this width directly and compares it to the exact \citet{klevenwaseem2013}
-dominated region for a $20\%$ notch at \pounds85{,}000,
-$T^{*}\tau/(1-\tau)=\pounds21.25\text{k}$. The width is strongly $k$-dependent:
-$k=0.0001$ leaves essentially the entire local band dominated (a near-kink),
-$k=0.001$ gives \pounds19.7\text{k} (closest to the exact \pounds21.25\text{k}),
-$k=0.002$ gives \pounds10.6\text{k}, $k=0.005$ gives \pounds4.6\text{k}, and
-$k=0.01$ gives only \pounds2.5\text{k}; the empirical excess span of the marginal
-buncher is $\Delta y^{*}=\pounds5.4\text{k}$. This is the basis for the choice of
-$k=0.001$ in the calibration step: its implied dominated region best
-matches both the exact notch region and the order of magnitude of the empirical
-span, whereas $k=0.01$ understates the band by roughly an order of magnitude. I
-report results at $k=0.001$ and treat the spread above as a calibration
-sensitivity rather than a point identification of $k$.
 
 \subsubsection*{Sensitivity to the effective wedge}
 
@@ -145,8 +143,55 @@ counterfactual-to-observed above/below mass ratios. Because the wedge enters onl
 through $\ln(1+\tau_{e})$, $\sigma$ scales roughly as $1/\ln(1+\tau_{e})$ while
 the displaced share $\Pi = 1-(1+\tau_{e})^{-\sigma}$ is essentially invariant
 (it is pinned by $\mathrm{RR}$). On my data, $\tau_{e}=0.025$ gives
-$\sigma=9.61$, $\tau_{e}=0.05$ gives $\sigma=4.85$, $\tau_{e}=0.075$ gives
-$\sigma=3.27$, and $\tau_{e}=0.10$ gives $\sigma=2.48$, while $\Pi=0.211$
+$\sigma=9.59$, $\tau_{e}=0.05$ gives $\sigma=4.85$, $\tau_{e}=0.075$ gives
+$\sigma=3.28$, and $\tau_{e}=0.10$ gives $\sigma=2.49$, while $\Pi=0.211$
 throughout. The magnitude of $\sigma$ is therefore conditional on $\tau_{e}$: I
 adopt $\tau_{e}=0.05$ as a baseline effective registration wedge and report
 $\Pi$, which is robust to it, as the policy-relevant displacement object.
+
+\subsubsection*{Placebo test}
+
+The non-identification of the bunching elasticities can be made precise with a
+placebo test. The HMRC turnover-band targets to which the synthetic population
+is calibrated are coarse: a single count for firms at or below \pounds85{,}000
+and a single count for firms in \pounds85{,}000--\pounds150{,}000. The implied
+average per-\pounds1{,}000 densities differ sharply across the threshold
+($\approx 7{,}981$ firms/\pounds1{,}000 below versus $\approx 4{,}697$ above), so
+the calibration target \emph{itself} contains a density step at exactly
+\pounds85{,}000. Because the generator has no firm location-choice, any density
+discontinuity in the synthetic population must be inherited from this stepped
+target rather than produced by behaviour. The placebo removes the step and
+re-runs the estimator. Table~\ref{tab:placebo} reports two variants: Placebo~A
+reweights the existing synthetic firms so the per-\pounds1{,}000 density follows
+a single smooth log-quadratic trend across the threshold (preserving total mass
+over $[\pounds20\text{k},\pounds140\text{k}]$, no regeneration); Placebo~B
+replaces the two HMRC band counts straddling \pounds85{,}000 with a split
+implied by a single common per-\pounds1{,}000 density (no step in the target),
+then re-runs the full generator and multi-objective calibration before
+estimating.
+
+\begin{table}[t]
+\centering
+\caption{Placebo test: removing the calibration density step collapses the
+excess mass. \pounds85{,}000 data.}
+\label{tab:placebo}
+\begin{tabular}{lrrr}
+\hline
+Population & $b$ & $E$ & $b_{\mathrm{LLAT}}$ \\
+\hline
+Actual (control)                          & $+0.060$ & $8{,}712$ & $0.941$ \\
+Placebo A (reweight density smooth)       & $-0.063$ & $0$       & $0.000$ \\
+Placebo B (un-stepped HMRC band targets)  & $-0.016$ & $99$      & $0.010$ \\
+\hline
+\end{tabular}
+\end{table}
+
+When the density step is removed from the calibration target, the estimated
+excess mass collapses from $8{,}712$ firms in the control to at most $\approx 99$
+firms ($\approx 1\%$ of the control value) in Placebo~B, and to zero in
+Placebo~A; the bunching ratio even turns slightly negative. This proves that the
+synthetic bunching is inherited from the coarse HMRC turnover-band targets, not
+from any firm behaviour, and confirms that the elasticities in
+Table~\ref{tab:boot} are mechanical artefacts of the calibration rather than
+behavioural parameters. The placebo is part of the released code and is fully
+reproducible.

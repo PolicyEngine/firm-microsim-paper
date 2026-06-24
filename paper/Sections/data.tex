@@ -55,25 +55,28 @@ voluntarily with probability $r = M / n_{<}$, the HMRC count of registered firms
 in the \pounds1--threshold band, $M$, divided by the synthetic number of
 below-threshold firms, $n_{<}$, so the synthetic voluntary-registration rate
 matches the HMRC aggregate. The resulting dataset comprises approximately
-$2.94$~million firm records, weighted to represent roughly $2.0$~million UK firms;
-validated against the official sources along every calibrated dimension, it attains
-an overall calibration accuracy of about $87\%$, reproducing the aggregates closely
-while supplying the firm-level resolution they lack.
+$2.94$~million firm records, weighted to represent roughly $2.5$~million UK firms;
+checked for consistency against the official sources along every calibrated
+dimension, it attains an overall calibration accuracy of about $90\%$, reproducing
+the aggregates closely while supplying the firm-level resolution they lack.
 
 \paragraph{The registration threshold in the data.} My data are for the 2023--24
 year, in which the statutory threshold was \pounds85{,}000. The firm density steps
-down at the threshold---from roughly $10{,}400$ to $6{,}700$ firms per
+down at the threshold---from roughly $10{,}200$ to $6{,}600$ firms per
 \pounds1{,}000 turnover band---reflecting the incentive to remain below the
 registration cutoff, with a second, smaller step at \pounds150{,}000, the ceiling
-of the VAT Flat Rate Scheme (Figure~\ref{fig:turnover_dist}). Counterfactual
+of the VAT Flat Rate Scheme (Figure~\ref{fig:turnover_dist}). I note, however,
+that HMRC publishes firm counts only in coarse turnover bands across the
+threshold, so the density step at \pounds85{,}000 in the synthetic data is
+inherited from these aggregate targets rather than from any modelled firm
+behaviour; Section~\ref{sec:bunching} quantifies this with a placebo test.
+Counterfactual
 policies---including the \pounds85{,}000 to \pounds90{,}000 reform and the forward
-threshold sweep of Section~\ref{sec:static}---are evaluated on these firms, by
-re-applying the registration rule to the microdata for the static costings and by
-re-solving firm optimisation for the behavioural exercise developed in a
-companion structural step. I hold the empirical turnover distribution
-fixed and let behaviour respond to the reform, rather than imposing a bunching
-pattern at the counterfactual threshold, which would presuppose the response the
-analysis sets out to measure.
+threshold sweep of Section~\ref{sec:static}---are evaluated on these firms by
+re-applying the registration rule to the microdata for the static costings. I
+hold the empirical turnover distribution fixed throughout. A fully behavioural
+forward solve that re-prices firms under counterfactual schedules is left to
+future work.
 
 \begin{figure}[htbp]
 \centering
