@@ -115,9 +115,7 @@ class Config:
 
     # --- The single configurable threshold -------------------------------
     # Defaults to the vintage's threshold; VAT_THRESHOLD env overrides if set.
-    vat_threshold: float = float(
-        os.environ.get("VAT_THRESHOLD", VINTAGES[DEFAULT_VINTAGE]["threshold"])
-    )
+    vat_threshold: float | None = None
 
     # --- Reproducibility / compute ---------------------------------------
     seed: int = 42
@@ -155,6 +153,21 @@ class Config:
     input_files: Dict[str, str] = field(default_factory=lambda: dict(INPUT_FILES))
 
     def __post_init__(self) -> None:
+        if self.data_vintage not in VINTAGES:
+            raise ValueError(
+                f"Unknown vintage {self.data_vintage!r}; "
+                f"choose from {sorted(VINTAGES)}"
+            )
+
+        if self.vat_threshold is None:
+            threshold = float(
+                os.environ.get(
+                    "VAT_THRESHOLD",
+                    VINTAGES[self.data_vintage]["threshold"],
+                )
+            )
+            object.__setattr__(self, "vat_threshold", threshold)
+
         # Keep processed_dir in sync with data_vintage unless the caller
         # passed a bespoke path (e.g. a tmp dir in tests). A path is treated
         # as "canonical" (and thus re-derived from the vintage) if it is the

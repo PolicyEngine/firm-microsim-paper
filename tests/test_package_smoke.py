@@ -4,6 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from firm_microsim.config import Config
+
 
 def test_import_public_packages() -> None:
     import firm_microsim
@@ -68,3 +70,20 @@ def test_dynamic_rejects_unsupported_vintage() -> None:
 
     assert result.returncode != 0
     assert "invalid choice" in result.stderr
+
+
+def test_config_data_vintage_sets_matching_threshold() -> None:
+    cfg_2023 = Config(data_vintage="2023-24")
+    cfg_2024 = Config(data_vintage="2024-25")
+
+    assert cfg_2023.vat_threshold == 85.0
+    assert cfg_2023.processed_dir.name == "2023-24"
+    assert cfg_2024.vat_threshold == 90.0
+    assert cfg_2024.processed_dir.name == "2024-25"
+
+
+def test_config_preserves_explicit_threshold_override() -> None:
+    cfg = Config(data_vintage="2024-25", vat_threshold=88.0)
+
+    assert cfg.vat_threshold == 88.0
+    assert cfg.processed_dir.name == "2024-25"
