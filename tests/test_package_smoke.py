@@ -55,3 +55,16 @@ def test_console_script_help_entry_points() -> None:
             text=True,
         )
         assert "usage:" in result.stdout
+
+
+def test_dynamic_rejects_unsupported_vintage() -> None:
+    bin_dir = Path(sys.executable).parent
+    result = subprocess.run(
+        [str(bin_dir / "firm-microsim-dynamic"), "--vintage", "2024-25"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode != 0
+    assert "invalid choice" in result.stderr

@@ -39,10 +39,11 @@ respect to the net-of-tax rate ``(1 - tau)``.
 ABILITY RECOVERY (accounting anchor, NOT structural identification)
 -------------------------------------------------------------------
 Given ``e`` and a firm's observed turnover ``y_obs`` under the BASELINE £85,000
-notch (``tau = 0.20`` on the whole base once registered)::
+notch, using the firm's observed net VAT rate ``tau0 = liab / y_obs`` once
+registered::
 
     y_obs <  T*  : unregistered  => n = y_obs.
-    y_obs >= T*  : registered     => n = y_obs / (1 - tau)**e = y_obs / 0.8**e.
+    y_obs >= T*  : registered     => n = y_obs / (1 - tau0)**e.
 
 This rationalises the observed allocation given ``e``; it is an accounting
 anchor, not structural identification (``e`` is not identified from the
