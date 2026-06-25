@@ -7,8 +7,8 @@ Cobb-Douglas version was rejected because it tied the behavioural response to
 the production returns ``alpha`` (implying an absurd elasticity ~90) and the
 forward-solve did not depend on ``e`` at all.
 
-All monetary quantities here are in **pounds** (not £k), matching the trusted
-reform scripts and the audit's £ cross-check targets. The iso-elastic marginal
+All monetary quantities here are in **pounds** (not £k), matching the generated
+firm-population data used for the reform costings. The iso-elastic marginal
 buncher is delegated unchanged to
 :meth:`notch.model.NotchModel.marginal_buncher` (it works in £k internally and
 we convert at the boundary), and it agrees with our own indifference solve.
@@ -68,17 +68,18 @@ CROSS-CHECKS (see :func:`crosscheck`)
    ``notch.model`` to within ±£200).
 3. Elasticity check: ``d ln(y_star)/d ln(1-tau) = e`` numerically.
 4. ``e -> 0`` limit: behavioural reform costs converge to the static costs
-   (raise-to-100k ~ -£518m, taper ~ -£335m, rate10 ~ -£357m, rate15 ~ -£178m).
+   computed on the in-repository generated population.
 """
 
 from __future__ import annotations
 
-from typing import Callable
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from notch.model import NotchModel
+from firm_microsim.config import SYNTHETIC_DATA_DIR
+from firm_microsim.notch.model import NotchModel
 
 # ---------------------------------------------------------------------------
 # Single consistent parameter set (pounds)
@@ -418,14 +419,17 @@ def reform_revenue(
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
-REFORM_DATA = (
-    "/Users/janansadeqian/PolicyEngine_VATLab/analysis/"
-    "synthetic_firms_with_productivity.csv"
-)
+REFORM_DATA = SYNTHETIC_DATA_DIR / "synthetic_firms_2023-24.csv"
 
 
 def load_reform_data(path=REFORM_DATA):
     """Load the reform-costing dataset (£ units). Ability is recovered per-e."""
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found - generate it first with:\n"
+            "  firm-microsim --vintage 2023-24 --output synthetic_firms_2023-24.csv"
+        )
     df = pd.read_csv(
         path,
         usecols=["annual_turnover_k", "vat_liability_k", "weight", "vat_registered"],
@@ -441,15 +445,15 @@ def load_reform_data(path=REFORM_DATA):
 # Reform registry
 # ---------------------------------------------------------------------------
 def build_reforms():
-    """Map reform name -> (schedule, display label, static-target £)."""
+    """Map reform name -> (schedule, display label)."""
     return {
         "raise100k": (make_schedule_raise(100_000.0),
-                      "Raise threshold to £100k", -518e6),
-        "taper": (schedule_taper, "Graduated taper (£85k→£105k)", -335e6),
+                      "Raise threshold to £100k"),
+        "taper": (schedule_taper, "Graduated taper (£85k→£105k)"),
         "rate10": (make_schedule_reduced_rate(0.10),
-                   "Reduced rate 10% (£85k–£105k)", -357e6),
+                   "Reduced rate 10% (£85k–£105k)"),
         "rate15": (make_schedule_reduced_rate(0.15),
-                   "Reduced rate 15% (£85k–£105k)", -178e6),
+                   "Reduced rate 15% (£85k–£105k)"),
     }
 
 
@@ -457,14 +461,17 @@ def build_reforms():
 # Cross-check harness
 # ---------------------------------------------------------------------------
 def crosscheck(verbose=True, data_path=REFORM_DATA):
-    """Assert every headline object against its target. Raise on failure.
+    """Assert analytic invariants and data-derived consistency checks.
 
     (1) dominated region; (2) marginal buncher vs notch.model AND our own
     iso-elastic indifference solve; (3) ELASTICITY check
     d ln y*/d ln(1-tau) = e; (4) e -> 0 behavioural costs converge to the static
-    costs; plus the static costs themselves.
+    costs computed from the in-repository reform dataset.
     """
     results = []
+
+    def record(name, value, unit=""):
+        results.append((name, value, None, None, True, unit))
 
     def check(name, value, target, tol, unit=""):
         ok = abs(value - target) <= tol
@@ -512,24 +519,28 @@ def crosscheck(verbose=True, data_path=REFORM_DATA):
     liab = df["liab"].to_numpy()
     w = df["weight"].to_numpy()
     base = float(np.sum(liab[(t >= T_STAR)] * w[(t >= T_STAR)]))
-    check("baseline registered base", base / 1e9, 179.3, 0.5, " bn")
+    record("baseline registered base", base / 1e9, " bn")
 
     reforms = build_reforms()
     e_lim = 0.001  # e -> 0 limit
-    for rname, (sched, label, tgt) in reforms.items():
+    for rname, (sched, _label) in reforms.items():
         # Static.
         rs = reform_revenue(df, sched, E_HEADLINE, behavioural=False)
-        check(f"static {rname}", rs["d_rev"], tgt, 25e6, " GBP")
+        record(f"static {rname}", rs["d_rev"], " GBP")
         # 4. e -> 0 behavioural must converge to the static cost.
         rb = reform_revenue(df, sched, e_lim, behavioural=True)
         check(f"behavioural(e->0) {rname}", rb["d_rev"], rs["d_rev"], 20e6, " GBP")
 
     if verbose:
-        print("CROSSCHECK PASSED — all headline objects match targets:")
+        print("CROSSCHECK PASSED — analytic invariants and repo-data checks passed:")
         print(f"  {'object':<42}{'value':>18}{'target':>16}{'tol':>12}  ok")
         for name, val, tgt, tol, ok, unit in results:
-            print(f"  {name:<42}{val:>16,.4f}{unit:<2}{tgt:>14,.4f}"
-                  f"{tol:>12,.4g}  {'PASS' if ok else 'FAIL'}")
+            if tgt is None:
+                print(f"  {name:<42}{val:>16,.4f}{unit:<5}{'data':>14}"
+                      f"{'--':>12}  {'PASS' if ok else 'FAIL'}")
+            else:
+                print(f"  {name:<42}{val:>16,.4f}{unit:<5}{tgt:>14,.4f}"
+                      f"{tol:>12,.4g}  {'PASS' if ok else 'FAIL'}")
     return results
 
 

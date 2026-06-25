@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "firm-microsim-paper"
+version = "1.0.0"
+description = "Synthetic firm-level microsimulation for UK VAT threshold policy analysis"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.6",
+    "numpy>=1.23",
+    "odfpy>=1.4",
+    "openpyxl>=3.0",
+    "pandas>=1.5",
+    "scipy>=1.10",
+    "torch>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[project.scripts]
+firm-microsim = "firm_microsim.__main__:main"
+firm-microsim-report = "firm_microsim.report:cli"
+firm-microsim-figures = "firm_microsim.figures:main"
+firm-microsim-static = "firm_microsim.static.__main__:main"
+firm-microsim-bunching = "firm_microsim.bunching.__main__:main"
+firm-microsim-notch = "firm_microsim.notch.__main__:main"
+firm-microsim-dynamic = "firm_microsim.dynamic.__main__:main"
+firm-microsim-placebo = "firm_microsim.analysis.placebo_bunching:cli"
+firm-microsim-dominated-region = "firm_microsim.analysis.dominated_region_mass:cli"
+firm-microsim-reform-menu = "firm_microsim.analysis.reform_menu_common_base:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/firm_microsim"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88

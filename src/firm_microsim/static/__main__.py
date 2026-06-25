@@ -1,4 +1,4 @@
-"""CLI: ``python -m static`` — regenerate the static VAT-threshold figures."""
+"""CLI: ``firm-microsim-static`` — regenerate the static VAT-threshold figures."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from .figures import generate_all
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="python -m static",
+        prog="firm-microsim-static",
         description="Generate static VAT-threshold figures into results/.",
     )
     parser.add_argument("--sweep-vintage", default="2024-25",

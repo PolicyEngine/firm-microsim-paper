@@ -29,8 +29,8 @@ year and the VAT registration threshold they embed:
 | `2023-24` | UK Business 2024 | Annual VAT 2023-24 | **£85,000** (frozen since Apr 2017) | Baseline that matches the existing paper, bunching and notch model |
 | `2024-25` | UK Business 2025 | Annual VAT 2024-25 | **£90,000** (raised 1 Apr 2024) | Latest available gov data; forward-looking robustness |
 
-Switching vintage in the generator is a one-liner — `python -m firm_microsim
---vintage 2024-25`, or `Config.for_vintage("2024-25")`, or set `DATA_VINTAGE` —
+Switching vintage in the generator is a one-liner — `firm-microsim --vintage
+2024-25`, or `Config.for_vintage("2024-25")`, or set `DATA_VINTAGE` —
 which selects the matching `processed/<vintage>/` directory **and** the right
 threshold automatically. The default is `2023-24`.
 

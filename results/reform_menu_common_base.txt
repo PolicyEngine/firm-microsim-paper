@@ -2,32 +2,32 @@
 REFORM MENU ON A SINGLE COMMON BASE  (tab:schedule_costs)
 Base: GBP85k notch, 2023-24 microdata, UNAGED
 ========================================================================
-Dataset            : /Users/janansadeqian/PolicyEngine_VATLab/analysis/synthetic_firms_with_productivity.csv
-VAT base (>=85k)   : GBP 179.299 bn   (target ~GBP179.3bn)
-Firms in [85k,105k): 125,608   (~125,600)
+Dataset            : data/synthetic/synthetic_firms_2023-24.csv
+VAT base (>=85k)   : GBP 183.589 bn
+Firms in [85k,105k): 123,085
 
 --- Threshold relocation GBP85k -> GBP100k (recomputed) -------------
-  (A) DIRECT band-sum [85k,100k) :  -518.4 m   firms -96.2 (000s)
-      as % of GBP179.3bn base    :  -0.289%
-  (B) SMOOTH counterfactual      :  -528.2 m   firms -54.4 (000s)
-  HEADLINE (adopt A)             :  -518 m   firms -96.2 (000s)
+  (A) DIRECT band-sum [85k,100k) :  -507.9 m   firms -94.3 (000s)
+      as % of VAT base           :  -0.277%
+  (B) SMOOTH counterfactual      :  -494.7 m   firms -54.9 (000s)
+  HEADLINE (adopt A)             :  -508 m   firms -94.3 (000s)
 
---- Schedule reforms (verified on the SAME GBP85k/GBP179.3bn base) --
-  Graduated taper [85k,105k]     :  -335 m   (125,608 firms lower rate)   [taper_reform.py: static_change_m=-335.2]
-  Reduced rate 10% [85k,105k]    :  -357 m   (125,608 firms)              [rate_reform.py]
-  Reduced rate 15% [85k,105k]    :  -178 m   (125,608 firms)              [rate_reform.py]
+--- Schedule reforms (computed on the SAME repo-generated base) -----
+  Graduated taper [85k,105k]       :  -336.3 m   affected firms -123.1 (000s)
+  Reduced rate 10% [85k,105k]      :  -342.9 m   affected firms -123.1 (000s)
+  Reduced rate 15% [85k,105k]      :  -171.4 m   affected firms -123.1 (000s)
 
 ========================================================================
-CORRECTED tab:schedule_costs  (all on GBP85k / GBP179.3bn, 2023-24 unaged)
+CORRECTED tab:schedule_costs  (repo-generated GBP85k, 2023-24 unaged)
 ========================================================================
 Reform                                    Lever              Static (GBPm)
 --------------------------------------------------------------------------
-Raise threshold to GBP100,000             Location                    -518
-Graduated taper [85k,105k]                Shape (phase-in)            -335
-Reduced rate 10% [85k,105k]               Rate (step)                 -357
-Reduced rate 15% [85k,105k]               Rate (step)                 -178
+Raise threshold to GBP100,000             Location                    -508
+Graduated taper [85k,105k]                Shape (phase-in)            -336
+Reduced rate 10% [85k,105k]               Rate (step)                 -343
+Reduced rate 15% [85k,105k]               Rate (step)                 -171
 ========================================================================
 
 Firm-in-band counts:
-  Raise-to-100k band [85k,100k): 96,195 firms released
-  Taper / reduced-rate band [85k,105k): 125,608 firms
+  Raise-to-100k band [85k,100k): 94,309 firms released
+  Taper / reduced-rate band [85k,105k): 123,085 firms

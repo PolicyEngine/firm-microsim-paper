@@ -6,7 +6,7 @@ shared house-style palette and helpers. Saved to ``results/``:
     * bunching_analysis_<regime>.png  — observed vs no-bunching counterfactual at T*
 
 (The structural notch figure lives in the ``notch`` package.)
-Run ``python -m bunching`` to regenerate it.
+Run ``python -m firm_microsim.bunching`` to regenerate it.
 """
 
 from __future__ import annotations
@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from firm_microsim.figures import (
-    ACCENT,
     LABEL_SIZE,
     PALETTE,
     PRIMARY,

@@ -21,9 +21,25 @@ from typing import Dict
 # ---------------------------------------------------------------------------
 # Repository layout
 # ---------------------------------------------------------------------------
-# config.py lives in   <repo>/firm_microsim/config.py
-# so the repo root is one level up from this file's parent package.
-REPO_ROOT: Path = Path(__file__).resolve().parents[1]
+def _default_repo_root() -> Path:
+    """Return the checkout root that owns data/, results/, and paper/."""
+    if override := os.environ.get("FIRM_MICROSIM_REPO_ROOT"):
+        return Path(override).expanduser()
+
+    # Editable installs keep this file at <repo>/src/firm_microsim/config.py.
+    source_root = Path(__file__).resolve().parents[2]
+    if (source_root / "data" / "processed").exists():
+        return source_root
+
+    # Wheel installs may run from a checked-out paper repo.
+    cwd = Path.cwd()
+    if (cwd / "data" / "processed").exists():
+        return cwd
+
+    return source_root
+
+
+REPO_ROOT: Path = _default_repo_root()
 
 DATA_DIR: Path = REPO_ROOT / "data"
 RAW_DATA_DIR: Path = DATA_DIR / "raw"

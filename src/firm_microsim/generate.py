@@ -45,7 +45,6 @@ from .calibration import (
     EMPLOYMENT_BANDS,
     _employment_band_index,
     build_target_matrix,
-    map_to_hmrc_bands,
     optimize_weights,
 )
 from .config import Config, DEFAULT_CONFIG

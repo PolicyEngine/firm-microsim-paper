@@ -6,11 +6,11 @@ discrete notch, a dominated region, and a marginal buncher. Calibrated to the
 reduced-form turnover elasticity, it re-solves firms under counterfactual
 schedules.
 
-    from notch import NotchModel
+    from firm_microsim.notch import NotchModel
     m = NotchModel("2023-24")        # £85k vintage
     m.summary()                       # dominated region, marginal buncher, ...
 
-Run ``python -m notch`` to regenerate the notch figure and print the summary.
+Run ``firm-microsim-notch`` to regenerate the notch figure and print the summary.
 """
 
 from .model import ALPHA, E_MEAN, E_MEDIAN, TAU, NotchModel

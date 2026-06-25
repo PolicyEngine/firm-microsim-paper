@@ -10,6 +10,7 @@ to ``results/calibration_accuracy.txt`` and prints it.
 
 from __future__ import annotations
 
+import argparse
 import logging
 
 import pandas as pd
@@ -97,5 +98,17 @@ def main(write: bool = True) -> str:
     return report
 
 
+def cli(argv: list[str] | None = None) -> str:
+    """Console entry point."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--no-write",
+        action="store_true",
+        help="Print the report without writing results/calibration_accuracy.txt.",
+    )
+    args = parser.parse_args(argv)
+    return main(write=not args.no_write)
+
+
 if __name__ == "__main__":
-    main()
+    cli()
