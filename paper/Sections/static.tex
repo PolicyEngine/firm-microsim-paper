@@ -26,7 +26,7 @@ age the microdata to a given fiscal year by a cumulative nominal-growth factor. 
 the \pounds90{,}000 threshold this puts total VAT revenue at \pounds203.8bn in
 2025--26 and \pounds210.0bn in 2026--27.
 
-\paragraph{Validation against HMRC.} I first check the static pipeline against
+\paragraph{Consistency check against HMRC.} I first check the static pipeline against
 HMRC's own costing of the April~2024 increase from \pounds85{,}000 to
 \pounds90{,}000. Because my microdata are calibrated to HMRC VAT aggregates
 (Section~\ref{sec:data}), a close match confirms internal consistency rather than
@@ -58,9 +58,11 @@ of the VAT net. Because the calibration places extra weight on high-liability fi
 just below the threshold, I evaluate the reclassified band from a smooth
 extrapolation of the clean above-threshold profile rather than the raw
 below-threshold mass. Lowering the threshold draws firms in and raises revenue;
-raising it loses revenue. The schedule is close to linear---each \pounds5{,}000 step changes
-revenue by roughly \pounds150m--\pounds220m, with the marginal effect growing as the
-threshold sweeps across denser parts of the distribution. Even a \pounds30{,}000
+raising it loses revenue. The schedule is approximately linear, with a mild
+convexity as the threshold sweeps into denser parts of the distribution---each
+\pounds5{,}000 step changes revenue by roughly \pounds150m--\pounds220m, with the
+marginal effect growing as the threshold sweeps across denser parts of the
+distribution. Even a \pounds30{,}000
 rise to \pounds120{,}000 costs about \pounds1.2bn, under $0.6\%$ of the
 \pounds203.8bn base, because the threshold governs many small firms whose individual
 liabilities are small. Figure~\ref{fig:static_sweep} shows the sweep graphically.
@@ -107,7 +109,8 @@ Threshold & Revenue change (\pounds m) & Change (\%) & VAT-paying firms (000s) \
 \caption{Static effect of moving the VAT registration threshold, 2025--26, relative
 to the \pounds90{,}000 baseline (dashed line). Panel (a): revenue impact---lowering
 the threshold raises revenue, raising it loses revenue, and the schedule is
-approximately linear over the \pounds70{,}000--\pounds120{,}000 range. Panel (b): the
+approximately linear, with a mild convexity as the threshold sweeps into denser
+parts of the distribution, over the \pounds70{,}000--\pounds120{,}000 range. Panel (b): the
 change in the number of VAT-paying firms, tracking the local density of firms on each
 side of the threshold.}
 \label{fig:static_sweep}
@@ -119,18 +122,26 @@ side of the threshold.}
 The threshold sweep above moves the \emph{location} of a single cutoff. The same
 static method---re-applying a tax rule to the fixed turnover distribution, with no
 behavioural response---also costs reforms that change the \emph{shape} of the
-schedule rather than merely its position. I consider three reform types and report
-their first-order revenue effects against the \pounds85{,}000-notch baseline (VAT
-base \pounds179.3bn for the schedule reforms; the threshold move is measured
-against the post-reform \pounds90{,}000 baseline of
-Table~\ref{tab:static_revenue}). For each reform I recompute the weighted sum of
-liabilities $R = \sum_i w_i\, v_i$ under the new schedule, holding each firm's
-turnover fixed, and difference it against the baseline.
+schedule rather than merely its position. I consider four reforms and report
+their first-order revenue effects against a common baseline: the
+\pounds85{,}000-notch / \pounds179.3bn 2023--24 base. (This 2023--24 data-year base
+differs from the \pounds203.8bn figure in the sweep above, which ages the same
+microdata to the 2025--26 fiscal year at the post-reform \pounds90{,}000 threshold;
+the schedule reforms are costed in the data year to match the bunching and
+dominated-region analysis.) For each reform I recompute
+the weighted sum of liabilities $R = \sum_i w_i\, v_i$ under the new schedule,
+holding each firm's turnover fixed, and difference it against the baseline.
 
-\paragraph{Threshold relocation.} Raising the threshold to \pounds100{,}000 is a
-pure location move, costed exactly as in the sweep above: it releases the firms with
-turnover in the \pounds90{,}000--\pounds100{,}000 band from the VAT net, for a
-static revenue change of \(-\)\pounds374m (Table~\ref{tab:static_revenue}).
+\paragraph{Threshold relocation.} Raising the threshold from \pounds85{,}000 to
+\pounds100{,}000 is a pure location move, costed exactly as in the sweep above: it
+releases the firms with turnover in $[\pounds85{,}000, \pounds100{,}000)$---about
+$96{,}200$ firms---from the VAT net, for a static revenue change of
+\(-\)\pounds518m on the \pounds85{,}000-notch / \pounds179.3bn base, consistent
+(same base) with the taper and reduced-rate reforms below. On this common base the
+level move is the most expensive option yet removes no distortion---it merely
+relocates the dominated region to a new cutoff---whereas the taper removes the
+dominated region entirely at lower cost (\(-\)\pounds335m), foreshadowing
+Section~\ref{sec:model}.
 
 \paragraph{Graduated taper.} A graduated taper replaces the discrete notch with an
 effective rate that phases linearly from $0\%$ at \pounds85{,}000 to the full $20\%$
@@ -148,18 +159,16 @@ again with about $125{,}600$ firms in the band facing the lower rate.
 
 \begin{table}[htbp]
 \centering
-\caption{Static, behaviour-free revenue effect of the three reform types relative to
-the \pounds85{,}000-notch baseline (VAT base \pounds179.3bn for the schedule
-reforms; the threshold move is measured against the post-reform \pounds90{,}000
-baseline of Table~\ref{tab:static_revenue}). Each reform is costed mechanically by
-re-applying its schedule to the fixed turnover distribution, with no behavioural
-response.}
+\caption{Static, behaviour-free revenue effect of the four reforms relative to the
+common \pounds85{,}000-notch / \pounds179.3bn 2023--24 baseline. Each reform is
+costed mechanically by re-applying its schedule to the fixed turnover distribution,
+with no behavioural response.}
 \label{tab:schedule_costs}
 \begin{tabular}{llr}
 \hline
 Reform & Lever & Static revenue (\pounds m) \\
 \hline
-Raise threshold to \pounds100{,}000 & Location & $-374$ \\
+Raise threshold to \pounds100{,}000 & Location & $-518$ \\
 Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-335$ \\
 Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-357$ \\
 Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-178$ \\

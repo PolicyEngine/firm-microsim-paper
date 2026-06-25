@@ -1,0 +1,228 @@
+\section{Behavioural reform costs}
+\label{sec:behavioural}
+
+The reforms of Section~\ref{sec:static} are costed \emph{statically}: each
+schedule is re-applied to a fixed turnover distribution, and the revenue change is
+the mechanical reclassification of firms with no response in turnover.
+Section~\ref{sec:bunching} then shows that the bunching in my synthetic data is
+mechanical, so a behavioural elasticity is not identified from it---the reduced-form
+response is a placebo. Section~\ref{sec:model} supplies the one object that needs
+no behavioural calibration at all: the exact, model-free dominated region. What is
+missing from this sequence is the behavioural layer itself---a costing that lets
+firms re-optimise turnover when a reform changes the effective rate they face. This
+section supplies that layer. I build an iso-elastic structural simulator that, for
+an \emph{assumed} turnover elasticity $e$, re-solves each firm's optimum under a
+counterfactual schedule and prices the resulting revenue effect. Because $e$ is not
+identified from these data, I do not report a point estimate; I report an
+$e$-sensitivity range. The simulator nests the static costing of
+Section~\ref{sec:static} as its $e\to0$ limit, which I use below as a correctness
+check rather than treat as a coincidence. This is honest infrastructure, and every
+number in it is explicitly conditional on $e$.
+
+\subsection{An iso-elastic structural simulator}
+\label{ssec:simulator}
+
+I adopt the iso-elastic firm problem of \citet{klevenwaseem2013}, in the
+sufficient-statistics tradition of \citet{saez2010} and as applied to UK VAT by
+\citet{liuetal2021}. A firm of ability $n$ chooses turnover $y$ to maximise
+\begin{equation}
+  \pi(y;n) \;=\; \bigl(1-\tau(y)\bigr)\,y \;-\;
+  \frac{n}{1+1/e}\left(\frac{y}{n}\right)^{1+1/e},
+  \label{eq:isoelastic}
+\end{equation}
+where $\tau(y)$ is the effective VAT rate the schedule levies on the firm's whole
+turnover once registered, and $e>0$ is the elasticity of turnover with respect to
+the net-of-tax rate $1-\tau$. Marginal cost is $(y/n)^{1/e}$, so the
+frictionless ($\tau=0$) optimum is $y=n$: ability $n$ is the firm's
+undistorted turnover. A firm registered under a flat rate $\tau$ chooses
+\begin{equation}
+  y \;=\; n\,(1-\tau)^{e},
+  \label{eq:flat-optimum}
+\end{equation}
+and one verifies directly from~\eqref{eq:flat-optimum} that
+$\mathrm{d}\ln y / \mathrm{d}\ln(1-\tau) = e$, so $e$ is exactly the knob that
+governs the intensive response.
+
+\paragraph{Ability recovery.} To populate the simulator I recover an ability $n$
+for each firm from its observed turnover under the baseline \pounds85{,}000 notch.
+Given $e$, I set $n=y_{\mathrm{obs}}$ for an unregistered firm
+($y_{\mathrm{obs}}<T^{*}$) and invert~\eqref{eq:flat-optimum} for a registered
+firm, $n=y_{\mathrm{obs}}/(1-\tau_i)^{e}$. The wedge $\tau_i$ here is the firm's
+\emph{own} net VAT rate---net remittance over turnover, that is output VAT less
+input credits, which averages about $3\%$ of turnover in the calibrated population
+(Section~\ref{sec:data})---and \emph{not} the statutory $20\%$. This distinction is
+material: VAT is levied on value added, not on turnover, so a firm remitting $3\%$
+of its turnover has been distorted as if it faced a net-of-tax rate near $0.97$,
+not $0.80$. Inverting~\eqref{eq:flat-optimum} at the statutory $20\%$ would inflate
+the recovered ability gap, and hence every counterfactual response, several-fold.
+
+\paragraph{Forward solve.} Holding the recovered abilities $\{n_i\}$ and the
+assumed $e$ fixed, I re-solve each firm's optimum under the reform schedule---the
+raised threshold, the graduated taper, or the reduced-rate band---and aggregate the
+resulting liabilities. The behavioural revenue effect is the difference between this
+aggregate and the baseline. Because a reform that lowers the effective rate on the
+band raises each affected firm's net-of-tax rate, the firm scales turnover up
+toward its frictionless optimum,
+\begin{equation}
+  y^{*}_i \;=\; y_{\mathrm{obs},i}\,
+  \left(\frac{1-\tau_{\mathrm{reform}}}{1-\tau_{\mathrm{base}}}\right)^{e}
+  \;>\; y_{\mathrm{obs},i},
+  \label{eq:rescale}
+\end{equation}
+so the taxed base broadens and partly offsets the static loss.
+
+\paragraph{Conditional on $e$.} I am explicit about what this exercise is and is
+not. Treating each firm's observed (mechanically calibrated) turnover as optimal
+and inverting it for $n$ is an \emph{accounting anchor}, not structural
+identification: it reproduces the baseline by construction but borrows no
+information about the response. The elasticity $e$ is not identified from these data
+(the placebo of Section~\ref{sec:bunching}), so every behavioural magnitude below is
+conditional on the assumed $e$. The robust, $e$-free headline objects remain the
+static cost of Section~\ref{sec:static} and the exact dominated region of
+Section~\ref{sec:model}; this section's numbers are a disciplined sensitivity range,
+not point estimates. The margin priced here is purely \emph{intensive}---firms scale
+turnover as the effective rate moves. The extensive notch distortion, the discrete
+incentive to suppress turnover and bunch below the threshold, is the separate
+analytic object of Section~\ref{sec:model}; a reader should not expect re-bunching
+dynamics here.
+
+\subsection{Results}
+\label{ssec:behavioural-results}
+
+I sweep $e\in\{0.05,\,0.17,\,0.32\}$ and take $e=0.17$ as the headline. The low
+value $0.05$ is of the order reported by \citet{klevenwaseem2013}; $0.32$ is the
+mean implied by mapping the marginal-buncher condition through my notch; $0.17$ is
+the median of that mapping. I flag the provenance plainly: the $0.17$ and $0.32$
+values are read off the marginal-buncher condition applied to my notch geometry,
+which inherits the mechanical bunching that Section~\ref{sec:bunching} shows to be
+non-behavioural, so they are model-implied, not data-identified; I use them only to
+delimit a plausible sweep, anchored at the lower end by the external
+\citet{klevenwaseem2013} value, and a reader preferring a fully external range may
+substitute literature values for $e$ directly without changing the conditional
+structure of the costing. The same mapping pins the marginal buncher
+$n_H(e)$---the highest ability that still finds it optimal to bunch at the
+threshold---at \pounds112{,}795 for $e=0.05$ (a frictionless excess of
+$\Delta y^{*}\approx\pounds27.8$k), \pounds127{,}382 for $e=0.17$
+($\approx\pounds42.4$k), and \pounds143{,}527 for $e=0.32$ ($\approx\pounds58.5$k),
+consistent with the analytic dominated-region width $a=\pounds21{,}250$ of
+Section~\ref{sec:model}.
+
+Table~\ref{tab:behavioural_costs} reports the behavioural cost of each of the three
+flat-rate reforms---the raised threshold and the two reduced-rate bands---measured
+as the change in revenue relative to the \pounds85{,}000-notch baseline, alongside
+the static figure of Table~\ref{tab:schedule_costs}, for each $e$. The direction is
+uniform across these three: a larger $e$ makes each of them \emph{cheaper} in
+revenue terms. The mechanism is~\eqref{eq:rescale}: each reform lowers the effective
+rate on the band by a \emph{constant} amount, so firms scale turnover up toward
+their frictionless optimum, broadening the taxed base and partly offsetting the
+static loss. The offset is substantial: at $e=0.17$ the raised threshold costs
+\(-\)\pounds243m against a static \(-\)\pounds518m, and the $10\%$ and $15\%$ bands
+cost \(-\)\pounds268m and \(-\)\pounds118m against static \(-\)\pounds357m and
+\(-\)\pounds178m. At the headline $e=0.17$, the number of firms re-optimising is
+$49{,}275$ under the raised threshold, $60{,}430$ under the $10\%$ reduced rate, and
+$50{,}812$ under the $15\%$ reduced rate. Figure~\ref{fig:reform_dist} traces these
+costs across the full range of $e$, with each curve nesting onto its static value as
+$e\to0$.
+
+\paragraph{Why the graduated taper is excluded.} I do not report a behavioural cost
+for the graduated taper, and I want to be candid about why. The taper carries two
+behavioural channels that pull in opposite directions. The first is the
+base-broadening channel shared with the flat reforms: as the \emph{average} rate a
+firm faces falls, the firm scales its turnover up, which is cheaper for revenue in
+exactly the way~\eqref{eq:rescale} captures. The second is a marginal-rate
+distortion that is the taper's signature: because the taper's rate \emph{rises} with
+turnover, raising output lifts the rate on \emph{all} of a firm's turnover, so the
+firm faces an incentive to hold turnover down---a force that is costlier for
+revenue, not cheaper. The iso-elastic cost used here can price the first, upward
+channel but not the second, downward one. Imposing the full marginal-rate wedge in a
+correct first-order-condition solve makes firms collapse to the band floor and yields
+economically pathological revenue losses of the order of several billion pounds---an
+artefact of a cost function that cannot represent the downward, marginal-rate-driven
+response a taper induces, not a credible policy estimate. The net behavioural sign of
+the taper is therefore ambiguous and not identified in this framework. I take this as
+an honest scope limit, consistent with the paper's careful identification stance, and
+report only the taper's robust, $e$-free objects---its static cost
+(Section~\ref{sec:static}) and its exact, analytic removal of the dominated region
+(Section~\ref{sec:model}).
+
+\begin{table}[htbp]
+\centering
+\caption{Behavioural revenue effect of the three flat-rate reforms relative to the
+\pounds85{,}000-notch baseline, by assumed turnover elasticity $e$, with the static
+($e\to0$ limit) figure for comparison. Each behavioural figure re-solves every
+firm's iso-elastic optimum~\eqref{eq:isoelastic} under the reform schedule, holding
+recovered abilities and $e$ fixed. The final column reports the number of firms that
+re-optimise at the headline $e=0.17$. Every behavioural figure is conditional on the
+assumed, non-identified $e$. The graduated taper is excluded from the behavioural
+costing; see the note below the table and the discussion that follows.}
+\label{tab:behavioural_costs}
+\begin{tabular}{lrrrrr}
+\hline
+Reform & Static & $e=0.05$ & $e=0.17$ & $e=0.32$ & Firms ($e{=}0.17$) \\
+\hline
+Raise threshold to \pounds100{,}000
+  & $-\pounds518$m & $-\pounds424$m & $-\pounds243$m & $-\pounds143$m & $49{,}275$ \\
+Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$
+  & $-\pounds357$m & $-\pounds329$m & $-\pounds268$m & $-\pounds185$m & $60{,}430$ \\
+Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$
+  & $-\pounds178$m & $-\pounds159$m & $-\pounds118$m & $-\pounds72$m & $50{,}812$ \\
+\hline
+\end{tabular}
+
+\smallskip
+{\footnotesize \emph{Note.} The graduated taper is deliberately omitted from this
+table. Its behavioural response cannot be credibly priced in the iso-elastic
+framework, for the reason set out in the paragraph below; its robust, $e$-free
+figures---the static cost of \(-\)\pounds335m and the exact removal of the dominated
+region---are reported in Sections~\ref{sec:static} and~\ref{sec:model} instead.}
+\end{table}
+
+\paragraph{Validation: the $e\to0$ limit.} For the three flat-rate reforms the
+simulator should reproduce the static costing as the response vanishes, and it does.
+Taking $e\to0$ in the forward solve returns \(-\)\pounds517m for the raised
+threshold, \(-\)\pounds356m for the $10\%$ reduced rate, and \(-\)\pounds178m for the
+$15\%$ reduced rate---matching the static \(-\)\pounds518m, \(-\)\pounds357m, and
+\(-\)\pounds178m of Table~\ref{tab:schedule_costs} to within \pounds1--\pounds2m.
+This is the intended nesting: when no firm responds, the behavioural cost collapses
+to the mechanical reclassification effect, so the static costing is the $e=0$ corner
+of the same machine, not a separate calculation. The nesting notably does \emph{not}
+hold for the graduated taper---a further symptom that the iso-elastic cost cannot
+represent the taper's marginal-rate channel, and an additional reason its behavioural
+cost is not reported. I separately confirm numerically that
+$\mathrm{d}\ln y^{*}/\mathrm{d}\ln(1-\tau)=e$ holds exactly in the solved population
+for the flat reforms, so $e$ is indeed the governing knob.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/dynamic_cost_vs_elasticity.png}
+\caption{Behavioural reform cost against the assumed turnover elasticity $e$, for
+the three flat-rate reforms. Each curve is the change in revenue relative to the
+\pounds85{,}000-notch baseline as $e$ varies; the intercept at $e=0$ is the static
+cost of Table~\ref{tab:schedule_costs}, onto which the behavioural cost nests as the
+response vanishes. As $e$ rises, firms scale turnover up toward their frictionless
+optimum~\eqref{eq:rescale}, broadening the taxed base and making each reform cheaper.
+The dotted lines mark the swept values $e\in\{0.05,0.17,0.32\}$ of
+Table~\ref{tab:behavioural_costs}. The graduated taper is omitted: its behavioural
+response is not credibly identified in this framework (see above). All magnitudes are
+conditional on the assumed, non-identified $e$.}
+\label{fig:reform_dist}
+\end{figure}
+
+This section completes the costing framework. Where Section~\ref{sec:static} prices
+each reform mechanically and Section~\ref{sec:model} measures the distortion it
+removes, the simulator here prices the \emph{level and rate} reforms
+\emph{behaviourally}: it lets firms re-optimise turnover as the effective rate
+changes and implies that, for any assumed $e$, the base-broadening response would
+offset a fraction of the static revenue loss. The layer is bounded by what it can
+and cannot identify. The behavioural magnitudes are conditional on an assumed,
+non-identified $e$, and so are a sensitivity range rather than forecasts; and the
+priced margin is purely \emph{intensive}, since the model re-scales turnover while
+holding the extensive bunching response fixed. Crucially, the graduated taper's
+behavioural response is \emph{not} credibly identified in this framework: its
+base-broadening and marginal-rate channels pull in opposite directions and the
+iso-elastic cost cannot net them, so I price it only statically and through its exact
+dominated-region removal. The robust anchors of the paper therefore remain the
+$e$-free static cost of Section~\ref{sec:static} and the exact dominated region of
+Section~\ref{sec:model}; the contribution here is a disciplined, transparent layer
+that prices the intensive behavioural response to the level and rate reforms once one
+is willing to name an elasticity.

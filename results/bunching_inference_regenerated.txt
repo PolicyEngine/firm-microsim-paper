@@ -1,0 +1,105 @@
+==============================================================================
+BUNCHING INFERENCE — REGENERATED FROM CURRENT ESTIMATOR (bunching/model.py)
+Vintage 2023-24 (£85k), T* = 85.0, RNG_SEED = 20240617, B = 200
+Baseline: degree=7, window=±£15k, tau_e=0.05
+==============================================================================
+
+[1] BOOTSTRAP TABLE (tab:boot)  — point / SE / 95% percentile CI
+------------------------------------------------------------------------------
+                        point          se        ci_lo         ci_hi  n_boot
+parameter                                                                   
+b                    0.059885    0.004582     0.050097      0.068398     200
+b_llat               0.941023    0.074882     0.795223      1.085457     200
+E                 8711.912433  661.555191  7920.404958  10515.575141     200
+sigma                4.854890    0.120713     4.575895      5.077208     200
+Pi                   0.210907    0.004651     0.200092      0.219420     200
+eps_local_median     0.447983    0.027343     0.404949      0.496093     200
+eps_marginal         0.656829    0.081588     0.509753      0.821444     200
+dyR                  5.583044    0.693497     4.332897      6.982270     200
+
+(Pi point estimate = 0.2109; bootstrapped via summary row 'Pi')
+
+
+[2] DEGREE x WINDOW SENSITIVITY (tab:degwin) — full grid, one code version
+------------------------------------------------------------------------------
+ degree  window         b   b_llat            E    sigma  eps_local_median
+      5    10.0  0.150428 1.661197 13338.722356 5.615162          0.468555
+      5    15.0  0.139050 2.357746 18822.580978 5.161476          0.705882
+      5    20.0  0.141365 3.255463 25595.643506 4.947221          0.866789
+      5    25.0  0.152190 4.424472 34172.236574 5.109582          1.043650
+      6    10.0  0.076640 0.790229  7261.587858 5.421902          0.407559
+      6    15.0  0.044540 0.680790  6574.690639 4.985034          0.441282
+      6    20.0  0.015359 0.379377  3822.475982 4.210163          0.352928
+      6    25.0 -0.027983 0.044262   471.228923      NaN          0.146725
+      7    10.0  0.091354 0.974704  8538.992282 5.070560          0.470588
+      7    15.0  0.059885 0.941023  8711.912433 4.854890          0.447983
+      7    20.0  0.034128 0.750732  7312.596011 4.619318          0.429669
+      7    25.0 -0.003942 0.300294  3088.756051 3.645150          0.251975
+      8    10.0  0.118478 1.323128 10805.769773 4.921910          0.423842
+      8    15.0  0.118450 2.043347 16329.327339 4.534296          0.588235
+      8    20.0  0.165624 3.863177 29363.773200 4.959291          0.772223
+      8    25.0  0.301498 8.553605 59931.057978 7.569222          0.953864
+
+Paper's tab:degwin cells (deg 6,7 x win 10,15,20):
+ degree  window        b   b_llat           E    sigma  eps_local_median
+      6    10.0 0.076640 0.790229 7261.587858 5.421902          0.407559
+      6    15.0 0.044540 0.680790 6574.690639 4.985034          0.441282
+      6    20.0 0.015359 0.379377 3822.475982 4.210163          0.352928
+      7    10.0 0.091354 0.974704 8538.992282 5.070560          0.470588
+      7    15.0 0.059885 0.941023 8711.912433 4.854890          0.447983
+      7    20.0 0.034128 0.750732 7312.596011 4.619318          0.429669
+
+
+[3] CONSTRAINED vs UNCONSTRAINED MASS, and empirical excess span dy*
+------------------------------------------------------------------------------
+UNCONSTRAINED (plain OLS, fixed ±£15k window, independent E and Delta_R):
+    E        = 7,820.1
+    Delta_R  = 16,523.7
+
+CONSTRAINED (mass-conserving, endogenous marginal buncher):
+    E        = 8,711.9
+    Delta_R  = 9,214.5
+    y_R      = 90.583  (£k)
+    dy* = y_R - T* = 5.583  (£k)  -> £5.6k
+
+  Constrained b      = 0.0599
+  Constrained sigma  = 4.8549
+
+
+[4] tau_e SENSITIVITY (sigma and Pi)
+------------------------------------------------------------------------------
+ tau_e    sigma       Pi
+ 0.025 9.592782 0.210907
+ 0.050 4.854890 0.210907
+ 0.075 3.275286 0.210907
+ 0.100 2.485263 0.210907
+
+
+[4b] SIGMOID-STEEPNESS (k) SUBSECTION — orphan check
+------------------------------------------------------------------------------
+No sigmoid schedule, no steepness parameter k, and no per-k dominated-region
+width computation exist anywhere in the current code base (bunching/, notch/,
+analysis/). notch/model.py uses the EXACT Kleven-Waseem dominated width
+a = T* * tau/(1-tau). For T*=85, tau=0.20:
+    a = 85 * 0.20/0.80 = 21.250  (£k)  -> £21.25k
+The k=0.0001/0.001/0.002/0.005/0.01 -> width numbers (19.7k etc.) are NOT
+reproducible: the smoothed-schedule structural model that produced them is
+not in the consolidated code. Subsection is ORPHANED.
+
+
+[5] CURRENTLY-PRINTED (WRONG) vs CORRECTED (current code)
+------------------------------------------------------------------------------
+tab:boot:
+  b      : printed 0.060/0.005/[0.050,0.068]  ->  0.0599/0.0046/[0.0501,0.0684]
+  E      : printed 8712/662/[7877,10483]      ->  8,711.9/661.6/[7,920.4,10,515.6]
+  sigma  : printed 4.85/0.12/[4.61,5.10]      ->  4.8549/0.1207/[4.5759,5.0772]
+  Pi     : printed 0.211/0.005/[0.202,0.221]  ->  0.2109/0.0047/[0.2001,0.2194]
+  notchW : printed 0.448/0.027/[0.419,0.519]  ->  0.4480/0.0273/[0.4049,0.4961]
+  margB  : printed 0.657/0.082/[0.536,0.828]  ->  0.6568/0.0816/[0.5098,0.8214]
+
+tab:degwin baseline (deg7, win15k):
+  printed b/E/sigma/notchW = 0.060/8712/4.85/0.45
+  current b/E/sigma/notchW = 0.0599/8,711.9/4.8549/0.4480
+
+Constrained Delta_R: printed 9,938  ->  current 9214.5
+Empirical excess span dy*: printed 5.4k / 5.6k  ->  current £5.6k

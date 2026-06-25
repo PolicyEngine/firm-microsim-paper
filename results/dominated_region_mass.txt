@@ -1,0 +1,58 @@
+==========================================================================
+EMPIRICAL MASS IN THE VAT-NOTCH DOMINATED REGION
+vintage = 2023-24   T* = GBP 85,000   tau = 0.20
+==========================================================================
+
+Dominated region (Kleven-Waseem):  a = T* * tau/(1-tau)
+Bands measured on the WEIGHTED synthetic firm population.
+  OBS = observed weighted firms in band
+  CF  = weighted firms the mass-conserving no-bunching counterfactual
+        density places in band  (total smooth density across the band)
+  NET = CF - OBS = net MISSING (notch-displaced) mass in the band; this
+        is the firms the notch removed from the dominated region -- the
+        quantity with empirical bite, consistent with excess mass E.
+
+rate / band            width a (GBP)      band (GBP k)         OBS          CF   NET disp.
+------------------------------------------------------------------------------------------
+20% (baseline notch)          21,250     [85, 106.250)     136,574     150,236      13,662
+15% band                      15,000     [85, 100.000)      96,500     110,568      14,068
+10% band                       9,444      [85, 94.444)      66,085      78,018      11,933
+------------------------------------------------------------------------------------------
+
+INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
+  Observed firms in dominated region ........      136,574
+  Counterfactual total density in band (CF)..      150,236
+  NET displaced mass in band (CF - OBS) .....       13,662
+  CF mass as share of firms near threshold ..        0.517
+
+  Note: the headline displaced-mass number is NET (CF - OBS), not the
+  total CF density. The band is wide, so most CF firms in it would
+  relocate to OTHER registered turnover levels, not disappear; only the
+  NET deficit is the mass the notch evacuates from the dominated region.
+
+REFORM-SHRUNK BANDS (net displaced mass):
+  15% -> band width GBP 15,000: net displaced = 14,068 firms  (CF total 110,568)
+  10% -> band width GBP 9,444: net displaced = 11,933 firms  (CF total 78,018)
+
+CONSISTENCY CHECK vs paper's reduced-form bunching:
+  excess mass below T*       E       = 8,712 firms
+  missing mass above T*      Delta_R = 9,215 firms
+  displaced share            Pi      = 0.211
+  marginal buncher           y_R     = GBP 90,583
+  NET displaced mass in 20% dominated band = 13,662 firms
+  -> NET band mass / E               = 1.57
+  -> NET band mass / Delta_R         = 1.48
+
+  By mass conservation the excess mass E (~8.7k) that bunches just below
+  T* is the mass that, absent the notch, would have spread into the region
+  above T*. The NET displaced mass in the dominated band (~13.7k) is the
+  same order of magnitude as E and Delta_R (~9.2k) -- it slightly exceeds
+  them because the wide 21.25k band also captures part of the smooth
+  density deficit beyond the marginal buncher y_R = GBP 90,583, not just
+  the bunching window. CONSISTENT: no order-of-magnitude discrepancy.
+  (The TOTAL CF density in the band, 150k, is NOT the displaced mass and
+  should not be compared to E -- that would be a category error.)
+
+  total observed weighted mass on [20,140] est. range = 919,713
+
+script: analysis/dominated_region_mass.py

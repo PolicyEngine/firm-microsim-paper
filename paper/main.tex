@@ -5,9 +5,9 @@
 
 % Title
 %----------------------------------------------------
-\title{A Firm-Level Microsimulation for VAT Policy Analysis\thanks{\textbf{Acknowledgements:} I thank Max Ghenis and Seyed Mahdi Hosseini for their great suggestions and helpful discussions.}}
+\title{A Firm-Level Microsimulation for VAT Policy Analysis\thanks{\parbox{\dimexpr\textwidth-5em\relax}{\textbf{Acknowledgements:} I thank Max Ghenis and Seyed Mahdi Hosseini for their great suggestions and helpful discussions.}}}
 \author{Vahid Ahmadi\thanks{Research Associate at PolicyEngine. Email: \href{mailto:vahid@policyengine.org}{vahid@policyengine.org}} \\[0.4cm] \normalsize PolicyEngine}
-\date{{\footnotesize\textcolor{red}{Preliminary and Incomplete. Comments are welcome.}} \\ \vspace{0.3cm} \small \ifcase\month\or January\or February\or March\or April\or May\or June\or July\or August\or September\or October\or November\or December\fi\ \the\year}
+\date{{\small\textcolor{red}{Preliminary and Incomplete. Comments are welcome.}} \\ \vspace{0.3cm} \small \ifcase\month\or January\or February\or March\or April\or May\or June\or July\or August\or September\or October\or November\or December\fi\ \the\year}
 
 % Main document
 %------------------------------------------------------
@@ -15,7 +15,7 @@
 \maketitle
 
 \begin{abstract}
-I present an open, reproducible firm-level microsimulation for costing reforms to the UK VAT registration threshold, released in full---including its synthetic data generator---as open-source code. The threshold is a \emph{notch}: once turnover crosses \pounds85{,}000, 20\% VAT falls due on a firm's entire turnover rather than only the excess, creating an incentive to bunch below. I build synthetic firm-level records from ONS business-structure counts (sector $\times$ turnover band $\times$ employment), calibrate them to HMRC VAT statistics for 2023--24, and use them to do three things on a common static basis. First, I cost threshold-location reforms and schedule reforms (a graduated taper and a reduced-rate band) statically; the static costing reproduces HMRC's published figure for the \pounds85{,}000 to \pounds90{,}000 reform ($-$\pounds175m versus $-$\pounds185m in 2025--26). Second, I document firm bunching at the \pounds85{,}000 notch, estimating a bunching ratio of $b\approx0.060$, consistent with \citet{liuetal2021} once normalised; a bunching-implied turnover elasticity of $\approx0.45$ follows from the notch-width relation, which I report descriptively and with caveats. Third, I characterise the notch's distortion through its \emph{dominated region}---the exact, model-free range of turnover above the threshold in which no firm locates---which is \pounds21{,}250 wide (\pounds85{,}000--\pounds106{,}250), and show how each reform changes it. I treat the model as a turnover-tax-notch approximation for consumer-facing, limited-reclaim firms, abstracting from input reclaim and voluntary registration; here the notch model supplies the exact dominated region rather than a behavioural pricing engine. For each reform I report the static cost together with the portion of the dominated region it removes: raising the threshold to \pounds100k ($-$\pounds374m) relocates the \pounds21{,}250 zone without removing it; a banded 10\% reduced rate ($-$\pounds357m) shrinks it to \pounds9{,}444; a 15\% reduced rate ($-$\pounds178m) shrinks it to \pounds15{,}000; and a graduated taper over $[\pounds85\text{k},\pounds105\text{k}]$ ($-$\pounds335m) removes it. Behavioural firm re-optimisation under counterfactual schedules is left to future work.
+I present an open, reproducible firm-level microsimulation for costing UK VAT registration-threshold reforms, released with its synthetic-data generator. The threshold is a \emph{notch}: once turnover crosses \pounds85{,}000, 20\% VAT falls due on a firm's whole turnover, not the excess. I build synthetic firm records from ONS counts, calibrate them to 2023--24 HMRC statistics, and cost \emph{level}, \emph{shape} (a taper) and \emph{rate} (a reduced-rate band) reforms statically on a common basis, reproducing HMRC's \pounds85{,}000-to-\pounds90{,}000 costing within \pounds10m. I characterise the notch by its \emph{dominated region}---the exact \pounds21{,}250 band above the threshold in which no firm locates---and how each reform changes it: raising it (to \pounds100{,}000, $-$\pounds518m) relocates it, a reduced rate shrinks it, a taper removes it. I price level and rate reforms behaviourally, conditional on an assumed elasticity, as a sensitivity range nesting the static cost. A placebo shows the synthetic bunching is a calibration artefact, not behaviour.
 \end{abstract}
 
 \vspace{0.3cm}
@@ -31,11 +31,14 @@ I present an open, reproducible firm-level microsimulation for costing reforms t
 \input{Sections/static}
 \input{Sections/bunching}
 \input{Sections/model}
+\input{Sections/behavioural}
 % Deferred to future work (kept in paper/future/): the structural calibration
-% (calibration.tex), the behavioural notch model + forward solve
-% (notch_model_dynamic.tex), the reform-menu/ranking results (results.tex), and
+% (calibration.tex), the reform-menu/ranking results (results.tex), and
 % the smooth-notch appendix (a_notch.tex). The paper keeps the open microsim,
-% static costing, bunching evidence, and the exact dominated region.
+% static costing, bunching evidence, the exact dominated region, and the
+% conditional behavioural costing (Sections/behavioural). What remains for
+% future work is identifying the turnover elasticity from administrative
+% micro-data, since on the synthetic data it is assumed, not identified.
 % \input{Sections/calibration}
 % \input{Sections/results}
 \input{Sections/conclusion}

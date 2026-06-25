@@ -84,7 +84,7 @@ def plot_hmrc_comparison(model: StaticVATModel) -> None:
 
     fig, ax = plt.subplots(figsize=(10, 6))
     b1 = ax.bar(x - w / 2, df["hmrc_impact_m"], w, label="HMRC", color=HMRC_COLOR, zorder=3)
-    b2 = ax.bar(x + w / 2, df["policyengine_impact_m"], w, label="PolicyEngine",
+    b2 = ax.bar(x + w / 2, df["policyengine_impact_m"], w, label="Model estimate",
                 color=PRIMARY, zorder=3)
     ax.axhline(0, color="black", linewidth=0.8, zorder=2)
     ax.set_ylim(-265, 110)

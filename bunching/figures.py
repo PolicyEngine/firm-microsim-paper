@@ -55,7 +55,7 @@ def plot_bunching(est: BunchingEstimator, vintage: str) -> None:
     ax.plot(centres[m], f_obs[m] / 1000.0, color=PRIMARY, marker="o",
             markersize=5, linewidth=1.8, zorder=3, label="Observed")
     ax.plot(centres[m], f_cf[m] / 1000.0, color=CF_COLOR, linestyle="--",
-            linewidth=2.2, zorder=4, label="No-bunching scenario")
+            linewidth=2.2, zorder=4, label="No-bunching counterfactual")
     # Registration-threshold marker, styled like the OBR figure (Fig. 2):
     # grey dotted line + horizontal grey label at top.
     ax.axvline(t_star, color="0.35", lw=1, ls=":", zorder=5)
