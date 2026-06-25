@@ -37,7 +37,12 @@ from .model import (
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="firm-microsim-dynamic")
-    ap.add_argument("--vintage", default="2023-24")
+    ap.add_argument(
+        "--vintage",
+        choices=["2023-24"],
+        default="2023-24",
+        help="Data vintage for the £85k notch baseline; only 2023-24 is supported.",
+    )
     ap.add_argument("--elasticity", type=float, default=None,
                     help="single elasticity; default sweeps {0.05,0.17,0.32}")
     ap.add_argument("--reform",
