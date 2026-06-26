@@ -64,16 +64,11 @@ class ValidationReport:
 
 
 def _accuracy(synthetic: float, target: float) -> float:
-    """Accuracy = 1 - relative absolute error (with sign-aware handling)."""
+    """Clipped accuracy: ``max(0, 1 - relative absolute error)``."""
     if abs(target) < 1e-9:
         return 1.0 if abs(synthetic) < 1e-9 else 0.0
-    if target > 0 and synthetic > 0:
-        return 1 - min(abs(synthetic - target) / target, 1.0)
-    if target < 0 and synthetic < 0:
-        return 1 - min(abs(synthetic - target) / abs(target), 1.0)
-    if target > 0:  # simple positive target
-        return 1 - abs(synthetic - target) / target
-    return max(0.0, 1 - abs(synthetic - target) / max(abs(target), 1.0))
+    relative_error = abs(synthetic - target) / abs(target)
+    return max(0.0, 1.0 - relative_error)
 
 
 def _hmrc_band_name(turnover_k: float, threshold: float) -> str:

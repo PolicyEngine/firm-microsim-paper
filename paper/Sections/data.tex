@@ -40,25 +40,32 @@ loss with per-target importance weights $\lambda_k$,
 \[
   L(\theta) \;=\; \frac{1}{K}\sum_{k} \lambda_k
     \min\!\Big\{ \big(\widehat{T}_k/T_k - 1\big)^2,\; \big(T_k/\widehat{T}_k - 1\big)^2 \Big\}
-    \;+\; \alpha \sum_i \lvert \theta_i \rvert ,
+    \;+\; \frac{\alpha}{N}\sum_i \lvert \theta_i \rvert ,
 \]
-the final term an $L_1$ penalty on the log-weights. The targets are the HMRC
-VAT-registered counts by turnover band and by sector, the HMRC net VAT liability
-by band and by sector, and the ONS employment-band totals; turnover-band targets
-carry the largest $\lambda_k$, followed by VAT liability by band. The problem is
+the final term a mean absolute penalty on the log-weights. The targets are the
+HMRC VAT-registered counts by turnover band and by sector, the HMRC net VAT
+liability by turnover band, and the ONS employment-band totals; turnover-band
+targets carry the largest $\lambda_k$, followed by VAT liability by band. VAT
+liability by sector is reported as an informational diagnostic but excluded from
+the optimizer, because the current generator fixes firm inputs rather than
+calibrating the input/output tax structure by sector. The problem is
 solved by gradient descent, and the symmetric loss keeps targets of very different
 magnitudes on a common scale.
 
 A firm is registered with certainty
 when its turnover exceeds the threshold $T^{*}$. Below the threshold it registers
-voluntarily with probability $r = M / n_{<}$, the HMRC count of registered firms
-in the \pounds1--threshold band, $M$, divided by the synthetic number of
-below-threshold firms, $n_{<}$, so the synthetic voluntary-registration rate
-matches the HMRC aggregate. The resulting dataset comprises approximately
+voluntarily with probability $r = M / n_{<}$, where $M$ is the HMRC count of
+registered firms in the \pounds1--threshold band and $n_{<}$ is the unweighted
+number of synthetic below-threshold firm rows. This sets the expected row-level
+voluntary-registration rate; I do not treat below-threshold voluntary
+registration as a separate weighted calibration target. The resulting dataset
+comprises approximately
 $2.94$~million firm records, weighted to represent roughly $2.5$~million UK firms;
 checked for consistency against the official sources along every calibrated
-dimension, it attains an overall calibration accuracy of about $90\%$, reproducing
-the aggregates closely while supplying the firm-level resolution they lack.
+dimension, it attains an overall calibration accuracy of about $90\%$. This
+headline is the mean of five calibrated-dimension scores, each clipped at zero
+as $\max\{0,1-\lvert \widehat{T}-T\rvert/\lvert T\rvert\}$; it excludes the
+VAT-liability-by-sector diagnostic described above.
 
 \paragraph{The registration threshold in the data.} My data are for the 2023--24
 year, in which the statutory threshold was \pounds85{,}000. The firm density steps

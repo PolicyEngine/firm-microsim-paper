@@ -18,6 +18,17 @@ $\sim\!90\%$ calibration accuracy, and the close match of the static
 consistency checks on the pipeline rather than out-of-sample tests of firm
 behaviour.
 
+The reported calibration score is a bounded summary statistic. For each
+dimension I compute
+\(\max\{0,1-\lvert \widehat{T}-T\rvert/\lvert T\rvert\}\), so a dimension missed
+by more than 100 percent receives zero rather than a negative score. The headline
+``overall'' number is the unweighted mean of the five dimensions used as
+calibration targets---HMRC turnover bands, ONS population, employment bands,
+HMRC sector counts, and VAT liability by turnover band. VAT liability by sector
+is excluded from that mean and reported separately as an informational
+diagnostic, because the current generator does not calibrate sector-specific
+input/output VAT structure.
+
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
 counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial
 regression on the observed density outside a manipulation window around the
