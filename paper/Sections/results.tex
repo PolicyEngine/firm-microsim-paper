@@ -68,25 +68,22 @@ from~\eqref{eq:dominated} and the firm's problem~\eqref{eq:firm-problem}, with n
 dependence on the smoothing parameter $k$, the returns-to-scale parameter
 $\alpha$, or any simulated re-optimisation.
 
-\paragraph{Revenue.} Against a baseline VAT base of \pounds179.3bn (the
-\pounds85{,}000-notch year), the taper reduces revenue by \pounds335m on a
+\paragraph{Revenue.} Against a baseline VAT base of \pounds183.6bn (the
+\pounds85{,}000-notch year), the taper reduces revenue by \pounds336m on a
 \emph{static} basis (firms in the band remit a tapered rather than a full rate,
 turnover held fixed). I treat this static figure as the robust object. The
-behavioural estimate---a larger loss of about \pounds889m once firms re-optimise
-and expand into the low-rate band---is reported only as a directional indication:
-it is sensitive to the smoothing parameter $k$ and the re-optimisation window and
-I do not headline it. The reform affects about $227{,}000$ firms, of which
-roughly $126{,}000$ ($125{,}608$ weighted) face a lower effective rate by sitting
-in the \pounds85{,}000--\pounds105{,}000 band.
+iso-elastic intensive-margin simulator gives a lower-bound behavioural cost of
+about \pounds156m at the headline $e=0.17$, but this omits the taper's
+marginal-rate channel and is not a full policy estimate. The reform affects about
+$123{,}100$ weighted firms sitting in the \pounds85{,}000--\pounds105{,}000 band.
 
-\paragraph{Sensitivity.} The revenue figures turn on the taper schedule and
-turnover, not on the smoothed notch baseline, and are stable across $k$ and the
-window. The \emph{simulated} change in near-threshold mass is not: the model's
-notch-baseline bunching depends on $k$ (a steep $k$ concentrates a spike the taper
-then cuts; at my calibrated $k=0.001$ the simulated notch barely bunches, so the
-sign of the implied change reverses). I therefore rest the distributional
-argument on the exact, $k$-free analytic mechanism above rather than on a
-simulated magnitude.
+\paragraph{Sensitivity.} The static revenue figure turns only on the taper schedule
+and observed turnover. The behavioural taper number is conditional on the assumed
+elasticity and deliberately not headlined: the iso-elastic model captures the
+base-broadening from a lower average rate but not the downward response induced by
+the taper's rising marginal rate. I therefore rest the distributional argument on
+the exact, model-free analytic mechanism above rather than on a simulated
+magnitude.
 
 \begin{figure}[htbp]
 \centering
@@ -113,14 +110,14 @@ retained above \pounds105{,}000. As with the taper, I re-solve each firm's
 problem under the new banded schedule and compare with the \pounds85{,}000-notch
 baseline.
 
-\paragraph{Revenue.} Against the same \pounds179.3bn baseline, the banded reduced
-rate reduces revenue, \emph{statically}, by \pounds357m at
-$\tau_{\text{low}}=10\%$ and by \pounds178m at $\tau_{\text{low}}=15\%$, with
-about $125{,}600$ firms in the band facing the lower rate. I report these static
-figures as the robust object. The behavioural estimates are fragile to $k$ and the
-window---the apparent behavioural \emph{gain} at $\tau_{\text{low}}=10\%$ (around
-\(+\)\pounds723m) is an artefact of the bounded re-optimisation and the secondary
-notch below, not a robust prediction---so I mention them only as directional.
+\paragraph{Revenue.} Against the same \pounds183.6bn baseline, the banded reduced
+rate reduces revenue, \emph{statically}, by \pounds343m at
+$\tau_{\text{low}}=10\%$ and by \pounds171m at $\tau_{\text{low}}=15\%$, with
+about $123{,}100$ firms in the band facing the lower rate. I report these static
+figures as the robust object. Conditional on the headline elasticity $e=0.17$, the
+iso-elastic intensive-margin simulator gives behavioural costs of \pounds273m and
+\pounds135m, respectively; these are reported as sensitivity results rather than
+identified estimates.
 
 \paragraph{Distortion case (analytic, robust).} The notch's discrete penalty
 $\tau T^{*}$ and dominated region $a=T^{*}\tau/(1-\tau)$
@@ -156,19 +153,19 @@ optimally locates there, so its width is a clean, $k$-free,
 $\alpha$-free index of the discrete distortion the notch imposes. For each reform
 I ask how much of this zone it removes. Raising the threshold to \pounds100{,}000
 simply \emph{relocates} the same \pounds21{,}250 zone to the new cutoff, removing
-essentially none of it at a static cost of \pounds518m. A reduced rate
+essentially none of it at a static cost of \pounds508m. A reduced rate
 \emph{shrinks} the zone: to \pounds15{,}000 at $15\%$ (removing \pounds6{,}250)
 and to \pounds9{,}444 at $10\%$ (removing \pounds11{,}806). The graduated taper
 \emph{eliminates} it: a continuous schedule has no dominated region, so the whole
-\pounds21{,}250 zone is removed---and at a static cost (\pounds335m) below that of
+\pounds21{,}250 zone is removed---and at a static cost (\pounds336m) below that of
 the threshold move.
 
 \begin{table}[htbp]
 \centering
 \caption{Reform-menu comparison: static, behaviour-free revenue effect of the four
 reforms at comparable scale, relative to the \pounds85{,}000-notch baseline (VAT
-base \pounds179.3bn, 2023--24 data year). All four reforms are costed against
-this common \pounds85{,}000-notch / \pounds179.3bn base. Each reform pulls a different lever---location,
+base \pounds183.6bn, 2023--24 data year). All four reforms are costed against
+this common \pounds85{,}000-notch / \pounds183.6bn base. Each reform pulls a different lever---location,
 schedule shape, or rate. Figures are static; behavioural estimates are reported
 and caveated as directional in the relevant subsections.}
 \label{tab:reform_menu}
@@ -176,10 +173,10 @@ and caveated as directional in the relevant subsections.}
 \toprule
 Reform & Lever & Static revenue (\pounds m) \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-518$ \\
-Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-335$ \\
-Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-357$ \\
-Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-178$ \\
+Raise threshold to \pounds100{,}000 & Location & $-508$ \\
+Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-336$ \\
+Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-343$ \\
+Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-171$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -200,10 +197,10 @@ to most distortion removed.}
 \toprule
 Reform & Lever & Static rev. (\pounds m) & Dominated region & Distortion removed \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-518$ & \pounds21{,}250 (relocated) & $\approx\pounds0$ \\
-Reduced rate $15\%$ & Rate & $-178$ & \pounds15{,}000 & \pounds6{,}250 \\
-Reduced rate $10\%$ & Rate & $-357$ & \pounds9{,}444 & \pounds11{,}806 \\
-Graduated taper & Shape & $-335$ & \pounds0 (no notch) & \pounds21{,}250 (whole zone) \\
+Raise threshold to \pounds100{,}000 & Location & $-508$ & \pounds21{,}250 (relocated) & $\approx\pounds0$ \\
+Reduced rate $15\%$ & Rate & $-171$ & \pounds15{,}000 & \pounds6{,}250 \\
+Reduced rate $10\%$ & Rate & $-343$ & \pounds9{,}444 & \pounds11{,}806 \\
+Graduated taper & Shape & $-336$ & \pounds0 (no notch) & \pounds21{,}250 (whole zone) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -219,8 +216,8 @@ the taper but reintroducing a smaller secondary notch at the band top that the
 taper's continuous phase-in avoids.
 
 The cross-check in Table~\ref{tab:reform_menu} is reassuring: the flat-$10\%$ band
-(\(-\)\pounds357m) costs almost exactly what the taper costs
-(\(-\)\pounds335m), because a $0\%\to20\%$ linear phase-in averages roughly $10\%$
+(\(-\)\pounds343m) costs almost exactly what the taper costs
+(\(-\)\pounds336m), because a $0\%\to20\%$ linear phase-in averages roughly $10\%$
 over the band, so two differently-shaped schedules impose nearly the same average
 burden. I label the efficiency comparison honestly: it is a
 deadweight/misallocation ranking based on the dominated-region distortion, which is

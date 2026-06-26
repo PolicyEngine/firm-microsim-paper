@@ -1,8 +1,8 @@
-"""CLI: ``python -m bunching`` — regenerate the bunching figure and print estimates.
+"""CLI: ``firm-microsim-bunching`` — regenerate the bunching figure and print estimates.
 
 No arguments: regenerate the figure for both vintages and print the reduced-form
 estimates (with bootstrap SEs). The structural notch model lives in the ``notch``
-package (``python -m notch``).
+package (``firm-microsim-notch``).
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from .model import BunchingEstimator
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="python -m bunching",
+        prog="firm-microsim-bunching",
         description="Regenerate the bunching figure and print estimates.",
     )
     parser.add_argument("--vintage", action="append", choices=["2023-24", "2024-25"],

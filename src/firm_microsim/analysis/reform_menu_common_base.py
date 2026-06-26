@@ -6,19 +6,13 @@ Reform-menu costs on a SINGLE COMMON BASE (tab:schedule_costs).
 Puts the ENTIRE schedule-reform menu on the SAME basis:
     * data year   : 2023-24 microdata, UNAGED
     * threshold   : the GBP85,000 notch
-    * VAT base    : GBP179.3bn (weighted sum of liabilities over firms >= 85k)
+    * VAT base    : computed from the repo-generated 2023-24 synthetic data
 
-Four reforms, all anchored at GBP85k / GBP179.3bn:
+Four reforms, all anchored at the repo-generated GBP85k baseline:
     1. Raise threshold to GBP100,000          (LOCATION)   -- recomputed here
-    2. Graduated taper [85k, 105k]            (SHAPE)      -- from taper_reform.py
-    3. Banded reduced rate 10% [85k, 105k]    (RATE)       -- from rate_reform.py
-    4. Banded reduced rate 15% [85k, 105k]    (RATE)       -- from rate_reform.py
-
-The taper / reduced-rate static numbers are already on the GBP85k/GBP179.3bn
-unaged base (they read the same productivity dataset and difference against the
-85k registered base). This script verifies the base and firm-in-band count, and
-RECOMPUTES the threshold-relocation reform as GBP85k -> GBP100k on the SAME
-base, replacing the old GBP90k -> GBP100k aged-to-2025-26 figure (-374m).
+    2. Graduated taper [85k, 105k]            (SHAPE)      -- recomputed here
+    3. Banded reduced rate 10% [85k, 105k]    (RATE)       -- recomputed here
+    4. Banded reduced rate 15% [85k, 105k]    (RATE)       -- recomputed here
 
 Two costings of the relocation are reported:
     (A) DIRECT band-sum: revenue lost = sum of weighted liabilities of firms
@@ -34,25 +28,40 @@ Two costings of the relocation are reported:
 
 We adopt (A) as the headline relocation figure for the common-base menu.
 
-Run:  python3 analysis/reform_menu_common_base.py
+Run:  firm-microsim-reform-menu
 Writes: results/reform_menu_common_base.txt
 """
 from __future__ import annotations
 
-import os
+import argparse
+
 import numpy as np
 import pandas as pd
 
-# --- locate the recovered-productivity dataset (same as taper/rate scripts) ---
+from firm_microsim.config import REPO_ROOT, RESULTS_DIR, SYNTHETIC_DATA_DIR
+from firm_microsim.dynamic.model import E_HEADLINE, build_reforms, reform_revenue
+
 DATA_CANDIDATES = [
-    "/Users/janansadeqian/PolicyEngine_VATLab/analysis/synthetic_firms_with_productivity.csv",
-    "/Users/janansadeqian/uk-vatlab/analysis/synthetic_firms_with_productivity.csv",
+    SYNTHETIC_DATA_DIR / "synthetic_firms_2023-24.csv",
 ]
-OUT = "/Users/janansadeqian/firm-microsim-paper/results/reform_menu_common_base.txt"
+OUT = RESULTS_DIR / "reform_menu_common_base.txt"
 
 T_STAR = 85000.0          # GBP85k notch baseline (common base)
 T_NEW = 100000.0          # raise-to threshold
 BAND_TOP = 105000.0       # taper / reduced-rate band top
+
+TABLE_LABELS = {
+    "raise100k": "Raise threshold to GBP100,000",
+    "taper": "Graduated taper [85k,105k]",
+    "rate10": "Reduced rate 10% [85k,105k]",
+    "rate15": "Reduced rate 15% [85k,105k]",
+}
+LEVERS = {
+    "raise100k": "Location",
+    "taper": "Shape (phase-in)",
+    "rate10": "Rate (step)",
+    "rate15": "Rate (step)",
+}
 
 
 def smooth_counterfactual_release(tk_k, liab_pounds, w, baseline_k, new_k,
@@ -75,26 +84,50 @@ def smooth_counterfactual_release(tk_k, liab_pounds, w, baseline_k, new_k,
     return -cf_liab[band].sum(), -cf_firms[band].sum()
 
 
+def display_path(path):
+    """Return a stable repo-relative path when possible."""
+    try:
+        return path.relative_to(REPO_ROOT)
+    except ValueError:
+        return path
+
+
 def main():
-    data = next((p for p in DATA_CANDIDATES if os.path.exists(p)), None)
+    data = next((p for p in DATA_CANDIDATES if p.exists()), None)
     if data is None:
-        raise FileNotFoundError("synthetic_firms_with_productivity.csv not found")
+        raise FileNotFoundError(
+            "synthetic_firms_2023-24.csv not found - generate it first with:\n"
+            "  firm-microsim --vintage 2023-24 --output synthetic_firms_2023-24.csv"
+        )
 
     df = pd.read_csv(data, usecols=["annual_turnover_k", "vat_liability_k", "weight"])
     tk = df["annual_turnover_k"].to_numpy()          # GBP thousand
     t = tk * 1000.0                                   # GBP
     liab = df["vat_liability_k"].to_numpy() * 1000.0  # GBP
     w = df["weight"].to_numpy()
+    reform_df = pd.DataFrame({"turnover": t, "liab": liab, "weight": w})
 
     # --- verify the common base ------------------------------------------
     reg = t >= T_STAR
     base_bn = (liab[reg] * w[reg]).sum() / 1e9
     firms_band_85_105 = w[(t >= T_STAR) & (t < BAND_TOP)].sum()
 
+    # --- Compute every static reform through the shared dynamic schedule code.
+    static_rows = {}
+    for key, (schedule, _label) in build_reforms().items():
+        result = reform_revenue(reform_df, schedule, E_HEADLINE, behavioural=False)
+        static_rows[key] = {
+            "result": result,
+            "cost_m": result["d_rev"] / 1e6,
+            "firms_k": -result["n_affected"] / 1000.0,
+        }
+
     # --- (A) DIRECT relocation 85k -> 100k -------------------------------
     rel_band = (t >= T_STAR) & (t < T_NEW)
     rev_direct_m = -(liab[rel_band] * w[rel_band]).sum() / 1e6
     firms_direct_k = -w[rel_band].sum() / 1000.0
+    if abs(rev_direct_m - static_rows["raise100k"]["cost_m"]) > 1e-6:
+        raise AssertionError("raise-to-100k direct sum and shared static cost diverged")
 
     # --- (B) SMOOTH counterfactual relocation 85k -> 100k ----------------
     rev_smooth, firms_smooth = smooth_counterfactual_release(
@@ -110,36 +143,33 @@ def main():
     p("REFORM MENU ON A SINGLE COMMON BASE  (tab:schedule_costs)")
     p("Base: GBP85k notch, 2023-24 microdata, UNAGED")
     p("=" * 72)
-    p(f"Dataset            : {data}")
-    p(f"VAT base (>=85k)   : GBP {base_bn:.3f} bn   (target ~GBP179.3bn)")
-    p(f"Firms in [85k,105k): {firms_band_85_105:,.0f}   (~125,600)")
+    p(f"Dataset            : {display_path(data)}")
+    p(f"VAT base (>=85k)   : GBP {base_bn:.3f} bn")
+    p(f"Firms in [85k,105k): {firms_band_85_105:,.0f}")
     p("")
     p("--- Threshold relocation GBP85k -> GBP100k (recomputed) -------------")
     p(f"  (A) DIRECT band-sum [85k,100k) :  {rev_direct_m:+.1f} m   "
       f"firms {firms_direct_k:+.1f} (000s)")
-    p(f"      as % of GBP179.3bn base    :  {pct_direct:+.3f}%")
+    p(f"      as % of VAT base           :  {pct_direct:+.3f}%")
     p(f"  (B) SMOOTH counterfactual      :  {rev_smooth_m:+.1f} m   "
       f"firms {firms_smooth_k:+.1f} (000s)")
     p("  HEADLINE (adopt A)             :  "
       f"{rev_direct_m:+.0f} m   firms {firms_direct_k:+.1f} (000s)")
     p("")
-    p("--- Schedule reforms (verified on the SAME GBP85k/GBP179.3bn base) --")
-    p("  Graduated taper [85k,105k]     :  -335 m   "
-      f"(125,608 firms lower rate)   [taper_reform.py: static_change_m=-335.2]")
-    p("  Reduced rate 10% [85k,105k]    :  -357 m   "
-      f"(125,608 firms)              [rate_reform.py]")
-    p("  Reduced rate 15% [85k,105k]    :  -178 m   "
-      f"(125,608 firms)              [rate_reform.py]")
+    p("--- Schedule reforms (computed on the SAME repo-generated base) -----")
+    for key in ["taper", "rate10", "rate15"]:
+        row = static_rows[key]
+        p(f"  {TABLE_LABELS[key]:<33}:  {row['cost_m']:+.1f} m   "
+          f"affected firms {row['firms_k']:+.1f} (000s)")
     p("")
     p("=" * 72)
-    p("CORRECTED tab:schedule_costs  (all on GBP85k / GBP179.3bn, 2023-24 unaged)")
+    p("CORRECTED tab:schedule_costs  (repo-generated GBP85k, 2023-24 unaged)")
     p("=" * 72)
     p(f"{'Reform':<42}{'Lever':<18}{'Static (GBPm)':>14}")
     p("-" * 74)
-    p(f"{'Raise threshold to GBP100,000':<42}{'Location':<18}{round(rev_direct_m):>14d}")
-    p(f"{'Graduated taper [85k,105k]':<42}{'Shape (phase-in)':<18}{-335:>14d}")
-    p(f"{'Reduced rate 10% [85k,105k]':<42}{'Rate (step)':<18}{-357:>14d}")
-    p(f"{'Reduced rate 15% [85k,105k]':<42}{'Rate (step)':<18}{-178:>14d}")
+    for key in ["raise100k", "taper", "rate10", "rate15"]:
+        p(f"{TABLE_LABELS[key]:<42}{LEVERS[key]:<18}"
+          f"{round(static_rows[key]['cost_m']):>14d}")
     p("=" * 72)
     p("")
     p("Firm-in-band counts:")
@@ -148,11 +178,17 @@ def main():
 
     text = "\n".join(lines)
     print(text)
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, "w") as f:
-        f.write(text + "\n")
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(text + "\n")
     print(f"\nWrote {OUT}")
 
 
-if __name__ == "__main__":
+def cli(argv: list[str] | None = None) -> None:
+    """Console entry point."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args(argv)
     main()
+
+
+if __name__ == "__main__":
+    cli()

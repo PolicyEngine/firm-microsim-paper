@@ -16,6 +16,8 @@ Run ``python -m firm_microsim.figures`` to regenerate all of them.
 
 from __future__ import annotations
 
+import argparse
+
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -184,5 +186,12 @@ def generate_all() -> None:
     print("  done.")
 
 
-if __name__ == "__main__":
+def main(argv: list[str] | None = None) -> None:
+    """Console entry point."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args(argv)
     generate_all()
+
+
+if __name__ == "__main__":
+    main()

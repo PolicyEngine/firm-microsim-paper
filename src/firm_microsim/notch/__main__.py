@@ -1,4 +1,4 @@
-"""CLI: ``python -m notch`` — regenerate the notch-model figure and print the summary."""
+"""CLI: ``firm-microsim-notch`` — regenerate the notch-model figure and print the summary."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from .model import NotchModel
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="python -m notch",
+        prog="firm-microsim-notch",
         description="Regenerate the structural notch-model figure and print its summary.",
     )
     parser.add_argument("--vintage", action="append", choices=["2023-24", "2024-25"],

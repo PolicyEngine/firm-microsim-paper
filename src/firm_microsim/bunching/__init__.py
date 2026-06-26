@@ -1,9 +1,9 @@
 """VAT-threshold bunching: reduced-form excess-mass estimator.
 
 Reproduces the paper's reduced-form bunching results on the synthetic firm
-population. The structural notch model lives in the ``notch`` package.
+population. The structural notch model lives in ``firm_microsim.notch``.
 
-Run ``python -m bunching`` to regenerate the bunching figure and print the
+Run ``firm-microsim-bunching`` to regenerate the bunching figure and print the
 estimates.
 """
 

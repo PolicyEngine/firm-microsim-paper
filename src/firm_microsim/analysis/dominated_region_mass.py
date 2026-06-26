@@ -16,24 +16,18 @@ reform-shrunk bands at lower headline rates (15% -> width £15,000, 10% ->
 width £9,444), and sanity-check the counterfactual band mass against the paper's
 excess-mass E and displaced share Pi recovered from ``bunching/model.py``.
 
-Run:  python analysis/dominated_region_mass.py
+Run:  firm-microsim-dominated-region
 Out:  results/dominated_region_mass.txt
 """
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
+import argparse
 
 import numpy as np
 
-# Make the repo root importable so ``notch`` / ``bunching`` resolve regardless
-# of the working directory the script is launched from.
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
 # Reuse the authoritative model code so definitions never drift.
-from notch.model import NotchModel, TAU
-from bunching.model import (
+from firm_microsim.bunching.model import (
     BunchingEstimator,
     BIN_WIDTH,
     bin_density,
@@ -41,9 +35,11 @@ from bunching.model import (
     DEFAULT_DEGREE,
     DEFAULT_WINDOW,
 )
+from firm_microsim.config import RESULTS_DIR
+from firm_microsim.notch.model import NotchModel, TAU
 
 VINTAGE = "2023-24"          # the £85k baseline used by the paper
-RESULTS = Path(__file__).resolve().parents[1] / "results" / "dominated_region_mass.txt"
+RESULTS = RESULTS_DIR / "dominated_region_mass.txt"
 
 # Headline-rate variants and the dominated-region width each implies:
 #   a(tau) = T* * tau / (1 - tau)
@@ -190,7 +186,7 @@ def main() -> None:
     W(f"  total observed weighted mass on [{est.firms['annual_turnover_k'].min():.0f},"
       f"{est.firms['annual_turnover_k'].max():.0f}] est. range = {total_obs_mass:,.0f}")
     W("")
-    W(f"script: analysis/dominated_region_mass.py")
+    W("script: firm-microsim-dominated-region")
     text = "\n".join(lines)
 
     RESULTS.parent.mkdir(parents=True, exist_ok=True)
@@ -199,5 +195,12 @@ def main() -> None:
     print(f"\n[written] {RESULTS}")
 
 
-if __name__ == "__main__":
+def cli(argv: list[str] | None = None) -> None:
+    """Console entry point."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args(argv)
     main()
+
+
+if __name__ == "__main__":
+    cli()

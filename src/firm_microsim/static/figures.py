@@ -8,7 +8,7 @@ captions go in LaTeX), reusing the shared house-style palette and helpers:
     * revenue_impact_2025_26.png       — static revenue change vs threshold.
     * firms_impact_2025_26.png         — change in VAT-paying firms vs threshold.
 
-Run ``python -m static`` to regenerate all three.
+Run ``python -m firm_microsim.static`` to regenerate all three.
 """
 
 from __future__ import annotations

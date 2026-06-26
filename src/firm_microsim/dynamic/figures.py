@@ -2,7 +2,7 @@
 
 Single clean panels (no embedded titles), £k x-axis, teal palette, 300 dpi,
 dashed grid alpha 0.3, top/right spines off — matching ``firm_microsim.figures``.
-PNGs are written to ``dynamic/results/`` and the ones used in the paper are also
+PNGs are written to ``results/`` and the ones used in the paper are also
 copied to ``paper/figures/``.
 """
 
@@ -17,10 +17,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from firm_microsim.config import PAPER_DIR, RESULTS_DIR
+
 from .model import (
     T_STAR,
     TAPER_TOP,
-    TAU_MAX,
     dominated_region_width,
     marginal_buncher,
 )
@@ -32,9 +33,7 @@ ACCENT = "#d62728"
 LABEL_SIZE = 15
 TICK_SIZE = 13
 
-HERE = Path(__file__).resolve().parent
-RESULTS_DIR = HERE / "results"
-PAPER_FIG_DIR = HERE.parent / "paper" / "figures"
+PAPER_FIG_DIR = PAPER_DIR / "figures"
 
 
 def _style_ax(ax) -> None:

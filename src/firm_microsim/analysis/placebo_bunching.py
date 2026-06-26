@@ -42,13 +42,14 @@ Outputs a comparison and writes results/placebo_bunching.txt.
 
 from __future__ import annotations
 
+import argparse
+
 import numpy as np
 import pandas as pd
 
-from bunching.model import (
+from firm_microsim.bunching.model import (
     RANGE_LO,
     RANGE_HI,
-    DEFAULT_WINDOW,
     _run_estimator,
 )
 from firm_microsim.config import SYNTHETIC_DATA_DIR, RESULTS_DIR, VINTAGES
@@ -131,7 +132,6 @@ def build_regenerate_placebo() -> dict:
     estimator on the resulting weighted population.
     """
     import logging
-    from dataclasses import replace
 
     import importlib
     import sys
@@ -207,7 +207,7 @@ def main() -> None:
     db0, da0, st0 = step(t, w)
     db1, da1, st1 = step(t, w_placebo)
     print()
-    print(f"  Density step at £85k (firms per £1k, 80-85 vs 85-90):")
+    print("  Density step at £85k (firms per £1k, 80-85 vs 85-90):")
     print(f"    ACTUAL  : below={db0:,.0f}  above={da0:,.0f}  step={st0:+.1%}")
     print(f"    PLACEBO A: below={db1:,.0f}  above={da1:,.0f}  step={st1:+.1%}")
     print()
@@ -270,5 +270,12 @@ def main() -> None:
     print(f"Wrote {out}")
 
 
-if __name__ == "__main__":
+def cli(argv: list[str] | None = None) -> None:
+    """Console entry point."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args(argv)
     main()
+
+
+if __name__ == "__main__":
+    cli()

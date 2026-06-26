@@ -1,0 +1,30 @@
+Iso-elastic (Kleven-Waseem) dynamic VAT-notch simulator — reform results
+vintage=2023-24  T*=£85,000  tau_max=0.20  taper/band top=£105,000
+Repo-generated baseline registered VAT base = £183.589bn.
+A SINGLE turnover elasticity e governs the response. The behavioural cost is
+now a defensible e-SENSITIVITY RANGE over e in {0.05,0.17,0.32} (headline 0.17).
+Ability n is an accounting anchor recovered under the £85k notch given e; e is
+NOT identified from the synthetic data (see the placebo) — read results as
+CONDITIONAL on the assumed e.
+==============================================================================
+
+Marginal buncher n_H(e) [analytic; £]:
+  e=0.05  n_H=£  112.8k   dy*=£  27.8k
+  e=0.17  n_H=£  127.4k   dy*=£  42.4k
+  e=0.32  n_H=£  143.5k   dy*=£  58.5k
+
+Reform costs (change vs £85k-notch baseline):
+  reform                              static      e=0.05      e=0.17      e=0.32    #reopt(e=0.17)    near-thr Δ
+  Raise threshold to £100k        £    -508m  £    -444m  £    -292m  £    -111m          50,155            +0
+  Graduated taper (£85k→£105k)    £    -336m  £    -273m  £    -156m  £     -52m          54,440            +0
+  Reduced rate 10% (£85k–£105k)   £    -343m  £    -322m  £    -273m  £    -210m          61,187            +0
+  Reduced rate 15% (£85k–£105k)   £    -171m  £    -160m  £    -135m  £    -107m          51,226            +0
+
+Direction: a LARGER e makes every reform CHEAPER (smaller revenue loss). Each
+reform lowers the effective rate on the band, so the iso-elastic response scales
+turnover UP toward the firm's frictionless optimum (y* = y_obs*((1-tau_reform)/(1-tau_base))^e > y_obs), widening the taxed base;
+the larger e, the larger this base-broadening offset to the static cost.
+NOTE: the taper figure captures this intensive base-broadening only; it omits the
+taper's marginal-rate distortion (the iso-elastic cost cannot credibly price the
+downward response a taper induces), so the taper's behavioural cost is a lower
+bound on its true cost. See Section 7 of the paper.

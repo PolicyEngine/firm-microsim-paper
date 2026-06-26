@@ -21,9 +21,25 @@ from typing import Dict
 # ---------------------------------------------------------------------------
 # Repository layout
 # ---------------------------------------------------------------------------
-# config.py lives in   <repo>/firm_microsim/config.py
-# so the repo root is one level up from this file's parent package.
-REPO_ROOT: Path = Path(__file__).resolve().parents[1]
+def _default_repo_root() -> Path:
+    """Return the checkout root that owns data/, results/, and paper/."""
+    if override := os.environ.get("FIRM_MICROSIM_REPO_ROOT"):
+        return Path(override).expanduser()
+
+    # Editable installs keep this file at <repo>/src/firm_microsim/config.py.
+    source_root = Path(__file__).resolve().parents[2]
+    if (source_root / "data" / "processed").exists():
+        return source_root
+
+    # Wheel installs may run from a checked-out paper repo.
+    cwd = Path.cwd()
+    if (cwd / "data" / "processed").exists():
+        return cwd
+
+    return source_root
+
+
+REPO_ROOT: Path = _default_repo_root()
 
 DATA_DIR: Path = REPO_ROOT / "data"
 RAW_DATA_DIR: Path = DATA_DIR / "raw"
@@ -99,9 +115,7 @@ class Config:
 
     # --- The single configurable threshold -------------------------------
     # Defaults to the vintage's threshold; VAT_THRESHOLD env overrides if set.
-    vat_threshold: float = float(
-        os.environ.get("VAT_THRESHOLD", VINTAGES[DEFAULT_VINTAGE]["threshold"])
-    )
+    vat_threshold: float | None = None
 
     # --- Reproducibility / compute ---------------------------------------
     seed: int = 42
@@ -139,6 +153,21 @@ class Config:
     input_files: Dict[str, str] = field(default_factory=lambda: dict(INPUT_FILES))
 
     def __post_init__(self) -> None:
+        if self.data_vintage not in VINTAGES:
+            raise ValueError(
+                f"Unknown vintage {self.data_vintage!r}; "
+                f"choose from {sorted(VINTAGES)}"
+            )
+
+        if self.vat_threshold is None:
+            threshold = float(
+                os.environ.get(
+                    "VAT_THRESHOLD",
+                    VINTAGES[self.data_vintage]["threshold"],
+                )
+            )
+            object.__setattr__(self, "vat_threshold", threshold)
+
         # Keep processed_dir in sync with data_vintage unless the caller
         # passed a bespoke path (e.g. a tmp dir in tests). A path is treated
         # as "canonical" (and thus re-derived from the vintage) if it is the

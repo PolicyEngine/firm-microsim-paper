@@ -17,19 +17,15 @@ firm-microsim-paper/
 │   ├── raw/              # pristine ONS + HMRC source workbooks
 │   ├── processed/        # derived band tables, by vintage (2023-24, 2024-25)
 │   └── synthetic/        # generated synthetic population (regenerated, not committed)
-├── firm_microsim/        # data-generation package (one command: python -m firm_microsim)
-│   ├── config.py         # single source of truth: vintage, VAT threshold, paths, hyperparams
-│   ├── data_loader.py    # load processed ONS + HMRC tables -> calibration targets
-│   ├── calibration.py    # target matrix + torch weight optimisation
+├── src/firm_microsim/    # installable package
+│   ├── config.py         # vintage, VAT threshold, paths, hyperparameters
 │   ├── generate.py       # synthetic-population generator
-│   ├── validate.py       # calibration-accuracy scoring vs official targets
-│   ├── report.py         # calibration report -> results/calibration_accuracy.txt
-│   ├── figures.py        # house-style descriptive figures -> results/
-│   └── __main__.py       # CLI: full data pipeline (all vintages + report + figures)
-├── static/               # static threshold-reform results (one command: python -m static)
-│   ├── model.py          # StaticVATModel: threshold sweep + £85k->£90k anchor reform
-│   ├── figures.py        # static figures -> results/
-│   └── __main__.py       # CLI: python -m static
+│   ├── static/           # static threshold-reform results
+│   ├── bunching/         # reduced-form bunching estimator
+│   ├── notch/            # structural notch diagnostics
+│   ├── dynamic/          # conditional behavioural costing
+│   └── analysis/         # paper table and diagnostic scripts
+├── pyproject.toml        # package metadata, dependencies, console scripts
 ├── results/              # generated figures + calibration_accuracy.txt
 └── requirements.txt
 ```
@@ -66,26 +62,26 @@ with a single switch (see `data/README.md`):
 
 ## Usage
 
-Two commands reproduce everything (both package-style):
+Install the package in editable mode, then run the package entry points:
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+uv venv --python 3.13
+uv pip install -e ".[dev]"
 
-python -m firm_microsim     # ALL DATA: every vintage + calibration report + figures
-python -m static            # ALL STATIC RESULTS: threshold-reform figures
+firm-microsim          # ALL DATA: every vintage + calibration report + figures
+firm-microsim-static   # ALL STATIC RESULTS: threshold-reform figures
 ```
 
-`python -m firm_microsim` with no arguments runs the full data build — it
+`firm-microsim` with no arguments runs the full data build — it
 generates `synthetic_firms_<vintage>.csv` for every vintage, writes
 `results/calibration_accuracy.txt`, and renders the descriptive figures. Single
 steps are still available:
 
 ```bash
-python -m firm_microsim --vintage 2024-25   # one vintage only (£90k)
-python -m firm_microsim --threshold 88 --seed 7 --output my_run.csv
-python -m firm_microsim.report              # calibration report only
-python -m firm_microsim.figures             # descriptive figures only
+firm-microsim --vintage 2024-25             # one vintage only (£90k)
+firm-microsim --threshold 88 --seed 7 --output my_run.csv
+firm-microsim-report                        # calibration report only
+firm-microsim-figures                       # descriptive figures only
 ```
 
 ```python
@@ -106,7 +102,7 @@ validator scores each dimension as `accuracy = 1 − relative error` (0–1).
 Reproduce with:
 
 ```bash
-python -m firm_microsim.report
+firm-microsim-report
 ```
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
@@ -138,7 +134,7 @@ produced by the in-package `firm_microsim.figures` module and generated for
 **both vintages** (two full sets, suffixed `_85k` / `_90k`):
 
 ```bash
-python -m firm_microsim.figures          # regenerate every figure, both vintages
+firm-microsim-figures          # regenerate every figure, both vintages
 ```
 
 `results/` then contains:
@@ -151,7 +147,7 @@ python -m firm_microsim.figures          # regenerate every figure, both vintage
 
 The turnover-distribution figures require the matching synthetic CSV
 (`data/synthetic/synthetic_firms_<vintage>.csv`); generate it first with
-`python -m firm_microsim --vintage <vintage> --output synthetic_firms_<vintage>.csv`.
+`firm-microsim --vintage <vintage> --output synthetic_firms_<vintage>.csv`.
 
 > **Note on ONS counts:** firm-count figures sum the per-SIC rows only — the ONS
 > band tables include a `Total` summary row that must be excluded, or every firm
@@ -159,12 +155,12 @@ The turnover-distribution figures require the matching synthetic CSV
 
 ## Static threshold reform results
 
-The `static/` module costs VAT-threshold reforms mechanically (turnover held
+The `firm_microsim.static` module costs VAT-threshold reforms mechanically (turnover held
 fixed; only registration status changes), reproducing the paper's static
 results. Run:
 
 ```bash
-python -m static          # -> results/{vat_threshold_revenue_impact,revenue_impact_2025_26,firms_impact_2025_26}.png
+firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue_impact_2025_26,firms_impact_2025_26}.png
 ```
 
 - `vat_threshold_revenue_impact.png` — the £85k→£90k anchor reform vs HMRC's

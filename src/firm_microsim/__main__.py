@@ -24,7 +24,7 @@ from .generate import generate
 def build_parser() -> argparse.ArgumentParser:
     """Build the command-line argument parser."""
     parser = argparse.ArgumentParser(
-        prog="python -m firm_microsim",
+        prog="firm-microsim",
         description="Build the synthetic UK firm dataset (ONS + HMRC "
         "calibrated). No args = full pipeline over every vintage + report + "
         "figures; --vintage = a single vintage.",

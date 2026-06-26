@@ -8,7 +8,7 @@ shared house-style palette and helpers. Saved to ``results/``:
 
 This is a mechanism illustration (the model-implied bunching spike + empty
 dominated region overlaid on the observed synthetic density), not a fitted
-overlay. Run ``python -m notch`` to regenerate it.
+overlay. Run ``python -m firm_microsim.notch`` to regenerate it.
 """
 
 from __future__ import annotations
@@ -20,10 +20,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from firm_microsim.figures import (
-    ACCENT,
     LABEL_SIZE,
     PALETTE,
-    PRIMARY,
     TICK_SIZE,
     VINTAGE_REGIME,
     _save,
