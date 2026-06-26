@@ -11,3 +11,13 @@
 
 # Preview build (scaffolding, not the submission)
 main_preview.pdf
+
+# Quarto render output
+out/
+web.qmd
+web.html
+web_files/
+site/
+
+/.quarto/
+**/*.quarto_ipynb

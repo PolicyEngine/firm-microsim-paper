@@ -1,0 +1,11 @@
+---
+title: "A Firm-Level Microsimulation for VAT Policy Analysis"
+author:
+  - name: "Vahid Ahmadi"
+    affiliation: "PolicyEngine"
+bibliography: references.bib
+---
+
+```{=latex}
+\input{body}
+```
