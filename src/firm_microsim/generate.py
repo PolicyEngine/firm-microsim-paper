@@ -15,11 +15,14 @@ population, calibrated to official statistics:
     by band and by sector) and ONS employment-band counts. Turnover bands are
     weighted ~5x; VAT-liability-by-band 2x. A symmetric-relative-error loss
     balances targets across scales. Below-threshold zero/negative-turnover
-    firms are added manually from the HMRC Negative_or_Zero target.
+    firms are added manually from the HMRC Negative_or_Zero target. VAT
+    liability by sector is reported as an informational diagnostic rather than
+    optimized by default because the input/output tax structure is not yet a
+    calibrated target.
 
 VAT registration is then assigned: mandatory above the (single, configurable)
-VAT threshold, plus voluntary below it at a rate calibrated from HMRC's
-£1_to_Threshold count.
+VAT threshold, plus voluntary below it at an unweighted row-level probability
+derived from HMRC's £1_to_Threshold count.
 
 Output: ~2.94M weighted rows summing to ~2.0M firms, written to
 ``data/synthetic/synthetic_firms.csv`` with columns
@@ -238,8 +241,10 @@ def assign_vat_flags(
 ) -> Tensor:
     """Assign VAT registration flags.
 
-    Mandatory above the configurable threshold; voluntary below it at a rate
-    calibrated to HMRC's £1_to_Threshold count.
+    Mandatory above the configurable threshold; voluntary below it at an
+    unweighted row-level rate derived from HMRC's £1_to_Threshold count. The
+    weighted below-threshold voluntary count is not an additional calibration
+    target.
 
     Args:
         turnover_values: Per-firm turnover (£k).
@@ -258,7 +263,7 @@ def assign_vat_flags(
     target_below = float(hmrc_bands["£1_to_Threshold"])
     voluntary_rate = target_below / n_below if n_below > 0 else 0.15
     logger.info(
-        "Voluntary VAT rate: %.3f (target %s / synthetic %s)",
+        "Voluntary VAT row rate: %.3f (target %s / synthetic rows %s)",
         voluntary_rate,
         f"{target_below:,.0f}",
         f"{n_below:,}",

@@ -1,5 +1,9 @@
 Calibration report — synthetic UK firm populations
 
+Accuracy = max(0, 1 - relative absolute error); reported error is
+the clipped complement. Overall averages the five calibrated
+dimensions and excludes the VAT-liability-by-sector diagnostic.
+
 ================================================================
   Vintage 2023-24  |  threshold £85k
 ================================================================

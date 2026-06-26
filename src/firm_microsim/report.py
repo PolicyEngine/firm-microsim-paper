@@ -72,7 +72,13 @@ def _vintage_lines(vintage: str) -> list[str]:
 
 def build_report() -> str:
     """Build the full calibration report for every configured vintage."""
-    lines = ["Calibration report — synthetic UK firm populations"]
+    lines = [
+        "Calibration report — synthetic UK firm populations",
+        "",
+        "Accuracy = max(0, 1 - relative absolute error); reported error is",
+        "the clipped complement. Overall averages the five calibrated",
+        "dimensions and excludes the VAT-liability-by-sector diagnostic.",
+    ]
     produced = 0
     for vintage in VINTAGES:
         block = _vintage_lines(vintage)

@@ -97,8 +97,11 @@ weight, vat_registered`).
 
 ## Calibration accuracy
 
-The population is calibrated to **five** official ONS + HMRC targets; the
-validator scores each dimension as `accuracy = 1 − relative error` (0–1).
+The population is calibrated to **five** official ONS + HMRC target groups; the
+validator scores each dimension as
+`accuracy = max(0, 1 − |synthetic − target| / |target|)`. The displayed error is
+the clipped complement of that score, not a signed relative error. **Overall**
+is the simple mean over the five calibrated dimensions below.
 Reproduce with:
 
 ```bash

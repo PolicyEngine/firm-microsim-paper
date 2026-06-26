@@ -301,10 +301,10 @@ def optimize_weights(
 ) -> Tensor:
     """Optimize per-firm weights to match all targets simultaneously.
 
-    Minimizes a symmetric-relative-error loss with per-target importance
-    weights, Adam, dropout regularization, L1 penalty on log-weights, gradient
-    clipping, and early stopping. Weights are parameterized as ``exp(log_w)``
-    to remain strictly positive.
+    Minimizes a mean symmetric-relative-error loss with per-target importance
+    weights, Adam, dropout regularization, a mean absolute log-weight penalty,
+    gradient clipping, and early stopping. Weights are parameterized as
+    ``exp(log_w)`` to remain strictly positive.
 
     Args:
         config: Run configuration (optimizer hyperparameters).
@@ -345,6 +345,7 @@ def optimize_weights(
 
         weighted_loss = sre_loss * importance
         total_loss = torch.mean(weighted_loss)
+        # Keep the regularizer on the same normalized scale as the target loss.
         total_loss = total_loss + config.l1_reg_coef * torch.mean(torch.abs(log_weights))
 
         total_loss.backward()
@@ -382,7 +383,7 @@ def optimize_weights(
         pred = final_predictions[i].item()
         target = target_values[i].item()
         if target > 0:
-            accuracy = 1 - abs(pred - target) / target
+            accuracy = max(0.0, 1.0 - abs(pred - target) / target)
             logger.info("  %-22s %12.0f vs %12.0f (%.1f%%)", name, pred, target, accuracy * 100)
 
     return final_weights
