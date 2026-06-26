@@ -87,3 +87,12 @@ def test_config_preserves_explicit_threshold_override() -> None:
 
     assert cfg.vat_threshold == 88.0
     assert cfg.processed_dir.name == "2024-25"
+
+
+def test_config_uses_vat_threshold_env_override(monkeypatch) -> None:
+    monkeypatch.setenv("VAT_THRESHOLD", "92.5")
+
+    cfg = Config(data_vintage="2024-25")
+
+    assert cfg.vat_threshold == 92.5
+    assert cfg.processed_dir.name == "2024-25"
