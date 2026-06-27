@@ -84,6 +84,22 @@ def pandoc_latex_to_markdown(latex: str, *, citeproc: bool = False) -> str:
         source_path.unlink(missing_ok=True)
 
 
+def restore_empty_citation_spans(markdown: str) -> str:
+    """Restore citation syntax that Pandoc emits as empty spans in raw HTML."""
+
+    def replace(match: re.Match[str]) -> str:
+        keys = match.group("keys").split()
+        if len(keys) == 1:
+            return f"@{keys[0]}"
+        return "[" + "; ".join(f"@{key}" for key in keys) + "]"
+
+    return re.sub(
+        r'<span class="citation" data-cites="(?P<keys>[^"]+)"></span>',
+        replace,
+        markdown,
+    )
+
+
 def frontmatter_abstract() -> str:
     frontmatter = (PAPER_DIR / "frontmatter.tex").read_text()
     match = re.search(
@@ -99,14 +115,8 @@ def frontmatter_abstract() -> str:
 def body_markdown() -> str:
     latex = expand_inputs((PAPER_DIR / "body.tex").read_text())
     latex = normalize_for_pandoc(latex)
-    body = pandoc_latex_to_markdown(latex, citeproc=True)
-    return re.sub(
-        r"^(?P<fence>:+\s+\{#refs \.references \.csl-bib-body \.hanging-indent\})",
-        "## References\n\n\\g<fence>",
-        body,
-        count=1,
-        flags=re.MULTILINE,
-    )
+    body = pandoc_latex_to_markdown(latex)
+    return restore_empty_citation_spans(body)
 
 
 def main() -> None:
@@ -120,6 +130,8 @@ author:
   - name: "Vahid Ahmadi"
     affiliation: "PolicyEngine"
 bibliography: references.bib
+citeproc: true
+link-citations: true
 format:
   html:
     toc: true
@@ -139,6 +151,11 @@ format:
 **Keywords:** value-added tax, microsimulation, tax notch, policy
 
 {body}
+
+## References
+
+::: {{#refs}}
+:::
 """
     )
 
