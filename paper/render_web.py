@@ -100,6 +100,44 @@ def restore_empty_citation_spans(markdown: str) -> str:
     )
 
 
+def quarto_equation_id(label: str) -> str:
+    """Return a Quarto-compatible equation id for a LaTeX label."""
+
+    return label.replace(":", "-")
+
+
+def normalize_equations(markdown: str) -> str:
+    """Convert LaTeX equation environments to Quarto display equations."""
+
+    def replace_equation(match: re.Match[str]) -> str:
+        body = match.group("body").strip()
+        equation_id = quarto_equation_id(match.group("label"))
+        return f"$$\n{body}\n$$ {{#{equation_id}}}"
+
+    markdown = re.sub(
+        r"\$\$\\begin\{equation\}\s*"
+        r"(?P<body>.*?)"
+        r"\s*\\label\{(?P<label>eq:[^}]+)\}\s*"
+        r"\\end\{equation\}\s*\$\$",
+        replace_equation,
+        markdown,
+        flags=re.DOTALL,
+    )
+
+    markdown = re.sub(
+        r'\[\\\[(?P<label>eq:[^\]]+)\\\]\]\(#(?P=label)\)'
+        r'\{reference-type="eqref" reference="(?P=label)"\}',
+        lambda match: f"@{quarto_equation_id(match.group('label'))}",
+        markdown,
+    )
+    return re.sub(
+        r'<a href="#(?P<label>eq:[^"]+)" data-reference-type="eqref" '
+        r'data-reference="(?P=label)">\[(?P=label)\]</a>',
+        lambda match: f"@{quarto_equation_id(match.group('label'))}",
+        markdown,
+    )
+
+
 def frontmatter_abstract() -> str:
     frontmatter = (PAPER_DIR / "frontmatter.tex").read_text()
     match = re.search(
@@ -116,7 +154,8 @@ def body_markdown() -> str:
     latex = expand_inputs((PAPER_DIR / "body.tex").read_text())
     latex = normalize_for_pandoc(latex)
     body = pandoc_latex_to_markdown(latex)
-    return restore_empty_citation_spans(body)
+    body = restore_empty_citation_spans(body)
+    return normalize_equations(body)
 
 
 def main() -> None:
@@ -136,6 +175,7 @@ format:
   html:
     toc: true
     toc-depth: 3
+    html-math-method: mathjax
     theme: none
     css:
       - pe-tokens.css
