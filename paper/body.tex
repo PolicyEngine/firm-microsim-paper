@@ -1,0 +1,31 @@
+\input{Sections/intro}
+\input{Sections/background}
+% literature folded into the introduction (IJM weaves the literature into the intro);
+% Sections/literature.tex retained in the repo if a standalone review is wanted later.
+% \input{Sections/literature}
+\input{Sections/data}
+\input{Sections/static}
+\input{Sections/bunching}
+\input{Sections/model}
+\input{Sections/behavioural}
+% Deferred to future work (kept in paper/future/): the structural calibration
+% (calibration.tex), the reform-menu/ranking results (results.tex), and
+% the smooth-notch appendix (a_notch.tex). The paper keeps the open microsim,
+% static costing, bunching evidence, the exact dominated region, and the
+% conditional behavioural costing (Sections/behavioural). What remains for
+% future work is identifying the turnover elasticity from administrative
+% micro-data, since on the synthetic data it is assumed, not identified.
+% \input{Sections/calibration}
+% \input{Sections/results}
+\input{Sections/conclusion}
+
+\newpage
+\bibliographystyle{econ}
+{\small \bibliography{references}}
+
+\newpage
+\begin{appendix}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\input{Appendix/appendix}
+\end{appendix}

@@ -1,0 +1,28 @@
+project:
+  type: manuscript
+  output-dir: out
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: none
+    css:
+      - pe-tokens.css
+      - firm-microsim-theme.css
+  pdf:
+    pdf-engine: latexmk
+    pdf-engine-opts:
+      - -lualatex
+      - -interaction=nonstopmode
+      - -halt-on-error
+    template: quarto-template.tex
+    keep-tex: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+manuscript:
+  article: index.qmd

@@ -26,6 +26,7 @@ firm-microsim-paper/
 │   ├── dynamic/          # conditional behavioural costing
 │   └── analysis/         # paper table and diagnostic scripts
 ├── pyproject.toml        # package metadata, dependencies, console scripts
+├── paper/                # Quarto/LaTeX manuscript sources and checked PDF
 ├── results/              # generated figures + calibration_accuracy.txt
 └── requirements.txt
 ```
@@ -94,6 +95,32 @@ df, report = firm_microsim.generate(return_report=True)
 Output is written to `data/synthetic/synthetic_firms.csv`
 (`sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
 weight, vat_registered`).
+
+## Paper
+
+The manuscript is rendered with Quarto, while preserving the existing LaTeX
+section files and template:
+
+```bash
+cd paper
+quarto render index.qmd --to pdf
+```
+
+The PolicyBench-style web paper is generated from the same LaTeX sections and
+rendered with PolicyEngine design tokens:
+
+```bash
+cd paper
+python3 build_site.py
+```
+
+The deployable static site is written to `paper/site/`. Quarto writes PDF render
+artifacts to `paper/out/`; the checked-in submission PDF is `paper/main.pdf`.
+The legacy direct-LaTeX entrypoint `paper/main.tex` remains available for
+debugging and uses the same shared frontmatter/body inputs.
+
+The current Vercel deployment is
+<https://firm-microsim-paper.vercel.app/>.
 
 ## Calibration accuracy
 

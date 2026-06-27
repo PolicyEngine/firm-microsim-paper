@@ -1,0 +1,72 @@
+name: Paper
+
+on:
+  pull_request:
+    paths:
+      - "paper/**"
+      - ".github/workflows/paper.yml"
+  push:
+    branches: [main]
+    paths:
+      - "paper/**"
+      - ".github/workflows/paper.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  quarto:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          tinytex: true
+
+      - name: Install paper TeX packages
+        run: |
+          TLMGR="$(find "$HOME" -path '*/bin/*/tlmgr' | head -n 1)"
+          if [ -z "$TLMGR" ]; then
+            echo "tlmgr not found"
+            exit 1
+          fi
+          "$TLMGR" update --self
+          "$TLMGR" install \
+            a4wide \
+            booktabs \
+            caption \
+            chngcntr \
+            datetime \
+            diagbox \
+            econ-bst \
+            float \
+            fnpct \
+            fontawesome \
+            footmisc \
+            kpfonts \
+            kpfonts-otf \
+            multirow \
+            natbib \
+            paralist \
+            pgf \
+            pgfplots \
+            pict2e \
+            psfrag \
+            sectsty \
+            subfigure \
+            threeparttable \
+            todonotes \
+            translations
+
+      - name: Render paper PDF
+        run: |
+          cd paper
+          quarto render index.qmd --to pdf
+
+      - name: Render paper HTML
+        run: |
+          cd paper
+          python3 build_site.py
