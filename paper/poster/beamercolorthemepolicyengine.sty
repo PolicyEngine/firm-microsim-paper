@@ -42,14 +42,15 @@
 \setbeamercolor{block separator}{bg=peteal}
 \setbeamercolor{block body}{fg=black,bg=white}
 
-% Alert Block (headline takeaways) -- white body avoids low-zoom rasterisation
-% artifacts (dark text antialiased on a tinted bg); teal title bar keeps emphasis.
-\setbeamercolor{block alerted title}{fg=white,bg=peteal}
-\setbeamercolor{block alerted separator}{bg=pedarkteal}
+% Alert / Example blocks: teal title TEXT on white (no filled colour bar) so
+% there is no low-zoom rasterisation artifact behind the titles; the teal
+% separator rule under each title carries the section structure. Matches the
+% standard-block title treatment for a clean, uniform look.
+\setbeamercolor{block alerted title}{fg=peteal,bg=white}
+\setbeamercolor{block alerted separator}{bg=peteal}
 \setbeamercolor{block alerted body}{fg=black,bg=white}
 
-% Example Block (method / definitions) -- white body, teal title for hierarchy.
-\setbeamercolor{block example title}{fg=white,bg=pedarkteal}
+\setbeamercolor{block example title}{fg=pedarkteal,bg=white}
 \setbeamercolor{block example separator}{bg=peteal}
 \setbeamercolor{block example body}{fg=black,bg=white}
 
