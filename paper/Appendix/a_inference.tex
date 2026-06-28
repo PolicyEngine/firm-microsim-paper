@@ -63,7 +63,14 @@ standard error of each statistic is the standard deviation of its bootstrap
 distribution, and the $95\%$ confidence interval is the $2.5$th--$97.5$th
 percentile interval. Resampling firms (rather than residuals) propagates both
 sampling variation and the variation induced by re-binning. Table~\ref{tab:boot}
-reports the results.
+reports the results. Because these replications resample the $\approx 2.94$
+million \emph{constructed} synthetic firm rows, whose number is itself a
+modelling choice, the resulting standard errors and $95\%$ intervals quantify
+only the estimator's dispersion under resampling of a synthetic file of
+analyst-chosen size; they scale with that arbitrary row count and should
+\emph{not} be read as population sampling error about the universe of UK firms.
+They are reported for completeness and reproducibility, not as confidence
+statements about UK firms.
 
 \begin{table}[t]
 \centering
@@ -95,7 +102,16 @@ to the threshold, so the excess mass below it is mechanical, inherited from the
 density step in the calibration targets rather than from any behavioural
 response (the placebo test below makes this precise). The elasticities are
 therefore reported only as a record of what the estimator returns when applied
-to these data; the paper draws no behavioural conclusion from them. This is an
+to these data; the paper draws no behavioural conclusion from them. A reader
+should note that the iso-elastic turnover elasticities $e\in\{0.05,0.17,0.32\}$
+swept in the body (Section~\ref{sec:behavioural}) are a \emph{different} object
+from the notch-width elasticity ($\approx 0.45$) and marginal-buncher elasticity
+($\approx 0.66$) reported here: the former are the median and mean of a per-firm
+marginal-buncher mapping under the iso-elastic firm specification, while the
+latter are aggregate estimator outputs computed under different normalisations.
+All of these numbers are mechanical artefacts of the calibration and are
+non-identified on these synthetic data---they admit no precise numerical mapping
+between the two sets---so none is used anywhere as a behavioural estimate. This is an
 instance of the general non-identification of bunching elasticities absent
 exogenous variation or strong functional-form assumptions
 \citep{blomquistetal2021, bertanhaetal2023}.

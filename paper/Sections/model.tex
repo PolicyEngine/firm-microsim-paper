@@ -12,7 +12,7 @@ to UK VAT by \citet{liuetal2021}. The UK registration threshold is a
 \emph{notch}, not a kink: once turnover crosses the threshold the firm becomes
 liable for VAT on its \emph{entire} turnover, not merely on the increment above
 it. I model this notch exactly. The section's central deliverable is the notch's
-\emph{dominated region}---an exact, model-free accounting identity that indexes the
+\emph{dominated region}---an exact, elasticity-free accounting identity that indexes the
 distortion the threshold imposes (Section~\ref{ssec:dominated}), whose analytic
 response to each schedule reform complements the static reform costs of
 Section~\ref{ssec:schedule_costs}. The dominated region is a transparent,
@@ -76,17 +76,26 @@ so the dominated region is
 $(T^{*},\,T^{*}+a)=(\pounds85{,}000,\ \pounds106{,}250)$, shown in
 Figure~\ref{fig:notch_fit}. Two properties make
 this $\sim\pounds21$k band a transparent, parameter-free index of the distortion.
-First, it is \emph{exact}: it depends on $\tau$ and $T^{*}$ alone and is
-independent of the cost specification, of any behavioural elasticity, and of any
-smoothing parameter. Second, it is an order of magnitude wider than the
-$\sim\pounds1$k region implied by a smoothed \emph{kink} approximation. The band
-also spans a populous part of the firm distribution: about $137{,}000$ weighted
-firms in the synthetic population lie in the $\pounds85{,}000$--$\pounds106{,}250$
-dominated band, so the identity ranges over a heavily populated stretch of
-turnover rather than an empty tail. The $15\%$ and $10\%$ reduced-rate bands
-shrink the dominated zone to ranges containing about $96{,}500$ and $66{,}100$
-firms respectively. The dominated region stands alone as a theoretical property of
-the schedule, independent of any reduced-form pattern in the data.
+First, it is \emph{exact and elasticity-free}: it depends on $\tau$ and $T^{*}$
+alone and is independent of the cost specification, of any behavioural elasticity,
+and of any smoothing parameter. It is, however, \emph{conditional on the
+statutory-rate turnover notch}: the $\pounds21{,}250$ width is computed at the
+statutory $\tau=0.20$ applied to whole turnover, and so applies to the
+limited-reclaim, consumer-facing firms that are the scope of this model (the
+``Scope: a turnover-tax notch'' paragraph above). For firms with substantial input
+reclaim the effective notch---and hence its dominated region---is correspondingly
+smaller. The width is thus independent of any behavioural elasticity but
+conditional on the turnover-tax-notch scope. Second, it is an order of magnitude
+wider than the $\sim\pounds1$k region implied by a smoothed \emph{kink}
+approximation. The band also spans a populous part of the firm distribution: about
+$137{,}000$ weighted firms in the synthetic population lie in the
+$\pounds85{,}000$--$\pounds106{,}250$ dominated band. Because the synthetic
+generator has no location choice, this counts the firms the data \emph{place} in
+the band---indexing the size of the population exposed to the distortion---rather
+than firms that \emph{optimally locate} there; the identity thus ranges over a
+heavily populated stretch of turnover rather than an empty tail. The dominated
+region stands alone as a theoretical property of the schedule, independent of any
+reduced-form pattern in the data.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.78\textwidth]{figures/dynamic_notch_fit_e017.png}
@@ -102,13 +111,39 @@ the cost specification, any behavioural elasticity, or any simulated
 re-optimisation. Raising the threshold to \pounds100{,}000 leaves the rate
 unchanged and therefore \emph{relocates} the zone without altering its width: it
 is the same \pounds21{,}250 band, transported to the new cutoff. A banded reduced
-rate \emph{shrinks} the zone, because $a$ falls with $\tau$: at
-$T^{*}=\pounds85{,}000$, lowering the band rate to $15\%$ cuts it to
-$\pounds85{,}000\times0.15/0.85=\pounds15{,}000$, and to $10\%$ cuts it to
-$\pounds85{,}000\times0.10/0.90=\pounds9{,}444$. A graduated taper has \emph{no}
+rate does \emph{not} remove the distortion. It reduces the \emph{largest single}
+notch---the jump at $T^{*}$ falls from $\tau T^{*}=\pounds17{,}000$ to
+$r\,T^{*}=\pounds12{,}750$ at a $15\%$ band rate---but, because the band reverts to
+the standard rate $\tau$ at its upper edge $T_{1}=\pounds105{,}000$, it introduces a
+\emph{secondary} notch there, and hence a second dominated region the simple
+``$a$ shrinks with $\tau$'' reasoning omits. The primary region at $T^{*}$ (the
+band rate $r$ on whole turnover) has the usual width
+$a=T^{*}r/(1-r)$: $\pounds85{,}000\times0.15/0.85=\pounds15{,}000$ at $15\%$ and
+$\pounds85{,}000\times0.10/0.90=\pounds9{,}444$ at $10\%$. The secondary region at
+the band top---where the schedule steps from $r$ back to $\tau$ on whole
+turnover---has width
+\begin{equation}
+  a' \;=\; T_{1}\,\frac{\tau-r}{1-\tau},
+  \label{eq:dominated-secondary}
+\end{equation}
+giving $\pounds105{,}000\times0.05/0.80=\pounds6{,}562$ at $15\%$ and
+$\pounds105{,}000\times0.10/0.80=\pounds13{,}125$ at $10\%$. The \emph{total}
+dominated-turnover width is therefore $a+a'=\pounds21{,}562$ at $15\%$ and
+$\pounds22{,}569$ at $10\%$---both marginally \emph{above} the $\pounds21{,}250$
+baseline, not below it. The reduced rate splits one wide empty band into two
+narrower ones rather than shrinking the total: it lowers the largest single notch
+(to $\pounds12{,}750$ at $15\%$) at the price of adding a secondary notch of
+$(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this. The roughly
+$96{,}500$ and $66{,}100$ weighted firms previously reported for the $15\%$ and
+$10\%$ bands are the mass of the \emph{primary} region alone; the secondary region
+above $\pounds105{,}000$ restores comparable dominated mass, so the total dominated
+mass is not materially reduced. A graduated taper, by contrast, has \emph{no}
 notch and hence no dominated region: marginal net revenue declines smoothly through
 the band rather than off a cliff, so the band of dominated turnover---and with it
-the discrete incentive to suppress turnover---is removed entirely. The dominated
-region is thus the paper's exact, model-free measure of the distortion the notch
-imposes, and the analytic statement above is exactly how much of that distortion
-each reform of Section~\ref{ssec:schedule_costs} removes.
+the discrete incentive to suppress turnover---is removed entirely. On the
+dominated-region metric, then, \emph{only} the taper removes the distortion; the
+reduced rate and the level move both leave it essentially intact---split and
+relocated, respectively---which sharpens the taper's advantage. The dominated
+region is thus the paper's exact, elasticity-free measure of the distortion the
+notch imposes, and the analytic statement above is exactly how much of that
+distortion each reform of Section~\ref{ssec:schedule_costs} removes.
