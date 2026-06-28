@@ -221,3 +221,49 @@ from any firm behaviour, and confirms that the elasticities in
 Table~\ref{tab:boot} are mechanical artefacts of the calibration rather than
 behavioural parameters. The placebo is part of the released code and is fully
 reproducible.
+
+\subsubsection*{Recovery: the estimator has power}
+
+The placebo establishes \emph{specificity}: the estimator returns no bunching
+when none is present. The complementary property is \emph{sensitivity}---whether
+the estimator can detect a genuine behavioural response when one \emph{is}
+present. To check this I run a recovery exercise. Starting from the step-free
+Placebo~A population---the null world with no bunching---I inject a behavioural
+bunching signal of \emph{known} magnitude by relocating $E_{\mathrm{true}}$ firms,
+mass-conservingly, from a donor window just above the threshold to a window just
+below it (the firm location-choice the generator lacks), with a triangular
+profile peaking at \pounds85{,}000. I then re-run the \emph{same} estimator
+(degree~$7$, $\pm\pounds15$k window) and record the recovered excess mass,
+measured as the change in signed below-threshold excess relative to the step-free
+baseline. Table~\ref{tab:recovery} reports three magnitudes.
+
+\begin{table}[t]
+\centering
+\caption{Recovery test: the estimator recovers $\approx 90\%$ of an injected
+behavioural response of known magnitude. \pounds85{,}000 data;
+$E_{\mathrm{recovered}}$ is the change in signed below-threshold excess relative
+to the step-free baseline.}
+\label{tab:recovery}
+\begin{tabular}{rrr}
+\hline
+$E_{\mathrm{true}}$ (injected) & $E_{\mathrm{recovered}}$ & Recovery \\
+\hline
+$2{,}000$ & $1{,}792$ & $89.6\%$ \\
+$5{,}000$ & $4{,}479$ & $89.6\%$ \\
+$8{,}000$ & $7{,}167$ & $89.6\%$ \\
+\hline
+\end{tabular}
+\end{table}
+
+The estimator recovers about $90\%$ of the injected mass at every magnitude (a
+stable $89.6\%$, monotone in $E_{\mathrm{true}}$ and never over-stating). The
+$\approx 10\%$ attenuation is benign: the degree-7 polynomial counterfactual
+re-absorbs part of the injected spike and the fixed exclusion window clips its
+tails, so the estimator slightly \emph{under}-states a true response rather than
+inflating one. The estimator is therefore both \emph{specific} (no false
+positive---the placebo) and \emph{sensitive} (has power---this recovery). The
+implication is the one this section turns on: the absence of identified bunching
+on the actual synthetic data is a property of the aggregate-calibrated
+\emph{data}, which contain no firm location-choice, not a failure of the
+\emph{method}. The recovery test is part of the released code and is fully
+reproducible.
