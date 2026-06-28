@@ -7,7 +7,7 @@ the mechanical reclassification of firms with no response in turnover.
 Section~\ref{sec:bunching} then shows that the bunching in my synthetic data is
 mechanical, so a behavioural elasticity is not identified from it---the reduced-form
 response is a placebo. Section~\ref{sec:model} supplies the one object that needs
-no behavioural calibration at all: the exact, model-free dominated region. What is
+no behavioural calibration at all: the exact, elasticity-free dominated region. What is
 missing from this sequence is the behavioural layer itself---a costing that lets
 firms re-optimise turnover when a reform changes the effective rate they face. This
 section supplies that layer. I build an iso-elastic structural simulator that, for
@@ -89,20 +89,27 @@ dynamics here.
 \subsection{Results}
 \label{ssec:behavioural-results}
 
-I sweep $e\in\{0.05,\,0.17,\,0.32\}$ and take $e=0.17$ as the headline. The low
+I sweep $e\in\{0.05,\,0.17,\,0.32\}$ and report the full sweep, treating
+$e=0.17$ as an illustrative midpoint rather than a headline estimate. The low
 value $0.05$ is of the order reported by \citet{klevenwaseem2013}; $0.32$ is the
 mean implied by mapping the marginal-buncher condition through my notch; $0.17$ is
-the median of that mapping. I flag the provenance plainly: the $0.17$ and $0.32$
+the median of that mapping. (These per-firm-mapping summaries are a different object
+from the single aggregate marginal-buncher elasticity $\approx0.66$ tabulated in
+Appendix~\ref{app:inference}, and differ from it numerically; both are mechanical,
+non-identified artefacts of the calibration.) I flag the provenance plainly: the $0.17$ and $0.32$
 values are read off the marginal-buncher condition applied to my notch geometry,
 which inherits the mechanical bunching that Section~\ref{sec:bunching} shows to be
-non-behavioural, so they are model-implied, not data-identified; I use them only to
-delimit a plausible sweep, anchored at the lower end by the external
-\citet{klevenwaseem2013} value, and a reader preferring a fully external range may
-substitute literature values for $e$ directly without changing the conditional
-structure of the costing. The same mapping pins the marginal buncher
+non-behavioural, so they are model-implied, not data-identified; the range's only
+externally-anchored point is its lower end (the \citet{klevenwaseem2013} value of
+$\approx 0.05$). I use them only to delimit a plausible sweep, and a reader
+preferring a fully external range---for instance \citet{liuetal2021}'s UK VAT-base
+elasticity---may substitute literature values for $e$ directly without changing the
+conditional structure of the costing. The same mapping pins the marginal buncher
 $n_H(e)$---the highest ability that still finds it optimal to bunch at the
-threshold---at \pounds112{,}795 for $e=0.05$ (a frictionless excess of
-$\Delta y^{*}\approx\pounds27.8$k), \pounds127{,}382 for $e=0.17$
+threshold---at \pounds112{,}795 for $e=0.05$ (a frictionless excess
+$\Delta y_{H}\equiv n_H-T^{*}\approx\pounds27.8$k, distinct from the empirical
+bunching span $\Delta y^{*}=\pounds5.6$k of Appendix~\ref{app:inference}),
+\pounds127{,}382 for $e=0.17$
 ($\approx\pounds42.4$k), and \pounds143{,}527 for $e=0.32$ ($\approx\pounds58.5$k),
 consistent with the analytic dominated-region width $a=\pounds21{,}250$ of
 Section~\ref{sec:model}.
@@ -118,7 +125,7 @@ their frictionless optimum, broadening the taxed base and partly offsetting the
 static loss. The offset is substantial: at $e=0.17$ the raised threshold costs
 \(-\)\pounds292m against a static \(-\)\pounds508m, and the $10\%$ and $15\%$ bands
 cost \(-\)\pounds273m and \(-\)\pounds135m against static \(-\)\pounds343m and
-\(-\)\pounds171m. At the headline $e=0.17$, the number of firms re-optimising is
+\(-\)\pounds171m. At the illustrative midpoint $e=0.17$, the number of firms re-optimising is
 $50{,}155$ under the raised threshold, $61{,}187$ under the $10\%$ reduced rate, and
 $51{,}226$ under the $15\%$ reduced rate. Figure~\ref{fig:reform_dist} traces these
 costs across the full range of $e$, with each curve nesting onto its static value as
@@ -152,7 +159,7 @@ report only the taper's robust, $e$-free objects---its static cost
 ($e\to0$ limit) figure for comparison. Each behavioural figure re-solves every
 firm's iso-elastic optimum~\eqref{eq:isoelastic} under the reform schedule, holding
 recovered abilities and $e$ fixed. The final column reports the number of firms that
-re-optimise at the headline $e=0.17$. Every behavioural figure is conditional on the
+re-optimise at the illustrative midpoint $e=0.17$. Every behavioural figure is conditional on the
 assumed, non-identified $e$. The graduated taper is excluded from the behavioural
 costing; see the note below the table and the discussion that follows.}
 \label{tab:behavioural_costs}

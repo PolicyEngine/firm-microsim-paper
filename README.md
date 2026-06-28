@@ -46,7 +46,7 @@ threshold:
    heavily. VAT registration is then assigned: mandatory above the threshold,
    voluntary below at the HMRC-calibrated rate.
 
-The result is ~2.94M firm rows weighted to ~2.0M UK firms. Because the population
+The result is ~2.94M firm rows weighted to ~2.5M UK firms. Because the population
 is calibrated **to** the HMRC aggregates, agreement with them is an internal
 consistency check, not external validation.
 
