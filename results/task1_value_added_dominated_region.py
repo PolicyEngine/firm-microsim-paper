@@ -22,7 +22,8 @@ TAU = 0.20
 
 def wquantile(x, w, q):
     """Weighted quantile(s)."""
-    x = np.asarray(x, float); w = np.asarray(w, float)
+    x = np.asarray(x, float)
+    w = np.asarray(w, float)
     order = np.argsort(x)
     x, w = x[order], w[order]
     cw = np.cumsum(w) - 0.5 * w
@@ -73,7 +74,7 @@ def main():
         P(f"NEAR-THRESHOLD BAND {label}   weighted firms = {wpop:,.0f}")
         P("-" * 78)
         # tau0 distribution (all firms in band)
-        P(f"  Net VAT rate tau0 = liab/turnover (weighted):")
+        P("  Net VAT rate tau0 = liab/turnover (weighted):")
         P(f"    mean   = {wmean(tm, wm)*100:7.3f}%")
         P(f"    median = {wquantile(tm, wm, 0.50)*100:7.3f}%")
         q25, q75 = wquantile(tm, wm, [0.25, 0.75])
@@ -102,7 +103,8 @@ def main():
         # the turnover-tax model is meant to describe)
         thr = wquantile(tm, wm, 0.75)
         hh = tm >= thr
-        a_h = a_of_tau(tm[hh]); w_h = wm[hh]
+        a_h = a_of_tau(tm[hh])
+        w_h = wm[hh]
         P(f"  HIGH-NET-RATE firms (top tau0 quartile, tau0 >= {thr*100:.2f}%):")
         P(f"    weighted-mean tau0  = {wmean(tm[hh], w_h)*100:.3f}%")
         P(f"    weighted-mean a_i   = £{wmean(a_h, w_h):,.0f}")

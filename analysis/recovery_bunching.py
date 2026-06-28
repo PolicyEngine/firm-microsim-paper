@@ -270,9 +270,6 @@ def main() -> None:
     # --- Verdict ---------------------------------------------------------
     mean_recov = float(res["recovery"].mean())
     monotonic = bool(np.all(np.diff(res["E_hat_signed"].to_numpy()) > 0))
-    has_power = bool(
-        np.all(res["E_hat_signed"] > 0.5 * res["E_true"]) and monotonic
-    )
 
     if mean_recov >= 0.85:
         bias_word = f"approximately unbiased (recovers ~{mean_recov:.0%} of injected mass)"
