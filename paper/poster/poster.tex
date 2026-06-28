@@ -29,6 +29,10 @@
 % ----- accent helpers -----
 \newcommand{\hl}[1]{{\color{peteal}\bfseries #1}}
 \newcommand{\pos}[1]{{\color{pedarkteal}\bfseries #1}}
+% short connective cue at the top of a block (italic deep-teal, no new claims)
+\newcommand{\leadin}[1]{{\color{pedarkteal}\itshape #1}\par\vspace*{0.45em}}
+% a small teal arrow used as a between-column flow connector
+\newcommand{\flow}{{\color{peteal}\bfseries$\rightarrow$~}}
 
 % tighter blocks so 4 columns fill the height cleanly
 \setbeamertemplate{block end}{\end{adjustwidth}\vskip1ex\end{beamercolorbox}\vskip0pt\vspace*{1.2ex}}
@@ -68,19 +72,13 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.98\colwidth]{figures/firms_by_turnover_band_85k.png}
+    \includegraphics[width=0.82\colwidth]{figures/firms_by_turnover_band_85k.png}
   \end{figure}
 
-  \begin{block}{Three reform families, one basis}
-    Costed on a \emph{common static basis}:
-    \begin{itemize}
-      \item \hl{Level} --- move the threshold up or down.
-      \item \hl{Shape} --- a graduated taper that phases VAT in.
-      \item \hl{Rate} --- a reduced-rate band above the threshold.
-    \end{itemize}
-  \end{block}
-
   \begin{alertblock}{Contribution}
+    {\color{peteal}\bfseries Headline: only the graduated taper removes the
+      notch's distortion; the level move is the dearest and least
+      efficient.}\par\vspace*{0.45em}
     An open, reproducible firm-level microsimulation that:
     \begin{enumerate}
       \item costs \hl{level + shape + rate} reforms on one static basis;
@@ -91,12 +89,23 @@
     \end{enumerate}
   \end{alertblock}
 
+  \begin{block}{Three reform families, one basis}
+    \leadin{What we cost.}
+    Costed on a \emph{common static basis}:
+    \begin{itemize}
+      \item \hl{Level} --- move the threshold up or down.
+      \item \hl{Shape} --- a graduated taper that phases VAT in.
+      \item \hl{Rate} --- a reduced-rate band above the threshold.
+    \end{itemize}
+  \end{block}
+
   \begin{figure}
     \centering
-    \includegraphics[width=0.84\colwidth]{figures/vat_firms_by_turnover_band_85k.png}
+    \includegraphics[width=0.72\colwidth]{figures/vat_firms_by_turnover_band_85k.png}
   \end{figure}
 
   \begin{exampleblock}{Method in one line}
+    \leadin{How the synthetic data are built.}
     Draw synthetic firms by sector\,$\times$\,turnover band; assign value
     added $v_i=y_i-x_i$. The threshold is a \emph{generator parameter}, so
     data regenerate under any counterfactual. Firm weights $w_i=e^{\theta_i}$
@@ -111,6 +120,7 @@
 \begin{column}{\colwidth}
 
   \begin{block}{Synthetic firm data}
+    \leadin{\flow The engine behind every costing.}
     \hl{$\approx$2.94m} firm rows weighted to \hl{$\approx$2.5m} UK firms,
     calibrated to HMRC + ONS aggregates (turnover-band counts, sector,
     employment, net VAT liability by band) at \hl{$\approx$90\% accuracy}.
@@ -120,10 +130,11 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.98\colwidth]{figures/turnover_distribution_85k.png}
+    \includegraphics[width=0.90\colwidth]{figures/turnover_distribution_85k.png}
   \end{figure}
 
   \begin{exampleblock}{Static costing}
+    \leadin{Pricing a reform on this data.}
     \[ R(T)=\sum_i w_i\, v_i\,\mathds{1}\{y_i\ge T\} \]
     Revenue moves only through firms whose registration status flips.\\[0.4em]
     \hl{Validation vs HMRC:} the \pounds85k$\to$\pounds90k April-2024 increase
@@ -133,15 +144,16 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.98\colwidth]{figures/vat_threshold_revenue_impact.png}
+    \includegraphics[width=0.90\colwidth]{figures/vat_threshold_revenue_impact.png}
   \end{figure}
 
   \begin{block}{Threshold sweep (2025--26)}
+    \leadin{Scaling the level reform across thresholds.}
     From a \pounds90k base (\hl{\pounds203.8bn}), the relationship is roughly
     \hl{linear}, $\approx$\pounds150--220m per \pounds5k step.
     \begin{figure}
       \centering
-      \includegraphics[width=0.71\colwidth]{figures/revenue_impact_2025_26.png}
+      \includegraphics[width=0.62\colwidth]{figures/revenue_impact_2025_26.png}
     \end{figure}
   \end{block}
 
@@ -153,6 +165,7 @@
 \begin{column}{\colwidth}
 
   \begin{alertblock}{The dominated region}
+    \leadin{\flow Beyond revenue: measuring the notch's distortion.}
     Profit jumps \emph{down} by $\tau T^\ast=\pounds17{,}000$ at the
     threshold. The \hl{dominated region} --- turnover where no firm locates
     because it earns less than at $T^\ast$ --- has exact width
@@ -168,6 +181,7 @@
   \end{figure}
 
   \begin{block}{How reforms change it}
+    \leadin{Which reforms actually shrink this band?}
     \begin{itemize}
       \item Raising the threshold \hl{relocates} the \pounds21{,}250 band
             unchanged.
@@ -181,6 +195,7 @@
   \end{block}
 
   \begin{block}{Bunching is mechanical}
+    \leadin{A transparency check on the synthetic data.}
     Estimator: $b=0.060$, excess mass \hl{$E=8{,}712$} firms. A
     \hl{placebo} collapses $E$ to \hl{0--99} when the step is removed from
     the calibration target $\Rightarrow$ bunching is inherited from coarse
@@ -201,6 +216,7 @@
 \begin{column}{\colwidth}
 
   \begin{block}{Reform menu (common \pounds85k / \pounds183.6bn base)}
+    \leadin{\flow Cost and distortion, side by side.}
     \centering
     \renewcommand{\arraystretch}{1.2}
     \footnotesize
@@ -216,11 +232,12 @@
     \end{tabular}
     \begin{figure}
       \centering
-      \includegraphics[width=0.96\colwidth]{figures/firms_impact_2025_26.png}
+      \includegraphics[width=0.86\colwidth]{figures/firms_impact_2025_26.png}
     \end{figure}
   \end{block}
 
   \begin{block}{Behavioural layer (conditional)}
+    \leadin{Layering an assumed response on the static costs.}
     Conditional on an \hl{assumed} turnover elasticity $e$ (\emph{not}
     identified on synthetic data); sweep $e\in\{0.05,0.17,0.32\}$, midpoint
     $0.17$. At $e=0.17$: raise-to-\pounds100k \pounds508m$\to$\hl{\pounds292m};
@@ -228,7 +245,7 @@
     \pounds171m$\to$\hl{\pounds135m}, as firms broaden the base.
     \begin{figure}
       \centering
-      \includegraphics[width=0.88\colwidth]{figures/dynamic_cost_vs_elasticity.png}
+      \includegraphics[width=0.80\colwidth]{figures/dynamic_cost_vs_elasticity.png}
     \end{figure}
   \end{block}
 
