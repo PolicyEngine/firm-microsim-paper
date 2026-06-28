@@ -43,7 +43,13 @@ the \citet{klevenwaseem2013} width $a=T^{*}\tau/(1-\tau)=\pounds21{,}250$---an
 accounting identity rather than a new structural result, but one spanning a
 populous range of roughly $137{,}000$ firms. Setting cost against distortion is
 instructive: raising the threshold is the most expensive option yet merely
-relocates the zone, whereas the taper removes it entirely for less. Third, the open
+relocates the zone, and a banded reduced rate does not shrink the distortion
+either---it lowers the largest single notch (from \pounds17{,}000 to \pounds12{,}750
+at a $15\%$ band) but, because the band reverts to the standard rate at its
+\pounds105{,}000 top, adds a secondary notch, leaving the total dominated-turnover
+width essentially unchanged (\pounds21{,}562 at $15\%$, \pounds22{,}569 at $10\%$,
+both marginally above the \pounds21{,}250 baseline). Only the graduated taper,
+being continuous, removes the distortion entirely, and for less. Third, the open
 data reproduce the published density step at the threshold, but a placebo test
 shows the apparent excess mass is inherited from the coarse HMRC band targets
 rather than firm behaviour---it collapses from $8{,}712$ to roughly $99$ weighted
@@ -57,10 +63,13 @@ turnover elasticity $e$ (Section~\ref{sec:behavioural}). Because $e$ is not
 identified on these synthetic data---the placebo shows the bunching is
 mechanical---I report the behavioural cost as an $e$-sensitivity range that nests
 the static cost as $e\to0$. Conditional on an assumed $e$, modelled responses partly
-offset the static costs: at $e=0.17$ the raise to \pounds100{,}000 falls from
-\pounds508m static to about \pounds292m, the $10\%$ band from \pounds343m to
-\pounds273m, and the $15\%$ band from \pounds171m to \pounds135m, as firms broaden
-the base when the effective rate falls. I report no behavioural cost for the
+offset the static costs: at an illustrative midpoint $e=0.17$ the raise to
+\pounds100{,}000 falls from \pounds508m static to about \pounds292m, the $10\%$
+band from \pounds343m to \pounds273m, and the $15\%$ band from \pounds171m to
+\pounds135m, as firms broaden the base when the effective rate falls. The
+$e$-range $\{0.05,0.17,0.32\}$ is a sensitivity range whose only externally
+anchored point is the lower end $e=0.05$; the $0.17$ and $0.32$ values are implied
+by the notch geometry, not identified from the data. I report no behavioural cost for the
 graduated taper: its behavioural response is not credibly identified, because its
 base-broadening and marginal-rate channels pull in opposite directions and the
 iso-elastic cost cannot net them, so only its static cost and dominated-region
@@ -69,9 +78,18 @@ $e$-free anchors; the behavioural magnitudes are conditional on the assumed $e$.
 
 \paragraph{Limitations and future work.} The model is a turnover-tax-notch
 approximation: it treats VAT as a cost on turnover, whereas real VAT is levied on
-value added with input reclaim, and roughly half of below-threshold firms register
+value added with input reclaim, and roughly 43\% of below-threshold firms register
 voluntarily \citep{liuetal2021}, so the effective notch is smaller than a flat
-treatment implies. The microdata are synthetic and calibrated to coarse aggregate
+treatment implies. The dominated-region width indexes the misallocation distortion
+only and omits the compliance and administrative-cost saving that a \emph{higher}
+threshold delivers by removing small firms from VAT---the classic rationale for a
+high registration threshold \citep{keenmintz2004}---so the efficiency comparison is
+partial; a full welfare/MVPF accounting would net these compliance costs against
+the misallocation distortion. The menu reforms are also costed only in aggregate:
+because VAT liability by sector is excluded from the calibration optimiser
+(Section~\ref{sec:data}), the framework does not yet report the sectoral incidence
+of a taper or reduced rate---which sectors gain and by how much---a cut of obvious
+policy interest that I leave to future work. The microdata are synthetic and calibrated to coarse aggregate
 bands---which is why the behavioural magnitudes are reported only conditional on an
 assumed elasticity rather than as estimates---and the analysis is
 partial-equilibrium, abstracting from pass-through into prices \citep{benedek2015,
