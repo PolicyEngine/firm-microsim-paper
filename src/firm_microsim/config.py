@@ -132,7 +132,7 @@ class Config:
     learning_rate: float = 0.01
     early_stopping_patience: int = 100
     dropout_keep_rate: float = 0.95  # keep 95%, drop 5% each step
-    l1_reg_coef: float = 0.05
+    l1_reg_coef: float = 0.01
     grad_clip_norm: float = 1.0
 
     # --- Multi-objective importance weights ------------------------------
@@ -140,7 +140,7 @@ class Config:
     sector_importance: float = 1.0
     employment_importance: float = 1.0
     vat_liability_sector_importance: float = 1.0
-    vat_liability_band_importance: float = 1.0
+    vat_liability_band_importance: float = 2.0
 
     # Whether to include VAT-liability-by-sector as a calibration target.
     # Disabled by default: the model does not yet calibrate the input/output
