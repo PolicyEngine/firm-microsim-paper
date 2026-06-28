@@ -68,6 +68,12 @@ VINTAGES: Dict[str, Dict[str, float]] = {
 }
 DEFAULT_VINTAGE: str = os.environ.get("DATA_VINTAGE", "2023-24")
 
+# Standard UK VAT rate. A registered firm's net VAT liability is this rate
+# applied to its value added (turnover less inputs):
+#   v_i = STANDARD_VAT_RATE * (turnover_i - inputs_i).
+# This is the single place the rate is set.
+STANDARD_VAT_RATE: float = 0.20
+
 # Processed input file names (placed in PROCESSED_DATA_DIR by an upstream
 # ETL process). These map onto the original ONS + HMRC official tables.
 INPUT_FILES: Dict[str, str] = {
@@ -126,7 +132,7 @@ class Config:
     learning_rate: float = 0.01
     early_stopping_patience: int = 100
     dropout_keep_rate: float = 0.95  # keep 95%, drop 5% each step
-    l1_reg_coef: float = 0.01
+    l1_reg_coef: float = 0.05
     grad_clip_norm: float = 1.0
 
     # --- Multi-objective importance weights ------------------------------
@@ -134,7 +140,7 @@ class Config:
     sector_importance: float = 1.0
     employment_importance: float = 1.0
     vat_liability_sector_importance: float = 1.0
-    vat_liability_band_importance: float = 2.0
+    vat_liability_band_importance: float = 1.0
 
     # Whether to include VAT-liability-by-sector as a calibration target.
     # Disabled by default: the model does not yet calibrate the input/output

@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 
 from .calibration import EMPLOYMENT_BANDS, VAT_LIABILITY_BANDS
-from .config import Config
+from .config import Config, STANDARD_VAT_RATE
 from .data_loader import LoadedData
 
 logger = logging.getLogger(__name__)
@@ -127,7 +127,7 @@ def validate(
     threshold = config.vat_threshold
     df = synthetic_df.copy()
     df["hmrc_band"] = df["annual_turnover_k"].apply(lambda t: _hmrc_band_name(t, threshold))
-    df["vat_liability_k"] = df["annual_turnover_k"] - df["annual_input_k"]
+    df["vat_liability_k"] = STANDARD_VAT_RATE * (df["annual_turnover_k"] - df["annual_input_k"])
     df["sic_numeric"] = df["sic_code"].astype(int)
     df["weighted_liability_m"] = df["vat_liability_k"] * df["weight"] / 1000.0
     all_bands = df.groupby("hmrc_band")["weight"].sum()
