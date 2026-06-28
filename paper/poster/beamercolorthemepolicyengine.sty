@@ -1,0 +1,74 @@
+% PolicyEngine colour variant for the Gemini poster theme
+% Inspired by https://github.com/anishathalye/gemini
+% Brand palette: PolicyEngine blue + teal accent on light neutrals.
+% ================================================================
+
+% --------------------
+% Colour Definitions
+% --------------------
+\definecolor{peblue}{RGB}{44,100,150}      % primary  #2C6496
+\definecolor{pedarkblue}{RGB}{23,57,89}    % deep blue for headline text
+\definecolor{peteal}{RGB}{57,135,135}      % teal accent
+\definecolor{darkgray}{RGB}{51,51,51}      % dark neutral text
+\definecolor{mediumgray}{RGB}{102,102,102} % mid neutral accents
+\definecolor{lightgray}{RGB}{245,246,248}  % light neutral background
+\definecolor{lightblue}{RGB}{223,235,246}  % gentle blue tint for headline / alert
+\definecolor{lightteal}{RGB}{223,240,238}  % gentle teal tint for examples
+
+% --------------------
+% Basic Palette
+% --------------------
+\setbeamercolor{palette primary}{fg=black,bg=white}
+\setbeamercolor{palette secondary}{fg=black,bg=white}
+\setbeamercolor{palette tertiary}{fg=white,bg=peblue}
+\setbeamercolor{palette quaternary}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=peblue}
+
+% --------------------
+% Headline & Footline
+% --------------------
+\setbeamercolor{headline}{fg=pedarkblue,bg=lightblue}
+\setbeamercolor{headline title}{fg=peblue,bg=lightblue}
+\setbeamercolor{headline author}{fg=pedarkblue,bg=lightblue}
+\setbeamercolor{headline institute}{fg=mediumgray,bg=lightblue}
+
+% --------------------
+% Blocks
+% --------------------
+% Standard Block
+\setbeamercolor{block title}{fg=peblue,bg=white}
+\setbeamercolor{block separator}{bg=peblue}
+\setbeamercolor{block body}{fg=black,bg=white}
+
+% Alert Block (headline takeaways)
+\setbeamercolor{block alerted title}{fg=white,bg=peblue}
+\setbeamercolor{block alerted separator}{bg=pedarkblue}
+\setbeamercolor{block alerted body}{fg=black,bg=lightblue}
+
+% Example Block (method / definitions)
+\setbeamercolor{block example title}{fg=peteal,bg=lightgray}
+\setbeamercolor{block example separator}{bg=peteal}
+\setbeamercolor{block example body}{fg=black,bg=lightgray}
+
+% --------------------
+% Headings & Text
+% --------------------
+\setbeamercolor{heading}{fg=peblue}
+\setbeamercolor{frametitle}{fg=peblue}
+\setbeamercolor{item}{fg=peblue}
+
+% --------------------
+% Bibliography
+% --------------------
+\setbeamercolor{bibliography item}{fg=black}
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry location}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
+
+% --------------------
+% Hyperlinks
+% --------------------
+\hypersetup{colorlinks=true, linkcolor=peblue, urlcolor=peblue, citecolor=peblue}
+
+% End of PolicyEngine theme
