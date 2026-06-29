@@ -3,7 +3,7 @@
 % Build:  xelatex poster.tex  (run twice).  Gemini theme + PolicyEngine teal.
 \documentclass[final]{beamer}
 
-\usepackage[size=a0,orientation=landscape,scale=1.0]{beamerposter}
+\usepackage[size=a0,orientation=landscape,scale=1.05]{beamerposter}
 \usetheme{gemini}
 \usecolortheme{policyengine}
 
@@ -46,14 +46,14 @@
 \title{A Firm-Level Microsimulation for VAT Policy Analysis}
 \author{Vahid Ahmadi \quad \faEnvelope~\texttt{vahid@policyengine.org}}
 \institute[PolicyEngine]{PolicyEngine \quad\textbar\quad
-  \faGlobe~\texttt{www.policyengine.org} \quad\textbar\quad
+  \faGlobe~\texttt{policyengine.org} \quad\textbar\quad
   Free, open-source tax and benefit analysis}
 \footercontent{\textbf{Beamm.conf26} \;\textbar\; Conference on Public Finance \&
   Public Policy Evaluation}
 
 \begin{document}
 \logoleft{\includegraphics[height=2.9cm]{logo/policyengine-teal.png}}
-\logoright{\qrcode[height=5cm]{https://firm-microsim-paper.vercel.app/}}
+\logoright{\qrcode[height=7.5cm]{https://firm-microsim-paper.vercel.app/}}
 
 \begin{frame}[t]
 \begin{columns}[t]
@@ -70,15 +70,19 @@
     Threshold \hl{\pounds85{,}000} (2023--24 data year), raised to
     \hl{\pounds90{,}000} in April 2024 --- among the \hl{highest in the
     OECD} --- and it sits in a \emph{dense} part of the firm-size
-    distribution.
+    distribution. Firms respond by \hl{locating just below} it; the cost of
+    crossing is sharpest for \emph{consumer-facing} firms with little
+    reclaimable input VAT, so the notch distorts both the size distribution
+    and firms' growth at the margin.
   \end{alertblock}
 
   \begin{figure}
     \centering
-    \includegraphics[width=1.0\colwidth]{figures/firms_by_turnover_band_85k.png}
+    {\itshape All UK firms by turnover band --- ONS, 2023--24}\\[0.4em]
+    \includegraphics[width=0.70\colwidth]{figures/firms_by_turnover_band_85k.png}
   \end{figure}
 
-  \vspace*{7ex}
+  \vfill
 
   \begin{block}{Three reform families, one basis}
     \leadin{What we cost.}
@@ -89,6 +93,8 @@
       \item \hl{Rate} --- a reduced-rate band above the threshold.
     \end{itemize}
   \end{block}
+
+  \vfill
 
   \begin{alertblock}{Contribution}
     {\color{peteal}\bfseries Headline: only the graduated taper removes the
@@ -104,15 +110,20 @@
     \end{enumerate}
   \end{alertblock}
 
-  \vspace*{7ex}
+  \vfill
 
-  \begin{exampleblock}{Method in one line}
+  \begin{exampleblock}{Data methodology}
     \leadin{How the synthetic data are built.}
-    Draw synthetic firms by sector\,$\times$\,turnover band; assign value
-    added $v_i=y_i-x_i$. The threshold is a \emph{generator parameter}, so
-    data regenerate under any counterfactual. Firm weights $w_i=e^{\theta_i}$
-    are fit by gradient descent to HMRC + ONS aggregates.
+    Draw synthetic firms by sector\,$\times$\,turnover band; give each an
+    input share $x_i=\rho_i y_i$ so value added $v_i=y_i-x_i$ is the net VAT
+    base. Firm weights $w_i=e^{\theta_i}$ are fit by gradient descent to HMRC
+    + ONS aggregates. Crucially, the threshold is a \emph{generator
+    parameter}: every counterfactual --- a higher cutoff, a taper, a reduced
+    rate --- \hl{regenerates} a fresh, internally consistent population, and
+    the whole file is \hl{released openly}.
   \end{exampleblock}
+
+  \vfill
 
 \end{column}
 
@@ -132,8 +143,10 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.90\colwidth]{figures/turnover_distribution_85k.png}
+    \includegraphics[width=0.92\colwidth]{figures/turnover_distribution_85k.png}
   \end{figure}
+
+  \vfill
 
   \begin{exampleblock}{Static costing}
     \leadin{Pricing a reform on this data.}
@@ -146,18 +159,20 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.92\colwidth]{figures/vat_threshold_revenue_impact.png}
+    \includegraphics[width=0.94\colwidth]{figures/vat_threshold_revenue_impact.png}
   \end{figure}
 
+  \vfill
+
   \begin{block}{Threshold sweep (2025--26)}
-    \leadin{Scaling the level reform across thresholds.}
-    From a \pounds90k base (\hl{\pounds203.8bn}), the relationship is roughly
-    \hl{linear}, $\approx$\pounds150--220m per \pounds5k step.
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.50\colwidth]{figures/revenue_impact_2025_26.png}
-    \end{figure}
+    \leadin{Scaling the \emph{level} reform across thresholds.}
+    From a \pounds90k base (\hl{\pounds203.8bn}), the static cost is roughly
+    \hl{linear}, $\approx$\pounds150--220m per \pounds5k step --- e.g.\
+    \hl{$-$\pounds374m} to raise to \pounds100k, \hl{$+$\pounds665m} to lower
+    to \pounds70k.
   \end{block}
+
+  \vfill
 
 \end{column}
 
@@ -166,22 +181,25 @@
 % ============================== COLUMN 3 ==============================
 \begin{column}{\colwidth}
 
-  \begin{block}{Reform menu (common \pounds85k / \pounds183.6bn base)}
-    \leadin{\flow Cost and distortion, side by side.}
+  \begin{block}{Reform menu}
+    \leadin{\flow Cost and distortion on a common \pounds85k / \pounds183.6bn base.}
     \centering
-    \renewcommand{\arraystretch}{1.4}
+    \renewcommand{\arraystretch}{1.45}
+    \setlength{\tabcolsep}{1.4em}
     \small
-    \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.34\colwidth} c r >{\raggedright\arraybackslash}p{0.30\colwidth}@{}}
+    \begin{tabular}{@{}l c r l@{}}
       \toprule
       \textbf{Reform} & \textbf{Type} & \textbf{Static} & \textbf{Dominated region}\\
       \midrule
-      Raise to \pounds100k & Location & $-$\pounds508m & relocates, removes none\\
-      Taper \pounds85--105k & Shape & $-$\pounds336m & \pos{removed entirely}\\
-      Reduced 10\% & Rate & $-$\pounds343m & splits (2nd notch)\\
-      Reduced 15\% & Rate & $-$\pounds171m & splits (2nd notch)\\
+      Raise to \pounds100k & Level & $-$\pounds508m & relocated\\
+      Taper \pounds85--105k & Shape & $-$\pounds336m & {\color{pedarkteal}\bfseries removed}\\
+      Reduced 10\% & Rate & $-$\pounds343m & split in two\\
+      Reduced 15\% & Rate & $-$\pounds171m & split in two\\
       \bottomrule
     \end{tabular}
   \end{block}
+
+  \vfill
 
   \begin{block}{Bunching is mechanical}
     \leadin{A transparency check on the synthetic data.}
@@ -193,9 +211,11 @@
     estimate of Liu et al.\ (2021) remains the behavioural fact.
     \begin{figure}
       \centering
-      \includegraphics[width=0.82\colwidth]{figures/bunching_analysis_85k.png}
+      \includegraphics[width=0.74\colwidth]{figures/bunching_analysis_85k.png}
     \end{figure}
   \end{block}
+
+  \vfill
 
   \begin{alertblock}{The dominated region}
     \leadin{Beyond revenue: measuring the notch's distortion.}
@@ -208,9 +228,11 @@
     turnover-tax notch).
     \begin{figure}
       \centering
-      \includegraphics[width=0.80\colwidth]{figures/dynamic_notch_fit_e017.png}
+      \includegraphics[width=0.72\colwidth]{figures/dynamic_notch_fit_e017.png}
     \end{figure}
   \end{alertblock}
+
+  \vfill
 
 \end{column}
 
@@ -224,33 +246,44 @@
     \begin{itemize}
       \item Raising the threshold \hl{relocates} the \pounds21{,}250 band
             unchanged.
-      \item A banded reduced rate does \hl{not shrink} it: reverting to 20\%
-            at the band top adds a \emph{secondary} notch
-            $a'=T_1\tfrac{\tau-r}{1-\tau}$, so total width is
+      \item A banded reduced rate does \hl{not shrink} it. It lowers the
+            \emph{largest single} notch (\pounds17{,}000$\to$\hl{\pounds12{,}750}
+            at 15\%), but reverting to 20\% at the band top adds a
+            \emph{secondary} notch $a'=T_1\tfrac{\tau-r}{1-\tau}$ of
+            \pounds5{,}250, so total width is
             \hl{\pounds21{,}562 (15\%)} / \hl{\pounds22{,}569 (10\%)} --- it
             \hl{splits} the band, not shrinks it.
       \item \hl{Only the graduated taper removes the distortion} entirely.
     \end{itemize}
   \end{block}
 
-  \vspace*{15ex}
+  \vfill
 
-  \begin{block}{Behavioural layer (conditional)}
+  \begin{block}{Behavioural layer}
     \leadin{Layering an assumed response on the static costs.}
     Conditional on an \hl{assumed} turnover elasticity $e$ (\emph{not}
-    identified on synthetic data); sweep $e\in\{0.05,0.17,0.32\}$, midpoint
-    $0.17$. At $e=0.17$: raise-to-\pounds100k \pounds508m$\to$\hl{\pounds292m};
-    10\% band \pounds343m$\to$\hl{\pounds273m}; 15\% band
-    \pounds171m$\to$\hl{\pounds135m}, as firms broaden the base.
+    identified on synthetic data); sweep $e\in\{0.05,0.17,0.32\}$. At the
+    midpoint $e=0.17$, each static cost falls as firms broaden the base:
+    raising to \pounds100k from \pounds508m to \hl{\pounds292m}; the 10\% band
+    \pounds343m to \hl{\pounds273m}; the 15\% band \pounds171m to
+    \hl{\pounds135m}. A larger $e$ makes every reform \hl{cheaper}. The taper
+    is \emph{excluded} --- its base-broadening and marginal-rate channels
+    cannot be netted in the iso-elastic cost. Only $e=0.05$ has an external
+    anchor, so this is a \hl{sensitivity range}, not a forecast.
     \begin{figure}
       \centering
-      \includegraphics[width=0.98\colwidth]{figures/dynamic_cost_vs_elasticity.png}
+      \includegraphics[width=0.80\colwidth]{figures/dynamic_cost_vs_elasticity.png}
     \end{figure}
   \end{block}
 
-  \vspace*{15ex}
+  \vfill
 
   \begin{alertblock}{Conclusions}
+    {\color{peteal}\bfseries What this paper is:} an open, reproducible
+    microsimulation that models the UK VAT threshold as a
+    \emph{turnover-tax notch} on synthetic firm data, and prices level, shape
+    and rate reforms three ways --- statically, by the exact distortion each
+    removes, and behaviourally.\par\vspace*{0.5em}
     \begin{enumerate}
       \item Prices level + shape + rate on one basis; reproduces HMRC's
             anchor costing.
@@ -262,6 +295,8 @@
             cost and dominated region are the \hl{elasticity-free anchors}.
     \end{enumerate}
   \end{alertblock}
+
+  \vfill
 
 \end{column}
 
