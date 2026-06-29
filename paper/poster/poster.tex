@@ -75,20 +75,6 @@
     \includegraphics[width=0.82\colwidth]{figures/firms_by_turnover_band_85k.png}
   \end{figure}
 
-  \begin{alertblock}{Contribution}
-    {\color{peteal}\bfseries Headline: only the graduated taper removes the
-      notch's distortion; the level move is the dearest and least
-      efficient.}\par\vspace*{0.45em}
-    An open, reproducible firm-level microsimulation that:
-    \begin{enumerate}
-      \item costs \hl{level + shape + rate} reforms on one static basis;
-      \item characterises the notch's distortion via its exact,
-            \hl{elasticity-free dominated region};
-      \item shows via a \hl{placebo} that synthetic bunching is mechanical;
-      \item adds a conditional \hl{behavioural layer}.
-    \end{enumerate}
-  \end{alertblock}
-
   \begin{block}{Three reform families, one basis}
     \leadin{What we cost.}
     Costed on a \emph{common static basis}:
@@ -103,6 +89,20 @@
     \centering
     \includegraphics[width=0.72\colwidth]{figures/vat_firms_by_turnover_band_85k.png}
   \end{figure}
+
+  \begin{alertblock}{Contribution}
+    {\color{peteal}\bfseries Headline: only the graduated taper removes the
+      notch's distortion; the level move is the dearest and least
+      efficient.}\par\vspace*{0.45em}
+    An open, reproducible firm-level microsimulation that:
+    \begin{enumerate}
+      \item costs \hl{level + shape + rate} reforms on one static basis;
+      \item characterises the notch's distortion via its exact,
+            \hl{elasticity-free dominated region};
+      \item shows via a \hl{placebo} that synthetic bunching is mechanical;
+      \item adds a conditional \hl{behavioural layer}.
+    \end{enumerate}
+  \end{alertblock}
 
   \begin{exampleblock}{Method in one line}
     \leadin{How the synthetic data are built.}
@@ -130,7 +130,7 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.90\colwidth]{figures/turnover_distribution_85k.png}
+    \includegraphics[width=0.88\colwidth]{figures/turnover_distribution_85k.png}
   \end{figure}
 
   \begin{exampleblock}{Static costing}
@@ -144,7 +144,7 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.90\colwidth]{figures/vat_threshold_revenue_impact.png}
+    \includegraphics[width=0.88\colwidth]{figures/vat_threshold_revenue_impact.png}
   \end{figure}
 
   \begin{block}{Threshold sweep (2025--26)}
@@ -153,7 +153,7 @@
     \hl{linear}, $\approx$\pounds150--220m per \pounds5k step.
     \begin{figure}
       \centering
-      \includegraphics[width=0.62\colwidth]{figures/revenue_impact_2025_26.png}
+      \includegraphics[width=0.64\colwidth]{figures/revenue_impact_2025_26.png}
     \end{figure}
   \end{block}
 
@@ -162,57 +162,6 @@
 \separatorcolumn
 
 % ============================== COLUMN 3 ==============================
-\begin{column}{\colwidth}
-
-  \begin{alertblock}{The dominated region}
-    \leadin{\flow Beyond revenue: measuring the notch's distortion.}
-    Profit jumps \emph{down} by $\tau T^\ast=\pounds17{,}000$ at the
-    threshold. The \hl{dominated region} --- turnover where no firm locates
-    because it earns less than at $T^\ast$ --- has exact width
-    \[ a=T^\ast\tfrac{\tau}{1-\tau}=\pounds21{,}250 \]
-    (\pounds85{,}000--\pounds106{,}250), spanning \hl{$\approx$137{,}000}
-    weighted firms. \hl{Exact and elasticity-free} (conditional on the
-    turnover-tax notch).
-  \end{alertblock}
-
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.98\colwidth]{figures/dynamic_notch_fit_e017.png}
-  \end{figure}
-
-  \begin{block}{How reforms change it}
-    \leadin{Which reforms actually shrink this band?}
-    \begin{itemize}
-      \item Raising the threshold \hl{relocates} the \pounds21{,}250 band
-            unchanged.
-      \item A banded reduced rate does \hl{not shrink} it: reverting to 20\%
-            at the band top adds a \emph{secondary} notch
-            $a'=T_1\tfrac{\tau-r}{1-\tau}$, so total width is
-            \hl{\pounds21{,}562 (15\%)} / \hl{\pounds22{,}569 (10\%)} --- it
-            \hl{splits} the band, not shrinks it.
-      \item \hl{Only the graduated taper removes the distortion} entirely.
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Bunching is mechanical}
-    \leadin{A transparency check on the synthetic data.}
-    Estimator: $b=0.060$, excess mass \hl{$E=8{,}712$} firms. A
-    \hl{placebo} collapses $E$ to \hl{0--99} when the step is removed from
-    the calibration target $\Rightarrow$ bunching is inherited from coarse
-    HMRC band targets, \emph{not} firm behaviour. Behavioural bunching is
-    therefore \hl{not identified} on the synthetic data; the administrative
-    estimate of Liu et al.\ (2021) remains the behavioural fact.
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.94\colwidth]{figures/bunching_analysis_85k.png}
-    \end{figure}
-  \end{block}
-
-\end{column}
-
-\separatorcolumn
-
-% ============================== COLUMN 4 ==============================
 \begin{column}{\colwidth}
 
   \begin{block}{Reform menu (common \pounds85k / \pounds183.6bn base)}
@@ -232,9 +181,61 @@
     \end{tabular}
     \begin{figure}
       \centering
-      \includegraphics[width=0.86\colwidth]{figures/firms_impact_2025_26.png}
+      \includegraphics[width=0.64\colwidth]{figures/firms_impact_2025_26.png}
     \end{figure}
   \end{block}
+
+  \begin{block}{Bunching is mechanical}
+    \leadin{A transparency check on the synthetic data.}
+    Estimator: $b=0.060$, excess mass \hl{$E=8{,}712$} firms. A
+    \hl{placebo} collapses $E$ to \hl{0--99} when the step is removed from
+    the calibration target $\Rightarrow$ bunching is inherited from coarse
+    HMRC band targets, \emph{not} firm behaviour. Behavioural bunching is
+    therefore \hl{not identified} on the synthetic data; the administrative
+    estimate of Liu et al.\ (2021) remains the behavioural fact.
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.70\colwidth]{figures/bunching_analysis_85k.png}
+    \end{figure}
+  \end{block}
+
+  \begin{alertblock}{The dominated region}
+    \leadin{Beyond revenue: measuring the notch's distortion.}
+    Profit jumps \emph{down} by $\tau T^\ast=\pounds17{,}000$ at the
+    threshold. The \hl{dominated region} --- turnover where no firm locates
+    because it earns less than at $T^\ast$ --- has exact width
+    \[ a=T^\ast\tfrac{\tau}{1-\tau}=\pounds21{,}250 \]
+    (\pounds85{,}000--\pounds106{,}250), spanning \hl{$\approx$137{,}000}
+    weighted firms. \hl{Exact and elasticity-free} (conditional on the
+    turnover-tax notch).
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.66\colwidth]{figures/dynamic_notch_fit_e017.png}
+    \end{figure}
+  \end{alertblock}
+
+\end{column}
+
+\separatorcolumn
+
+% ============================== COLUMN 4 ==============================
+\begin{column}{\colwidth}
+
+  \begin{block}{How reforms change it}
+    \leadin{\flow Which reforms actually shrink this band?}
+    \begin{itemize}
+      \item Raising the threshold \hl{relocates} the \pounds21{,}250 band
+            unchanged.
+      \item A banded reduced rate does \hl{not shrink} it: reverting to 20\%
+            at the band top adds a \emph{secondary} notch
+            $a'=T_1\tfrac{\tau-r}{1-\tau}$, so total width is
+            \hl{\pounds21{,}562 (15\%)} / \hl{\pounds22{,}569 (10\%)} --- it
+            \hl{splits} the band, not shrinks it.
+      \item \hl{Only the graduated taper removes the distortion} entirely.
+    \end{itemize}
+  \end{block}
+
+  \vspace*{7ex}
 
   \begin{block}{Behavioural layer (conditional)}
     \leadin{Layering an assumed response on the static costs.}
@@ -245,9 +246,11 @@
     \pounds171m$\to$\hl{\pounds135m}, as firms broaden the base.
     \begin{figure}
       \centering
-      \includegraphics[width=0.80\colwidth]{figures/dynamic_cost_vs_elasticity.png}
+      \includegraphics[width=0.98\colwidth]{figures/dynamic_cost_vs_elasticity.png}
     \end{figure}
   \end{block}
+
+  \vspace*{7ex}
 
   \begin{alertblock}{Conclusions}
     \begin{enumerate}
@@ -261,6 +264,8 @@
             cost and dominated region are the \hl{elasticity-free anchors}.
     \end{enumerate}
   \end{alertblock}
+
+  \vspace*{7ex}
 
   \begin{block}{Future work \& contact}
     \begin{minipage}{0.62\colwidth}
