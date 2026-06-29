@@ -1,0 +1,306 @@
+% !TEX program = xelatex
+% A Firm-Level Microsimulation for VAT Policy Analysis -- conference poster
+% Build:  xelatex poster.tex  (run twice).  Gemini theme + PolicyEngine teal.
+\documentclass[final]{beamer}
+
+\usepackage[size=a0,orientation=landscape,scale=1.05]{beamerposter}
+\usetheme{gemini}
+\usecolortheme{policyengine}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{anyfontsize}
+\usepackage{qrcode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{fontawesome5}
+
+% ----- layout: 4 content columns -----
+% 5 separators + 4 columns = 1.0 paperwidth
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.018\paperwidth}
+\setlength{\colwidth}{0.2305\paperwidth}
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+% ----- accent helpers -----
+\newcommand{\hl}[1]{{\color{peteal}\bfseries #1}}
+\newcommand{\pos}[1]{{\color{pedarkteal}\bfseries #1}}
+% short connective cue at the top of a block (italic deep-teal, no new claims)
+\newcommand{\leadin}[1]{{\color{pedarkteal}\itshape #1}\par\vspace*{0.45em}}
+% a small teal arrow used as a between-column flow connector
+\newcommand{\flow}{{\color{peteal}\bfseries$\rightarrow$~}}
+
+% tighter blocks so 4 columns fill the height cleanly
+\setbeamertemplate{block end}{\end{adjustwidth}\vskip1ex\end{beamercolorbox}\vskip0pt\vspace*{1.2ex}}
+\setbeamertemplate{block alerted end}{\end{adjustwidth}\vskip1ex\end{beamercolorbox}\vskip0pt\vspace*{1.2ex}}
+\setbeamertemplate{block example end}{\end{adjustwidth}\vskip1ex\end{beamercolorbox}\vskip0pt\vspace*{1.2ex}}
+
+% ----- header -----
+% Uniform subtitle size: author and institute lines render at the same size.
+\setbeamerfont{author}{size=\large}
+\setbeamerfont{institute}{size=\large}
+\title{A Firm-Level Microsimulation for VAT Policy Analysis}
+\author{Vahid Ahmadi \quad \faEnvelope~\texttt{vahid@policyengine.org}}
+\institute[PolicyEngine]{PolicyEngine \quad\textbar\quad
+  \faGlobe~\texttt{policyengine.org} \quad\textbar\quad
+  Free, open-source tax and benefit analysis}
+\footercontent{\textbf{Beamm.conf26} \;\textbar\; Conference on Public Finance \&
+  Public Policy Evaluation}
+
+\begin{document}
+\logoleft{\includegraphics[height=2.9cm]{logo/policyengine-teal.png}}
+\logoright{\qrcode[height=7.5cm]{https://firm-microsim-paper.vercel.app/}}
+
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+% ============================== COLUMN 1 ==============================
+\begin{column}{\colwidth}
+
+  \begin{alertblock}{The problem: VAT as a tax \emph{notch}}
+    The UK VAT registration threshold is a \hl{notch}, not a kink. Once
+    taxable turnover crosses $T^\ast$, \hl{20\% VAT falls due on the
+    \emph{whole} turnover}, not just the increment --- a discrete liability
+    jump of \hl{$\tau T^\ast=$~\pounds17{,}000} at $T^\ast=$~\pounds85{,}000.
+    Threshold \hl{\pounds85{,}000} (2023--24 data year), raised to
+    \hl{\pounds90{,}000} in April 2024 --- among the \hl{highest in the
+    OECD} --- and it sits in a \emph{dense} part of the firm-size
+    distribution. Firms respond by \hl{locating just below} it; the cost of
+    crossing is sharpest for \emph{consumer-facing} firms with little
+    reclaimable input VAT, so the notch distorts both the size distribution
+    and firms' growth at the margin.
+  \end{alertblock}
+
+  \begin{figure}
+    \centering
+    {\itshape All UK firms by turnover band --- ONS, 2023--24}\\[0.4em]
+    \includegraphics[width=0.70\colwidth]{figures/firms_by_turnover_band_85k.png}
+  \end{figure}
+
+  \vfill
+
+  \begin{block}{Three reform families, one basis}
+    \leadin{What we cost.}
+    Costed on a \emph{common static basis}:
+    \begin{itemize}
+      \item \hl{Level} --- move the threshold up or down.
+      \item \hl{Shape} --- a graduated taper that phases VAT in.
+      \item \hl{Rate} --- a reduced-rate band above the threshold.
+    \end{itemize}
+  \end{block}
+
+  \vfill
+
+  \begin{alertblock}{Contribution}
+    {\color{peteal}\bfseries Headline: only the graduated taper removes the
+      notch's distortion; the level move is the dearest and least
+      efficient.}\par\vspace*{0.45em}
+    An open, reproducible firm-level microsimulation that:
+    \begin{enumerate}
+      \item costs \hl{level + shape + rate} reforms on one static basis;
+      \item characterises the notch's distortion via its exact,
+            \hl{elasticity-free dominated region};
+      \item shows via a \hl{placebo} that synthetic bunching is mechanical;
+      \item adds a conditional \hl{behavioural layer}.
+    \end{enumerate}
+  \end{alertblock}
+
+  \vfill
+
+  \begin{exampleblock}{Data methodology}
+    \leadin{How the synthetic data are built.}
+    Draw synthetic firms by sector\,$\times$\,turnover band; give each an
+    input share $x_i=\rho_i y_i$ so value added $v_i=y_i-x_i$ is the net VAT
+    base. Firm weights $w_i=e^{\theta_i}$ are fit by gradient descent to HMRC
+    + ONS aggregates. Crucially, the threshold is a \emph{generator
+    parameter}: every counterfactual --- a higher cutoff, a taper, a reduced
+    rate --- \hl{regenerates} a fresh, internally consistent population, and
+    the whole file is \hl{released openly}.
+  \end{exampleblock}
+
+  \vfill
+
+\end{column}
+
+\separatorcolumn
+
+% ============================== COLUMN 2 ==============================
+\begin{column}{\colwidth}
+
+  \begin{block}{Synthetic firm data}
+    \leadin{\flow The engine behind every costing.}
+    \hl{$\approx$2.94m} firm rows weighted to \hl{$\approx$2.5m} UK firms,
+    calibrated to HMRC + ONS aggregates (turnover-band counts, sector,
+    employment, net VAT liability by band) at \hl{$\approx$90\% accuracy}.
+    Calibrated \emph{to} the aggregates, so agreement is an
+    \hl{internal-consistency check}, not external validation.
+  \end{block}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.92\colwidth]{figures/turnover_distribution_85k.png}
+  \end{figure}
+
+  \vfill
+
+  \begin{exampleblock}{Static costing}
+    \leadin{Pricing a reform on this data.}
+    \[ R(T)=\sum_i w_i\, v_i\,\mathds{1}\{y_i\ge T\} \]
+    Revenue moves only through firms whose registration status flips.\\[0.4em]
+    \hl{Validation vs HMRC:} the \pounds85k$\to$\pounds90k April-2024 increase
+    costs \hl{$-$\pounds175m} in 2025--26 vs HMRC's published
+    \hl{$-$\pounds185m} --- agreement \hl{within $\sim$\pounds10m}.
+  \end{exampleblock}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.94\colwidth]{figures/vat_threshold_revenue_impact.png}
+  \end{figure}
+
+  \vfill
+
+  \begin{block}{Threshold sweep (2025--26)}
+    \leadin{Scaling the \emph{level} reform across thresholds.}
+    From a \pounds90k base (\hl{\pounds203.8bn}), the static cost is roughly
+    \hl{linear}, $\approx$\pounds150--220m per \pounds5k step --- e.g.\
+    \hl{$-$\pounds374m} to raise to \pounds100k, \hl{$+$\pounds665m} to lower
+    to \pounds70k.
+  \end{block}
+
+  \vfill
+
+\end{column}
+
+\separatorcolumn
+
+% ============================== COLUMN 3 ==============================
+\begin{column}{\colwidth}
+
+  \begin{block}{Reform menu}
+    \leadin{\flow Cost and distortion on a common \pounds85k / \pounds183.6bn base.}
+    \centering
+    \renewcommand{\arraystretch}{1.45}
+    \setlength{\tabcolsep}{1.4em}
+    \small
+    \begin{tabular}{@{}l c r l@{}}
+      \toprule
+      \textbf{Reform} & \textbf{Type} & \textbf{Static} & \textbf{Dominated region}\\
+      \midrule
+      Raise to \pounds100k & Level & $-$\pounds508m & relocated\\
+      Taper \pounds85--105k & Shape & $-$\pounds336m & {\color{pedarkteal}\bfseries removed}\\
+      Reduced 10\% & Rate & $-$\pounds343m & split in two\\
+      Reduced 15\% & Rate & $-$\pounds171m & split in two\\
+      \bottomrule
+    \end{tabular}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Bunching is mechanical}
+    \leadin{A transparency check on the synthetic data.}
+    Estimator: $b=0.060$, excess mass \hl{$E=8{,}712$} firms. A
+    \hl{placebo} collapses $E$ to \hl{0--99} when the step is removed from
+    the calibration target $\Rightarrow$ bunching is inherited from coarse
+    HMRC band targets, \emph{not} firm behaviour. Behavioural bunching is
+    therefore \hl{not identified} on the synthetic data; the administrative
+    estimate of Liu et al.\ (2021) remains the behavioural fact.
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.74\colwidth]{figures/bunching_analysis_85k.png}
+    \end{figure}
+  \end{block}
+
+  \vfill
+
+  \begin{alertblock}{The dominated region}
+    \leadin{Beyond revenue: measuring the notch's distortion.}
+    Profit jumps \emph{down} by $\tau T^\ast=$~\pounds17{,}000 at the
+    threshold. The \hl{dominated region} --- turnover where no firm locates
+    because it earns less than at $T^\ast$ --- has exact width
+    \[ a=T^\ast\tfrac{\tau}{1-\tau}=\text{\pounds}21{,}250 \]
+    (\pounds85{,}000--\pounds106{,}250), spanning \hl{$\approx$137{,}000}
+    weighted firms. \hl{Exact and elasticity-free} (conditional on the
+    turnover-tax notch).
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.72\colwidth]{figures/dynamic_notch_fit_e017.png}
+    \end{figure}
+  \end{alertblock}
+
+  \vfill
+
+\end{column}
+
+\separatorcolumn
+
+% ============================== COLUMN 4 ==============================
+\begin{column}{\colwidth}
+
+  \begin{block}{How reforms change it}
+    \leadin{\flow Which reforms actually shrink this band?}
+    \begin{itemize}
+      \item Raising the threshold \hl{relocates} the \pounds21{,}250 band
+            unchanged.
+      \item A banded reduced rate does \hl{not shrink} it. It lowers the
+            \emph{largest single} notch (\pounds17{,}000$\to$\hl{\pounds12{,}750}
+            at 15\%), but reverting to 20\% at the band top adds a
+            \emph{secondary} notch $a'=T_1\tfrac{\tau-r}{1-\tau}$ of
+            \pounds5{,}250, so total width is
+            \hl{\pounds21{,}562 (15\%)} / \hl{\pounds22{,}569 (10\%)} --- it
+            \hl{splits} the band, not shrinks it.
+      \item \hl{Only the graduated taper removes the distortion} entirely.
+    \end{itemize}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Behavioural layer}
+    \leadin{Layering an assumed response on the static costs.}
+    Conditional on an \hl{assumed} turnover elasticity $e$ (\emph{not}
+    identified on synthetic data); sweep $e\in\{0.05,0.17,0.32\}$. At the
+    midpoint $e=0.17$, each static cost falls as firms broaden the base:
+    raising to \pounds100k from \pounds508m to \hl{\pounds292m}; the 10\% band
+    \pounds343m to \hl{\pounds273m}; the 15\% band \pounds171m to
+    \hl{\pounds135m}. A larger $e$ makes every reform \hl{cheaper}. The taper
+    is \emph{excluded} --- its base-broadening and marginal-rate channels
+    cannot be netted in the iso-elastic cost. Only $e=0.05$ has an external
+    anchor, so this is a \hl{sensitivity range}, not a forecast.
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.80\colwidth]{figures/dynamic_cost_vs_elasticity.png}
+    \end{figure}
+  \end{block}
+
+  \vfill
+
+  \begin{alertblock}{Conclusions}
+    {\color{peteal}\bfseries What this paper is:} an open, reproducible
+    microsimulation that models the UK VAT threshold as a
+    \emph{turnover-tax notch} on synthetic firm data, and prices level, shape
+    and rate reforms three ways --- statically, by the exact distortion each
+    removes, and behaviourally.\par\vspace*{0.5em}
+    \begin{enumerate}
+      \item Prices level + shape + rate on one basis; reproduces HMRC's
+            anchor costing.
+      \item On the dominated-region metric, \hl{only the taper removes the
+            distortion} --- the level move is the dearest and least efficient.
+      \item Synthetic bunching is \hl{mechanical} (a transparency lesson) ---
+            no elasticity is read off it.
+      \item Behavioural offsets are conditional on an assumed $e$; the static
+            cost and dominated region are the \hl{elasticity-free anchors}.
+    \end{enumerate}
+  \end{alertblock}
+
+  \vfill
+
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+\end{document}
