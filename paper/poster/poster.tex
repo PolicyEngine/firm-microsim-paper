@@ -40,17 +40,20 @@
 \setbeamertemplate{block example end}{\end{adjustwidth}\vskip1ex\end{beamercolorbox}\vskip0pt\vspace*{1.2ex}}
 
 % ----- header -----
+% Uniform subtitle size: author and institute lines render at the same size.
+\setbeamerfont{author}{size=\large}
+\setbeamerfont{institute}{size=\large}
 \title{A Firm-Level Microsimulation for VAT Policy Analysis}
 \author{Vahid Ahmadi \quad \faEnvelope~\texttt{vahid@policyengine.org}}
-\institute[PolicyEngine]{PolicyEngine \quad \faGlobe~\texttt{www.policyengine.org}
-  \quad\textbar\quad free, open-source policy analysis}
-\footercontent{\texttt{github.com/PolicyEngine/firm-microsim-paper}
-  \;\textbar\; Open \& reproducible
-  \;\textbar\; \texttt{www.policyengine.org}}
+\institute[PolicyEngine]{PolicyEngine \quad\textbar\quad
+  \faGlobe~\texttt{www.policyengine.org} \quad\textbar\quad
+  Free, open-source tax and benefit analysis}
+\footercontent{\textbf{Beamm.conf26} \;\textbar\; Conference on Public Finance \&
+  Public Policy Evaluation}
 
 \begin{document}
 \logoleft{\includegraphics[height=2.9cm]{logo/policyengine-teal.png}}
-\logoright{}
+\logoright{\qrcode[height=5cm]{https://firm-microsim-paper.vercel.app/}}
 
 \begin{frame}[t]
 \begin{columns}[t]
@@ -63,7 +66,7 @@
     The UK VAT registration threshold is a \hl{notch}, not a kink. Once
     taxable turnover crosses $T^\ast$, \hl{20\% VAT falls due on the
     \emph{whole} turnover}, not just the increment --- a discrete liability
-    jump of \hl{$\tau T^\ast = \pounds17{,}000$} at $T^\ast=\pounds85{,}000$.
+    jump of \hl{$\tau T^\ast=$~\pounds17{,}000} at $T^\ast=$~\pounds85{,}000.
     Threshold \hl{\pounds85{,}000} (2023--24 data year), raised to
     \hl{\pounds90{,}000} in April 2024 --- among the \hl{highest in the
     OECD} --- and it sits in a \emph{dense} part of the firm-size
@@ -72,8 +75,10 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.82\colwidth]{figures/firms_by_turnover_band_85k.png}
+    \includegraphics[width=1.0\colwidth]{figures/firms_by_turnover_band_85k.png}
   \end{figure}
+
+  \vspace*{7ex}
 
   \begin{block}{Three reform families, one basis}
     \leadin{What we cost.}
@@ -84,11 +89,6 @@
       \item \hl{Rate} --- a reduced-rate band above the threshold.
     \end{itemize}
   \end{block}
-
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.72\colwidth]{figures/vat_firms_by_turnover_band_85k.png}
-  \end{figure}
 
   \begin{alertblock}{Contribution}
     {\color{peteal}\bfseries Headline: only the graduated taper removes the
@@ -103,6 +103,8 @@
       \item adds a conditional \hl{behavioural layer}.
     \end{enumerate}
   \end{alertblock}
+
+  \vspace*{7ex}
 
   \begin{exampleblock}{Method in one line}
     \leadin{How the synthetic data are built.}
@@ -130,7 +132,7 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.88\colwidth]{figures/turnover_distribution_85k.png}
+    \includegraphics[width=0.90\colwidth]{figures/turnover_distribution_85k.png}
   \end{figure}
 
   \begin{exampleblock}{Static costing}
@@ -144,7 +146,7 @@
 
   \begin{figure}
     \centering
-    \includegraphics[width=0.88\colwidth]{figures/vat_threshold_revenue_impact.png}
+    \includegraphics[width=0.92\colwidth]{figures/vat_threshold_revenue_impact.png}
   \end{figure}
 
   \begin{block}{Threshold sweep (2025--26)}
@@ -153,7 +155,7 @@
     \hl{linear}, $\approx$\pounds150--220m per \pounds5k step.
     \begin{figure}
       \centering
-      \includegraphics[width=0.64\colwidth]{figures/revenue_impact_2025_26.png}
+      \includegraphics[width=0.50\colwidth]{figures/revenue_impact_2025_26.png}
     \end{figure}
   \end{block}
 
@@ -167,8 +169,8 @@
   \begin{block}{Reform menu (common \pounds85k / \pounds183.6bn base)}
     \leadin{\flow Cost and distortion, side by side.}
     \centering
-    \renewcommand{\arraystretch}{1.2}
-    \footnotesize
+    \renewcommand{\arraystretch}{1.4}
+    \small
     \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.34\colwidth} c r >{\raggedright\arraybackslash}p{0.30\colwidth}@{}}
       \toprule
       \textbf{Reform} & \textbf{Type} & \textbf{Static} & \textbf{Dominated region}\\
@@ -179,10 +181,6 @@
       Reduced 15\% & Rate & $-$\pounds171m & splits (2nd notch)\\
       \bottomrule
     \end{tabular}
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.64\colwidth]{figures/firms_impact_2025_26.png}
-    \end{figure}
   \end{block}
 
   \begin{block}{Bunching is mechanical}
@@ -195,22 +193,22 @@
     estimate of Liu et al.\ (2021) remains the behavioural fact.
     \begin{figure}
       \centering
-      \includegraphics[width=0.70\colwidth]{figures/bunching_analysis_85k.png}
+      \includegraphics[width=0.82\colwidth]{figures/bunching_analysis_85k.png}
     \end{figure}
   \end{block}
 
   \begin{alertblock}{The dominated region}
     \leadin{Beyond revenue: measuring the notch's distortion.}
-    Profit jumps \emph{down} by $\tau T^\ast=\pounds17{,}000$ at the
+    Profit jumps \emph{down} by $\tau T^\ast=$~\pounds17{,}000 at the
     threshold. The \hl{dominated region} --- turnover where no firm locates
     because it earns less than at $T^\ast$ --- has exact width
-    \[ a=T^\ast\tfrac{\tau}{1-\tau}=\pounds21{,}250 \]
+    \[ a=T^\ast\tfrac{\tau}{1-\tau}=\text{\pounds}21{,}250 \]
     (\pounds85{,}000--\pounds106{,}250), spanning \hl{$\approx$137{,}000}
     weighted firms. \hl{Exact and elasticity-free} (conditional on the
     turnover-tax notch).
     \begin{figure}
       \centering
-      \includegraphics[width=0.66\colwidth]{figures/dynamic_notch_fit_e017.png}
+      \includegraphics[width=0.80\colwidth]{figures/dynamic_notch_fit_e017.png}
     \end{figure}
   \end{alertblock}
 
@@ -235,7 +233,7 @@
     \end{itemize}
   \end{block}
 
-  \vspace*{7ex}
+  \vspace*{15ex}
 
   \begin{block}{Behavioural layer (conditional)}
     \leadin{Layering an assumed response on the static costs.}
@@ -250,7 +248,7 @@
     \end{figure}
   \end{block}
 
-  \vspace*{7ex}
+  \vspace*{15ex}
 
   \begin{alertblock}{Conclusions}
     \begin{enumerate}
@@ -264,21 +262,6 @@
             cost and dominated region are the \hl{elasticity-free anchors}.
     \end{enumerate}
   \end{alertblock}
-
-  \vspace*{7ex}
-
-  \begin{block}{Future work \& contact}
-    \begin{minipage}{0.62\colwidth}
-      \small Identify $e$ from administrative micro-data; welfare / MVPF
-      accounting; sectoral incidence.\\[0.4em]
-      \hl{Vahid Ahmadi} --- PolicyEngine\\
-      \texttt{github.com/PolicyEngine/}\\\texttt{firm-microsim-paper}
-    \end{minipage}\hfill
-    \begin{minipage}{0.32\colwidth}
-      \centering
-      \qrcode[height=3.4cm]{https://github.com/PolicyEngine/firm-microsim-paper}
-    \end{minipage}
-  \end{block}
 
 \end{column}
 
