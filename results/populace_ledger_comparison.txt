@@ -1,0 +1,35 @@
+# Populace/Ledger firm-generation comparison
+
+Reference run:
+
+- Status: pinned to merged Ledger and Populace snapshots
+- Vintage: 2024-25
+- Seed: 42
+- Populace iterations: 1,000
+- Ledger input surface: 1,439 consumer facts
+- Ledger facts SHA256: `58b6c2752adec5baa6a6260fe8cd9e9b85d0a78b5ba76ea28201f4c7986dce50`
+- Ledger target snapshot: https://github.com/PolicyEngine/ledger/pull/67 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` (MERGED on 2026-06-30, merge commit `ac643afa0c1d45fc4abd0268dc5aa7c843440b38`)
+- Populace snapshot: https://github.com/PolicyEngine/populace/pull/223 at `fa20daf75ff023e5e88731a140f456f58e0b864e` (MERGED on 2026-06-30, merge commit `8271d767244161631253ad1d9ad792a82e2b96b4`)
+- Normalized source-table parity: 6 tables checked, 0 mismatched, max absolute numeric difference 0
+
+The Ledger-backed targets match the paper's processed 2024-25 numeric input tables exactly after dropping presentation-only labels, totals, and the HMRC Unknown column that the generator does not calibrate.
+
+| Metric | Comparability | Truth / target where it exists | Paper 2024-25 | Populace/Ledger 2024-25 |
+| --- | --- | ---: | ---: | ---: |
+| Rows | Descriptive | N/A, synthetic support size | 2,945,974 | 2,946,015 |
+| Weighted population | Direct | 2,734,615 ONS firms | 2,577,078 | 2,945,777 |
+| HMRC turnover bands | Not like-for-like | 2,171,200 VAT-registered firms excluding Unknown | 92.7% | 99.9% |
+| ONS population | Direct | 2,734,615 ONS firms | 94.2% | 92.3% |
+| Employment bands | Direct | ONS employment-band distribution, sum 2,734,615 | 89.7% | 92.3% |
+| Sector distribution | Project-specific | 2,330,230 VAT-registered firms by SIC sector | 94.5% | 85.0% |
+| VAT liability by band | Direct | GBP 177.17bn net VAT liability by turnover band | 81.4% | 99.5% |
+| Overall | Not like-for-like | N/A, mean of calibrated accuracy scores | 90.5% | 93.8% |
+| VAT liability by sector diagnostic | Diagnostic | GBP 177.29bn net VAT liability by SIC sector | 44.5% | 42.2% |
+
+Interpretation: this is not a silent replacement for the paper's published synthetic population. The target surface is identical, and the directly comparable rows are ONS population, employment bands, and VAT liability by turnover band. HMRC turnover-band accuracy, sector distribution, and overall accuracy are computed under project-specific definitions, so the overall scores are not a like-for-like quality ranking. VAT liability by sector remains an informational diagnostic, not a calibrated target.
+
+Recompute command:
+
+```bash
+firm-microsim-populace-ledger --facts-jsonl /tmp/uk_firm_consumer_facts.jsonl --reference-population --output results/populace_ledger_comparison.txt --json-output results/populace_ledger_provenance.json
+```

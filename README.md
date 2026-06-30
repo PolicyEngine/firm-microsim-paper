@@ -50,6 +50,12 @@ The result is ~2.94M firm rows weighted to ~2.5M UK firms. Because the populatio
 is calibrated **to** the HMRC aggregates, agreement with them is an internal
 consistency check, not external validation.
 
+The official target surface is also being mirrored into PolicyEngine Ledger and
+Populace. This repository keeps the paper's archived CSV inputs and generator for
+reproducibility, and includes a Populace/Ledger comparison command so the pinned
+migration snapshot can be audited without silently changing the published paper
+population.
+
 ## Data vintages — single version, one-line switch
 
 The pipeline is **single-version**: there is one `VAT_THRESHOLD`, not separate
@@ -83,6 +89,7 @@ firm-microsim --vintage 2024-25             # one vintage only (£90k)
 firm-microsim --threshold 88 --seed 7 --output my_run.csv
 firm-microsim-report                        # calibration report only
 firm-microsim-figures                       # descriptive figures only
+firm-microsim-populace-ledger               # Populace/Ledger comparison
 ```
 
 ```python
@@ -145,15 +152,57 @@ firm-microsim-report
 | **Overall (5 calibrated dimensions)** | **89.9%** | **90.5%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
-an informational diagnostic only (47.1% / 21.7%). The model fixes firm inputs
+an informational diagnostic only (47.1% / 44.5%). The model fixes firm inputs
 and sets liability = turnover − input but does not yet calibrate the
 **input/output tax structure**, so per-sector net liability is structurally
-unhittable and, while targeted, competed with the dimensions above (it scored
-43.9% / −121.1% and dragged the naive mean down). It is gated off via
+unhittable and is gated off via
 `Config.calibrate_vat_liability_sector = False`. Restoring it after input/output
 calibration is tracked in issues
 [#1](https://github.com/PolicyEngine/firm-microsim-paper/issues/1) and
 [#2](https://github.com/PolicyEngine/firm-microsim-paper/issues/2).
+
+## Populace/Ledger migration check
+
+`firm-microsim-populace-ledger` reports the current migration comparison. The
+checked reference run used the 2024-25 Ledger target surface from
+[PolicyEngine/ledger#67](https://github.com/PolicyEngine/ledger/pull/67)
+at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Populace's experimental UK
+firm generator from
+[PolicyEngine/populace#223](https://github.com/PolicyEngine/populace/pull/223)
+at `fa20daf75ff023e5e88731a140f456f58e0b864e`. Both upstream PRs merged on
+June 30, 2026: Ledger at merge commit
+`ac643afa0c1d45fc4abd0268dc5aa7c843440b38`, and Populace at merge commit
+`8271d767244161631253ad1d9ad792a82e2b96b4`. The reference population uses
+1,000 calibration iterations:
+
+```bash
+firm-microsim-populace-ledger \
+  --output results/populace_ledger_comparison.txt \
+  --json-output results/populace_ledger_provenance.json
+```
+
+When `populace-build` is installed from the Populace source tree, the same command
+can recompute the table and paper-CSV parity from Ledger consumer facts:
+
+```bash
+firm-microsim-populace-ledger \
+  --facts-jsonl /path/to/uk_firm_consumer_facts.jsonl \
+  --iterations 1000 \
+  --output results/populace_ledger_comparison.txt \
+  --json-output results/populace_ledger_provenance.json
+```
+
+The current reference comparison shows exact parity between the Ledger-backed
+targets and the paper's processed 2024-25 numeric inputs: six normalized source
+tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
+replicate the paper's generated synthetic population: Populace's shared optimizer
+lands at 93.8% overall accuracy under its own validator versus the paper's 90.5%,
+but that overall pair is **not like-for-like**: HMRC turnover-band accuracy uses
+different band sets, and sector distribution reflects different calibration-target
+definitions. The directly comparable rows are ONS population, employment bands,
+and VAT liability by turnover band. The Populace/Ledger path is now based on
+merged upstream inputs, while remaining a migration check rather than a silent
+replacement for the paper's archived generator/results.
 
 ## Figures
 

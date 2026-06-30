@@ -1,0 +1,103 @@
+{
+  "ledger_paper_parity": {
+    "facts_count": 1439,
+    "facts_sha256": "58b6c2752adec5baa6a6260fe8cd9e9b85d0a78b5ba76ea28201f4c7986dce50",
+    "max_abs_numeric_diff": 0.0,
+    "mismatched_tables": [],
+    "tables": [
+      {
+        "max_abs_numeric_diff": 0.0,
+        "name": "ons_turnover_by_sic_band",
+        "paper_rows_after_filter": 88,
+        "rows": 88,
+        "same_keys": true,
+        "values_equal": true
+      },
+      {
+        "max_abs_numeric_diff": 0.0,
+        "name": "ons_employment_by_sic_band",
+        "paper_rows_after_filter": 88,
+        "rows": 88,
+        "same_keys": true,
+        "values_equal": true
+      },
+      {
+        "max_abs_numeric_diff": 0.0,
+        "name": "hmrc_population_by_turnover_band",
+        "paper_rows_after_filter": 1,
+        "rows": 1,
+        "same_keys": true,
+        "values_equal": true
+      },
+      {
+        "max_abs_numeric_diff": 0.0,
+        "name": "hmrc_population_by_sic",
+        "paper_rows_after_filter": 88,
+        "rows": 88,
+        "same_keys": true,
+        "values_equal": true
+      },
+      {
+        "max_abs_numeric_diff": 0.0,
+        "name": "hmrc_liability_by_turnover_band",
+        "paper_rows_after_filter": 1,
+        "rows": 1,
+        "same_keys": true,
+        "values_equal": true
+      },
+      {
+        "max_abs_numeric_diff": 0.0,
+        "name": "hmrc_liability_by_sic",
+        "paper_rows_after_filter": 88,
+        "rows": 88,
+        "same_keys": true,
+        "values_equal": true
+      }
+    ],
+    "tables_checked": 6
+  },
+  "migration_snapshot": {
+    "arch_data_commit": "cd98b5cb7b1604fbf7750689a429bbc356e5603a",
+    "arch_data_merge_commit": "ac643afa0c1d45fc4abd0268dc5aa7c843440b38",
+    "arch_data_pr": "https://github.com/PolicyEngine/ledger/pull/67",
+    "arch_data_state_at_check": "MERGED on 2026-06-30",
+    "comparison_command": "firm-microsim-populace-ledger --facts-jsonl /tmp/uk_firm_consumer_facts.jsonl --reference-population --output results/populace_ledger_comparison.txt --json-output results/populace_ledger_provenance.json",
+    "populace_commit": "fa20daf75ff023e5e88731a140f456f58e0b864e",
+    "populace_merge_commit": "8271d767244161631253ad1d9ad792a82e2b96b4",
+    "populace_pr": "https://github.com/PolicyEngine/populace/pull/223",
+    "populace_state_at_check": "MERGED on 2026-06-30",
+    "source_packages": [
+      "ons-uk-business-firm-targets-2025",
+      "ons-uk-business-firm-sector-targets-2025",
+      "hmrc-vat-firm-targets-2024-25",
+      "hmrc-vat-firm-sector-targets-2024-25"
+    ]
+  },
+  "paper_2024_25": {
+    "employment": 89.7,
+    "hmrc_bands": 92.7,
+    "ons_population": 94.2,
+    "overall": 90.5,
+    "rows": 2945974,
+    "sector": 94.5,
+    "vat_liability_band": 81.4,
+    "vat_liability_sector": 44.5,
+    "weighted_population": 2577078.0
+  },
+  "populace_ledger_2024_25": {
+    "employment": 92.27463056446766,
+    "hmrc_bands": 99.92894355826047,
+    "ons_population": 92.27819089707326,
+    "overall": 93.79009306789898,
+    "rows": 2946015,
+    "sector": 85.0102525769766,
+    "vat_liability_band": 99.45844774271694,
+    "vat_liability_sector": 42.17514113123149,
+    "weighted_population": 2945776.75
+  },
+  "run_parameters": {
+    "populace_iterations": 1000,
+    "seed": 42
+  },
+  "vintage": "2024-25"
+}

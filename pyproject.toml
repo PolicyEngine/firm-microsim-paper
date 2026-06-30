@@ -35,6 +35,7 @@ firm-microsim-dynamic = "firm_microsim.dynamic.__main__:main"
 firm-microsim-placebo = "firm_microsim.analysis.placebo_bunching:cli"
 firm-microsim-dominated-region = "firm_microsim.analysis.dominated_region_mass:cli"
 firm-microsim-reform-menu = "firm_microsim.analysis.reform_menu_common_base:cli"
+firm-microsim-populace-ledger = "firm_microsim.populace_ledger:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/firm_microsim"]
