@@ -57,6 +57,31 @@ value-added share and the statutory net-of-tax rate, and one verifies directly
 from~\eqref{eq:flat-optimum} that
 $\mathrm{d}\ln y^{*}/\mathrm{d}\ln\!\bigl[(1-\delta)(1-\tau)\bigr]=e$, so $e$ is
 exactly the knob that governs the intensive response.
+Figure~\ref{fig:formulation_a_optima} traces the formulation-A profit and its
+optima across the notch and taper schedules for three deductible shares, showing
+how both the value-added optimum and the notch geometry shift with $\delta$: the
+$(1-\delta)$ factor scales the whole curve down, and a higher $\delta$ pulls the
+registered optimum back toward the threshold, eventually tipping the global
+choice from the registered interior optimum to bunching at the notch.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/formulation_a_optima.png}
+\caption{Optima of the value-added (formulation~A) profit
+function~\eqref{eq:isoelastic}, $\pi_A(y)=(1-\delta)(1-\tau f(y))\,y-C(y;n,e)$,
+at statutory rate $\tau=0.20$, ability $n=\pounds130$k and elasticity $e=0.17$,
+under the hard registration notch (left) and the graduated
+taper (right). Each panel overlays three deductible-input shares
+$\delta\in\{0.0,0.4,0.8\}$; dots mark each curve's local maxima and the star its
+global optimum, and the dashed vertical line is the \pounds85{,}000 threshold.
+The value-added factor $(1-\delta)$ scales the whole curve down without moving
+the frictionless optimum, while a higher $\delta$ shrinks the retained wedge
+$(1-\delta)(1-\tau)$ and so pulls the registered optimum
+$y^{*}=n[(1-\delta)(1-\tau)]^{e}$ back toward the threshold---eventually tipping
+the global optimum from the registered interior peak to bunching at the notch,
+consistent with the formulation-A discussion above.}
+\label{fig:formulation_a_optima}
+\end{figure}
 
 \paragraph{Ability recovery.} To populate the simulator I recover an ability $n$
 for each firm from its observed turnover under the baseline \pounds85{,}000 notch.
