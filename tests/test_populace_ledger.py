@@ -34,6 +34,8 @@ def test_reference_report_records_populace_calibration_tradeoff() -> None:
 
     assert "Paper 2024-25" in report
     assert "Populace/Ledger 2024-25" in report
+    assert "pinned to merged Ledger and Populace snapshots" in report
+    assert "Preliminary reference run" not in report
     assert (
         "| Overall | Not like-for-like | N/A, mean of calibrated accuracy scores | "
         "90.5% | 93.8% |"
@@ -93,8 +95,22 @@ def test_reference_provenance_records_pinned_pr_snapshot() -> None:
         == "cd98b5cb7b1604fbf7750689a429bbc356e5603a"
     )
     assert (
+        payload["migration_snapshot"]["arch_data_merge_commit"]
+        == "ac643afa0c1d45fc4abd0268dc5aa7c843440b38"
+    )
+    assert payload["migration_snapshot"]["arch_data_state_at_check"].startswith(
+        "MERGED"
+    )
+    assert (
         payload["migration_snapshot"]["populace_commit"]
         == "fa20daf75ff023e5e88731a140f456f58e0b864e"
+    )
+    assert (
+        payload["migration_snapshot"]["populace_merge_commit"]
+        == "8271d767244161631253ad1d9ad792a82e2b96b4"
+    )
+    assert payload["migration_snapshot"]["populace_state_at_check"].startswith(
+        "MERGED"
     )
     assert "--reference-population" in payload["migration_snapshot"][
         "comparison_command"

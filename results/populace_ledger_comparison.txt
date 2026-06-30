@@ -1,15 +1,15 @@
 # Populace/Ledger firm-generation comparison
 
-Preliminary reference run:
+Reference run:
 
-- Status: pinned to open, unmerged Arch and Populace PR snapshots
+- Status: pinned to merged Ledger and Populace snapshots
 - Vintage: 2024-25
 - Seed: 42
 - Populace iterations: 1,000
 - Ledger input surface: 1,439 consumer facts
 - Ledger facts SHA256: `58b6c2752adec5baa6a6260fe8cd9e9b85d0a78b5ba76ea28201f4c7986dce50`
-- Arch data snapshot: https://github.com/PolicyEngine/arch-data/pull/67 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` (OPEN, MERGEABLE, CLEAN on 2026-06-30)
-- Populace snapshot: https://github.com/PolicyEngine/populace/pull/223 at `fa20daf75ff023e5e88731a140f456f58e0b864e` (OPEN, MERGEABLE, CLEAN on 2026-06-30)
+- Ledger target snapshot: https://github.com/PolicyEngine/ledger/pull/67 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` (MERGED on 2026-06-30, merge commit `ac643afa0c1d45fc4abd0268dc5aa7c843440b38`)
+- Populace snapshot: https://github.com/PolicyEngine/populace/pull/223 at `fa20daf75ff023e5e88731a140f456f58e0b864e` (MERGED on 2026-06-30, merge commit `8271d767244161631253ad1d9ad792a82e2b96b4`)
 - Normalized source-table parity: 6 tables checked, 0 mismatched, max absolute numeric difference 0
 
 The Ledger-backed targets match the paper's processed 2024-25 numeric input tables exactly after dropping presentation-only labels, totals, and the HMRC Unknown column that the generator does not calibrate.

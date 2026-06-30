@@ -90,7 +90,7 @@ class ParitySummary:
 #   firm-microsim --vintage 2024-25 --output synthetic_firms_2024-25.csv
 #
 # REFERENCE_POPULACE_LEDGER_2024_25 is from a separate full Populace optimizer
-# run using the pinned PR snapshots recorded in REFERENCE_MIGRATION. These
+# run using the merged upstream snapshots recorded in REFERENCE_MIGRATION. These
 # generated-population numbers are not recomputed in CI; CI verifies rendering,
 # provenance, and Ledger-vs-paper source-table parity.
 PAPER_2024_25 = CalibrationSnapshot(
@@ -140,12 +140,14 @@ REFERENCE_SOURCE_TOTALS = {
 }
 
 REFERENCE_MIGRATION = {
-    "arch_data_pr": "https://github.com/PolicyEngine/arch-data/pull/67",
+    "arch_data_pr": "https://github.com/PolicyEngine/ledger/pull/67",
     "arch_data_commit": "cd98b5cb7b1604fbf7750689a429bbc356e5603a",
-    "arch_data_state_at_check": "OPEN, MERGEABLE, CLEAN on 2026-06-30",
+    "arch_data_merge_commit": "ac643afa0c1d45fc4abd0268dc5aa7c843440b38",
+    "arch_data_state_at_check": "MERGED on 2026-06-30",
     "populace_pr": "https://github.com/PolicyEngine/populace/pull/223",
     "populace_commit": "fa20daf75ff023e5e88731a140f456f58e0b864e",
-    "populace_state_at_check": "OPEN, MERGEABLE, CLEAN on 2026-06-30",
+    "populace_merge_commit": "8271d767244161631253ad1d9ad792a82e2b96b4",
+    "populace_state_at_check": "MERGED on 2026-06-30",
     "source_packages": [
         "ons-uk-business-firm-targets-2025",
         "ons-uk-business-firm-sector-targets-2025",
@@ -265,20 +267,22 @@ def format_comparison_report(
     lines = [
         "# Populace/Ledger firm-generation comparison",
         "",
-        "Preliminary reference run:",
+        "Reference run:",
         "",
-        "- Status: pinned to open, unmerged Arch and Populace PR snapshots",
+        "- Status: pinned to merged Ledger and Populace snapshots",
         "- Vintage: 2024-25",
         f"- Seed: {seed}",
         f"- Populace iterations: {_count(iterations)}",
         f"- Ledger input surface: {_count(parity.facts_count)} consumer facts",
         f"- Ledger facts SHA256: `{parity.facts_sha256}`",
-        f"- Arch data snapshot: {REFERENCE_MIGRATION['arch_data_pr']} at "
+        f"- Ledger target snapshot: {REFERENCE_MIGRATION['arch_data_pr']} at "
         f"`{REFERENCE_MIGRATION['arch_data_commit']}` "
-        f"({REFERENCE_MIGRATION['arch_data_state_at_check']})",
+        f"({REFERENCE_MIGRATION['arch_data_state_at_check']}, merge commit "
+        f"`{REFERENCE_MIGRATION['arch_data_merge_commit']}`)",
         f"- Populace snapshot: {REFERENCE_MIGRATION['populace_pr']} at "
         f"`{REFERENCE_MIGRATION['populace_commit']}` "
-        f"({REFERENCE_MIGRATION['populace_state_at_check']})",
+        f"({REFERENCE_MIGRATION['populace_state_at_check']}, merge commit "
+        f"`{REFERENCE_MIGRATION['populace_merge_commit']}`)",
         f"- Normalized source-table parity: {len(parity.tables)} tables checked, "
         f"{mismatches} mismatched, max absolute numeric difference "
         f"{parity.max_abs_numeric_diff:g}",

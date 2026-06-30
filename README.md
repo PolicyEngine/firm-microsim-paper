@@ -164,14 +164,16 @@ calibration is tracked in issues
 ## Populace/Ledger migration check
 
 `firm-microsim-populace-ledger` reports the current migration comparison. The
-checked preliminary reference run used the 2024-25 Ledger target surface from
-[PolicyEngine/arch-data#67](https://github.com/PolicyEngine/arch-data/pull/67)
+checked reference run used the 2024-25 Ledger target surface from
+[PolicyEngine/ledger#67](https://github.com/PolicyEngine/ledger/pull/67)
 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Populace's experimental UK
 firm generator from
 [PolicyEngine/populace#223](https://github.com/PolicyEngine/populace/pull/223)
-at `fa20daf75ff023e5e88731a140f456f58e0b864e`. Both PRs were open, mergeable,
-and clean when checked on June 30, 2026. The reference population uses 1,000
-calibration iterations:
+at `fa20daf75ff023e5e88731a140f456f58e0b864e`. Both upstream PRs merged on
+June 30, 2026: Ledger at merge commit
+`ac643afa0c1d45fc4abd0268dc5aa7c843440b38`, and Populace at merge commit
+`8271d767244161631253ad1d9ad792a82e2b96b4`. The reference population uses
+1,000 calibration iterations:
 
 ```bash
 firm-microsim-populace-ledger \
@@ -198,8 +200,9 @@ lands at 93.8% overall accuracy under its own validator versus the paper's 90.5%
 but that overall pair is **not like-for-like**: HMRC turnover-band accuracy uses
 different band sets, and sector distribution reflects different calibration-target
 definitions. The directly comparable rows are ONS population, employment bands,
-and VAT liability by turnover band. Treat the Populace population figures as
-preliminary until the upstream Arch and Populace PRs merge.
+and VAT liability by turnover band. The Populace/Ledger path is now based on
+merged upstream inputs, while remaining a migration check rather than a silent
+replacement for the paper's archived generator/results.
 
 ## Figures
 

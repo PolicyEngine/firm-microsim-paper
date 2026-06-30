@@ -58,12 +58,14 @@
   },
   "migration_snapshot": {
     "arch_data_commit": "cd98b5cb7b1604fbf7750689a429bbc356e5603a",
-    "arch_data_pr": "https://github.com/PolicyEngine/arch-data/pull/67",
-    "arch_data_state_at_check": "OPEN, MERGEABLE, CLEAN on 2026-06-30",
+    "arch_data_merge_commit": "ac643afa0c1d45fc4abd0268dc5aa7c843440b38",
+    "arch_data_pr": "https://github.com/PolicyEngine/ledger/pull/67",
+    "arch_data_state_at_check": "MERGED on 2026-06-30",
     "comparison_command": "firm-microsim-populace-ledger --facts-jsonl /tmp/uk_firm_consumer_facts.jsonl --reference-population --output results/populace_ledger_comparison.txt --json-output results/populace_ledger_provenance.json",
     "populace_commit": "fa20daf75ff023e5e88731a140f456f58e0b864e",
+    "populace_merge_commit": "8271d767244161631253ad1d9ad792a82e2b96b4",
     "populace_pr": "https://github.com/PolicyEngine/populace/pull/223",
-    "populace_state_at_check": "OPEN, MERGEABLE, CLEAN on 2026-06-30",
+    "populace_state_at_check": "MERGED on 2026-06-30",
     "source_packages": [
       "ons-uk-business-firm-targets-2025",
       "ons-uk-business-firm-sector-targets-2025",

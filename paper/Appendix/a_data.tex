@@ -33,16 +33,16 @@ input/output VAT structure.
 being moved into PolicyEngine Ledger, with Populace providing the shared
 synthetic-population generator. I therefore keep the paper's archived processed
 CSVs as the reproduction source for the reported results, and treat the pinned
-Populace/Ledger path as an auditable preliminary migration check rather than a silent
-replacement. The snapshot used here is PolicyEngine/arch-data pull request 67
+Populace/Ledger path as an auditable migration check rather than a silent
+replacement. The snapshot used here is PolicyEngine/ledger pull request 67
 at commit \texttt{cd98b5c} and PolicyEngine/populace pull request 223 at commit
-\texttt{fa20daf}; both were open, mergeable, and clean when checked on June 30,
-2026. For the 2024--25 vintage, the Ledger-backed targets match the paper's
+\texttt{fa20daf}; both upstream pull requests merged on June 30, 2026. For the
+2024--25 vintage, the Ledger-backed targets match the paper's
 processed numeric inputs exactly after dropping presentation-only labels,
 totals, and the HMRC ``Unknown'' column that the generator does not calibrate:
 six normalized source tables checked, zero mismatches, and maximum numeric
-difference zero. A 1,000-iteration preliminary Populace run from those targets
-generated 2,946,015 firm rows. Its own validator reports a 93.8 percent overall
+difference zero. A 1,000-iteration Populace run from those targets generated
+2,946,015 firm rows. Its own validator reports a 93.8 percent overall
 calibration score, compared with the paper validator's 90.5 percent score for
 the same vintage, but this overall comparison is not like-for-like: HMRC
 turnover-band accuracy uses different band sets, and sector distribution
