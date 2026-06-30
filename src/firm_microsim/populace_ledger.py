@@ -107,14 +107,14 @@ PAPER_2024_25 = CalibrationSnapshot(
 
 REFERENCE_POPULACE_LEDGER_2024_25 = CalibrationSnapshot(
     rows=2_946_015,
-    weighted_population=2_945_776.8,
-    hmrc_bands=99.9,
-    ons_population=92.3,
-    employment=92.3,
-    sector=85.0,
-    vat_liability_band=99.5,
-    overall=93.8,
-    vat_liability_sector=42.2,
+    weighted_population=2_945_776.75,
+    hmrc_bands=99.92894355826047,
+    ons_population=92.27819089707326,
+    employment=92.27463056446766,
+    sector=85.0102525769766,
+    vat_liability_band=99.45844774271694,
+    overall=93.79009306789898,
+    vat_liability_sector=42.17514113123149,
 )
 
 REFERENCE_PARITY = ParitySummary(

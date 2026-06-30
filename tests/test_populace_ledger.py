@@ -120,4 +120,4 @@ def test_reference_provenance_records_pinned_pr_snapshot() -> None:
 def test_reference_snapshot_uses_full_populace_run() -> None:
     assert REFERENCE_POPULACE_LEDGER_2024_25.rows == 2_946_015
     assert round(REFERENCE_POPULACE_LEDGER_2024_25.weighted_population) == 2_945_777
-    assert REFERENCE_POPULACE_LEDGER_2024_25.hmrc_bands == 99.9
+    assert round(REFERENCE_POPULACE_LEDGER_2024_25.hmrc_bands, 1) == 99.9

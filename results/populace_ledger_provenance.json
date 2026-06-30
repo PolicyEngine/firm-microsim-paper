@@ -85,15 +85,15 @@
     "weighted_population": 2577078.0
   },
   "populace_ledger_2024_25": {
-    "employment": 92.3,
-    "hmrc_bands": 99.9,
-    "ons_population": 92.3,
-    "overall": 93.8,
+    "employment": 92.27463056446766,
+    "hmrc_bands": 99.92894355826047,
+    "ons_population": 92.27819089707326,
+    "overall": 93.79009306789898,
     "rows": 2946015,
-    "sector": 85.0,
-    "vat_liability_band": 99.5,
-    "vat_liability_sector": 42.2,
-    "weighted_population": 2945776.8
+    "sector": 85.0102525769766,
+    "vat_liability_band": 99.45844774271694,
+    "vat_liability_sector": 42.17514113123149,
+    "weighted_population": 2945776.75
   },
   "run_parameters": {
     "populace_iterations": 1000,
