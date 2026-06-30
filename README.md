@@ -50,6 +50,12 @@ The result is ~2.94M firm rows weighted to ~2.5M UK firms. Because the populatio
 is calibrated **to** the HMRC aggregates, agreement with them is an internal
 consistency check, not external validation.
 
+The official target surface is also being mirrored into PolicyEngine Ledger and
+Populace. This repository keeps the paper's archived CSV inputs and generator for
+reproducibility, and includes a Populace/Ledger comparison command so the pinned
+migration snapshot can be audited without silently changing the published paper
+population.
+
 ## Data vintages — single version, one-line switch
 
 The pipeline is **single-version**: there is one `VAT_THRESHOLD`, not separate
@@ -83,6 +89,7 @@ firm-microsim --vintage 2024-25             # one vintage only (£90k)
 firm-microsim --threshold 88 --seed 7 --output my_run.csv
 firm-microsim-report                        # calibration report only
 firm-microsim-figures                       # descriptive figures only
+firm-microsim-populace-ledger               # Populace/Ledger comparison
 ```
 
 ```python
@@ -148,12 +155,48 @@ firm-microsim-report
 an informational diagnostic only (47.1% / 21.7%). The model fixes firm inputs
 and sets liability = turnover − input but does not yet calibrate the
 **input/output tax structure**, so per-sector net liability is structurally
-unhittable and, while targeted, competed with the dimensions above (it scored
-43.9% / −121.1% and dragged the naive mean down). It is gated off via
+unhittable and is gated off via
 `Config.calibrate_vat_liability_sector = False`. Restoring it after input/output
 calibration is tracked in issues
 [#1](https://github.com/PolicyEngine/firm-microsim-paper/issues/1) and
 [#2](https://github.com/PolicyEngine/firm-microsim-paper/issues/2).
+
+## Populace/Ledger migration check
+
+`firm-microsim-populace-ledger` reports the current migration comparison. The
+checked reference run used the 2024-25 Ledger target surface from
+[PolicyEngine/arch-data#67](https://github.com/PolicyEngine/arch-data/pull/67)
+at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Populace's experimental UK
+firm generator from
+[PolicyEngine/populace#223](https://github.com/PolicyEngine/populace/pull/223)
+at `fa20daf75ff023e5e88731a140f456f58e0b864e`. Both PRs were open, mergeable,
+and clean when checked on June 30, 2026. The reference population uses 1,000
+calibration iterations:
+
+```bash
+firm-microsim-populace-ledger \
+  --output results/populace_ledger_comparison.txt \
+  --json-output results/populace_ledger_provenance.json
+```
+
+When `populace-build` is installed from the Populace source tree, the same command
+can recompute the table and paper-CSV parity from Ledger consumer facts:
+
+```bash
+firm-microsim-populace-ledger \
+  --facts-jsonl /path/to/uk_firm_consumer_facts.jsonl \
+  --iterations 1000 \
+  --output results/populace_ledger_comparison.txt \
+  --json-output results/populace_ledger_provenance.json
+```
+
+The current reference comparison shows exact parity between the Ledger-backed
+targets and the paper's processed 2024-25 numeric inputs: six normalized source
+tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
+replicate the paper's generated synthetic population: Populace's shared optimizer
+lands at 93.8% overall accuracy versus the paper's 90.5%, with a different
+tradeoff across weighted population (2,945,777 vs 2,577,076), sector distribution
+(85.0% vs 94.5%), and VAT liability by band (99.5% vs 81.4%).
 
 ## Figures
 

@@ -29,6 +29,31 @@ is excluded from that mean and reported separately as an informational
 diagnostic, because the current generator does not calibrate sector-specific
 input/output VAT structure.
 
+\paragraph{Ledger and Populace migration check.} The official target tables are
+being moved into PolicyEngine Ledger, with Populace providing the shared
+synthetic-population generator. I therefore keep the paper's archived processed
+CSVs as the reproduction source for the reported results, and treat the pinned
+Populace/Ledger path as an auditable migration check rather than a silent
+replacement. The snapshot used here is PolicyEngine/arch-data pull request 67
+at commit \texttt{cd98b5c} and PolicyEngine/populace pull request 223 at commit
+\texttt{fa20daf}; both were open, mergeable, and clean when checked on June 30,
+2026. For the 2024--25 vintage, the Ledger-backed targets match the paper's
+processed numeric inputs exactly after dropping presentation-only labels,
+totals, and the HMRC ``Unknown'' column that the generator does not calibrate:
+six normalized source tables checked, zero mismatches, and maximum numeric
+difference zero. A 1,000-iteration Populace run from those targets generated
+2,946,015 firm rows and a 93.8 percent headline calibration score, compared with
+the paper's 2,945,974 rows and 90.5 percent score for the same vintage. The
+higher headline score reflects a different optimizer tradeoff, not exact
+replication: Populace hits HMRC turnover bands and VAT liability by turnover
+band more closely, while its weighted population (2,945,777 versus 2,577,076)
+and sector distribution (85.0 percent versus 94.5 percent) differ more from the
+paper population. VAT liability by sector remains an informational diagnostic
+in both runs. The comparison table and structured provenance are reproduced by
+\texttt{firm-microsim-populace-ledger} and checked into
+\texttt{results/populace\_ledger\_comparison.txt} and
+\texttt{results/populace\_ledger\_provenance.json}.
+
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
 counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial
 regression on the observed density outside a manipulation window around the

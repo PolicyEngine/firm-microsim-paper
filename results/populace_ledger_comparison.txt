@@ -1,0 +1,34 @@
+# Populace/Ledger firm-generation comparison
+
+Reference run:
+
+- Vintage: 2024-25
+- Seed: 42
+- Populace iterations: 1,000
+- Ledger input surface: 1,439 consumer facts
+- Ledger facts SHA256: `58b6c2752adec5baa6a6260fe8cd9e9b85d0a78b5ba76ea28201f4c7986dce50`
+- Arch data snapshot: https://github.com/PolicyEngine/arch-data/pull/67 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` (OPEN, MERGEABLE, CLEAN on 2026-06-30)
+- Populace snapshot: https://github.com/PolicyEngine/populace/pull/223 at `fa20daf75ff023e5e88731a140f456f58e0b864e` (OPEN, MERGEABLE, CLEAN on 2026-06-30)
+- Normalized source-table parity: 6 tables checked, 0 mismatched, max absolute numeric difference 0
+
+The Ledger-backed targets match the paper's processed 2024-25 numeric input tables exactly after dropping presentation-only labels, totals, and the HMRC Unknown column that the generator does not calibrate.
+
+| Metric | Truth / target where it exists | Paper 2024-25 | Populace/Ledger 2024-25 |
+| --- | ---: | ---: | ---: |
+| Rows | N/A, synthetic support size | 2,945,974 | 2,946,015 |
+| Weighted population | 2,734,615 ONS firms | 2,577,076 | 2,945,777 |
+| HMRC turnover bands | 2,171,200 VAT-registered firms excluding Unknown | 92.7% | 99.9% |
+| ONS population | 2,734,615 ONS firms | 94.2% | 92.3% |
+| Employment bands | ONS employment-band distribution, sum 2,734,615 | 89.7% | 92.3% |
+| Sector distribution | 2,330,230 VAT-registered firms by SIC sector | 94.5% | 85.0% |
+| VAT liability by band | GBP 177.17bn net VAT liability by turnover band | 81.4% | 99.5% |
+| Overall | N/A, mean of calibrated accuracy scores | 90.5% | 93.8% |
+| VAT liability by sector diagnostic | GBP 177.29bn net VAT liability by SIC sector | 21.7% | 42.2% |
+
+Interpretation: this is not a silent replacement for the paper's published synthetic population. The target surface is identical, but Populace's shared calibration optimizer produces a different tradeoff across dimensions. VAT liability by sector remains an informational diagnostic, not a calibrated target.
+
+Recompute command:
+
+```bash
+firm-microsim-populace-ledger --facts-jsonl /tmp/uk_firm_consumer_facts.jsonl --iterations 1000 --output results/populace_ledger_comparison.txt --json-output results/populace_ledger_provenance.json
+```
