@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+from importlib import import_module
 
 from firm_microsim.config import Config
 
@@ -15,6 +16,27 @@ def test_import_public_packages() -> None:
     import firm_microsim.static
 
     assert firm_microsim.__version__ == "1.0.0"
+
+
+def test_lazy_public_exports_remain_accessible() -> None:
+    import firm_microsim
+
+    assert callable(firm_microsim.generate)
+    assert firm_microsim.ValidationReport.__name__ == "ValidationReport"
+
+
+def test_lazy_generate_export_survives_submodule_import() -> None:
+    import firm_microsim
+
+    import_module("firm_microsim.generate")
+    from firm_microsim import generate
+
+    namespace: dict[str, object] = {}
+    exec("from firm_microsim import *", namespace)
+
+    assert callable(firm_microsim.generate)
+    assert callable(generate)
+    assert callable(namespace["generate"])
 
 
 def test_cli_help_entry_points() -> None:
@@ -44,9 +66,12 @@ def test_console_script_help_entry_points() -> None:
         "firm-microsim-bunching",
         "firm-microsim-notch",
         "firm-microsim-dynamic",
+        "firm-microsim-verify-optimum",
+        "firm-microsim-formulation-a-optima",
         "firm-microsim-placebo",
         "firm-microsim-dominated-region",
         "firm-microsim-reform-menu",
+        "firm-microsim-populace-ledger",
     ]
     bin_dir = Path(sys.executable).parent
     for script in scripts:

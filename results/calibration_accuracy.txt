@@ -28,7 +28,7 @@ dimensions and excludes the VAT-liability-by-sector diagnostic.
   Vintage 2024-25  |  threshold £90k
 ================================================================
   rows (firm types):   2,945,974
-  weighted population: 2,577,076 firms
+  weighted population: 2,577,078 firms
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
@@ -41,7 +41,7 @@ dimensions and excludes the VAT-liability-by-sector diagnostic.
   Overall (5 calibrated dims)       90.5%        9.5%
 ----------------------------------------------------------------
   Informational diagnostic (not a calibration target):
-  VAT Liability by Sector          21.7%       78.3%
+  VAT Liability by Sector          44.5%       55.5%
 ================================================================
 
 Done: 2/2 vintage(s) reported.

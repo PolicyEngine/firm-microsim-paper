@@ -1,0 +1,78 @@
+% PolicyEngine colour variant for the Gemini poster theme
+% Inspired by https://github.com/anishathalye/gemini
+% Brand palette: official PolicyEngine TEAL on light neutrals.
+% ================================================================
+
+% --------------------
+% Colour Definitions
+% --------------------
+\definecolor{peteal}{RGB}{44,122,123}      % primary teal  #2C7A7B
+\definecolor{pedarkteal}{RGB}{26,77,77}    % deep teal for headline text  #1A4D4D
+\definecolor{peblue}{RGB}{44,122,123}      % alias (kept for legacy macros) -> teal
+\definecolor{pedarkblue}{RGB}{26,77,77}    % alias -> deep teal
+\definecolor{darkgray}{RGB}{51,51,51}      % dark neutral text
+\definecolor{mediumgray}{RGB}{102,102,102} % mid neutral accents
+\definecolor{lightgray}{RGB}{245,246,248}  % light neutral background
+\definecolor{lightteal}{RGB}{220,237,236}  % gentle teal tint  #DCEDEC
+\definecolor{paleteal}{RGB}{234,244,243}   % paler teal tint   #EAF4F3
+\definecolor{lightblue}{RGB}{220,237,236}  % alias -> lightteal
+
+% --------------------
+% Basic Palette
+% --------------------
+\setbeamercolor{palette primary}{fg=black,bg=white}
+\setbeamercolor{palette secondary}{fg=black,bg=white}
+\setbeamercolor{palette tertiary}{fg=white,bg=peteal}
+\setbeamercolor{palette quaternary}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=peteal}
+
+% --------------------
+% Headline & Footline
+% --------------------
+\setbeamercolor{headline}{fg=pedarkteal,bg=lightteal}
+\setbeamercolor{headline title}{fg=pedarkteal,bg=lightteal}
+\setbeamercolor{headline author}{fg=peteal,bg=lightteal}
+\setbeamercolor{headline institute}{fg=mediumgray,bg=lightteal}
+
+% --------------------
+% Blocks
+% --------------------
+% Standard Block
+\setbeamercolor{block title}{fg=peteal,bg=white}
+\setbeamercolor{block separator}{bg=peteal}
+\setbeamercolor{block body}{fg=black,bg=white}
+
+% Alert / Example blocks: teal title TEXT on white (no filled colour bar) so
+% there is no low-zoom rasterisation artifact behind the titles; the teal
+% separator rule under each title carries the section structure. Matches the
+% standard-block title treatment for a clean, uniform look.
+\setbeamercolor{block alerted title}{fg=peteal,bg=white}
+\setbeamercolor{block alerted separator}{bg=peteal}
+\setbeamercolor{block alerted body}{fg=black,bg=white}
+
+\setbeamercolor{block example title}{fg=peteal,bg=white}
+\setbeamercolor{block example separator}{bg=peteal}
+\setbeamercolor{block example body}{fg=black,bg=white}
+
+% --------------------
+% Headings & Text
+% --------------------
+\setbeamercolor{heading}{fg=peteal}
+\setbeamercolor{frametitle}{fg=peteal}
+\setbeamercolor{item}{fg=peteal}
+
+% --------------------
+% Bibliography
+% --------------------
+\setbeamercolor{bibliography item}{fg=black}
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry location}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
+
+% --------------------
+% Hyperlinks
+% --------------------
+\hypersetup{colorlinks=true, linkcolor=peteal, urlcolor=peteal, citecolor=peteal}
+
+% End of PolicyEngine theme

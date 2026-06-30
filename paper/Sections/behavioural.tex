@@ -24,37 +24,95 @@ number in it is explicitly conditional on $e$.
 
 I adopt the iso-elastic firm problem of \citet{klevenwaseem2013}, in the
 sufficient-statistics tradition of \citet{saez2010} and as applied to UK VAT by
-\citet{liuetal2021}. A firm of ability $n$ chooses turnover $y$ to maximise
+\citet{liuetal2021}, but write it so that the tax falls on \emph{value added}
+rather than on turnover. In this value-added statement---which I label
+formulation~A---a firm of ability $n_i$ chooses turnover $y$ to maximise
 \begin{equation}
-  \pi(y;n) \;=\; \bigl(1-\tau(y)\bigr)\,y \;-\;
-  \frac{n}{1+1/e}\left(\frac{y}{n}\right)^{1+1/e},
+  \pi_i(y) \;=\; (1-\delta_i)\,\bigl(1-\tau\,f(y)\bigr)\,y \;-\;
+  C(y;n_i,e), \qquad
+  C(y;n,e)=\frac{n}{1+1/e}\left(\frac{y}{n}\right)^{1+1/e},
   \label{eq:isoelastic}
 \end{equation}
-where $\tau(y)$ is the effective VAT rate the schedule levies on the firm's whole
-turnover once registered, and $e>0$ is the elasticity of turnover with respect to
-the net-of-tax rate $1-\tau$. Marginal cost is $(y/n)^{1/e}$, so the
-frictionless ($\tau=0$) optimum is $y=n$: ability $n$ is the firm's
-undistorted turnover. A firm registered under a flat rate $\tau$ chooses
+where $\delta_i\in[0,1)$ is the firm's \emph{deductible-input share} of turnover,
+so that value added is $(1-\delta_i)\,y$; $\tau$ is the statutory VAT rate; and
+$f(y)\in[0,1]$ is the fraction of $\tau$ that the schedule levies on the firm once
+registered ($f=0$ below the threshold, $f=1$ for a fully registered firm under the
+standard rate). Here $e>0$ is the elasticity of turnover with respect to the
+net-of-tax rate.
+
+It is essential to read $C$ correctly. Because the deductible inputs $\delta_i\,y$
+are already netted out of revenue through the $(1-\delta_i)$ factor,
+$C(y;n_i,e)$ must be understood as the firm's \emph{own-factor production
+cost}---the labour and capital effort the firm itself supplies---and \emph{not} its
+total cost of production. Reading $C$ as total cost would double-count the bought-in
+inputs, which the value-added factor has already removed. Marginal own-factor cost
+is $(y/n)^{1/e}$, so the undistorted optimum is $y=n$: ability $n$ is the firm's
+frictionless turnover. A firm registered under a flat rate ($f\equiv1$) chooses
 \begin{equation}
-  y \;=\; n\,(1-\tau)^{e},
+  y^{*} \;=\; n\,\bigl[(1-\delta)(1-\tau)\bigr]^{e},
   \label{eq:flat-optimum}
 \end{equation}
-and one verifies directly from~\eqref{eq:flat-optimum} that
-$\mathrm{d}\ln y / \mathrm{d}\ln(1-\tau) = e$, so $e$ is exactly the knob that
-governs the intensive response.
+so the retained wedge facing the firm is the product $(1-\delta)(1-\tau)$ of the
+value-added share and the statutory net-of-tax rate, and one verifies directly
+from~\eqref{eq:flat-optimum} that
+$\mathrm{d}\ln y^{*}/\mathrm{d}\ln\!\bigl[(1-\delta)(1-\tau)\bigr]=e$, so $e$ is
+exactly the knob that governs the intensive response.
+Figure~\ref{fig:formulation_a_optima} traces the formulation-A profit and its
+optima across the notch and taper schedules for three deductible shares, showing
+how both the value-added optimum and the notch geometry shift with $\delta$: the
+$(1-\delta)$ factor scales the whole curve down, and a higher $\delta$ pulls the
+registered optimum back toward the threshold, eventually tipping the global
+choice from the registered interior optimum to bunching at the notch.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/formulation_a_optima.png}
+\caption{Optima of the value-added (formulation~A) profit
+function~\eqref{eq:isoelastic}, $\pi_A(y)=(1-\delta)(1-\tau f(y))\,y-C(y;n,e)$,
+at statutory rate $\tau=0.20$, ability $n=\pounds130$k and elasticity $e=0.17$,
+under the hard registration notch (left) and the graduated
+taper (right). Each panel overlays three deductible-input shares
+$\delta\in\{0.0,0.4,0.8\}$; dots mark each curve's local maxima and the star its
+global optimum, and the dashed vertical line is the \pounds85{,}000 threshold.
+The value-added factor $(1-\delta)$ scales the whole curve down without moving
+the frictionless optimum, while a higher $\delta$ shrinks the retained wedge
+$(1-\delta)(1-\tau)$ and so pulls the registered optimum
+$y^{*}=n[(1-\delta)(1-\tau)]^{e}$ back toward the threshold---eventually tipping
+the global optimum from the registered interior peak to bunching at the notch,
+consistent with the formulation-A discussion above.}
+\label{fig:formulation_a_optima}
+\end{figure}
 
 \paragraph{Ability recovery.} To populate the simulator I recover an ability $n$
 for each firm from its observed turnover under the baseline \pounds85{,}000 notch.
 Given $e$, I set $n=y_{\mathrm{obs}}$ for an unregistered firm
-($y_{\mathrm{obs}}<T^{*}$) and invert~\eqref{eq:flat-optimum} for a registered
-firm, $n=y_{\mathrm{obs}}/(1-\tau_i)^{e}$. The wedge $\tau_i$ here is the firm's
-\emph{own} net VAT rate---net remittance over turnover, that is output VAT less
-input credits, which averages about $3\%$ of turnover in the calibrated population
-(Section~\ref{sec:data})---and \emph{not} the statutory $20\%$. This distinction is
-material: VAT is levied on value added, not on turnover, so a firm remitting $3\%$
-of its turnover has been distorted as if it faced a net-of-tax rate near $0.97$,
-not $0.80$. Inverting~\eqref{eq:flat-optimum} at the statutory $20\%$ would inflate
-the recovered ability gap, and hence every counterfactual response, several-fold.
+($y_{\mathrm{obs}}<T^{*}$) and invert the registered-firm optimum for the rest.
+Operationally I drive both the recovery and the forward solve off each firm's
+calibrated \emph{net VAT rate} $\tau_i$---net remittance over turnover, that is
+output VAT less input credits, which averages about $3\%$ of turnover in the
+calibrated population (Section~\ref{sec:data})---so that
+$n=y_{\mathrm{obs}}/(1-\tau_i)^{e}$ and the effective wedge is pinned to the firm's
+calibrated net-VAT position rather than to the full statutory product
+$(1-\delta_i)(1-\tau)$. The net rate $\tau_i$ is the firm's own remittance, and
+\emph{not} the statutory $20\%$. This distinction is material: VAT is levied on
+value added, not on turnover, so a firm remitting $3\%$ of its turnover has been
+distorted as if it faced a net-of-tax rate near $0.97$, not $0.80$. Inverting at
+the statutory $20\%$ would inflate the recovered ability gap, and hence every
+counterfactual response, several-fold.
+
+Formulation~A in~\eqref{eq:isoelastic} is the conceptual value-added statement of
+exactly this tax, and the two representations coincide at $\delta=0$, where the
+net-VAT wedge and the statutory net-of-tax rate agree. I do not, however, run the
+recovery off the literal formulation-A wedge, and one caveat explains why. The
+literal recovery $n=y_{\mathrm{obs}}/\bigl[(1-\delta_i)(1-\tau)\bigr]^{e}$ is
+numerically fragile for firms with very high deductible shares: as $\delta_i\to1$
+the retained wedge $(1-\delta_i)(1-\tau)\to0$ and the recovered ability diverges,
+which would hand a handful of input-heavy firms an implausible weight in the
+aggregate. Driving the costing off the calibrated net-VAT wedge $\tau_i$ sidesteps
+this instability while pricing the same value-added tax. At present $\delta_i$ is
+parametric---held at a calibrated value rather than measured firm by firm---and
+grounding it in ONS Supply--Use and Annual Business Survey
+value-added-to-turnover data is left to future work.
 
 \paragraph{Forward solve.} Holding the recovered abilities $\{n_i\}$ and the
 assumed $e$ fixed, I re-solve each firm's optimum under the reform schedule---the

@@ -11,6 +11,12 @@ tax-benefit microsimulation \citep{policyengine}; here I apply it at the firm
 level. The generator takes the registration threshold as a parameter and is
 documented in Appendix~\ref{app:data}.
 
+The archived CSV inputs in this repository remain the reproduction source for
+the paper's reported numbers; a pinned migration snapshot also represents the
+same 2024--25 numeric target surface through PolicyEngine Ledger and the
+experimental Populace firm generator, and Appendix~\ref{app:data} reports the
+parity check between that shared source-of-truth path and the paper inputs.
+
 \paragraph{Construction.} Index firms by $i$. For each sector $s$ and ONS
 turnover band $b=[\underline{b},\overline{b}]$, the \emph{UK Business: Activity,
 Size and Location} table gives a firm count $N_{s,b}$, and I draw $N_{s,b}$ firms
@@ -83,9 +89,10 @@ Counterfactual
 policies---including the \pounds85{,}000 to \pounds90{,}000 reform and the forward
 threshold sweep of Section~\ref{sec:static}---are evaluated on these firms by
 re-applying the registration rule to the microdata for the static costings. I
-hold the empirical turnover distribution fixed throughout. A fully behavioural
-forward solve that re-prices firms under counterfactual schedules is left to
-future work.
+hold the empirical turnover distribution fixed for these static costings. A
+fully behavioural forward solve that re-prices firms under counterfactual
+schedules---conditional on an assumed turnover elasticity---is developed in
+Section~\ref{sec:behavioural}.
 
 \begin{figure}[htbp]
 \centering
