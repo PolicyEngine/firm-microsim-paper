@@ -508,6 +508,33 @@
 \section{Behavioural layer}
 
 % --- Behavioural ---
+\begin{frame}{The firm's problem: VAT on \emph{value added} (formulation A)}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \scriptsize
+      A firm of ability $n$ chooses turnover $y$ to maximise
+      \[ \pi(y)=(1-\delta)\bigl(1-\tau f(y)\bigr)\,y-C(y;n,e). \]
+      \begin{itemize}\itemsep0.12cm
+        \item VAT falls on \alert{value added} $(1-\delta)y$, not whole turnover;
+          $\delta$ is the firm's \alert{deductible-input share}.
+        \item $C$ is the firm's \alert{own-factor cost} (labour, capital): inputs
+          $\delta y$ are already netted by $(1-\delta)$, so reading $C$ as total
+          cost would \alert{double-count} them.
+        \item Optimum $y^{\star}=n\bigl[(1-\delta)(1-\tau)\bigr]^{e}$. $\delta$ is
+          parametric for now --- ONS Supply--Use value-added shares to come.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}\centering
+        \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{formulation_a_optima.png}
+      \end{figure}
+      \vspace{-0.1cm}
+      {\scriptsize Higher $\delta$ scales the curve down and pulls the registered
+      optimum toward the threshold (eventually tipping to bunching).}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}{Behavioural layer: conditional on an assumed elasticity}
   \hypertarget{slide:behavioural}{}
   \begin{columns}[T]
@@ -524,8 +551,9 @@
     \begin{column}{0.46\textwidth}
       \scriptsize
       \begin{itemize}\itemsep0.1cm
-        \item Iso-elastic simulator re-optimises each firm (left); the
-          elasticity $e$ is \alert{assumed}, not identified.
+        \item Iso-elastic simulator (value-added base, formulation~A)
+          re-optimises each firm (left); the elasticity $e$ is \alert{assumed},
+          not identified.
         \item Sweep $e\in\{0.05,0.17,0.32\}$. At \alert{$e=0.17$}
           base-broadening offsets much of each static loss:
           \begin{itemize}\itemsep0.02cm
@@ -676,9 +704,12 @@
 
 \begin{frame}{Appendix: limitations and future work}
   \begin{itemize}\itemsep0.25cm
-    \item \textbf{Turnover-tax approximation} --- real VAT is on value added with
-      input reclaim; $\sim$43\% of below-threshold firms register voluntarily
-      \citep{liuetal2021}, so the effective notch is smaller.
+    \item \textbf{Value added, parametric $\delta$} --- the behavioural simulator
+      now taxes \emph{value added} $(1-\delta)y$ (formulation~A), but $\delta$ is
+      parametric, not yet measured firm by firm (ONS Supply--Use to come); the
+      dominated region still uses the statutory-rate notch, and $\sim$43\% of
+      below-threshold firms register voluntarily \citep{liuetal2021}, which the
+      model abstracts from.
     \item \textbf{Partial efficiency metric} --- dominated-region width indexes
       misallocation only, omitting compliance-cost savings \citep{keenmintz2004};
       a full welfare / MVPF accounting is needed.
