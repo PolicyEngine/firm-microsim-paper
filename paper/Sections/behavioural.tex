@@ -1,226 +1,268 @@
-\section{Behavioural reform costs: registration heterogeneity}
+\section{Behavioural reform costs}
 \label{sec:behavioural}
 
-The reforms of Section~\ref{sec:static} are costed \emph{statically}: each schedule
-is re-applied to a fixed turnover distribution, and the revenue change is the
-mechanical reclassification of firms with no response in turnover.
+The reforms of Section~\ref{sec:static} are costed \emph{statically}: each
+schedule is re-applied to a fixed turnover distribution, and the revenue change is
+the mechanical reclassification of firms with no response in turnover.
 Section~\ref{sec:bunching} then shows that the bunching in my synthetic data is
 mechanical, so a behavioural elasticity is not identified from it---the reduced-form
-response is a placebo. Section~\ref{sec:model} supplies the one object that needs no
-behavioural calibration at all: the exact, elasticity-free dominated region. What is
-missing from this sequence is the behavioural layer itself. In the UK VAT setting that
-layer is, in the first instance, not an intensive turnover response but an
-\emph{extensive} one: the decision of whether to register. I follow
-\citet{liuetal2021}, who place the registration choice at the centre of the threshold
-notch and document its empirical signature directly in the administrative data---most
-strikingly, that roughly $43\%$ of UK firms below the threshold register
-\emph{voluntarily}. This section sets out their structure in full and uses it to price
-the threshold and rate reforms parametrically on the registration margin. Throughout, I
-am explicit that the elasticity-free anchors of the paper remain the static cost of
-Section~\ref{sec:static} and the exact dominated region of Section~\ref{sec:model};
-the registration costing here is a transparent, composition-conditional sensitivity
-layer that sits on top of them.
+response is a placebo. Section~\ref{sec:model} supplies the one object that needs
+no behavioural calibration at all: the exact, elasticity-free dominated region. What is
+missing from this sequence is the behavioural layer itself---a costing that lets
+firms re-optimise turnover when a reform changes the effective rate they face. This
+section supplies that layer. I build an iso-elastic structural simulator that, for
+an \emph{assumed} turnover elasticity $e$, re-solves each firm's optimum under a
+counterfactual schedule and prices the resulting revenue effect. Because $e$ is not
+identified from these data, I do not report a point estimate; I report an
+$e$-sensitivity range. The simulator nests the static costing of
+Section~\ref{sec:static} as its $e\to0$ limit, which I use below as a correctness
+check rather than treat as a coincidence. This is honest infrastructure, and every
+number in it is explicitly conditional on $e$.
 
-\subsection{The firm's problem: a registration model}
-\label{ssec:liu-model}
+\subsection{An iso-elastic structural simulator}
+\label{ssec:simulator}
 
-I adopt the structural registration model of \citet{liuetal2021}, in the
-sufficient-statistics tradition of \citet{saez2010} and \citet{klevenwaseem2013}.
-Consider a small firm of productivity $a$ and input share $\omega\in[0,1]$ that sells
-to two markets: final consumers (business-to-consumer, B2C, quantity $x$) and other
-businesses (business-to-business, B2B, quantity $y$). Production is fixed-coefficients,
-following \citet{keenmintz2004}: one unit of output requires $\omega/a$ units of a taxed
-intermediate input and $(1-\omega)/a$ units of labour, with the input price and the wage
-both normalised to one. Absent VAT the unit cost is therefore
-$\omega/a + (1-\omega)/a = 1/a$, and $\omega$ is the share of costs that are
-taxed, deductible inputs. The defining feature of VAT is that this input tax is
-reclaimable only by a registered firm, so the firm's unit cost depends on its
-registration status. Writing the VAT rate as $t$, a registered firm reclaims the input
-VAT and so still pays $\omega/a$ for inputs, while an unregistered firm pays the
-VAT-inclusive price $(\omega/a)(1+t)$; the unit cost is thus
+I adopt the iso-elastic firm problem of \citet{klevenwaseem2013}, in the
+sufficient-statistics tradition of \citet{saez2010} and as applied to UK VAT by
+\citet{liuetal2021}, but write it so that the tax falls on \emph{value added}
+rather than on turnover. In this value-added statement---which I label
+formulation~A---a firm of ability $n_i$ chooses turnover $y$ to maximise
 \begin{equation}
-  c \;=\;
-  \begin{cases}
-    \dfrac{\omega}{a}+\dfrac{1-\omega}{a} \;=\; \dfrac{1}{a}, & \text{registered,}\\[2ex]
-    \dfrac{\omega}{a}(1+t)+\dfrac{1-\omega}{a} \;=\; \dfrac{1+\omega t}{a}, & \text{unregistered.}
-  \end{cases}
-  \label{eq:liu-cost}
+  \pi_i(y) \;=\; (1-\delta_i)\,\bigl(1-\tau\,f(y)\bigr)\,y \;-\;
+  C(y;n_i,e), \qquad
+  C(y;n,e)=\frac{n}{1+1/e}\left(\frac{y}{n}\right)^{1+1/e},
+  \label{eq:isoelastic}
 \end{equation}
-The gap $\omega t/a$ between the two is the irrecoverable input VAT an unregistered firm
-bears---the reclaim benefit of registering, rising in the input share $\omega$, which is
-the first of the two forces in \eqref{eq:liu-netbenefit} below.
+where $\delta_i\in[0,1)$ is the firm's \emph{deductible-input share} of turnover,
+so that value added is $(1-\delta_i)\,y$; $\tau$ is the statutory VAT rate; and
+$f(y)\in[0,1]$ is the fraction of $\tau$ that the schedule levies on the firm once
+registered ($f=0$ below the threshold, $f=1$ for a fully registered firm under the
+standard rate). Here $e>0$ is the elasticity of turnover with respect to the
+net-of-tax rate.
 
-Demand in each market is iso-elastic (CES). Let $I\in\{0,1\}$ be the registration
-indicator, $e_C$ and $e_B$ the B2C and B2B demand elasticities, $A_C,A_B$ market scale
-terms, and $\lambda$ the B2C taste weight. With $p_C,p_B$ the firm's pre-tax prices,
-\begin{align}
-  x &= \lambda A_C\,\bigl(p_C(1+It)\bigr)^{-e_C}, \notag\\
-  y &= (1-\lambda)A_B\,p_B^{-e_B}.
-  \label{eq:liu-demand}
-\end{align}
-Output VAT grosses up the price the buyer faces only in the B2C market, and only when
-the firm is registered---this is the factor $1+It$ in the first line of
-\eqref{eq:liu-demand}. In the B2B market the buyer reclaims any VAT charged, so output
-VAT is neutral on that side and does not enter the second line. Let $\beta$ denote the
-firm's B2C sales share. The firm sets a constant-elasticity monopoly markup over its
-unit cost in each market,
+It is essential to read $C$ correctly. Because the deductible inputs $\delta_i\,y$
+are already netted out of revenue through the $(1-\delta_i)$ factor,
+$C(y;n_i,e)$ must be understood as the firm's \emph{own-factor production
+cost}---the labour and capital effort the firm itself supplies---and \emph{not} its
+total cost of production. Reading $C$ as total cost would double-count the bought-in
+inputs, which the value-added factor has already removed. Marginal own-factor cost
+is $(y/n)^{1/e}$, so the undistorted optimum is $y=n$: ability $n$ is the firm's
+frictionless turnover. A firm registered under a flat rate ($f\equiv1$) chooses
 \begin{equation}
-  p_C \;=\; \frac{e_C}{e_C-1}\,c,
-  \qquad
-  p_B \;=\; \frac{e_B}{e_B-1}\,c,
-  \label{eq:liu-prices}
+  y^{*} \;=\; n\,\bigl[(1-\delta)(1-\tau)\bigr]^{e},
+  \label{eq:flat-optimum}
 \end{equation}
-where $c$ is the registration-dependent unit cost of \eqref{eq:liu-cost}. Because the
-consumer pays the grossed-up price $p_C(1+t)$ once the firm registers, registration
-simultaneously lowers the firm's unit cost (through input reclaim) and raises the
-price consumers face (through output VAT), so it depresses B2C quantity even as it
-expands the B2B margin. The firm chooses prices and the registration indicator $I$ to
-maximise profit
+so the retained wedge facing the firm is the product $(1-\delta)(1-\tau)$ of the
+value-added share and the statutory net-of-tax rate, and one verifies directly
+from~\eqref{eq:flat-optimum} that
+$\mathrm{d}\ln y^{*}/\mathrm{d}\ln\!\bigl[(1-\delta)(1-\tau)\bigr]=e$, so $e$ is
+exactly the knob that governs the intensive response.
+
+\paragraph{Ability recovery.} To populate the simulator I recover an ability $n$
+for each firm from its observed turnover under the baseline \pounds85{,}000 notch.
+Given $e$, I set $n=y_{\mathrm{obs}}$ for an unregistered firm
+($y_{\mathrm{obs}}<T^{*}$) and invert the registered-firm optimum for the rest.
+Operationally I drive both the recovery and the forward solve off each firm's
+calibrated \emph{net VAT rate} $\tau_i$---net remittance over turnover, that is
+output VAT less input credits, which averages about $3\%$ of turnover in the
+calibrated population (Section~\ref{sec:data})---so that
+$n=y_{\mathrm{obs}}/(1-\tau_i)^{e}$ and the effective wedge is pinned to the firm's
+calibrated net-VAT position rather than to the full statutory product
+$(1-\delta_i)(1-\tau)$. The net rate $\tau_i$ is the firm's own remittance, and
+\emph{not} the statutory $20\%$. This distinction is material: VAT is levied on
+value added, not on turnover, so a firm remitting $3\%$ of its turnover has been
+distorted as if it faced a net-of-tax rate near $0.97$, not $0.80$. Inverting at
+the statutory $20\%$ would inflate the recovered ability gap, and hence every
+counterfactual response, several-fold.
+
+Formulation~A in~\eqref{eq:isoelastic} is the conceptual value-added statement of
+exactly this tax, and the two representations coincide at $\delta=0$, where the
+net-VAT wedge and the statutory net-of-tax rate agree. I do not, however, run the
+recovery off the literal formulation-A wedge, and one caveat explains why. The
+literal recovery $n=y_{\mathrm{obs}}/\bigl[(1-\delta_i)(1-\tau)\bigr]^{e}$ is
+numerically fragile for firms with very high deductible shares: as $\delta_i\to1$
+the retained wedge $(1-\delta_i)(1-\tau)\to0$ and the recovered ability diverges,
+which would hand a handful of input-heavy firms an implausible weight in the
+aggregate. Driving the costing off the calibrated net-VAT wedge $\tau_i$ sidesteps
+this instability while pricing the same value-added tax. At present $\delta_i$ is
+parametric---held at a calibrated value rather than measured firm by firm---and
+grounding it in ONS Supply--Use and Annual Business Survey
+value-added-to-turnover data is left to future work.
+
+\paragraph{Forward solve.} Holding the recovered abilities $\{n_i\}$ and the
+assumed $e$ fixed, I re-solve each firm's optimum under the reform schedule---the
+raised threshold, the graduated taper, or the reduced-rate band---and aggregate the
+resulting liabilities. The behavioural revenue effect is the difference between this
+aggregate and the baseline. Because a reform that lowers the effective rate on the
+band raises each affected firm's net-of-tax rate, the firm scales turnover up
+toward its frictionless optimum,
 \begin{equation}
-  \pi \;=\; (p_C-c)\,x \;+\; (p_B-c)\,y,
-  \label{eq:liu-profit}
+  y^{*}_i \;=\; y_{\mathrm{obs},i}\,
+  \left(\frac{1-\tau_{\mathrm{reform}}}{1-\tau_{\mathrm{base}}}\right)^{e}
+  \;>\; y_{\mathrm{obs},i},
+  \label{eq:rescale}
 \end{equation}
-subject, if it remains unregistered ($I=0$), to keeping sales $p_C x + p_B y$ below the
-registration threshold $s^{*}$.
+so the taxed base broadens and partly offsets the static loss.
 
-\paragraph{Who gains from registering.} Comparing optimised profit in
-\eqref{eq:liu-profit} across $I=1$ and $I=0$, the net benefit of registering is, to
-first order, proportional to
-\begin{equation}
-  t\,\bigl[\,\omega \;-\; \beta(1-\omega)\,\bigr].
-  \label{eq:liu-netbenefit}
-\end{equation}
-The two terms are the two faces of VAT. The reclaim benefit $t\,\omega$ rises in the
-input share $\omega$: an input-heavy firm gains by recovering the VAT on its inputs.
-The output burden $t\,\beta(1-\omega)$ rises in the B2C sales share $\beta$: a
-consumer-facing firm loses, because the output VAT it cannot pass on falls on its B2C
-sales. Hence \eqref{eq:liu-netbenefit} is \emph{negative} for consumer-facing,
-low-input firms---for them the threshold is a downward notch and the model predicts
-bunching just below it---and \emph{positive} for input-heavy, B2B-facing firms, who
-register \emph{voluntarily} even below the threshold. This sign flip is the model's
-central qualitative content, and it rationalises the administrative fact that some
-$43\%$ of below-threshold UK firms register voluntarily \citep{liuetal2021}.
-Figure~\ref{fig:liu_registration_choice} contrasts two representative firms---a
-consumer-facing, low-input firm and an input-heavy, business-facing one---and
-Figure~\ref{fig:liu_notch_taper} traces how the sign of the notch varies across firm
-types under the hard notch and a graduated taper.
+\paragraph{Conditional on $e$.} I am explicit about what this exercise is and is
+not. Treating each firm's observed (mechanically calibrated) turnover as optimal
+and inverting it for $n$ is an \emph{accounting anchor}, not structural
+identification: it reproduces the baseline by construction but borrows no
+information about the response. The elasticity $e$ is not identified from these data
+(the placebo of Section~\ref{sec:bunching}), so every behavioural magnitude below is
+conditional on the assumed $e$. The robust, $e$-free headline objects remain the
+static cost of Section~\ref{sec:static} and the exact dominated region of
+Section~\ref{sec:model}; this section's numbers are a disciplined sensitivity range,
+not point estimates. The margin priced here is purely \emph{intensive}---firms scale
+turnover as the effective rate moves. The extensive notch distortion, the discrete
+incentive to suppress turnover and bunch below the threshold, is the separate
+analytic object of Section~\ref{sec:model}; a reader should not expect re-bunching
+dynamics here.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.78\textwidth]{figures/liu_registration_choice.png}
-\caption{\emph{Illustrative.} Net profit around the \pounds85{,}000 threshold for two
-representative firms: each firm's chosen profit (solid) against its unregistered and
-full-rate-registered branches (dotted). The consumer-facing, low-input firm
-($\omega=0.2$, $\beta=0.9$) faces a downward notch at registration and bunches just
-below the threshold; the input-heavy, business-facing firm ($\omega=0.7$, $\beta=0.2$)
-gains from input reclaim and registers \emph{voluntarily} even below it---the sign flip
-of \eqref{eq:liu-netbenefit}. The $(\omega,\beta)$ values here are not yet data-grounded;
-in future work they are to come from ONS Supply--Use tables, including the final-demand
-split.}
-\label{fig:liu_registration_choice}
-\end{figure}
+\subsection{Results}
+\label{ssec:behavioural-results}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.78\textwidth]{figures/liu_notch_taper.png}
-\caption{\emph{Illustrative.} Net profit around the registration threshold for a
-consumer-facing firm under \eqref{eq:liu-profit}: the output-VAT burden on B2C sales
-creates a discrete drop at registration---a downward notch generating bunching just
-below $s^{*}$---which a smoothing taper would replace by a graduated slope. The
-underlying $(\omega,\beta)$ are illustrative and not yet grounded in ONS Supply--Use
-data.}
-\label{fig:liu_notch_taper}
-\end{figure}
+I sweep $e\in\{0.05,\,0.17,\,0.32\}$ and report the full sweep, treating
+$e=0.17$ as an illustrative midpoint rather than a headline estimate. The low
+value $0.05$ is of the order reported by \citet{klevenwaseem2013}; $0.32$ is the
+mean implied by mapping the marginal-buncher condition through my notch; $0.17$ is
+the median of that mapping. (These per-firm-mapping summaries are a different object
+from the single aggregate marginal-buncher elasticity $\approx0.66$ tabulated in
+Appendix~\ref{app:inference}, and differ from it numerically; both are mechanical,
+non-identified artefacts of the calibration.) I flag the provenance plainly: the $0.17$ and $0.32$
+values are read off the marginal-buncher condition applied to my notch geometry,
+which inherits the mechanical bunching that Section~\ref{sec:bunching} shows to be
+non-behavioural, so they are model-implied, not data-identified; the range's only
+externally-anchored point is its lower end (the \citet{klevenwaseem2013} value of
+$\approx 0.05$). I use them only to delimit a plausible sweep, and a reader
+preferring a fully external range---for instance \citet{liuetal2021}'s UK VAT-base
+elasticity---may substitute literature values for $e$ directly without changing the
+conditional structure of the costing. The same mapping pins the marginal buncher
+$n_H(e)$---the highest ability that still finds it optimal to bunch at the
+threshold---at \pounds112{,}795 for $e=0.05$ (a frictionless excess
+$\Delta y_{H}\equiv n_H-T^{*}\approx\pounds27.8$k, distinct from the empirical
+bunching span $\Delta y^{*}=\pounds5.6$k of Appendix~\ref{app:inference}),
+\pounds127{,}382 for $e=0.17$
+($\approx\pounds42.4$k), and \pounds143{,}527 for $e=0.32$ ($\approx\pounds58.5$k),
+consistent with the analytic dominated-region width $a=\pounds21{,}250$ of
+Section~\ref{sec:model}.
 
-\subsection{Parametric budget cost on the registration margin}
-\label{ssec:liu-costing}
+Table~\ref{tab:behavioural_costs} reports the behavioural cost of each of the three
+flat-rate reforms---the raised threshold and the two reduced-rate bands---measured
+as the change in revenue relative to the \pounds85{,}000-notch baseline, alongside
+the static figure of Table~\ref{tab:schedule_costs}, for each $e$. The direction is
+uniform across these three: a larger $e$ makes each of them \emph{cheaper} in
+revenue terms. The mechanism is~\eqref{eq:rescale}: each reform lowers the effective
+rate on the band by a \emph{constant} amount, so firms scale turnover up toward
+their frictionless optimum, broadening the taxed base and partly offsetting the
+static loss. The offset is substantial: at $e=0.17$ the raised threshold costs
+\(-\)\pounds292m against a static \(-\)\pounds508m, and the $10\%$ and $15\%$ bands
+cost \(-\)\pounds273m and \(-\)\pounds135m against static \(-\)\pounds343m and
+\(-\)\pounds171m. At the illustrative midpoint $e=0.17$, the number of firms re-optimising is
+$50{,}155$ under the raised threshold, $61{,}187$ under the $10\%$ reduced rate, and
+$51{,}226$ under the $15\%$ reduced rate. Figure~\ref{fig:reform_dist} traces these
+costs across the full range of $e$, with each curve nesting onto its static value as
+$e\to0$.
 
-This costing prices the \emph{extensive} margin only---whether each firm sits inside or
-outside the VAT net---and holds turnover fixed. The \emph{intensive} response embedded in
-the CES demand \eqref{eq:liu-demand}, by which registration depresses B2C quantity, is
-part of the model but is not re-solved here; pricing it is the full behavioural exercise
-left to future work. On the extensive margin, the registration decision
-\eqref{eq:liu-netbenefit} has a direct, static implication for revenue. Consider the VAT
-the government collects per firm. A \emph{registered} firm remits VAT on its value added,
-$t(1-\omega)y$, since it charges output VAT and reclaims input VAT. An
-\emph{unregistered} firm remits nothing directly, but the input VAT it cannot reclaim,
-$t\,\omega\,y$, sticks and reaches the Exchequer as irrecoverable tax embedded in its
-purchases. A firm is inside the VAT net if it must register, $y\ge T^{*}$, or chooses
-to, $\omega-\beta(1-\omega)>0$. A reform that changes who is inside the net therefore
-moves revenue per affected firm between $t(1-\omega)y$ (registered) and $t\,\omega\,y$
-(unregistered)---a swing that depends entirely on whether $\omega$ is above or below
-$\tfrac12$. Applying this accounting to the firm population, weighted by the assumed
-composition $(\omega,\beta)$, yields a budget cost for each reform.
-Table~\ref{tab:liu_costing} reports these population-weighted figures.
+\paragraph{Why the graduated taper is excluded.} I do not report a behavioural cost
+for the graduated taper, and I want to be candid about why. The taper carries two
+behavioural channels that pull in opposite directions. The first is the
+base-broadening channel shared with the flat reforms: as the \emph{average} rate a
+firm faces falls, the firm scales its turnover up, which is cheaper for revenue in
+exactly the way~\eqref{eq:rescale} captures. The second is a marginal-rate
+distortion that is the taper's signature: because the taper's rate \emph{rises} with
+turnover, raising output lifts the rate on \emph{all} of a firm's turnover, so the
+firm faces an incentive to hold turnover down---a force that is costlier for
+revenue, not cheaper. The iso-elastic cost used here can price the first, upward
+channel but not the second, downward one. Imposing the full marginal-rate wedge in a
+correct first-order-condition solve makes firms collapse to the band floor and yields
+economically pathological revenue losses of the order of several billion pounds---an
+artefact of a cost function that cannot represent the downward, marginal-rate-driven
+response a taper induces, not a credible policy estimate. The net behavioural sign of
+the taper is therefore ambiguous and not identified in this framework. I take this as
+an honest scope limit, consistent with the paper's careful identification stance, and
+report only the taper's robust, $e$-free objects---its static cost
+(Section~\ref{sec:static}) and its exact, analytic removal of the dominated region
+(Section~\ref{sec:model}).
 
 \begin{table}[htbp]
 \centering
-\caption{Parametric static budget cost of the three threshold/rate reforms under the
-extensive-margin accounting of \eqref{eq:liu-netbenefit}, by assumed firm composition
-$(\omega,\beta)$ (\pounds bn; negative denotes a revenue loss). Each row fixes the
-input share $\omega$ and B2C sales share $\beta$ for the affected population and applies
-the registered/unregistered remittance swing between $t(1-\omega)y$ and $t\,\omega\,y$.
-Figures are conditional on the assumed $(\omega,\beta)$ and are a sensitivity range, not
-a forecast.}
-\label{tab:liu_costing}
-\begin{tabular}{lrrr}
+\caption{Behavioural revenue effect of the three flat-rate reforms relative to the
+\pounds85{,}000-notch baseline, by assumed turnover elasticity $e$, with the static
+($e\to0$ limit) figure for comparison. Each behavioural figure re-solves every
+firm's iso-elastic optimum~\eqref{eq:isoelastic} under the reform schedule, holding
+recovered abilities and $e$ fixed. The final column reports the number of firms that
+re-optimise at the illustrative midpoint $e=0.17$. Every behavioural figure is conditional on the
+assumed, non-identified $e$. The graduated taper is excluded from the behavioural
+costing; see the note below the table and the discussion that follows.}
+\label{tab:behavioural_costs}
+\begin{tabular}{lrrrrr}
 \hline
-Firm type $(\omega,\beta)$ & Raise to \pounds100k & Reduced $10\%$ band & Reduced $15\%$ band \\
+Reform & Static & $e=0.05$ & $e=0.17$ & $e=0.32$ & Firms ($e{=}0.17$) \\
 \hline
-Consumer-facing $(0.2,0.9)$    & $-1.045$ & $-0.933$ & $-0.466$ \\
-Mixed $(0.45,0.5)$             & $0.000$  & $-0.641$ & $-0.321$ \\
-Input-heavy B2B $(0.7,0.2)$    & $0.000$  & $-0.350$ & $-0.175$ \\
-Population-average $(0.5,0.5)$ & $0.000$  & $-0.583$ & $-0.291$ \\
+Raise threshold to \pounds100{,}000
+  & $-\pounds508$m & $-\pounds444$m & $-\pounds292$m & $-\pounds111$m & $50{,}155$ \\
+Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$
+  & $-\pounds343$m & $-\pounds322$m & $-\pounds273$m & $-\pounds210$m & $61{,}187$ \\
+Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$
+  & $-\pounds171$m & $-\pounds160$m & $-\pounds135$m & $-\pounds107$m & $51{,}226$ \\
 \hline
 \end{tabular}
+
+\smallskip
+{\footnotesize \emph{Note.} The graduated taper is deliberately omitted from this
+table. Its behavioural response cannot be credibly priced in the iso-elastic
+framework, for the reason set out in the paragraph below; its robust, $e$-free
+figures---the static cost of \(-\)\pounds336m and the exact removal of the dominated
+region---are reported in Sections~\ref{sec:static} and~\ref{sec:model} instead.}
 \end{table}
 
-The key finding is that raising the threshold costs revenue \emph{only} for the
-low-$\omega$, high-$\beta$ consumer-facing firms. These firms de-register when the
-threshold rises, and because $\omega<\tfrac12$ for them they then yield less as
-unregistered firms ($t\,\omega\,y$) than they did as registered firms ($t(1-\omega)y$),
-so the Exchequer loses. Input-heavy firms, by contrast, register \emph{voluntarily}
-under \eqref{eq:liu-netbenefit} regardless of where the threshold sits, so a change in
-the threshold is irrelevant to them and the raise-to-\pounds100k column is zero for
-every type with $\omega\ge\tfrac12$. Across the plausible range of $(\omega,\beta)$ the
-raise-to-\pounds100k cost therefore ranges from \pounds0 to about $-\pounds1.05$bn. The
-two reduced-rate bands, which lower the output-VAT burden on \emph{everyone} who would
-otherwise be registered rather than only the de-registering margin, cost more uniformly
-across firm types: up to about $-\pounds0.93$bn for the $10\%$ band and $-\pounds0.47$bn
-for the $15\%$ band, with the population-average composition $(0.5,0.5)$ implying
-$-\pounds0.58$bn and $-\pounds0.29$bn respectively. Figure~\ref{fig:liu_costing} plots
-the reform cost against $\omega$ and the raise-to-\pounds100k cost surface over the full
-$(\omega,\beta)$ plane.
+\paragraph{Validation: the $e\to0$ limit.} For the three flat-rate reforms the
+simulator should reproduce the static costing as the response vanishes, and it does.
+Taking $e\to0$ in the forward solve returns \(-\)\pounds507m for the raised
+threshold, \(-\)\pounds343m for the $10\%$ reduced rate, and \(-\)\pounds171m for the
+$15\%$ reduced rate---matching the static \(-\)\pounds508m, \(-\)\pounds343m, and
+\(-\)\pounds171m of Table~\ref{tab:schedule_costs} to within about \pounds1m.
+This is the intended nesting: when no firm responds, the behavioural cost collapses
+to the mechanical reclassification effect, so the static costing is the $e=0$ corner
+of the same machine, not a separate calculation. The nesting notably does \emph{not}
+hold for the graduated taper---a further symptom that the iso-elastic cost cannot
+represent the taper's marginal-rate channel, and an additional reason its behavioural
+cost is not reported. I separately confirm numerically that
+$\mathrm{d}\ln y^{*}/\mathrm{d}\ln(1-\tau)=e$ holds exactly in the solved population
+for the flat reforms, so $e$ is indeed the governing knob.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/liu_costing.png}
-\caption{Parametric budget cost of the threshold reforms. Left: cost of each reform
-against the input share $\omega$, showing that the raise-to-\pounds100k cost is borne
-entirely by low-$\omega$ firms. Right: the raise-to-\pounds100k cost surface over the
-$(\omega,\beta)$ plane, ranging from \pounds0 (input-heavy or business-facing) to about
-$-\pounds1.05$bn (consumer-facing, low-input). All magnitudes are conditional on the
-assumed composition $(\omega,\beta)$ and are read as a sensitivity range.}
-\label{fig:liu_costing}
+\includegraphics[width=0.78\textwidth]{figures/dynamic_cost_vs_elasticity.png}
+\caption{Behavioural reform cost against the assumed turnover elasticity $e$, for
+the three flat-rate reforms. Each curve is the change in revenue relative to the
+\pounds85{,}000-notch baseline as $e$ varies; the intercept at $e=0$ is the static
+cost of Table~\ref{tab:schedule_costs}, onto which the behavioural cost nests as the
+response vanishes. As $e$ rises, firms scale turnover up toward their frictionless
+optimum~\eqref{eq:rescale}, broadening the taxed base and making each reform cheaper.
+The dotted lines mark the swept values $e\in\{0.05,0.17,0.32\}$ of
+Table~\ref{tab:behavioural_costs}. The graduated taper is omitted: its behavioural
+response is not credibly identified in this framework (see above). All magnitudes are
+conditional on the assumed, non-identified $e$.}
+\label{fig:reform_dist}
 \end{figure}
 
-\paragraph{Caveats and scope.} I am explicit about what this layer is and is not. It is
-a \emph{static, extensive-margin} estimate: firms switch registration status, but their
-turnover and prices are held fixed. It is \emph{not} the full behavioural response of
-\citet{liuetal2021}, in which the CES demand system \eqref{eq:liu-demand} is re-solved
-through the optimal prices \eqref{eq:liu-prices} so that prices, quantities, and the tax
-base all adjust jointly; recovering that, together with grounding $\omega$ and $\beta$
-in ONS Supply--Use data (including the final-demand split), is left for future work. The
-treatment of B2B VAT cascading is simplified: I credit unregistered firms only with
-their own irrecoverable input VAT and do not trace tax embedded further down the chain.
-And the $(\omega,\beta)$ values are not data-grounded, so the figures in
-Table~\ref{tab:liu_costing} are a sensitivity range rather than point estimates or a
-forecast. This margin is exactly the ``turnover-tax notch'' corner of the model in
-Section~\ref{sec:model}: in the limit $\omega\to0$, $\beta\to1$---an all-B2C firm with
-no reclaimable inputs---the registration choice collapses to the pure downward notch of
-\citet{klevenwaseem2013}, and the dominated region of Section~\ref{sec:model} is the
-elasticity-free object that survives whatever one assumes about $(\omega,\beta)$. That
-dominated region, and the static cost of Section~\ref{sec:static}, remain the paper's
-robust anchors; the registration model adds a disciplined account of \emph{who} bears a
-threshold reform's cost, conditional on a composition that future ONS work will
-pin down.
+This section completes the costing framework. Where Section~\ref{sec:static} prices
+each reform mechanically and Section~\ref{sec:model} measures the distortion it
+removes, the simulator here prices the \emph{level and rate} reforms
+\emph{behaviourally}: it lets firms re-optimise turnover as the effective rate
+changes and implies that, for any assumed $e$, the base-broadening response would
+offset a fraction of the static revenue loss. The layer is bounded by what it can
+and cannot identify. The behavioural magnitudes are conditional on an assumed,
+non-identified $e$, and so are a sensitivity range rather than forecasts; and the
+priced margin is purely \emph{intensive}, since the model re-scales turnover while
+holding the extensive bunching response fixed. Crucially, the graduated taper's
+behavioural response is \emph{not} credibly identified in this framework: its
+base-broadening and marginal-rate channels pull in opposite directions and the
+iso-elastic cost cannot net them, so I price it only statically and through its exact
+dominated-region removal. The robust anchors of the paper therefore remain the
+$e$-free static cost of Section~\ref{sec:static} and the exact dominated region of
+Section~\ref{sec:model}; the contribution here is a disciplined, transparent layer
+that prices the intensive behavioural response to the level and rate reforms once one
+is willing to name an elasticity.

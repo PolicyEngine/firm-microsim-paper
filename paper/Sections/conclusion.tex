@@ -26,7 +26,7 @@ Static cost, \pounds85k to \pounds90k anchor & --- & $\approx-\pounds175$m & \S\
 Static sweep, \pounds90k baseline & per \pounds5k step & $\sim\pounds150$--$220$m & Table~\ref{tab:static_revenue} \\
 Dominated region (misallocation zone) & $a=T^{*}\tau/(1-\tau)$ & \pounds21{,}250 & \S\ref{ssec:dominated} \\
 Firms in the dominated band (weighted) & --- & $\approx137{,}000$ & \S\ref{ssec:dominated} \\
-Registration-margin raise-to-\pounds100k & parametric $(\omega,\beta)$ range & \pounds0 to $-\pounds1.05$bn & \S\ref{sec:behavioural} \\
+Behavioural raise-to-\pounds100k ($e=0.05$--$0.32$) & $e$-sensitivity range & $-\pounds444$m to $-\pounds111$m & \S\ref{sec:behavioural} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -62,27 +62,24 @@ firms when the target step is removed---so behavioural bunching is not identifie
 on these data; the bunching ratio and implied elasticities are relegated to the
 appendix and labelled non-identified, and the behavioural evidence on threshold
 bunching remains the administrative estimate of \citet{liuetal2021}. Fourth, the
-framework also prices each reform \emph{behaviourally} on the registration margin,
-embedding the extensive-margin registration decision in the framework of
-\citet{liuetal2021}: a firm weighs the input-VAT reclaim benefit, which rises in its
-input share $\omega$, against the output-VAT burden on business-to-consumer sales,
-which rises in its B2C share $\beta$, so the net incentive to register is
-proportional to $t[\omega-\beta(1-\omega)]$
-(Section~\ref{sec:behavioural}). The sign is informative: it is negative for
-consumer-facing, low-input firms, which have an incentive to remain unregistered
-(bunching), and positive for input-heavy business-to-business firms, which register
-voluntarily. I price each reform's budget cost on this margin parametrically over
-$(\omega,\beta)$---a registered firm yields $t(1-\omega)y$ and an unregistered firm
-$t\omega y$---reporting a sensitivity range rather than a point estimate. Raising
-the threshold to \pounds100{,}000 costs between \pounds0 and about $-$\pounds1.05bn,
-the loss falling only on low-$\omega$, high-$\beta$ consumer-facing firms, because
-input-heavy firms register voluntarily and the threshold is irrelevant to them; the
-$10\%$ and $15\%$ reduced-rate bands cost up to about $-$\pounds0.93bn and
-$-$\pounds0.47bn. This is a static extensive-margin estimate over $(\omega,\beta)$
-values that are not yet data-grounded, not the full CES-demand response of
-\citet{liuetal2021}. The static costs and the dominated region remain the robust,
-behaviour-free anchors; the registration-margin magnitudes are conditional on the
-assumed $(\omega,\beta)$.
+framework also prices each reform \emph{behaviourally}, with a structural simulator
+that re-optimises firms under the reformed schedule conditional on an assumed
+turnover elasticity $e$ (Section~\ref{sec:behavioural}). Because $e$ is not
+identified on these synthetic data---the placebo shows the bunching is
+mechanical---I report the behavioural cost as an $e$-sensitivity range that nests
+the static cost as $e\to0$. Conditional on an assumed $e$, modelled responses partly
+offset the static costs: at an illustrative midpoint $e=0.17$ the raise to
+\pounds100{,}000 falls from \pounds508m static to about \pounds292m, the $10\%$
+band from \pounds343m to \pounds273m, and the $15\%$ band from \pounds171m to
+\pounds135m, as firms broaden the base when the effective rate falls. The
+$e$-range $\{0.05,0.17,0.32\}$ is a sensitivity range whose only externally
+anchored point is the lower end $e=0.05$; the $0.17$ and $0.32$ values are implied
+by the notch geometry, not identified from the data. I report no behavioural cost for the
+graduated taper: its behavioural response is not credibly identified, because its
+base-broadening and marginal-rate channels pull in opposite directions and the
+iso-elastic cost cannot net them, so only its static cost and dominated-region
+removal are reported. The static costs and the dominated region remain the robust,
+$e$-free anchors; the behavioural magnitudes are conditional on the assumed $e$.
 
 \paragraph{Limitations and future work.} The model is a turnover-tax-notch
 approximation: it treats VAT as a cost on turnover, whereas real VAT is levied on
@@ -98,17 +95,14 @@ because VAT liability by sector is excluded from the calibration optimiser
 (Section~\ref{sec:data}), the framework does not yet report the sectoral incidence
 of a taper or reduced rate---which sectors gain and by how much---a cut of obvious
 policy interest that I leave to future work. The microdata are synthetic and calibrated to coarse aggregate
-bands---which is why the registration-margin magnitudes are reported only as a
-parametric range over the input share $\omega$ and the B2C share $\beta$ rather than
-as estimates---and the analysis is partial-equilibrium, abstracting from
-pass-through into prices \citep{benedek2015, belloncopestake2022}. The
-registration-margin costing is now done (Section~\ref{sec:behavioural}), but the
-shares $(\omega,\beta)$ it requires are set parametrically rather than measured, and
-the response is the static extensive margin only; the chief outstanding tasks are
-therefore to ground $(\omega,\beta)$ in firm-level data---for instance the ONS
-Supply--Use tables---and to extend the static extensive margin to the full
-CES-demand response of \citet{liuetal2021}, which together would turn the present
-parametric range into estimates. A welfare/MVPF analysis modelling
+bands---which is why the behavioural magnitudes are reported only conditional on an
+assumed elasticity rather than as estimates---and the analysis is
+partial-equilibrium, abstracting from pass-through into prices \citep{benedek2015,
+belloncopestake2022}. The conditional behavioural costing is now done
+(Section~\ref{sec:behavioural}), but on synthetic data the turnover elasticity $e$
+it requires is assumed, not identified; the chief outstanding task is therefore to
+\emph{identify} $e$ from administrative micro-data, which would turn the present
+$e$-sensitivity range into a point estimate. A welfare/MVPF analysis modelling
 value added and input reclaim would in turn convert the dominated-region distortion
 into cost--benefit terms and support revenue-neutral schedule designs that
 neutralise the notch at no net fiscal cost. Above all, validation against
