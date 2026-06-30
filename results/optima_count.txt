@@ -1,0 +1,29 @@
+Optima of the iso-elastic profit function
+================================================================
+pi(y;n) = (1 - tau*f(y))*y - n/(1+1/e)*(y/n)**(1+1/e)
+tau=0.2, e=0.17, T*=£85,000
+
+Within any constant-rate regime pi is strictly concave, so pi'=0 has a
+single root y*=n(1-tau*f)**e. Extra maxima are bunching points created
+by the schedule's notch discontinuities, not interior FOC roots.
+
+### flat single rate  (expected 1)
+  n=£  90,000: local maxima = 1  (at 87k)   global argmax = £86.6k
+  n=£ 120,000: local maxima = 1  (at 116k)   global argmax = £115.5k
+  n=£ 150,000: local maxima = 1  (at 144k)   global argmax = £144.4k
+
+### hard notch  (expected 2)
+  n=£  90,000: local maxima = 2  (at 85k, 87k)   global argmax = £85.0k
+  n=£ 120,000: local maxima = 2  (at 85k, 116k)   global argmax = £85.0k
+  n=£ 150,000: local maxima = 2  (at 85k, 144k)   global argmax = £144.4k
+
+### reduced-rate band 15%  (expected 3)
+  n=£  90,000: local maxima = 2  (at 85k, 88k)   global argmax = £85.0k
+  n=£ 120,000: local maxima = 3  (at 85k, 105k, 116k)   global argmax = £85.0k
+  n=£ 150,000: local maxima = 3  (at 85k, 105k, 144k)   global argmax = £144.4k
+
+### graduated taper  (expected 2)
+  n=£  90,000: local maxima = 1  (at 85k)   global argmax = £85.0k
+  n=£ 120,000: local maxima = 2  (at 86k, 116k)   global argmax = £85.6k
+  n=£ 150,000: local maxima = 2  (at 90k, 144k)   global argmax = £144.4k
+

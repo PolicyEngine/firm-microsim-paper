@@ -68,6 +68,8 @@ def test_console_script_help_entry_points() -> None:
         "firm-microsim-dynamic",
         "firm-microsim-verify-optimum",
         "firm-microsim-sector-vat",
+        "firm-microsim-deductible",
+        "firm-microsim-optima-count",
         "firm-microsim-placebo",
         "firm-microsim-dominated-region",
         "firm-microsim-reform-menu",

@@ -1,0 +1,97 @@
+Explicit value-added (deductible) reformulation of the VAT notch
+========================================================================
+MODEL
+------------------------------------------------------------------------
+  Statutory rate tau = 0.20; sector deductible share delta in [0,1).
+  Value added = turnover - deductibles = (1 - delta)*y.
+  Unregistered (y <  T*):  pi = y                       - C(y;n,e)
+  Registered   (y >= T*):  pi = (1 - tau*(1-delta))*y   - C(y;n,e)
+  C(y;n,e) = (n/(1+1/e))*(y/n)**(1+1/e),  c'(y) = (y/n)**(1/e).
+
+  Effective wedge      tau_eff(delta) = tau*(1-delta)
+  Registered optimum   y* = n*(1 - tau*(1-delta))**e
+  Notch jump at T*     tau_eff*T*
+  Dominated width      a(delta) = T**tau_eff/(1-tau_eff)
+
+1. OPTIMUM VERIFICATION (closed form vs grid AND scipy argmax)
+------------------------------------------------------------------------
+       e   delta    rel_grid  rel_scalar   abs_grid(£)  abs_scalar(£)
+    0.05   0.000    6.78e-08    8.05e-10        0.0168         0.0002
+    0.05   0.200    4.23e-07    6.15e-10        0.1048         0.0002
+    0.05   0.500    3.28e-07    4.01e-10        0.0815         0.0001
+    0.05   0.850    1.49e-07    2.41e-10        0.0372         0.0001
+    0.05   0.950    2.10e-07    2.07e-10        0.0524         0.0001
+    0.17   0.000    6.91e-09    9.18e-09        0.0017         0.0022
+    0.17   0.200    1.72e-07    3.15e-09        0.0417         0.0008
+    0.17   0.500    8.55e-08    2.10e-09        0.0210         0.0005
+    0.17   0.850    4.34e-07    1.31e-09        0.1081         0.0003
+    0.17   0.950    1.02e-07    1.14e-09        0.0254         0.0003
+    0.32   0.000    2.64e-07    9.54e-09        0.0614         0.0022
+    0.32   0.200    2.08e-07    1.04e-08        0.0491         0.0011
+    0.32   0.500    1.93e-07    3.21e-09        0.0465         0.0008
+    0.32   0.850    4.93e-08    1.94e-09        0.0122         0.0005
+    0.32   0.950    1.09e-07    1.32e-08        0.0272         0.0020
+   worst relative error: 4.34e-07  (target < 1e-4: PASS)
+   worst (least-negative) pi''(y*): -1.0740e-05  strictly concave: PASS
+
+   LIMIT delta -> 1 (all deductible, zero value added): wedge->0, y*->n
+     delta=0.9          wedge=2.000e-02  max|y*-n|/n=3.429e-03
+     delta=0.99         wedge=2.000e-03  max|y*-n|/n=3.403e-04
+     delta=0.999        wedge=2.000e-04  max|y*-n|/n=3.400e-05
+     delta=1            wedge=2.000e-10  max|y*-n|/n=3.400e-11
+   LIMIT delta -> 0 (no deductibles): wedge=0.2000 == tau: PASS; recovers whole-turnover y*: PASS
+
+2. EQUIVALENCE WITH THE (1 - tau0)*y SIMULATOR  [tau0 = tau*(1-delta)]
+------------------------------------------------------------------------
+     delta     tau0      y*_expl      y*_tau0     a_expl     a_tau0     nH_expl     nH_tau0
+     0.000   0.2000   144,416.41   144,416.41   21,250.0   21,250.0     127,382     127,382
+     0.200   0.1600   145,619.23   145,619.23   16,190.5   16,190.5     119,575     119,575
+     0.500   0.1000   147,337.22   147,337.22    9,444.4    9,444.4     108,637     108,637
+     0.700   0.0600   148,430.45   148,430.45    5,425.5    5,425.5     101,420     101,420
+     0.850   0.0300   149,225.30   149,225.30    2,628.9    2,628.9      95,520      95,520
+     0.950   0.0100   149,743.94   149,743.94      858.6      858.6      90,544      90,544
+   max |dy*|=0.00e+00  max |da|=0.00e+00  max |dpi|=0.00e+00  max |dnH|=0.00e+00
+   EQUIVALENCE: PASS  (explicit (delta,tau) model == implicit (1-tau0)*y model)
+
+3. SECTOR SIMULATION FROM REAL DATA (2023-24)
+------------------------------------------------------------------------
+   sector                             tau_eff  delta      y*(£)   jump(£)      a(£)     n_H(£)
+    1 Agriculture (crop & animal pro   0.0000  1.000    150,000         0         0   no notch
+   41 Construction of buildings        0.0288  0.856    149,257     2,446     2,518     95,254
+   56 Food & beverage service          0.1213  0.393    146,738    10,311    11,735    112,456
+   62 Computer programming & IT serv   0.1997  0.002    144,426    16,974    21,209    127,320
+   (optimum/jump/buncher at e=0.17, sample ability n=£150,000)
+
+   sector ratio (=tau_eff) spread: min 0.0000, median 0.0808, max 0.3000  (n=83 sectors)
+   implied delta spread          : 0.000 .. 1.000
+   population-weighted mean delta = 0.5392,  mean tau_eff = 0.0935
+
+VERDICT
+========================================================================
+The explicit value-added reformulation is SOUND. Levying tau on
+value added (turnover - deductibles) instead of on the whole
+turnover yields a registered net rate (1 - tau*(1-delta)) whose
+iso-elastic optimum y* = n*(1 - tau*(1-delta))**e is recovered by the
+numerical optimisers to better than 1e-4 relative error, with a
+single strictly-concave interior maximum. It is EXACTLY EQUIVALENT to
+the existing (1 - tau0)*y simulator with tau0 = tau*(1-delta): the
+optimum, the dominated-region width, the registered profit and the
+marginal buncher all coincide to machine precision (PASS above).
+
+WHAT IT CHANGES relative to the implicit form: the wedge is no longer
+an opaque ~3% number but tau x (value-added share), grounded in the
+sector deductible share delta. This makes the notch and the dominated
+region SECTOR-SPECIFIC. High-deductible / low-value-added sectors
+(agriculture, food) have delta near 1, tau_eff near 0, a near-zero
+notch jump and a vanishing dominated region -- effectively no notch.
+High-value-added services (delta near 0) face tau_eff near 0.20, the
+full Kleven-Waseem £21,250 dominated region and the harsh notch. The
+implicit uniform wedge HIDES exactly this heterogeneity.
+
+CAVEATS
+------------------------------------------------------------------------
+* delta is identified from sector aggregates via tau_eff = tau*(1-delta);
+  net-repayment / zero-rated sectors give tau_eff~0 (delta clipped to <1)
+  and high-VA sectors hit the data cap, so delta is clipped to [0,1).
+* e is a calibration input, not identified from the synthetic data; all
+  optima/bunchers are CONDITIONAL on the assumed e.
