@@ -66,6 +66,8 @@ def test_console_script_help_entry_points() -> None:
         "firm-microsim-bunching",
         "firm-microsim-notch",
         "firm-microsim-dynamic",
+        "firm-microsim-verify-optimum",
+        "firm-microsim-sector-vat",
         "firm-microsim-placebo",
         "firm-microsim-dominated-region",
         "firm-microsim-reform-menu",

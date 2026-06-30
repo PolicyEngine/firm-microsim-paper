@@ -322,6 +322,7 @@ def reform_revenue(
     near_lo=83_000.0,
     near_hi=85_000.0,
     move_tol=500.0,
+    tau0_override=None,
 ):
     """Revenue change of a reform vs the £85k hard-notch baseline (iso-elastic).
 
@@ -355,8 +356,17 @@ def reform_revenue(
     w = df["weight"].to_numpy(dtype=float)
 
     # Firm-specific baseline net VAT rate (share of turnover actually remitted).
+    # By default this is the firm-level ``liab / turnover`` ratio. A caller may
+    # instead pass ``tau0_override`` (a per-firm array, e.g. a data-grounded
+    # sector net-VAT-to-turnover wedge) to replace it; clipping/handling of the
+    # effective rate downstream is identical either way (the forward solve still
+    # clips ``tau0 * f(y)`` to [0, 0.999]).
     with np.errstate(divide="ignore", invalid="ignore"):
         tau0 = np.where(t_obs > 0, liab / t_obs, 0.0)
+    if tau0_override is not None:
+        tau0 = np.broadcast_to(
+            np.asarray(tau0_override, dtype=float), tau0.shape
+        ).astype(float)
 
     band = (t_obs >= band_lo) & (t_obs <= band_hi)
     idx = np.where(band)[0]

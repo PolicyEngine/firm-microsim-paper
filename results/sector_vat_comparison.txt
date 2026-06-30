@@ -1,0 +1,21 @@
+Data-grounded sector VAT wedge: comparison
+================================================================
+
+Effective wedge (net VAT / turnover, population-weighted mean)
+  firm-level synthetic baseline :  0.0479
+  sector-grounded (this module) :  0.0935
+  sector ratio spread           : min 0.0000, median 0.0808, max 0.3000  (n=83 sectors)
+  population-mean fallback       : 0.0873
+
+Reform revenue change vs £85k notch (£bn, behavioural)
+  reform         e      baseline        sector         delta
+  raise100k   0.05       -0.4438       -0.4952       -0.0514
+  raise100k   0.17       -0.2919       -0.4687       -0.1768
+  raise100k   0.32       -0.1112       -0.4345       -0.3233
+  rate10      0.05       -0.3219       -0.3388       -0.0170
+  rate10      0.17       -0.2726       -0.3279       -0.0553
+  rate10      0.32       -0.2104       -0.3161       -0.1057
+  rate15      0.05       -0.1600       -0.1697       -0.0097
+  rate15      0.17       -0.1355       -0.1653       -0.0299
+  rate15      0.32       -0.1069       -0.1602       -0.0533
+

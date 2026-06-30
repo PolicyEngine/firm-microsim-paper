@@ -1,0 +1,69 @@
+Iso-elastic firm optimum — verification report
+========================================================================
+Profit: pi(y;n) = (1-tau)*y - (n/(1+1/e))*(y/n)**(1+1/e)
+Closed form (flat rate): y* = n*(1-tau)**e ; frictionless y=n.
+
+1. FLAT-RATE OPTIMUM (numerical vs closed form)
+------------------------------------------------------------------------
+       e    tau     rel_grid   rel_scalar    abs_grid(£)   abs_scalar(£)
+    0.05   0.03     5.13e-08     2.38e-10         0.0103          0.0000
+    0.05   0.20     4.26e-08     8.07e-10         0.0084          0.0002
+    0.17   0.03     3.09e-07     1.31e-09         0.0614          0.0003
+    0.17   0.20     4.22e-07     9.18e-09         0.0813          0.0018
+    0.32   0.03     9.98e-08     1.29e-08         0.0198          0.0020
+    0.32   0.20     1.56e-07     9.54e-09         0.0291          0.0018
+   worst relative error across grid: 4.22e-07  (target < 1e-4: PASS)
+
+2. FOC / ELASTICITY IDENTITY  d ln y* / d ln(1-tau) = e
+------------------------------------------------------------------------
+   e=0.05  slope=0.050000  |slope-e|=3.10e-13  PASS
+   e=0.17  slope=0.170000  |slope-e|=2.00e-13  PASS
+   e=0.32  slope=0.320000  |slope-e|=2.91e-13  PASS
+   identity holds: PASS
+
+3. SECOND-ORDER CONDITION (strict concavity, unique interior max)
+------------------------------------------------------------------------
+   worst (least-negative) pi''(y*) over grid = -1.342521e-05
+   all interior optima strictly concave (pi''<0): PASS
+   single interior maximum on every grid: PASS
+   (analytically pi''(y) = -(1/e)(1/n)(y/n)**(1/e-1) < 0 for all y>0)
+
+4. FRICTIONLESS LIMIT  y* -> n  as  e -> 0
+------------------------------------------------------------------------
+   e=0.1      max |y*-n|/n = 2.207e-02
+   e=0.01     max |y*-n|/n = 2.229e-03
+   e=0.001    max |y*-n|/n = 2.231e-04
+   e=0.0001   max |y*-n|/n = 2.231e-05
+   limit recovered (gap -> 0): PASS
+
+5. NOTCH GEOMETRY (discontinuity, dominated region, buncher)
+------------------------------------------------------------------------
+   dominated region (T*, T*+a) = (£85,000, £106,250),  a = £21,250
+       e    nH_iso(£)   nH_model(£)    paper(£)  |iso-paper|     y*@nH(£)  >dom_hi
+    0.05      112,795       112,795     112,795            0      111,544     True
+    0.17      127,382       127,382     127,382            0      122,640     True
+    0.32      143,527       143,527     143,527            0      133,635     True
+   dominated region never optimally chosen: PASS
+
+VERDICT
+========================================================================
+The iso-elastic profit function is WELL-BEHAVED. Under any flat
+effective rate it has a SINGLE strictly-concave interior maximum
+that the numerical optimisers recover to better than 1e-4 relative
+error against the closed form y* = n(1-tau)**e. The FOC reproduces
+the elasticity identity d ln y*/d ln(1-tau) = e exactly, and the
+frictionless limit y* -> n is recovered as e -> 0, so ability n is
+the firm's undistorted turnover. Under the hard notch the geometry
+is exactly Kleven-Waseem: profit is discontinuous at T*, the
+dominated region (£85,000, £106,250) is never optimally chosen, and
+the marginal buncher n_H(e) matches the paper's 112,795 / 127,382 /
+143,527 for e = 0.05 / 0.17 / 0.32.
+
+CAVEATS
+------------------------------------------------------------------------
+* This verifies only the INTENSIVE margin (the smooth choice of y).
+  The notch's EXTENSIVE bunching is a separate DISCRETE choice
+  (bunch at T* vs register at y*); profit is not differentiable there,
+  so the marginal buncher is found by an indifference solve, not an FOC.
+* e is a calibration input, not identified from the synthetic data;
+  all numbers are CONDITIONAL on the assumed e.
