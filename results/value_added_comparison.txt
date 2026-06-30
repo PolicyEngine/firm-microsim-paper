@@ -1,0 +1,119 @@
+Value-added VAT notch: model A (inputs as a real cost) vs model B
+========================================================================
+TWO PROFIT FUNCTIONS (same iso-elastic C, different meaning of C)
+------------------------------------------------------------------------
+  tau = 0.20 statutory; delta = sector deductible-input share of
+  turnover; value-added share = (1 - delta); d = delta*y inputs.
+
+  MODEL B (existing paper / deductible_model.py):
+    Unregistered:  pi_B = y                       - C(y;n,e)
+    Registered:    pi_B = (1 - tau*(1-delta))*y   - C(y;n,e)
+    -> C is TOTAL turnover cost; inputs are NOT separately netted.
+
+  MODEL A (this module):
+    Unregistered:  pi_A = (1-delta)*y             - C(y;n,e)
+    Registered:    pi_A = (1-delta)*(1-tau)*y     - C(y;n,e)
+    -> C is OWN-FACTOR (NON-INPUT) cost; inputs d=delta*y are a
+       real cost subtracted from turnover.
+
+  C(y;n,e) = (n/(1+1/e))*(y/n)**(1+1/e) is the SAME FUNCTION in both;
+  only its economic INTERPRETATION differs. A and B coincide only at
+  delta=0; in general w_B - w_A = delta exactly.
+
+  Registered wedge   w_A=(1-delta)(1-tau)   w_B=1-tau(1-delta)
+  Registered optimum y*_A=n[(1-delta)(1-tau)]**e   y*_B=n[1-tau(1-delta)]**e
+  Notch jump at T*   Delta_A = Delta_B = tau*(1-delta)*T*  (IDENTICAL)
+  Dominated width    a_A = T*tau/(1-tau) (delta-INDEPENDENT)
+                     a_B = T*tau(1-delta)/(1-tau(1-delta)) (shrinks)
+
+1. MODEL-A OPTIMUM VERIFICATION (closed form vs grid AND scipy)
+------------------------------------------------------------------------
+       e   delta    rel_grid  rel_scalar   abs_grid(£)  abs_scalar(£)
+    0.05   0.000    3.33e-08    8.05e-10        0.0082         0.0002
+    0.05   0.300    3.29e-07    2.82e-09        0.0799         0.0007
+    0.05   0.500    5.19e-07    1.29e-10        0.1240         0.0000
+    0.05   0.700    3.00e-07    3.04e-09        0.0699         0.0007
+    0.05   0.900    4.09e-07    8.30e-10        0.0900         0.0002
+    0.17   0.000    9.70e-08    9.18e-09        0.0233         0.0022
+    0.17   0.300    6.22e-07    5.14e-10        0.1408         0.0001
+    0.17   0.500    9.84e-08    5.96e-10        0.0210         0.0001
+    0.17   0.700    5.25e-07    3.66e-09        0.1029         0.0007
+    0.17   0.900    1.93e-07    3.98e-09        0.0315         0.0006
+    0.32   0.000    1.56e-07    9.54e-09        0.0364         0.0022
+    0.32   0.300    5.00e-07    7.27e-10        0.1038         0.0001
+    0.32   0.500    5.76e-07    3.71e-09        0.1073         0.0007
+    0.32   0.700    5.40e-07    1.01e-09        0.0856         0.0002
+    0.32   0.900    2.34e-01    3.35e-10    26088.8122         0.0000
+   worst relative error: 2.34e-01  (target < 1e-4: FAIL)
+   worst (least-negative) pi''(y*): -2.2439e-06  strictly concave: PASS
+
+   DOMINATED-REGION delta-INDEPENDENCE (a_A across delta):
+     delta=0      a_A = £21,250.00
+     delta=0.3    a_A = £21,250.00
+     delta=0.5    a_A = £21,250.00
+     delta=0.7    a_A = £21,250.00
+     delta=0.9    a_A = £21,250.00
+   all equal £21,250.00  (max dev 0.00e+00): PASS
+
+2. A-vs-B SECTOR COMPARISON (real delta, e=0.17, n=£150,000, y_obs=£120,000)
+------------------------------------------------------------------------
+   sector                     delta    w_A    w_B     y*_A     y*_B      n_A      n_B    jump     a_A     a_B
+    1 Agriculture             1.000  0.000  1.000    4,262  150,0004,223,339  120,000       0  21,250       0
+   41 Construction of buildi  0.856  0.115  0.971  103,864  149,257  173,303  120,597   2,446  21,250   2,518
+   56 Food & beverage servic  0.393  0.485  0.879  132,649  146,738  135,697  122,667  10,311  21,250  11,735
+   62 Computer programming &  0.002  0.799  0.800  144,379  144,426  124,672  124,631  16,974  21,250  21,209
+   marginal buncher n_H (A vs B):
+     Agriculture                n_H,A=    no notch   n_H,B=    no notch
+     Construction of buildings  n_H,A=    £177,116   n_H,B=     £95,254
+     Food & beverage service    n_H,A=    £138,682   n_H,B=    £112,456
+     Computer programming & IT  n_H,A=    £127,415   n_H,B=    £127,320
+   (jump_A == jump_B by construction; a_A flat £21,250, a_B shrinks)
+
+3. POPULATION COMPARISON (real synthetic population, weighted means)
+------------------------------------------------------------------------
+   registered firms used (turnover >= T*): 1,958,215
+   mean registered wedge   w_A = 0.3686   w_B = 0.9078   (w_B - w_A = 0.5392 = mean delta)
+   mean dominated width    a_A = £21,250 (flat)   a_B = £9,024 (smaller)
+   mean recovered ability  n_A = £7,731,243   n_B = £1,942,755
+   A recovers HIGHER abilities: mean n_A/n_B = 3.9743 (+297.43% on average)
+   A's smaller wedge attributes MORE of observed turnover to the tax
+   distortion, so it recovers larger underlying abilities than B.
+
+4. ILLUSTRATIVE REFORM-RESPONSE DIRECTION (NOT a re-costing)
+------------------------------------------------------------------------
+   Reduced-rate band reform: value-added rate 0.20 -> 0.15. Intensive scaling y*(new)/y*(old):
+   sector                        delta   scale_A   scale_B  A-B (pp)
+   Agriculture                   1.000    1.0104    1.0000     1.036
+   Construction of buildings     0.856    1.0104    1.0013     0.910
+   Food & beverage service       0.393    1.0104    1.0058     0.457
+   Computer programming & IT s   0.002    1.0104    1.0103     0.002
+   A's wedge is smaller, so a given proportional rate cut moves a
+   MORE-distorted firm more: A's intensive response exceeds B's (confirmed).
+   DIRECTION: larger base-broadening response under A => reforms are
+   relatively CHEAPER under A than under B. (Illustrative single-firm
+   scaling; the full population reform-cost engine is out of scope.)
+
+VERDICT (defensibility -- neither is identified by the data)
+========================================================================
+Both readings use the IDENTICAL iso-elastic cost form; they differ
+only in whether deductible input spend d=delta*y is subtracted as a
+real cost (A) or folded into total cost C (B). The data cannot tell
+them apart -- it is a MODELLING CONVENTION, not an identified fact.
+
+* Model B is INTERNALLY CONSISTENT with the rest of the paper: its
+  turnover-based ability recovery and calibration to net-VAT-to-
+  turnover data both presume the 'C = total turnover cost' reading,
+  and its sector-shrinking dominated region follows from the same
+  effective wedge tau*(1-delta) used everywhere else.
+* Model A is the more LITERAL 'VAT on value added with inputs as a
+  real cost' statement. Notably it REPRODUCES the paper's headline
+  £21,250 Kleven-Waseem dominated region for EVERY sector (the
+  (1-delta) cancels), whereas B makes that region sector-specific.
+* Both agree EXACTLY on the notch jump tau*(1-delta)*T*. They differ
+  on the retained wedge (by exactly delta), hence on recovered
+  abilities (A higher) and on reform responsiveness (A larger,
+  reforms relatively cheaper).
+
+Recommendation: state the convention explicitly. B is defensible and
+coherent with the paper as written; A is an equally defensible
+alternative that happens to restore the canonical £21,250 figure.
