@@ -72,6 +72,7 @@ def test_console_script_help_entry_points() -> None:
         "firm-microsim-optima-count",
         "firm-microsim-value-added",
         "firm-microsim-va-choice",
+        "firm-microsim-liu-mechanism",
         "firm-microsim-placebo",
         "firm-microsim-dominated-region",
         "firm-microsim-reform-menu",
