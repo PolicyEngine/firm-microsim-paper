@@ -71,6 +71,7 @@ def test_console_script_help_entry_points() -> None:
         "firm-microsim-deductible",
         "firm-microsim-optima-count",
         "firm-microsim-value-added",
+        "firm-microsim-va-choice",
         "firm-microsim-placebo",
         "firm-microsim-dominated-region",
         "firm-microsim-reform-menu",

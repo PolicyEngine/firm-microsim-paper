@@ -1,0 +1,114 @@
+Value-added-CHOICE VAT notch (A2): the firm chooses value added z
+========================================================================
+PROFIT FUNCTIONS (choice variable z = value added; y = z/(1-delta))
+------------------------------------------------------------------------
+  tau = 0.20 statutory; delta = sector deductible share;
+  C(z;n,e) = (n/(1+1/e))*(z/n)**(1+1/e); ability n = undistorted VA.
+
+    Unregistered:  pi = z          - C(z;n,e)   ->  z* = n
+    Registered:    pi = (1-tau)*z  - C(z;n,e)   ->  z* = n*(1-tau)**e
+
+  Turnover is the accounting image y = z/(1-delta). The £85k notch is
+  on TURNOVER, so in value-added space the threshold is sector-specific
+  z_T = (1-delta)*T*.
+
+  Notch jump          tau*z_T = tau*(1-delta)*T*  (IDENTICAL to A, B)
+  Dominated (VA)      a_z = (1-delta)*T**tau/(1-tau) = (1-delta)*£21,250
+  Dominated (turnover)a_y = a_z/(1-delta) = T**tau/(1-tau) = £21,250
+                      delta-INDEPENDENT (matches the paper's section 4)
+  Ability recovery    reg:   n = (1-delta)*y_obs/(1-tau)**e
+                      unreg: n = (1-delta)*y_obs
+
+THREE PROPERTIES A2 SECURES
+------------------------------------------------------------------------
+  1. A literal value-added base: the firm optimises over value added.
+  2. A bounded ability n = undistorted value added; as delta->1 the
+     observed value added (1-delta)y_obs -> 0 so n -> 0, NOT infinity
+     (this is the key fix versus model A).
+  3. The paper's headline £21,250 turnover dominated region for EVERY
+     sector (section 4).
+
+1. A2 OPTIMUM VERIFICATION (closed form z*=n(1-tau)**e vs grid + scipy)
+------------------------------------------------------------------------
+       e    rel_grid  rel_scalar   abs_grid(£)  abs_scalar(£)
+    0.05    1.85e-07    8.05e-10        0.0457         0.0002
+    0.17    3.29e-08    9.18e-09        0.0079         0.0022
+    0.32    7.30e-07    9.54e-09        0.1699         0.0022
+   worst relative error: 7.30e-07  (target < 1e-4: PASS)
+   worst (least-negative) pi''(z*): -1.0740e-05  strictly concave: PASS
+   elasticity identity  d ln z*/d ln(1-tau) = e:
+     e=0.05  numeric slope=0.050000  err=3.74e-11
+     e=0.17  numeric slope=0.170000  err=3.26e-11
+     e=0.32  numeric slope=0.320000  err=9.20e-12
+   elasticity check: PASS
+
+   TURNOVER dominated region flat £21,250 across delta:
+     delta=0      a_y = £21,250.00
+     delta=0.3    a_y = £21,250.00
+     delta=0.5    a_y = £21,250.00
+     delta=0.7    a_y = £21,250.00
+     delta=0.9    a_y = £21,250.00
+   all equal £21,250.00 (max dev 0.00e+00): PASS
+   notch jump == tau*(1-delta)*T* across delta:
+     delta=0      jump = £17,000.00  (target £17,000.00)
+     delta=0.3    jump = £11,900.00  (target £11,900.00)
+     delta=0.5    jump = £8,500.00  (target £8,500.00)
+     delta=0.7    jump = £5,100.00  (target £5,100.00)
+     delta=0.9    jump = £1,700.00  (target £1,700.00)
+   notch-jump identity: PASS
+
+2. ABILITY IS WELL-BEHAVED (A2 bounded -> 0 vs A -> infinity)
+------------------------------------------------------------------------
+   recovery from a fixed observed turnover y_obs=£120,000, e=0.17:
+      delta         n(A2)            n(A)          n(B)
+     0.0000       124,640         124,640       124,640
+     0.3000        87,248         132,431       123,117
+     0.5000        62,320         140,227       122,169
+     0.7000        37,392         152,949       121,269
+     0.9000        12,464         184,355       120,413
+     0.9900         1,246         272,682       120,041
+     0.9990           125         403,326       120,004
+     1.0000             0       4,223,339       120,000
+   A2 -> 0 as delta -> 1: PASS   A diverges upward: confirmed
+   A2's ability is the firm's UNDISTORTED VALUE ADDED: a near-all-
+   deductible firm has little value-adding capacity, so n -> 0. A
+   instead inflates ability without bound because it divides by
+   (1-delta) -> 0.
+
+   Representative sectors (real delta):
+   sector                        delta       n(A2)        n(A)        n(B)
+    1 Agriculture                1.000           0   4,223,339     120,000
+   41 Construction of building   0.856      17,930     173,303     120,597
+   56 Food & beverage service    0.393      75,599     135,697     122,667
+   62 Computer programming & I   0.002     124,449     124,672     124,631
+
+3. THREE-WAY POPULATION COMPARISON (real data, weighted means)
+------------------------------------------------------------------------
+   registered firms used (turnover >= T*): 1,958,215
+   mean recovered ability   n(A2) = £959,535   n(A) = £7,731,243   n(B) = £1,942,755
+     -> A2 is bounded; A is inflated (divides by 1-delta); B is mild.
+   mean dominated width     a(A2) = £21,250 (flat)   a(A) = £21,250 (flat)   a(B) = £9,024 (smaller)
+   intensive turnover response to a 20%->15% value-added-rate reform:
+     A2 mean scale = 1.01036 (+1.036% turnover)  -- uses FULL (1-tau)
+     B  mean scale = 1.00445 (+0.445% turnover)  -- diluted by tau*(1-delta)
+     A2's response is governed by the full statutory rate on value
+     added, so it exceeds B's diluted response.
+
+THE ONE COST
+------------------------------------------------------------------------
+  The single £85k notch on TURNOVER becomes a sector-specific notch on
+  VALUE ADDED at z_T = (1-delta)*T*: the threshold the firm 'feels' in
+  its own choice variable depends on its sector deductible share.
+
+VERDICT
+========================================================================
+A2 is the CLEANEST of the three formulations for a value-added VAT base.
+By letting the firm choose value added z directly it: (i) uses a literal
+value-added base; (ii) recovers a BOUNDED, economically sensible ability
+n = undistorted value added that goes to 0 (not infinity) as delta -> 1,
+fixing model A's blow-up while keeping a clean primitive like model B;
+and (iii) reproduces the paper's headline £21,250 turnover dominated
+region for every sector (which B loses). The only price is that the
+registration notch, expressed in the firm's value-added choice variable,
+becomes sector-specific at z_T = (1-delta)*T*. On balance A2 dominates
+both A (unbounded ability) and B (sector-shrinking dominated region).
