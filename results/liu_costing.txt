@@ -1,0 +1,48 @@
+Liu et al. (2021) setting -- PARAMETRIC static EXTENSIVE-MARGIN VAT
+reform costing (registration in/out, omega & beta as parameters)
+======================================================================
+
+ACCOUNTING (per firm, turnover y, weight w):
+  registered    -> government VAT = t*(1-omega)*y   (t=0.2)
+  unregistered  -> government VAT = t*omega*y       (irrecoverable input VAT)
+  registered iff  y >= T  OR  omega - beta*(1-omega) > 0  (voluntary)
+  baseline threshold T* = GBP 85,000
+
+REFORMS:
+  raise100k : raise threshold to GBP 100,000
+  rate10/15 : reduced band rate 10%/15% over [GBP 85,000, GBP 105,000], threshold unchanged
+  cost = reform revenue - baseline revenue (population-weighted)
+
+CAVEATS: static; only the in/out registration choice is modelled (no
+turnover response, no bunching, no GE). B2B cascading simplified to the
+single t*omega*y unregistered figure. omega, beta are PARAMETERS (swept),
+not data -- output is a sensitivity range. Graduated taper omitted.
+
+----------------------------------------------------------------------
+Table 1 -- reform cost (GBP bn) at representative (omega, beta) pairs
+----------------------------------------------------------------------
+  firm type                          omega  beta   raise100k    rate10    rate15
+  consumer-facing, low-input          0.20  0.90      -1.045    -0.933    -0.466
+  mixed                               0.45  0.50       0.000    -0.641    -0.321
+  input-heavy B2B                     0.70  0.20       0.000    -0.350    -0.175
+  population-average (illustrative)   0.50  0.50       0.000    -0.583    -0.291
+  (costs in GBP bn; negative = revenue LOSS to government)
+
+----------------------------------------------------------------------
+Table 2 -- raise-to-GBP100k cost (GBP bn) sensitivity to (omega, beta)
+----------------------------------------------------------------------
+  omega \ beta          0.20        0.50        0.80
+  0.20                 0.000      -1.045      -1.045
+  0.35                 0.000       0.000      -0.523
+  0.50                 0.000       0.000       0.000
+  0.65                 0.000       0.000       0.000
+  0.80                 0.000       0.000       0.000
+  (costs in GBP bn; negative = revenue LOSS)
+
+SIGN SANITY-CHECK (raise threshold to GBP100k):
+  At omega=0.20, beta=0.90 (consumer-facing, low input share) the cost is
+  GBP -1.045 bn -- a revenue LOSS, as expected: a firm in [85k,100k)
+  that de-registers flips from yielding t*(1-omega)*y to t*omega*y, and with
+  omega<0.5 we have t*omega*y < t*(1-omega)*y, so government revenue falls.
+  For input-heavy firms (omega>0.5) the comparison reverses (or they
+  voluntarily register and are unaffected).
