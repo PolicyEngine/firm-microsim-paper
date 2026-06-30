@@ -42,6 +42,7 @@ class TargetSummary:
     """Official target description for one reported metric."""
 
     label: str
+    comparability: str
     truth: str
     paper_value: str
     populace_value: str
@@ -81,16 +82,27 @@ class ParitySummary:
         return max(diffs, default=0.0)
 
 
+# Manually captured reference snapshots.
+#
+# PAPER_2024_25 is from the paper generator at seed 42. The 2024-25 synthetic
+# population was regenerated on 2026-06-30 with:
+#
+#   firm-microsim --vintage 2024-25 --output synthetic_firms_2024-25.csv
+#
+# REFERENCE_POPULACE_LEDGER_2024_25 is from a separate full Populace optimizer
+# run using the pinned PR snapshots recorded in REFERENCE_MIGRATION. These
+# generated-population numbers are not recomputed in CI; CI verifies rendering,
+# provenance, and Ledger-vs-paper source-table parity.
 PAPER_2024_25 = CalibrationSnapshot(
     rows=2_945_974,
-    weighted_population=2_577_076.0,
+    weighted_population=2_577_078.0,
     hmrc_bands=92.7,
     ons_population=94.2,
     employment=89.7,
     sector=94.5,
     vat_liability_band=81.4,
     overall=90.5,
-    vat_liability_sector=21.7,
+    vat_liability_sector=44.5,
 )
 
 REFERENCE_POPULACE_LEDGER_2024_25 = CalibrationSnapshot(
@@ -142,7 +154,7 @@ REFERENCE_MIGRATION = {
     ],
     "comparison_command": (
         "firm-microsim-populace-ledger --facts-jsonl "
-        "/tmp/uk_firm_consumer_facts.jsonl --iterations 1000 "
+        "/tmp/uk_firm_consumer_facts.jsonl --reference-population "
         "--output results/populace_ledger_comparison.txt "
         "--json-output results/populace_ledger_provenance.json"
     ),
@@ -157,54 +169,63 @@ def comparison_rows(
     return [
         TargetSummary(
             "Rows",
+            "Descriptive",
             "N/A, synthetic support size",
             _count(PAPER_2024_25.rows),
             _count(populace.rows),
         ),
         TargetSummary(
             "Weighted population",
+            "Direct",
             REFERENCE_SOURCE_TOTALS["ons_population"],
             _count(PAPER_2024_25.weighted_population),
             _count(populace.weighted_population),
         ),
         TargetSummary(
             "HMRC turnover bands",
+            "Not like-for-like",
             REFERENCE_SOURCE_TOTALS["hmrc_turnover_bands"],
             _pct(PAPER_2024_25.hmrc_bands),
             _pct(populace.hmrc_bands),
         ),
         TargetSummary(
             "ONS population",
+            "Direct",
             REFERENCE_SOURCE_TOTALS["ons_population"],
             _pct(PAPER_2024_25.ons_population),
             _pct(populace.ons_population),
         ),
         TargetSummary(
             "Employment bands",
+            "Direct",
             "ONS employment-band distribution, sum 2,734,615",
             _pct(PAPER_2024_25.employment),
             _pct(populace.employment),
         ),
         TargetSummary(
             "Sector distribution",
+            "Project-specific",
             REFERENCE_SOURCE_TOTALS["hmrc_sector"],
             _pct(PAPER_2024_25.sector),
             _pct(populace.sector),
         ),
         TargetSummary(
             "VAT liability by band",
+            "Direct",
             REFERENCE_SOURCE_TOTALS["hmrc_liability_band"],
             _pct(PAPER_2024_25.vat_liability_band),
             _pct(populace.vat_liability_band),
         ),
         TargetSummary(
             "Overall",
+            "Not like-for-like",
             "N/A, mean of calibrated accuracy scores",
             _pct(PAPER_2024_25.overall),
             _pct(populace.overall),
         ),
         TargetSummary(
             "VAT liability by sector diagnostic",
+            "Diagnostic",
             REFERENCE_SOURCE_TOTALS["hmrc_liability_sector"],
             _pct(PAPER_2024_25.vat_liability_sector),
             _pct(populace.vat_liability_sector),
@@ -244,8 +265,9 @@ def format_comparison_report(
     lines = [
         "# Populace/Ledger firm-generation comparison",
         "",
-        "Reference run:",
+        "Preliminary reference run:",
         "",
+        "- Status: pinned to open, unmerged Arch and Populace PR snapshots",
         "- Vintage: 2024-25",
         f"- Seed: {seed}",
         f"- Populace iterations: {_count(iterations)}",
@@ -263,11 +285,12 @@ def format_comparison_report(
         "",
         parity_sentence,
         "",
-        "| Metric | Truth / target where it exists | Paper 2024-25 | Populace/Ledger 2024-25 |",
-        "| --- | ---: | ---: | ---: |",
+        "| Metric | Comparability | Truth / target where it exists | Paper 2024-25 | Populace/Ledger 2024-25 |",
+        "| --- | --- | ---: | ---: | ---: |",
     ]
     lines.extend(
-        f"| {row.label} | {row.truth} | {row.paper_value} | {row.populace_value} |"
+        f"| {row.label} | {row.comparability} | {row.truth} | "
+        f"{row.paper_value} | {row.populace_value} |"
         for row in comparison_rows(populace)
     )
     lines.extend(
@@ -275,9 +298,12 @@ def format_comparison_report(
             "",
             "Interpretation: this is not a silent replacement for the paper's "
             f"published synthetic population. {interpretation_target_sentence}"
-            "but Populace's shared calibration optimizer produces a different "
-            "tradeoff across dimensions. VAT liability by sector remains an "
-            "informational diagnostic, not a calibrated target.",
+            "and the directly comparable rows are ONS population, employment "
+            "bands, and VAT liability by turnover band. HMRC turnover-band "
+            "accuracy, sector distribution, and overall accuracy are computed "
+            "under project-specific definitions, so the overall scores are not "
+            "a like-for-like quality ranking. VAT liability by sector remains "
+            "an informational diagnostic, not a calibrated target.",
             "",
             "Recompute command:",
             "",

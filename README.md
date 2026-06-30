@@ -152,7 +152,7 @@ firm-microsim-report
 | **Overall (5 calibrated dimensions)** | **89.9%** | **90.5%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
-an informational diagnostic only (47.1% / 21.7%). The model fixes firm inputs
+an informational diagnostic only (47.1% / 44.5%). The model fixes firm inputs
 and sets liability = turnover − input but does not yet calibrate the
 **input/output tax structure**, so per-sector net liability is structurally
 unhittable and is gated off via
@@ -164,7 +164,7 @@ calibration is tracked in issues
 ## Populace/Ledger migration check
 
 `firm-microsim-populace-ledger` reports the current migration comparison. The
-checked reference run used the 2024-25 Ledger target surface from
+checked preliminary reference run used the 2024-25 Ledger target surface from
 [PolicyEngine/arch-data#67](https://github.com/PolicyEngine/arch-data/pull/67)
 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Populace's experimental UK
 firm generator from
@@ -194,9 +194,12 @@ The current reference comparison shows exact parity between the Ledger-backed
 targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
 replicate the paper's generated synthetic population: Populace's shared optimizer
-lands at 93.8% overall accuracy versus the paper's 90.5%, with a different
-tradeoff across weighted population (2,945,777 vs 2,577,076), sector distribution
-(85.0% vs 94.5%), and VAT liability by band (99.5% vs 81.4%).
+lands at 93.8% overall accuracy under its own validator versus the paper's 90.5%,
+but that overall pair is **not like-for-like**: HMRC turnover-band accuracy uses
+different band sets, and sector distribution reflects different calibration-target
+definitions. The directly comparable rows are ONS population, employment bands,
+and VAT liability by turnover band. Treat the Populace population figures as
+preliminary until the upstream Arch and Populace PRs merge.
 
 ## Figures
 

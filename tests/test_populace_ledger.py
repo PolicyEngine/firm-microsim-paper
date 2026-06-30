@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from firm_microsim.populace_ledger import (
     ParitySummary,
     ParityTable,
@@ -15,11 +18,15 @@ def test_comparison_rows_include_truth_for_official_targets() -> None:
     rows = {row.label: row for row in comparison_rows()}
 
     assert rows["Weighted population"].truth == "2,734,615 ONS firms"
+    assert rows["Weighted population"].comparability == "Direct"
     assert rows["VAT liability by band"].truth.endswith(
         "net VAT liability by turnover band"
     )
+    assert rows["VAT liability by band"].comparability == "Direct"
     assert rows["Rows"].truth == "N/A, synthetic support size"
+    assert rows["HMRC turnover bands"].comparability == "Not like-for-like"
     assert rows["Overall"].truth == "N/A, mean of calibrated accuracy scores"
+    assert rows["Overall"].comparability == "Not like-for-like"
 
 
 def test_reference_report_records_populace_calibration_tradeoff() -> None:
@@ -27,13 +34,29 @@ def test_reference_report_records_populace_calibration_tradeoff() -> None:
 
     assert "Paper 2024-25" in report
     assert "Populace/Ledger 2024-25" in report
-    assert "| Overall | N/A, mean of calibrated accuracy scores | 90.5% | 93.8% |" in report
+    assert (
+        "| Overall | Not like-for-like | N/A, mean of calibrated accuracy scores | "
+        "90.5% | 93.8% |"
+    ) in report
+    assert "not a like-for-like quality ranking" in report
     assert "0 mismatched" in report
     assert REFERENCE_PARITY.facts_sha256 in report
+    assert "--reference-population" in report
     assert (
-        "| VAT liability by sector diagnostic | GBP 177.29bn net VAT liability "
-        "by SIC sector | 21.7% | 42.2% |"
+        "| VAT liability by sector diagnostic | Diagnostic | GBP 177.29bn net "
+        "VAT liability by SIC sector | 44.5% | 42.2% |"
     ) in report
+
+
+def test_checked_artifacts_match_reference_rendering() -> None:
+    root = Path(__file__).resolve().parents[1]
+
+    assert (
+        root / "results" / "populace_ledger_comparison.txt"
+    ).read_text() == format_comparison_report()
+    assert json.loads(
+        (root / "results" / "populace_ledger_provenance.json").read_text()
+    ) == provenance_payload()
 
 
 def test_mismatched_parity_report_does_not_claim_exact_match() -> None:
@@ -73,6 +96,9 @@ def test_reference_provenance_records_pinned_pr_snapshot() -> None:
         payload["migration_snapshot"]["populace_commit"]
         == "fa20daf75ff023e5e88731a140f456f58e0b864e"
     )
+    assert "--reference-population" in payload["migration_snapshot"][
+        "comparison_command"
+    ]
 
 
 def test_reference_snapshot_uses_full_populace_run() -> None:
