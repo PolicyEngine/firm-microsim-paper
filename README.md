@@ -144,22 +144,27 @@ firm-microsim-report
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
-| HMRC turnover bands | 93.0% | 92.7% |
-| ONS population | 91.1% | 94.2% |
-| Employment bands | 78.2% | 89.7% |
-| Sector distribution | 92.5% | 94.5% |
-| VAT liability by band | 94.6% | 81.4% |
-| **Overall (5 calibrated dimensions)** | **89.9%** | **90.5%** |
+| HMRC turnover bands | 93.9% | 93.5% |
+| ONS population | 90.3% | 94.0% |
+| Employment bands | 77.9% | 86.1% |
+| Sector distribution | 92.5% | 94.4% |
+| VAT liability by band | 92.6% | 79.0% |
+| **Overall (5 calibrated dimensions)** | **89.4%** | **89.4%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
-an informational diagnostic only (47.1% / 44.5%). The model fixes firm inputs
-and sets liability = turnover − input but does not yet calibrate the
-**input/output tax structure**, so per-sector net liability is structurally
-unhittable and is gated off via
+an informational diagnostic only (45.1% / 43.4%). The model draws per-firm input
+shares (mean value-added share ≈ 40%) and sets net liability
+`v = 0.20 × (turnover − input)` — the standard rate applied to value added — but
+does not yet calibrate the **input/output tax structure by sector**, so
+per-sector net liability is structurally unhittable and is gated off via
 `Config.calibrate_vat_liability_sector = False`. Restoring it after input/output
 calibration is tracked in issues
 [#1](https://github.com/PolicyEngine/firm-microsim-paper/issues/1) and
-[#2](https://github.com/PolicyEngine/firm-microsim-paper/issues/2).
+[#2](https://github.com/PolicyEngine/firm-microsim-paper/issues/2). An earlier
+build set `v = turnover − input` (no 0.20 factor); the correction and its
+consequences are documented in
+[#15](https://github.com/PolicyEngine/firm-microsim-paper/issues/15) and the
+paper's Section 5.
 
 ## Populace/Ledger migration check
 
@@ -196,13 +201,17 @@ The current reference comparison shows exact parity between the Ledger-backed
 targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
 replicate the paper's generated synthetic population: Populace's shared optimizer
-lands at 93.8% overall accuracy under its own validator versus the paper's 90.5%,
-but that overall pair is **not like-for-like**: HMRC turnover-band accuracy uses
-different band sets, and sector distribution reflects different calibration-target
-definitions. The directly comparable rows are ONS population, employment bands,
-and VAT liability by turnover band. The Populace/Ledger path is now based on
-merged upstream inputs, while remaining a migration check rather than a silent
-replacement for the paper's archived generator/results.
+landed at 93.8% overall accuracy under its own validator versus the paper's
+then-90.5% (89.4% on the corrected build), but that overall pair is **not
+like-for-like**: HMRC turnover-band accuracy uses different band sets, and sector
+distribution reflects different calibration-target definitions. The directly
+comparable rows are ONS population, employment bands, and VAT liability by
+turnover band. **Note:** the pinned Populace snapshot predates this repo's
+net-liability correction (issue #15) and inherits the same `v = turnover − input`
+mis-scaling; the target-parity result is unaffected (it concerns input tables,
+not generated rows), but the Populace generator needs the same fix upstream. The
+Populace/Ledger path remains a migration check rather than a silent replacement
+for the paper's archived generator/results.
 
 ## Figures
 

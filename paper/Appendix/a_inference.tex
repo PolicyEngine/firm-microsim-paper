@@ -2,268 +2,178 @@
 \label{app:inference}
 
 This appendix documents the inference procedure for the reduced-form bunching
-estimates of Section~\ref{sec:bunching}: the mass-conservation constraint
-that disciplines the counterfactual density, the bootstrap that delivers
-standard errors, the sensitivity of the estimates to the polynomial degree,
-the exclusion window, and the effective wedge $\tau_{e}$, and a placebo test
-demonstrating that the synthetic bunching is mechanical rather than behavioural.
-All numbers reported here and in the calibration step are produced by the
-released estimator (fixed seed, $B=200$ bootstrap replications), run on the
-\pounds85{,}000 (2023--24) weighted synthetic firm data; the seed and $B$ are
-fixed so the table is reproducible, and nothing is hardcoded as a result.
+results of Section~\ref{sec:bunching}: the mass-conservation constraint that
+disciplines the counterfactual density, the bootstrap that delivers standard
+errors, sensitivity to the polynomial degree and exclusion window, the placebo
+tests, and the power (recovery) test. All numbers are produced by the released
+estimator (fixed seed, $B=200$ bootstrap replications) run on the regenerated
+weighted synthetic populations for both vintages; the machine-readable
+artifacts are \texttt{results/bunching\_inference.txt},
+\texttt{results/placebo\_bunching.txt} and
+\texttt{results/recovery\_bunching.txt}. The estimator reports the geometry
+only---the bunching ratio $b$, its \citet{liuetal2021}-normalised counterpart
+$b_{\mathrm{LLAT}}$, the excess mass $E$, and the mass-conservation objects
+($\Delta_R$, $y_R$)---and computes no elasticities: the mapping from excess
+mass to an elasticity is not identified without functional-form assumptions
+\citep{blomquistetal2021,bertanhaetal2023}, and on these data there is no
+behavioural mass to convert in the first place.\footnote{Earlier versions of
+the estimator also printed a CES substitution elasticity and two
+wedge-normalised turnover elasticities, the latter inheriting an ad hoc
+$\tau/2$ normalisation from a deleted smoothed-schedule model. These outputs
+were labelled non-identified but were still reported; they have been removed
+from the code and the paper.}
 
 \subsubsection*{Mass-conservation constraint}
 
-The canonical bunching estimator of \citet{saez2010}, \citet{klevenwaseem2013}
-and \citet{chettyetal2011} imposes that the counterfactual density conserves
-mass: every firm removed from above the threshold reappears as excess mass below
-it. An unconstrained fit by plain polynomial OLS on bins outside a hand-set
-window computes the excess mass $E$ (below $T^{*}$) and the missing mass
-$\Delta_{R}$ (above $T^{*}$) \emph{independently}, with no guarantee that
-$E = \Delta_{R}$ and no endogenous location of the marginal buncher.
-
-I impose the constraint in two ways. First, the counterfactual polynomial in
-$(y-T^{*})$ is fit by an iterated weighted least-squares procedure in which the
-density of the bins above the excluded region is rescaled until the fitted
-counterfactual integrates to the \emph{observed} total mass over the estimation
-range $[\pounds20\text{k},\pounds140\text{k}]$. This forces the bunching mass to
-be reabsorbed into the counterfactual rather than discarded. The regressor is
-normalised to $[-1,1]$ for numerical stability of the high-degree Vandermonde
-basis. Second, the upper edge of the excluded (manipulation) region---the
-\emph{marginal buncher} $y_{R}$---is located \emph{endogenously} by integrating
-the missing mass upward from $T^{*}$ until cumulative missing mass above equals
-cumulative excess mass below,
+The canonical bunching estimator of \citet{chettyetal2011} and
+\citet{klevenwaseem2013} imposes that the counterfactual density conserves
+mass: every firm removed from above the threshold reappears as excess mass
+below it. An unconstrained polynomial fit on bins outside a hand-set window
+computes the excess mass $E$ (below $T^{*}$) and the missing mass $\Delta_{R}$
+(above $T^{*}$) \emph{independently}, with no guarantee that $E=\Delta_{R}$
+and no endogenous location of the marginal buncher. I impose the constraint in
+two ways. First, the counterfactual polynomial in $(y-T^{*})$ is fit by an
+iterated procedure in which the density of the bins above the excluded region
+is rescaled until the fitted counterfactual integrates to the observed total
+mass over the estimation range $[\pounds20\text{k},\pounds140\text{k}]$ (the
+regressor is normalised to $[-1,1]$ for numerical stability of the
+high-degree basis). Second, the upper edge of the manipulation region---the
+marginal buncher $y_{R}$---is located endogenously by integrating missing mass
+upward from $T^{*}$ until it equals the excess mass below,
 \[
   \int_{T^{*}}^{y_{R}} \bigl[f^{\mathrm{cf}}(y)-f^{\mathrm{obs}}(y)\bigr]_{+}\,dy
   \;=\;
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
-  \;=\; E ,
+  \;=\; E .
 \]
-rather than being fixed at an arbitrary window edge. The excess turnover span of
-the marginal buncher, $\Delta y^{*}=y_{R}-T^{*}$, is then used by the
-notch-width elasticity.
-
-Imposing the constraint matters because the unconstrained fit grossly violates
-adding-up: it delivers $E=7{,}820$ but $\Delta_{R}=16{,}524$, whereas the
-constrained estimator returns $E=8{,}712$ and $\Delta_{R}=9{,}214$, which agree
-to within sampling noise. Imposing the constraint thus reconciles the excess
-mass below the threshold with the missing mass above it, which the
-unconstrained estimator computes independently and which would otherwise diverge
-by roughly a factor of two; the resulting movement in the headline estimates is
-reported in the calibration step.
+On the corrected 2023--24 population the constraint is degenerate---there is
+no excess mass to reconcile ($E=0$)---while on the 2024--25 population it
+binds at the window edge ($y_R$ pinned at $T^{*}+\pounds15$k), a symptom that
+the ``signal'' there is not the local spike the estimator is designed for but
+a band-scale target artifact.
 
 \subsubsection*{Bootstrap standard errors}
 
 I compute standard errors by a firm-level bootstrap. In each of $B=200$
-replications I draw $n$ firms with replacement from the estimation sample, with
-draw probabilities proportional to the survey weight, re-bin the resampled firms
-into \pounds1{,}000 bins, and re-run the entire estimator---counterfactual fit,
-marginal-buncher location, and all downstream statistics---on the replicate. The
-standard error of each statistic is the standard deviation of its bootstrap
-distribution, and the $95\%$ confidence interval is the $2.5$th--$97.5$th
-percentile interval. Resampling firms (rather than residuals) propagates both
-sampling variation and the variation induced by re-binning. Table~\ref{tab:boot}
-reports the results. Because these replications resample the $\approx 2.94$
-million \emph{constructed} synthetic firm rows, whose number is itself a
-modelling choice, the resulting standard errors and $95\%$ intervals quantify
-only the estimator's dispersion under resampling of a synthetic file of
-analyst-chosen size; they scale with that arbitrary row count and should
-\emph{not} be read as population sampling error about the universe of UK firms.
-They are reported for completeness and reproducibility, not as confidence
-statements about UK firms.
+replications I draw $n$ firms with replacement with probability proportional
+to survey weight, assign each replicate uniform weights summing to the
+\emph{original weighted mass} $W$, re-bin, and re-run the entire
+estimator.\footnote{An earlier version assigned unit weights, so each
+replicate's total mass was the row count $n$ rather than $W$, scaling mass
+statistics such as $E$ by $n/W$ (visible as an off-centre bootstrap CI). The
+correction leaves scale-free statistics such as $b$ unaffected.} The standard
+error of each statistic is the standard deviation of its bootstrap
+distribution; the $95\%$ interval is the $2.5$th--$97.5$th percentile range.
+Because these replications resample $\approx 2.94$ million \emph{constructed}
+synthetic rows, whose number is an analyst choice, the resulting intervals
+quantify the estimator's dispersion under resampling of a synthetic file of
+chosen size; they should not be read as population sampling error about UK
+firms. Table~\ref{tab:boot} reports both vintages.
 
 \begin{table}[t]
 \centering
-\caption{Bootstrap inference, \pounds85{,}000 data ($B=200$ firm resamples).}
+\caption{Bootstrap inference ($B=200$ firm resamples), both vintages,
+degree-7 polynomial, $\pm\pounds15$k window.}
 \label{tab:boot}
-\begin{tabular}{lrrr}
-\hline
-Statistic & Point & Std.\ error & 95\% CI \\
-\hline
-Bunching ratio $b$              & $0.060$ & $0.005$  & $[0.050,\ 0.068]$ \\
-Excess mass $E$                 & $8{,}712$ & $662$  & $[7{,}920,\ 10{,}516]$ \\
-Substitution elasticity $\sigma$ & $4.85$ & $0.12$  & $[4.58,\ 5.08]$ \\
-Displaced share $\Pi$           & $0.211$ & $0.005$ & $[0.200,\ 0.219]$ \\
-Notch-width elasticity (median) & $0.448$ & $0.027$ & $[0.405,\ 0.496]$ \\
-Marginal-buncher elasticity     & $0.657$ & $0.082$ & $[0.510,\ 0.821]$ \\
-\hline
+\begin{tabular}{llrrr}
+\toprule
+Vintage & Statistic & Point & Std.\ error & 95\% CI \\
+\midrule
+2023--24 (\pounds85k) & Bunching ratio $b$ & $-0.139$ & $0.004$ & $[-0.146,\ -0.132]$ \\
+2023--24 (\pounds85k) & Excess mass $E$    & $0$      & $0$     & $[0,\ 0]$ \\
+2024--25 (\pounds90k) & Bunching ratio $b$ & $1.222$  & $0.011$ & $[1.202,\ 1.246]$ \\
+2024--25 (\pounds90k) & Excess mass $E$    & $195{,}867$ & $800$ & $[194{,}332,\ 197{,}655]$ \\
+\bottomrule
 \end{tabular}
 \end{table}
-
-\subsubsection*{Non-identification: the elasticities are not behavioural}
-
-The bunching-implied elasticities in Table~\ref{tab:boot}---the notch-width
-elasticity ($\approx 0.45$) and the marginal-buncher elasticity
-($\approx 0.66$)---together with the CES substitution elasticity
-$\sigma = 4.85$ are \emph{not} behaviourally identified on these data. The
-synthetic firm population is calibrated to coarse aggregate HMRC turnover-band
-counts, and the generator contains no firm location-choice: firms do not respond
-to the threshold, so the excess mass below it is mechanical, inherited from the
-density step in the calibration targets rather than from any behavioural
-response (the placebo test below makes this precise). The elasticities are
-therefore reported only as a record of what the estimator returns when applied
-to these data; the paper draws no behavioural conclusion from them. A reader
-should note that the iso-elastic turnover elasticities $e\in\{0.05,0.17,0.32\}$
-swept in the body (Section~\ref{sec:behavioural}) are a \emph{different} object
-from the notch-width elasticity ($\approx 0.45$) and marginal-buncher elasticity
-($\approx 0.66$) reported here: the former are the median and mean of a per-firm
-marginal-buncher mapping under the iso-elastic firm specification, while the
-latter are aggregate estimator outputs computed under different normalisations.
-All of these numbers are mechanical artefacts of the calibration and are
-non-identified on these synthetic data---they admit no precise numerical mapping
-between the two sets---so none is used anywhere as a behavioural estimate. This is an
-instance of the general non-identification of bunching elasticities absent
-exogenous variation or strong functional-form assumptions
-\citep{blomquistetal2021, bertanhaetal2023}.
 
 \subsubsection*{Sensitivity to polynomial degree and exclusion window}
 
-Table~\ref{tab:degwin} maps the point estimates across a grid of polynomial
-degree $\in\{5,6,7,8\}$ and symmetric exclusion window
-$\in\{\pounds10\text{k},\pounds15\text{k},\pounds20\text{k},\pounds25\text{k}\}$.
-The estimates are stable across the central cells (degree $6$--$7$, window
-\pounds10--\pounds20k): the substitution elasticity stays in roughly
-$4.4$--$5.7$ and the excess mass in $4{,}000$--$9{,}000$. The corner cells are
-less reliable: at very wide windows ($\pounds25$k) the excluded region begins to
-swallow genuine curvature in the density, the fitted counterfactual crosses the
-observed density, and $b$ can turn slightly negative (so $\sigma$ is undefined);
-at the lowest degree ($5$) the inflexible trend over-fits the bunching mass into
-the counterfactual and inflates $b$. I therefore report the degree-$7$,
-\pounds15k-window specification as the baseline, with the bootstrap CIs above
-spanning the variation across the stable interior of the grid.
+Table entries for a grid of polynomial degree $\in\{5,6,7,8\}$ and symmetric
+exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
+\texttt{results/bunching\_inference.txt}; the pattern matters more than the
+cells. On the 2023--24 population the null is stable: $E=0$ in every interior
+cell (degrees 6--7, all windows), with small positive artifacts only in the
+fragile corners (degree 5 or 8 with the widest windows, where the polynomial
+under- or over-fits the wings). On the 2024--25 population the spurious signal
+is robust in \emph{every one} of the sixteen cells ($E$ between $195{,}000$
+and $212{,}000$; $b$ between $0.73$ and $1.90$): no specification choice
+rescues the estimator from reading the \pounds90{,}000 band edge as bunching.
+Specification robustness is therefore no defence against target-inherited
+artifacts---a caution for any bunching exercise on calibrated synthetic data.
+
+\subsubsection*{Placebo tests}
+
+The placebo makes the target-inheritance mechanism precise by manipulating the
+calibration targets and re-running the estimator
+(Table~\ref{tab:placebo}; Section~\ref{ssec:bunch-placebo} describes the
+constructions). On the corrected 2023--24 population all three worlds agree
+with the null: the control has no excess mass to begin with, Placebo~A
+(smooth reweighting) returns $E=27$, and Placebo~B (un-stepped HMRC band
+targets, full regeneration and recalibration) returns $E=0$. Removing
+structure from the targets removes structure from the estimates because the
+targets are the only place sub-band structure can come from: the generator has
+no firm location-choice.
 
 \begin{table}[t]
 \centering
-\caption{Degree $\times$ window sensitivity (point estimates), \pounds85{,}000
-data. Cells with $b<0$ leave $\sigma$ undefined.}
-\label{tab:degwin}
-\begin{tabular}{llrrrr}
-\hline
-Degree & Window & $b$ & $E$ & $\sigma$ & Notch-width (median) \\
-\hline
-5 & \pounds10k & $0.150$ & $13{,}339$ & $5.62$ & $0.47$ \\
-5 & \pounds15k & $0.139$ & $18{,}823$ & $5.16$ & $0.71$ \\
-5 & \pounds20k & $0.141$ & $25{,}596$ & $4.95$ & $0.87$ \\
-5 & \pounds25k & $0.152$ & $34{,}172$ & $5.11$ & $1.04$ \\
-6 & \pounds10k & $0.077$ & $7{,}262$ & $5.42$ & $0.41$ \\
-6 & \pounds15k & $0.045$ & $6{,}575$ & $4.99$ & $0.44$ \\
-6 & \pounds20k & $0.015$ & $3{,}822$ & $4.21$ & $0.35$ \\
-6 & \pounds25k & $-0.028$ & $471$ & --- & $0.15$ \\
-7 & \pounds10k & $0.091$ & $8{,}539$ & $5.07$ & $0.47$ \\
-\textbf{7} & \textbf{\pounds15k} & $\mathbf{0.060}$ & $\mathbf{8{,}712}$ & $\mathbf{4.85}$ & $\mathbf{0.45}$ \\
-7 & \pounds20k & $0.034$ & $7{,}313$ & $4.62$ & $0.43$ \\
-7 & \pounds25k & $-0.004$ & $3{,}089$ & --- & $0.25$ \\
-8 & \pounds10k & $0.118$ & $10{,}806$ & $4.92$ & $0.42$ \\
-8 & \pounds15k & $0.118$ & $16{,}329$ & $4.53$ & $0.59$ \\
-8 & \pounds20k & $0.166$ & $29{,}364$ & $4.96$ & $0.77$ \\
-8 & \pounds25k & $0.301$ & $59{,}931$ & $7.57$ & $0.95$ \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsubsection*{Sensitivity to the effective wedge}
-
-The CES substitution elasticity is recovered as $\sigma =
-\ln(\mathrm{RR})/\ln(1+\tau_{e})$, where $\mathrm{RR}$ is the ratio of
-counterfactual-to-observed above/below mass ratios. Because the wedge enters only
-through $\ln(1+\tau_{e})$, $\sigma$ scales roughly as $1/\ln(1+\tau_{e})$ while
-the displaced share $\Pi = 1-(1+\tau_{e})^{-\sigma}$ is essentially invariant
-(it is pinned by $\mathrm{RR}$). On my data, $\tau_{e}=0.025$ gives
-$\sigma=9.59$, $\tau_{e}=0.05$ gives $\sigma=4.85$, $\tau_{e}=0.075$ gives
-$\sigma=3.28$, and $\tau_{e}=0.10$ gives $\sigma=2.49$, while $\Pi=0.211$
-throughout. The magnitude of $\sigma$ is therefore conditional on $\tau_{e}$: I
-adopt $\tau_{e}=0.05$ as a baseline effective registration wedge and report
-$\Pi$, which is robust to it, as the policy-relevant displacement object.
-
-\subsubsection*{Placebo test}
-
-The non-identification of the bunching elasticities can be made precise with a
-placebo test. The HMRC turnover-band targets to which the synthetic population
-is calibrated are coarse: a single count for firms at or below \pounds85{,}000
-and a single count for firms in \pounds85{,}000--\pounds150{,}000. The implied
-average per-\pounds1{,}000 densities differ sharply across the threshold
-($\approx 7{,}981$ firms/\pounds1{,}000 below versus $\approx 4{,}697$ above), so
-the calibration target \emph{itself} contains a density step at exactly
-\pounds85{,}000. Because the generator has no firm location-choice, any density
-discontinuity in the synthetic population must be inherited from this stepped
-target rather than produced by behaviour. The placebo removes the step and
-re-runs the estimator. Table~\ref{tab:placebo} reports two variants: Placebo~A
-reweights the existing synthetic firms so the per-\pounds1{,}000 density follows
-a single smooth log-quadratic trend across the threshold (preserving total mass
-over $[\pounds20\text{k},\pounds140\text{k}]$, no regeneration); Placebo~B
-replaces the two HMRC band counts straddling \pounds85{,}000 with a split
-implied by a single common per-\pounds1{,}000 density (no step in the target),
-then re-runs the full generator and multi-objective calibration before
-estimating.
-
-\begin{table}[t]
-\centering
-\caption{Placebo test: removing the calibration density step collapses the
-excess mass. \pounds85{,}000 data.}
+\caption{Placebo tests, 2023--24 population (\pounds85{,}000 threshold).}
 \label{tab:placebo}
-\begin{tabular}{lrrr}
-\hline
-Population & $b$ & $E$ & $b_{\mathrm{LLAT}}$ \\
-\hline
-Actual (control)                          & $+0.060$ & $8{,}712$ & $0.941$ \\
-Placebo A (reweight density smooth)       & $-0.063$ & $0$       & $0.000$ \\
-Placebo B (un-stepped HMRC band targets)  & $-0.016$ & $99$      & $0.010$ \\
-\hline
+\begin{tabular}{lrr}
+\toprule
+Population & $b$ & $E$ \\
+\midrule
+Actual (control)                          & $-0.139$ & $0$ \\
+Placebo A (reweight density smooth)       & $-0.020$ & $27$ \\
+Placebo B (un-stepped HMRC band targets)  & $-0.274$ & $0$ \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-When the density step is removed from the calibration target, the estimated
-excess mass collapses from $8{,}712$ firms in the control to at most $\approx 99$
-firms ($\approx 1\%$ of the control value) in Placebo~B, and to zero in
-Placebo~A; the bunching ratio even turns slightly negative. This proves that the
-synthetic bunching is inherited from the coarse HMRC turnover-band targets, not
-from any firm behaviour, and confirms that the elasticities in
-Table~\ref{tab:boot} are mechanical artefacts of the calibration rather than
-behavioural parameters. The placebo is part of the released code and is fully
-reproducible.
+\subsubsection*{Power (recovery) test}
 
-\subsubsection*{Recovery: the estimator has power}
-
-The placebo establishes \emph{specificity}: the estimator returns no bunching
-when none is present. The complementary property is \emph{sensitivity}---whether
-the estimator can detect a genuine behavioural response when one \emph{is}
-present. To check this I run a recovery exercise. Starting from the step-free
-Placebo~A population---the null world with no bunching---I inject a behavioural
-bunching signal of \emph{known} magnitude by relocating $E_{\mathrm{true}}$ firms,
-mass-conservingly, from a donor window just above the threshold to a window just
-below it (the firm location-choice the generator lacks), with a triangular
-profile peaking at \pounds85{,}000. I then re-run the \emph{same} estimator
-(degree~$7$, $\pm\pounds15$k window) and record the recovered excess mass,
-measured as the change in signed below-threshold excess relative to the step-free
-baseline. Table~\ref{tab:recovery} reports three magnitudes.
+The placebo establishes \emph{specificity}: no false positive on step-free
+data. The complementary property is \emph{power}. Starting from the step-free
+Placebo~A population, I inject a Kleven--Waseem-consistent behavioural signal
+of known magnitude: firms in the donor region $(T^{*}, \pounds112\text{k}]$
+relocate to $[\pounds80\text{k}, T^{*})$ with probability declining linearly
+from the threshold to zero at the true marginal buncher
+$y_R^{\mathrm{true}}=\pounds112$k, so the missing-mass region extends
+\pounds12k \emph{beyond} the exclusion window---as with genuine bunching---and
+the counterfactual fit confronts genuinely depressed above-window bins.
+Recovery is scored with the headline estimator alone
+(Table~\ref{tab:recovery}).\footnote{An earlier version of this exercise
+relocated mass entirely \emph{within} the exclusion window. The fitted
+counterfactual is identical across such injections by construction (it is fit
+outside the window and rescaled by total mass, which relocation preserves), so
+that version measured deposit bookkeeping, not power, and its stated
+attenuation mechanism was wrong. The redesigned test supersedes it.}
 
 \begin{table}[t]
 \centering
-\caption{Recovery test: the estimator recovers $\approx 90\%$ of an injected
-behavioural response of known magnitude. \pounds85{,}000 data;
-$E_{\mathrm{recovered}}$ is the change in signed below-threshold excess relative
-to the step-free baseline.}
+\caption{Power (recovery) test on the step-free population:
+Kleven--Waseem-consistent injections with true marginal buncher at
+\pounds112{,}000. Baseline (no injection): $E=27$.}
 \label{tab:recovery}
-\begin{tabular}{rrr}
-\hline
-$E_{\mathrm{true}}$ (injected) & $E_{\mathrm{recovered}}$ & Recovery \\
-\hline
-$2{,}000$ & $1{,}792$ & $89.6\%$ \\
-$5{,}000$ & $4{,}479$ & $89.6\%$ \\
-$8{,}000$ & $7{,}167$ & $89.6\%$ \\
-\hline
+\begin{tabular}{rrrr}
+\toprule
+$E_{\mathrm{true}}$ (injected) & $E_{\mathrm{hat}}$ & Recovery & $\hat y_R$ (true 112) \\
+\midrule
+$2{,}000$ & $859$    & $42.9\%$ & $87.3$ \\
+$5{,}000$ & $3{,}538$ & $70.8\%$ & $92.4$ \\
+$8{,}000$ & $6{,}347$ & $79.3\%$ & $96.4$ \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-The estimator recovers about $90\%$ of the injected mass at every magnitude (a
-stable $89.6\%$, monotone in $E_{\mathrm{true}}$ and never over-stating). The
-$\approx 10\%$ attenuation is benign: the degree-7 polynomial counterfactual
-re-absorbs part of the injected spike and the fixed exclusion window clips its
-tails, so the estimator slightly \emph{under}-states a true response rather than
-inflating one. The estimator is therefore both \emph{specific} (no false
-positive---the placebo) and \emph{sensitive} (has power---this recovery). The
-implication is the one this section turns on: the absence of identified bunching
-on the actual synthetic data is a property of the aggregate-calibrated
-\emph{data}, which contain no firm location-choice, not a failure of the
-\emph{method}. The recovery test is part of the released code and is fully
-reproducible.
+Every injected signal is detected, recovery rises with signal size, and the
+estimator \emph{under}-states the truth rather than inflating it. The
+attenuation has a measured mechanical source: the depressed bins between the
+window top (\pounds100k) and the true marginal buncher (\pounds112k) enter the
+counterfactual fit and pull it down, truncating measured missing mass and
+drawing $\hat y_R$ toward the threshold. The implication is the one
+Section~\ref{sec:bunching} turns on: the absence of bunching on the corrected
+2023--24 data is a property of the \emph{data}, not a failure of the method,
+while the 2024--25 artifact is two orders of magnitude beyond anything
+attenuation could explain. Both tests are part of the released code and are
+fully reproducible.

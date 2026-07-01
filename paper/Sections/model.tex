@@ -2,41 +2,38 @@
 \label{sec:model}
 
 The behavioural response to the registration notch is documented in
-administrative data by \citet{liuetal2021}; on my synthetic data the reduced-form
-bunching is not behaviourally identified (Section~\ref{sec:bunching}). To
-characterise the notch precisely I therefore turn to its analytic structure,
-which yields an exact distortion measure that needs no behavioural calibration. I
-set out the firm-level structure following the framework of
-\citet{klevenwaseem2013}, \citet{saez2010}, and \citet{kleven2016}, as applied
-to UK VAT by \citet{liuetal2021}. The UK registration threshold is a
-\emph{notch}, not a kink: once turnover crosses the threshold the firm becomes
-liable for VAT on its \emph{entire} turnover, not merely on the increment above
-it. I model this notch exactly. The section's central deliverable is the notch's
-\emph{dominated region}---an exact, elasticity-free accounting identity that indexes the
-distortion the threshold imposes (Section~\ref{ssec:dominated}), whose analytic
-response to each schedule reform complements the static reform costs of
-Section~\ref{ssec:schedule_costs}. The dominated region is a transparent,
-parameter-free distortion index: it depends on the rate and threshold alone and is
-therefore exact. Section~\ref{sec:behavioural} prices the behavioural response to
-each reform conditional on an assumed turnover elasticity, re-solving firm choices
-under each counterfactual schedule; here the dominated region remains the exact,
-elasticity-free distortion measure, requiring no assumption about the firm's
-technology or elasticity.
+administrative data by \citet{liuetal2021}; the synthetic data contain no
+bunching signal to exploit (Section~\ref{sec:bunching}). To characterise the
+notch precisely I therefore turn to its analytic structure, which yields an
+exact distortion measure that needs no behavioural calibration. I set out the
+firm-level structure following \citet{klevenwaseem2013}, \citet{saez2010}, and
+\citet{kleven2016}, whose bunching framework \citet{liuetal2021} adapt to UK
+VAT. The UK registration threshold is a \emph{notch}, not a kink: once
+turnover crosses the threshold the firm becomes liable for VAT on its
+\emph{entire} base, not merely on the increment above it. The section's
+central deliverable is the notch's \emph{dominated region}---an exact,
+elasticity-free property of the schedule that indexes the distortion the
+threshold imposes (Section~\ref{ssec:dominated})---and its analytic response
+to each schedule reform, complementing the static reform costs of
+Section~\ref{ssec:schedule_costs}. Section~\ref{sec:behavioural} prices the
+intensive-margin response to each reform conditional on an assumed turnover
+elasticity; nothing in this section depends on that assumption.
 
-\paragraph{Scope: a turnover-tax notch.} The structure here taxes \emph{turnover}.
-Real VAT is levied on \emph{value added} with input-tax reclaim, and a substantial
-share of below-threshold firms register voluntarily to recover input VAT
-\citep{liuetal2021}. My treatment abstracts from input reclaim and voluntary
-registration: it is a turnover-tax-notch approximation. This is a scope limitation
-I state up front; it bounds the welfare claims I make and is one I return to in the
-concluding discussion.
+\paragraph{Scope.} The model prices the registration margin for firms that
+remit positive net VAT. Two populations are outside its scope and are treated
+as such throughout: below-threshold \emph{voluntary} registrants (roughly 43\%
+of eligible firms in \citealp{liuetal2021}), who have chosen registration and
+so face no notch at the threshold, and net-repayment traders (zero-rated
+exporters and similar), whose remittance is negative for rated-structure
+reasons the generator does not represent (Section~\ref{sec:data}).
 
 \subsection{The firm's problem}
 
 Each firm $i$ chooses turnover $y_i$ to maximise after-tax profit. Let $c_i(y_i)$
 denote the cost of producing turnover $y_i$, $T^{*}$ the registration threshold,
-and $\tau$ the standard VAT rate. Because VAT applies to the firm's entire
-turnover once it registers, after-tax revenue is discontinuous and profit is
+and $\tau$ the standard VAT rate. In the simplest statement VAT applies to the
+firm's entire turnover once it registers, so after-tax revenue is discontinuous
+and profit is
 \begin{equation}
   \pi_i(y_i) \;=\;
   \begin{cases}
@@ -49,12 +46,19 @@ At $T^{*}$ after-tax revenue falls discretely by $\tau\,T^{*}$: a firm
 that nudges its turnover from just below to just above the threshold loses
 $\tau\,T^{*}$ of net revenue on turnover it was already earning. With the
 standard rate $\tau=0.20$ and threshold $T^{*}=\pounds85{,}000$ this discrete
-drop is $\tau\,T^{*}=\pounds17{,}000$. This drop---absent from a kink, where only
-the \emph{marginal} rate changes at the threshold while average liability moves
-continuously---is the defining feature of a notch and the source of the bunching
-documented in Section~\ref{sec:bunching}. It is what makes locating just below
-the cutoff strictly attractive and creates the empty band derived in
-Section~\ref{ssec:dominated}.
+drop is $\tau\,T^{*}=\pounds17{,}000$ on whole turnover. Real VAT taxes value
+added, and the corrected data give each firm net liability
+$v_i=\tau(y_i-x_i)$ with deductible inputs $x_i=\delta_i y_i$
+(Section~\ref{sec:data}); profit is then
+$(1-\delta_i)y_i - \tilde c_i(y_i)$ unregistered and
+$(1-\delta_i)(1-\tau)y_i - \tilde c_i(y_i)$ registered---the deductible share
+multiplies \emph{both} branches, so the notch geometry
+of~\eqref{eq:firm-problem} carries over firm by firm, with the cash size of
+the jump scaled to $\tau(1-\delta_i)T^{*}$ (about \pounds6{,}800 at the mean
+value-added share of 40\%). This drop---absent from a kink, where only the
+\emph{marginal} rate changes at the threshold while average liability moves
+continuously---is the defining feature of a notch: it makes locating just
+below the cutoff strictly attractive and creates the empty band derived next.
 
 \subsection{The dominated region}
 \label{ssec:dominated}
@@ -74,31 +78,34 @@ This is the Kleven--Waseem dominated-region width \citep{klevenwaseem2013}. At
 my parameters it gives $a = \pounds85{,}000\times 0.20/0.80 = \pounds21{,}250$,
 so the dominated region is
 $(T^{*},\,T^{*}+a)=(\pounds85{,}000,\ \pounds106{,}250)$, shown in
-Figure~\ref{fig:notch_fit}. Two properties make
-this $\sim\pounds21$k band a transparent, parameter-free index of the distortion.
-First, it is \emph{exact and elasticity-free}: it depends on $\tau$ and $T^{*}$
-alone and is independent of the cost specification, of any behavioural elasticity,
-and of any smoothing parameter. It is, however, \emph{conditional on the
-statutory-rate turnover notch}: the $\pounds21{,}250$ width is computed at the
-statutory $\tau=0.20$ applied to whole turnover, and so applies to the
-limited-reclaim, consumer-facing firms that are the scope of this model (the
-``Scope: a turnover-tax notch'' paragraph above). For firms with substantial input
-reclaim the effective notch---and hence its dominated region---is correspondingly
-smaller. The width is thus independent of any behavioural elasticity but
-conditional on the turnover-tax-notch scope. Second, it is an order of magnitude
-wider than the $\sim\pounds1$k region implied by a smoothed \emph{kink}
-approximation. The band also spans a populous part of the firm distribution: about
-$137{,}000$ weighted firms in the synthetic population lie in the
-$\pounds85{,}000$--$\pounds106{,}250$ dominated band. Because the synthetic
-generator has no location choice, this counts the firms the data \emph{place} in
-the band---indexing the size of the population exposed to the distortion---rather
-than firms that \emph{optimally locate} there; the identity thus ranges over a
-heavily populated stretch of turnover rather than an empty tail. The precise count
-is, moreover, conditional on the uniform within-band fill used to resolve turnover
-inside the coarse HMRC bands (Section~\ref{sec:data}) and would shift under a
-different within-band shape; it is the width $a$, not this count, that is exact. The dominated
-region stands alone as a theoretical property of the schedule, independent of any
-reduced-form pattern in the data.
+Figure~\ref{fig:notch_fit}.
+
+Two properties make this band a transparent index of the distortion. First, it
+is \emph{exact and elasticity-free}, and---less obviously---\emph{invariant to
+the firm's input share}. Under the value-added formulation above, the
+indifference condition at the edge of the region is
+$(1-\delta_i)(T^{*}) = (1-\delta_i)(1-\tau)(T^{*}+a)$: the deductible share
+$(1-\delta_i)$ cancels, so every firm with positive value added faces the
+\emph{same} dominated width $a=T^{*}\tau/(1-\tau)$, whatever its input
+intensity. (A per-firm width built from the net remittance rate, such as
+$T^{*}\tau_{0i}/(1-\tau_{0i})$, corresponds to a different technology in which
+marginal turnover carries no input cost, and is not used here.) The width
+depends on $\tau$ and $T^{*}$ alone---not on the cost specification, any
+behavioural elasticity, or any smoothing parameter. Who escapes the notch is a
+matter of scope, not of input shares: voluntary registrants escape by choice,
+and net-repayment traders have no positive remittance to jump
+(the Scope paragraph above). Second, the region is an order of magnitude wider
+than the $\sim\pounds1$k region implied by a smoothed \emph{kink}
+approximation, and it spans a populous part of the firm distribution: about
+$144{,}000$ weighted firms in the corrected synthetic population lie in the
+$\pounds85{,}000$--$\pounds106{,}250$ band
+(\texttt{results/dominated\_region\_mass.txt}). Because the generator has no
+location choice, this counts the firms the data \emph{place} in the
+band---indexing the size of the population exposed to the distortion---rather
+than firms that optimally locate there; the count is conditional on the
+uniform within-band fill inside the coarse HMRC bands (Section~\ref{sec:data})
+and would shift under a different within-band shape. It is the width $a$, not
+the count, that is exact.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.78\textwidth]{figures/dynamic_notch_fit_e017.png}
@@ -106,37 +113,14 @@ reduced-form pattern in the data.
 \label{fig:notch_fit}
 \end{figure}
 
-\paragraph{Value-added robustness of the dominated region.} The
-$\pounds21{,}250$ width assumes VAT falls on the firm's whole turnover, whereas
-real VAT taxes value added net of reclaimed input tax. A firm that remits a net
-rate $\tau_0$ (its net VAT as a share of turnover) faces a value-added dominated
-region $a_i=T^{*}\,\tau_0/(1-\tau_0)$ rather than the full-rate width. I gauge the
-magnitude this implies from the firm-level net-rate distribution for
-near-threshold firms (turnover $\pounds80$k--$\pounds90$k). About $42\%$ of these
-firms have a net VAT rate below $1\%$---net input creditors or near-zero
-remitters---so they face effectively \emph{no} notch; this share is close to the
-roughly $43\%$ voluntary-registration rate \citet{liuetal2021} document. For the
-remaining firms with positive net VAT, the value-added dominated region has a
-weighted median of about $\pounds18{,}650$---the same order of magnitude as the
-$\pounds21{,}250$ full-rate figure---rising to about $\pounds44{,}000$ for the
-consumer-facing, high-net-rate firms in the top quartile, which are precisely the
-firms the turnover-tax-notch model is meant to describe. The value-added
-correction therefore does not collapse the dominated region: it identifies the
-$\sim\!42\%$ of firms (the voluntary registrants) for whom there is no notch---the
-subpopulation already scoped out above---while leaving a $\sim\pounds20$k dominated
-region for the limited-reclaim, consumer-facing firms the model targets. The
-$\pounds21{,}250$ width is thus a reasonable representative magnitude for that
-target population, consistent with the conditional, scope-limited reading set out
-above.
-
 \paragraph{How each reform changes the dominated region.} Because the width
 $a=T^{*}\tau/(1-\tau)$ depends on the threshold and the rate alone, the effect of
-each schedule reform of Section~\ref{ssec:schedule_costs} on this misallocation
-zone is exact and follows directly from the notch arithmetic
+each schedule reform of Section~\ref{ssec:schedule_costs} on the dominated
+region is exact and follows directly from the notch arithmetic
 of~\eqref{eq:dominated} and~\eqref{eq:dominated-secondary}, with no dependence on
 the cost specification, any behavioural elasticity, or any simulated
 re-optimisation. Raising the threshold to \pounds100{,}000 leaves the rate
-unchanged and therefore \emph{relocates} the zone without altering its width: it
+unchanged and therefore \emph{relocates} the region without altering its width: it
 is the same \pounds21{,}250 band, transported to the new cutoff. A banded reduced
 rate does \emph{not} remove the distortion. It reduces the \emph{largest single}
 notch---the jump at $T^{*}$ falls from $\tau T^{*}=\pounds17{,}000$ to
@@ -160,17 +144,19 @@ $\pounds22{,}569$ at $10\%$---both marginally \emph{above} the $\pounds21{,}250$
 baseline, not below it. The reduced rate splits one wide empty band into two
 narrower ones rather than shrinking the total: it lowers the largest single notch
 (to $\pounds12{,}750$ at $15\%$) at the price of adding a secondary notch of
-$(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this. The roughly
-$96{,}500$ and $66{,}100$ weighted firms previously reported for the $15\%$ and
-$10\%$ bands are the mass of the \emph{primary} region alone; the secondary region
-above $\pounds105{,}000$ restores comparable dominated mass, so the total dominated
-mass is not materially reduced. A graduated taper, by contrast, has \emph{no}
-notch and hence no dominated region: marginal net revenue declines smoothly through
-the band rather than off a cliff, so the band of dominated turnover---and with it
-the discrete incentive to suppress turnover---is removed entirely. On the
-dominated-region metric, then, \emph{only} the taper removes the distortion; the
-reduced rate and the level move both leave it essentially intact---split and
-relocated, respectively---which sharpens the taper's advantage. The dominated
-region is thus the paper's exact, elasticity-free measure of the distortion the
-notch imposes, and the analytic statement above is exactly how much of that
-distortion each reform of Section~\ref{ssec:schedule_costs} removes.
+$(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this
+(\texttt{results/dominated\_region\_mass.txt}): the primary regions hold about
+$102{,}700$ ($15\%$) and $70{,}100$ ($10\%$) weighted firms, the secondary
+regions add about $38{,}200$ and $72{,}900$, and the totals---$140{,}900$ and
+$143{,}000$---sit within $2.5\%$ of the $144{,}400$-firm baseline band. A
+graduated taper, by contrast, has \emph{no} notch and hence no dominated
+region: marginal net revenue declines smoothly through the band rather than off
+a cliff, so the band of dominated turnover---and with it the discrete incentive
+to suppress turnover---is removed entirely. On the dominated-region metric,
+then, only the taper removes the distortion; the reduced rate splits it and the
+level move relocates it. The metric indexes the misallocation distortion
+only---what it omits, and how the reforms compare on cost, is taken up in
+Section~\ref{sec:conclusion}. The dominated region is the paper's exact,
+elasticity-free measure of the distortion the notch imposes, and the analytic
+statement above is exactly how much of that distortion each reform of
+Section~\ref{ssec:schedule_costs} removes.
