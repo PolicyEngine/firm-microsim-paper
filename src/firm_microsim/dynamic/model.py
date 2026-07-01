@@ -51,9 +51,10 @@ synthetic data — see the placebo).
 
 REVENUE CONVENTION
 ------------------
-The stored net VAT remittance ``liab`` is NOT ``0.20 * turnover`` — it is
-output-minus-input VAT (a firm-specific net rate ``liab/y_obs`` averaging ~3%
-of turnover).  Under a reform schedule that scales the standard rate by a
+The stored net VAT remittance ``liab`` is NOT ``0.20 * turnover`` — it is the
+standard rate applied to value added, ``0.20 * (turnover - input)`` (a
+firm-specific net rate ``liab/y_obs`` of roughly 8% of turnover, i.e.
+``0.20 * value-added-share``).  Under a reform schedule that scales the standard rate by a
 fraction ``f(y) in [0,1]`` over the band, a registered firm's reform remittance
 is ``liab * (y_star / y_obs) * f(y_star)``: the firm's net VAT-to-turnover ratio
 is held fixed, turnover is re-optimised to ``y_star`` (iso-elastic response),

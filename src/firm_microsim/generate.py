@@ -50,7 +50,7 @@ from .calibration import (
     build_target_matrix,
     optimize_weights,
 )
-from .config import Config, DEFAULT_CONFIG
+from .config import Config, DEFAULT_CONFIG, STANDARD_VAT_RATE
 from .data_loader import LoadedData, load_data
 from .validate import ValidationReport, validate
 
@@ -138,9 +138,12 @@ def generate_input_values(
 ) -> Tensor:
     """Draw per-firm input expenditure (£k) from Beta input/output ratios.
 
-    Most firms get inputs at 60-95% of turnover (positive VAT liability);
-    sector-specific shifts allow some firms inputs > turnover (negative
-    liability), matching HMRC's negative net-liability sectors.
+    The input/output ratio is centred near 0.6 (value added ~40% of turnover,
+    in line with the UK non-financial business economy) with sector-specific
+    shifts, and clamped to [0.1, 0.95] so value added is always strictly
+    positive. Net VAT liability is then the standard rate applied to value
+    added (see :func:`generate_synthetic_firms`); the model is a standard-rate
+    turnover-tax approximation and does not represent net-repayment positions.
 
     Args:
         turnover_values: Per-firm turnover (£k).
@@ -154,7 +157,7 @@ def generate_input_values(
     n_firms = len(turnover_values)
 
     base_ratios = torch.distributions.Beta(4.0, 2.0).sample((n_firms,)).to(device)
-    scaled = 0.3 + base_ratios * 1.0  # map [0,1] -> [0.3, 1.3]
+    scaled = 0.2 + base_ratios * 0.6  # map [0,1] -> [0.2, 0.8]; Beta(4,2) mean -> 0.6
     sector_noise = torch.randn(n_firms, device=device) * 0.15
 
     sic_np = sic_codes.cpu().numpy()
@@ -166,21 +169,23 @@ def generate_input_values(
     scaled = scaled + neg_t.float() * (torch.rand(n_firms, device=device) * 0.3)
     scaled = scaled - high_t.float() * (torch.rand(n_firms, device=device) * 0.2)
 
-    # Floor the input/output ratio at 0.6 (value-added <= 40% of turnover).
-    # A lower floor lets a few firms get implausibly low input (VA up to 90%
-    # of turnover), which both produces unrealistic per-firm VAT liabilities
-    # and lets the weight optimiser concentrate huge weights on those outliers
-    # to hit the liability targets — distorting the near-threshold density and
-    # the static threshold sweep. 0.6 matches the documented 60-95% intent.
-    final_ratios = torch.clamp(scaled + sector_noise, 0.6, 1.5)
+    # Clamp the input/output ratio to [0.1, 0.95]: value added is always
+    # strictly positive (between 5% and 90% of turnover), so no firm has inputs
+    # exceeding turnover. The upper bound 0.95 rules out negative net VAT
+    # liability (the model is a standard-rate approximation that abstracts from
+    # net-repayment positions); the lower bound 0.1 prevents implausibly high
+    # value added that the weight optimiser could exploit with outlier weights.
+    final_ratios = torch.clamp(scaled + sector_noise, 0.1, 0.95)
     input_values = torch.where(
         turnover_values > 0, turnover_values * final_ratios, torch.zeros_like(turnover_values)
     )
 
     logger.info(
-        "Input/output ratio: mean=%.2f std=%.2f; firms with negative VAT liability: %s",
+        "Input/output ratio: mean=%.2f std=%.2f; mean value-added share=%.2f; "
+        "firms with negative value added: %s",
         final_ratios.mean().item(),
         final_ratios.std().item(),
+        (1.0 - final_ratios).mean().item(),
         f"{int((final_ratios > 1.0).sum().item()):,}",
     )
     return input_values
@@ -427,7 +432,7 @@ def generate(
             "sic_code": [str(s).zfill(5) for s in sic_np],
             "annual_turnover_k": turnover_np,
             "annual_input_k": input_np,
-            "vat_liability_k": turnover_np - input_np,
+            "vat_liability_k": STANDARD_VAT_RATE * (turnover_np - input_np),
             "employment": employment.cpu().numpy().astype(int),
             "weight": final_weights.cpu().numpy(),
             "vat_registered": vat_flags.cpu().numpy().astype(bool),

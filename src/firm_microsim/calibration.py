@@ -25,7 +25,7 @@ import pandas as pd
 import torch
 from torch import Tensor
 
-from .config import Config
+from .config import Config, STANDARD_VAT_RATE
 
 logger = logging.getLogger(__name__)
 
@@ -203,8 +203,10 @@ def build_target_matrix(
         row = spec.employment_start + band_idx
         target_matrix[row, employment_band_indices == band_idx] = 1.0
 
-    # VAT liability (£k) per firm = turnover - input.
-    vat_liability_values = turnover_values - input_values
+    # Net VAT liability (£k) per firm = standard rate * value added
+    # = STANDARD_VAT_RATE * (turnover - input). This matches the HMRC
+    # net-VAT-liability targets, which are net of input reclaim.
+    vat_liability_values = STANDARD_VAT_RATE * (turnover_values - input_values)
 
     # VAT-liability-by-sector targets (weight firms by their liability).
     for offset, (_, vat_row) in enumerate(vat_liability_sector_rows.iterrows()):

@@ -68,6 +68,12 @@ VINTAGES: Dict[str, Dict[str, float]] = {
 }
 DEFAULT_VINTAGE: str = os.environ.get("DATA_VINTAGE", "2023-24")
 
+# Standard UK VAT rate. A registered firm's net VAT liability is this rate
+# applied to its value added (turnover less inputs):
+#   v_i = STANDARD_VAT_RATE * (turnover_i - inputs_i).
+# This is the single place the rate is set.
+STANDARD_VAT_RATE: float = 0.20
+
 # Processed input file names (placed in PROCESSED_DATA_DIR by an upstream
 # ETL process). These map onto the original ONS + HMRC official tables.
 INPUT_FILES: Dict[str, str] = {

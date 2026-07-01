@@ -52,6 +52,11 @@ RATE_VARIANTS = [
     ("10% band", 0.10),
 ]
 
+# Reduced-rate band runs [T*, T*+BAND_WIDTH]; at the band top it reverts to the
+# standard rate tau, creating a SECOND notch whose dominated width is
+#   a' = T1 * (tau - r) / (1 - tau),  T1 = T* + BAND_WIDTH.
+REDUCED_RATE_BAND_WIDTH = 20.0  # £k (band [85k, 105k] in the paper)
+
 
 def mass_in_band(centres, density, lo, hi, bin_width=BIN_WIDTH):
     """Integrate a binned density over [lo, hi) -> weighted firm count.
@@ -104,6 +109,24 @@ def main() -> None:
             "obs": obs,
             "cf": cf,
             "net": cf - obs,   # net missing (displaced) mass in band
+        })
+
+    # --- Secondary dominated region at the reduced-rate band top ------------
+    # A banded reduced rate reverts to the standard rate tau at the band top
+    # T1, creating a SECOND notch with dominated width a' = T1*(tau-r)/(1-tau).
+    # The total dominated turnover under a reduced rate is primary + secondary.
+    band_top = t_star + REDUCED_RATE_BAND_WIDTH      # £105k
+    sec_rows = []
+    for label, tau_r in RATE_VARIANTS[1:]:           # 15% and 10% only
+        a_sec = band_top * (TAU - tau_r) / (1.0 - TAU)
+        lo, hi = band_top, band_top + a_sec
+        obs = mass_in_band(centres, f_obs, lo, hi)
+        cf = mass_in_band(centres, f_cf, lo, hi)
+        prim = next(r for r in rows if r["tau"] == tau_r)
+        sec_rows.append({
+            "label": label, "tau": tau_r, "a_sec": a_sec,
+            "lo": lo, "hi": hi, "obs": obs, "cf": cf,
+            "prim_obs": prim["obs"], "total_obs": prim["obs"] + obs,
         })
 
     # Baseline (20%) is the paper's actual dominated region.
@@ -163,6 +186,17 @@ def main() -> None:
       f"  (CF total {rows[1]['cf']:,.0f})")
     W(f"  10% -> band width GBP {rows[2]['a']*1000:,.0f}: net displaced = {rows[2]['net']:,.0f} firms"
       f"  (CF total {rows[2]['cf']:,.0f})")
+    W("")
+    W(f"SECONDARY NOTCH at the reduced-rate band top (T1 = GBP {band_top*1000:,.0f}):")
+    W("  A banded reduced rate reverts to tau=20% at T1, adding a SECOND")
+    W("  dominated region a' = T1*(tau-r)/(1-tau). Total dominated turnover and")
+    W("  mass = primary [T*, T*+a] + secondary [T1, T1+a'].")
+    for s in sec_rows:
+        W(f"  {s['label']:<9} secondary [{s['lo']:.0f}, {s['hi']:.3f}) "
+          f"width GBP {s['a_sec']*1000:,.0f}  OBS = {s['obs']:,.0f}")
+        W(f"            primary OBS {s['prim_obs']:,.0f} + secondary OBS {s['obs']:,.0f}"
+          f" = TOTAL {s['total_obs']:,.0f}  (baseline {base['obs']:,.0f},"
+          f" {100*(s['total_obs']/base['obs']-1):+.1f}%)")
     W("")
     W("CONSISTENCY CHECK vs paper's reduced-form bunching:")
     W(f"  excess mass below T*       E       = {E:,.0f} firms")
