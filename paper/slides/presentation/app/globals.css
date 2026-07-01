@@ -1,0 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+@import "tailwindcss";
+@import "@policyengine/ui-kit/theme.css";
+@import "katex/dist/katex.min.css";
+
+@source "../app";
+@source "../components";
+@source "../lib";
+@source "../slides";
+
+@theme {
+  --font-display: var(--font-sans);
+  --spacing: 0.25rem;
+
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 1;
+
+  --color-pe-teal: #319795;
+  --color-pe-dark: #234e52;
+  --color-pe-darker: #0d2f33;
+  --color-pe-light: #e6fffa;
+  --color-pe-amber: #e8913a;
+}
+
+:root {
+  --slide-bg: #ffffff;
+  --slide-ink: #101828;
+  --slide-muted: #64748b;
+  --pe-teal: #319795;
+  --pe-teal-dark: #2c7a7b;
+  --pe-dark: #234e52;
+  --pe-darker: #0d2f33;
+  --pe-light: #e6fffa;
+  --pe-amber: #e8913a;
+  --border-light: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--slide-bg);
+  color: var(--slide-ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+}
+
+@utility gradient-bg {
+  background:
+    linear-gradient(135deg, var(--pe-teal) 0%, var(--pe-teal-dark) 38%, var(--pe-dark) 72%, var(--pe-darker) 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.gradient-bg::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 18% 118%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 96% 10%, rgba(232, 145, 58, 0.10) 0%, transparent 42%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+@utility gradient-footer {
+  background: var(--pe-dark);
+  position: relative;
+}
+
+.gradient-footer::before {
+  background: linear-gradient(90deg, var(--pe-teal) 0%, var(--pe-amber) 100%);
+  content: "";
+  height: 2px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.slide-active {
+  opacity: 1;
+  transition: opacity 150ms ease-in-out;
+}
+
+.slide-exit {
+  opacity: 0;
+}
+
+.math-text {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.figure-grid {
+  background-image:
+    linear-gradient(rgba(49, 151, 149, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(49, 151, 149, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}

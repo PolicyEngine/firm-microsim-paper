@@ -163,13 +163,20 @@ def make_figure(path, *, n=N_ABILITY, e=E_DEFAULT, deltas=DELTAS) -> Path:
         _style_ax(ax)
 
     axes[0].set_ylabel(r"Value-added profit $\pi_A$ (£k)", fontsize=LABEL_SIZE)
-    axes[0].legend(frameon=False, fontsize=TICK_SIZE, loc="upper left",
-                   title="deductible share")
-    axes[0].get_legend().get_title().set_fontsize(TICK_SIZE)
 
-    fig.tight_layout()
+    # Reserve bottom margin, then place a single horizontal boxed legend below
+    # both panels so it never overlaps the profit curves.
+    fig.tight_layout(rect=(0.0, 0.10, 1.0, 1.0))
+    handles, labels = axes[0].get_legend_handles_labels()
+    legend = fig.legend(
+        handles, labels, title="deductible share", loc="lower center",
+        ncol=len(labels), frameon=False, fontsize=TICK_SIZE,
+        bbox_to_anchor=(0.5, 0.005),
+    )
+    legend.get_title().set_fontsize(TICK_SIZE)
+
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=300, bbox_inches="tight")
+    fig.savefig(path, dpi=300, bbox_inches="tight", bbox_extra_artists=(legend,))
     plt.close(fig)
     print(f"  saved {path}")
     return path
