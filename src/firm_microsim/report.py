@@ -33,6 +33,12 @@ def _vintage_lines(vintage: str) -> list[str]:
     """Return the report lines for one vintage (or a skip notice)."""
     cfg = Config.for_vintage(vintage)
     csv_path = cfg.synthetic_dir / f"synthetic_firms_{vintage}.csv"
+    if not csv_path.exists():
+        # A bare ``firm_microsim.generate()`` writes the generic
+        # ``cfg.output_file`` name rather than the vintage-suffixed one.
+        fallback = cfg.synthetic_dir / cfg.output_file
+        if fallback.exists():
+            csv_path = fallback
 
     out = ["", "=" * 64,
            f"  Vintage {vintage}  |  threshold £{int(cfg.vat_threshold)}k",

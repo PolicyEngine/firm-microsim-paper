@@ -11,7 +11,6 @@ from .model import (
     BunchingEstimator,
     DEFAULT_DEGREE,
     DEFAULT_WINDOW,
-    TAU_E,
     TAU_MAX,
 )
 
@@ -20,5 +19,4 @@ __all__ = [
     "TAU_MAX",
     "DEFAULT_DEGREE",
     "DEFAULT_WINDOW",
-    "TAU_E",
 ]

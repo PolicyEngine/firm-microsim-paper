@@ -36,31 +36,47 @@ respect to the net-of-tax rate ``(1 - tau)``.
 * General smooth schedule FOC:
   ``(1 - tau(y)) - y * tau'(y) = (y/n)**(1/e)``.
 
-ABILITY RECOVERY (accounting anchor, NOT structural identification)
+SCOPE: INTENSIVE MARGIN ONLY, REGION-CONFINED
+---------------------------------------------
+The behavioural layer prices the INTENSIVE margin only: each firm re-optimises
+turnover *within the schedule region that contains its observed turnover*
+(regions are the maximal intervals on which the effective-rate fraction ``f``
+is constant). Relocation across a notch — bunching below a threshold from
+above, or de-registering past a band edge — is the EXTENSIVE margin, which is
+the separate analytic object (dominated region + marginal buncher) and is
+deliberately out of scope here. Confining the response to the firm's own
+region makes the solve a closed form, makes the ``e -> 0`` limit collapse onto
+the static costing *exactly*, and removes any dependence on solver iteration
+details at schedule discontinuities (a damped fixed point has no fixed point
+for abilities that straddle a notch, so its iterates oscillate and the
+"solution" is an artifact of the iteration count — the previous implementation
+had exactly this defect).
+
+RESPONSE (formulation A: value-added tax, deductible share cancels)
 -------------------------------------------------------------------
-Given ``e`` and a firm's observed turnover ``y_obs`` under the BASELINE £85,000
-notch, using the firm's observed net VAT rate ``tau0 = liab / y_obs`` once
-registered::
+Under formulation A the firm maximises
+``pi = (1 - delta)(1 - tau f(y)) y - C(y; n, e)``, so the interior optimum is
+``y* = n [(1-delta)(1-tau f)]**e``. The reform response RATIO from the
+baseline (fraction ``f0``) to the reform (fraction ``f1``) is therefore::
 
-    y_obs <  T*  : unregistered  => n = y_obs.
-    y_obs >= T*  : registered     => n = y_obs / (1 - tau0)**e.
+    y_star / y_obs = [(1 - tau*f1) / (1 - tau*f0)] ** e,
 
-This rationalises the observed allocation given ``e``; it is an accounting
-anchor, not structural identification (``e`` is not identified from the
-synthetic data — see the placebo).
+with ``tau`` the STATUTORY rate: the deductible share ``delta`` cancels, so
+the response needs neither ``delta`` nor the firm's net rate — ``e`` is the
+sole knob (``d ln y / d ln(1 - tau f) = e`` exactly). The ratio is clipped to
+the firm's schedule region.
 
 REVENUE CONVENTION
 ------------------
 The stored net VAT remittance ``liab`` is NOT ``0.20 * turnover`` — it is the
 standard rate applied to value added, ``0.20 * (turnover - input)`` (a
 firm-specific net rate ``liab/y_obs`` of roughly 8% of turnover, i.e.
-``0.20 * value-added-share``).  Under a reform schedule that scales the standard rate by a
-fraction ``f(y) in [0,1]`` over the band, a registered firm's reform remittance
-is ``liab * (y_star / y_obs) * f(y_star)``: the firm's net VAT-to-turnover ratio
-is held fixed, turnover is re-optimised to ``y_star`` (iso-elastic response),
-and the schedule fraction is applied.  This is exactly ``tau_R(y_star)*y_star``
-with ``tau_R(y) = (liab/y_obs) * f(y)`` and it reproduces the trusted STATIC
-reform costs in the ``e -> 0`` (no-response) limit.
+``0.20 * value-added-share``). Under a reform schedule with effective-rate
+fraction ``f(y) in [0,1]``, a registered firm's reform remittance is
+``liab * (y_star / y_obs) * f(y_star)`` — value added stays a fixed share of
+turnover, turnover is re-optimised, and the schedule fraction is applied. In
+the ``e -> 0`` (no-response) limit ``y_star = y_obs`` and this reproduces the
+STATIC reform costs exactly.
 
 CROSS-CHECKS (see :func:`crosscheck`)
 -------------------------------------
@@ -68,9 +84,15 @@ CROSS-CHECKS (see :func:`crosscheck`)
 2. Marginal buncher ``n_H(e)`` = 112,795 / 127,382 / 143,527 at
    e = 0.05 / 0.17 / 0.32 (our iso-elastic indifference solve matches
    ``notch.model`` to within ±£200).
-3. Elasticity check: ``d ln(y_star)/d ln(1-tau) = e`` numerically.
-4. ``e -> 0`` limit: behavioural reform costs converge to the static costs
-   computed on the in-repository generated population.
+3. Elasticity check: ``d ln(y_star)/d ln(1-tau f) = e`` numerically.
+4. ``e -> 0`` limit: behavioural reform costs equal the static costs to
+   first order in ``e`` (checked at e = 1e-6 to within £0.1m).
+5. Baseline reproduction: solving the BASELINE schedule returns every firm's
+   observed turnover exactly (the accounting anchor is internally consistent).
+6. Raise-to-£100k invariance: the behavioural cost of a pure threshold raise
+   equals its static cost at EVERY ``e`` — released firms leave the VAT base
+   (their expansion is untaxed) and no other firm's effective rate changes,
+   so a level move has no intensive-margin revenue offset in this model.
 """
 
 from __future__ import annotations
@@ -90,7 +112,10 @@ TAU_MAX = 0.20          # standard UK VAT rate (full effective rate once registe
 T_STAR = 85_000.0       # registration threshold (£)
 TAPER_TOP = 105_000.0   # taper / reduced-rate band upper edge (£)
 
-# Headline elasticity bracket (median 0.17, bracketed by 0.05 and 0.32).
+# ASSUMED sweep values for the e-sensitivity analysis. None is identified from
+# the synthetic data. The low end (0.05) is the external Kleven-Waseem (2013)
+# anchor; 0.17 and 0.32 are assumption choices spanning the range used in the
+# threshold literature, reported to show how the costings move with e.
 ELASTICITIES = (0.05, 0.17, 0.32)
 E_HEADLINE = 0.17
 
@@ -146,6 +171,12 @@ def schedule_notch(y, T=T_STAR):
     return (y >= T).astype(float)
 
 
+# Piecewise-flat region metadata: list of (lo, hi, fraction) half-open [lo, hi)
+# intervals covering [0, inf). ``None`` marks a schedule that is NOT piecewise
+# flat (the taper), for which the region-confined intensive solve is undefined.
+schedule_notch.regions = [(0.0, T_STAR, 0.0), (T_STAR, np.inf, 1.0)]
+
+
 def make_schedule_raise(T_new=100_000.0):
     """Raise the threshold to ``T_new``: the notch simply moves to ``T_new``."""
 
@@ -153,6 +184,7 @@ def make_schedule_raise(T_new=100_000.0):
         y = np.asarray(y, dtype=float)
         return (y >= T_new).astype(float)
 
+    sched.regions = [(0.0, float(T_new), 0.0), (float(T_new), np.inf, 1.0)]
     return sched
 
 
@@ -160,6 +192,13 @@ def schedule_taper(y, T=T_STAR, top=TAPER_TOP):
     """Graduated taper: effective fraction phases 0 -> 1 linearly over [T, top]."""
     y = np.asarray(y, dtype=float)
     return np.clip((y - T) / (top - T), 0.0, 1.0)
+
+
+# The taper's fraction varies continuously with y, so it has no flat regions:
+# its intensive response cannot be priced by the region-confined solve (and its
+# marginal-rate channel is not represented by the flat-rate FOC), so the
+# behavioural layer excludes it.
+schedule_taper.regions = None
 
 
 def make_schedule_reduced_rate(tau_low, T=T_STAR, top=TAPER_TOP, tau_std=TAU_MAX):
@@ -174,6 +213,11 @@ def make_schedule_reduced_rate(tau_low, T=T_STAR, top=TAPER_TOP, tau_std=TAU_MAX
         f[y > top] = 1.0
         return f
 
+    sched.regions = [
+        (0.0, float(T), 0.0),
+        (float(T), float(top), float(frac_low)),
+        (float(top), np.inf, 1.0),
+    ]
     return sched
 
 
@@ -183,22 +227,7 @@ def schedule_effective_tau(schedule, y, tau_max=TAU_MAX):
 
 
 # ---------------------------------------------------------------------------
-# Notch geometry for a schedule: where do registration notches sit?
-# ---------------------------------------------------------------------------
-def _schedule_notch_threshold(schedule, T=T_STAR):
-    """The turnover at which registration first bites under ``schedule``.
-
-    For the raise-to-T_new schedule this is T_new; for taper/reduced-rate it is
-    T*.  Detected numerically as the smallest y with fraction(y) > 0.
-    """
-    grid = np.arange(T - 50_000.0, T + 60_000.0, 100.0)
-    f = np.asarray(schedule(grid), dtype=float)
-    pos = grid[f > 1e-12]
-    return float(pos.min()) if pos.size else T
-
-
-# ---------------------------------------------------------------------------
-# Forward solver: iso-elastic re-optimisation under a reform schedule
+# Forward solver: region-confined iso-elastic response under a reform schedule
 # ---------------------------------------------------------------------------
 def forward_solve_iso_batch(
     n,
@@ -207,65 +236,78 @@ def forward_solve_iso_batch(
     tau0,
     *,
     T=T_STAR,
-    fp_iter=60,
+    y_obs=None,
+    base_schedule=schedule_notch,
+    tau_std=TAU_MAX,
+    **_deprecated,
 ):
-    """Vectorised iso-elastic INTENSIVE-margin response for an array of abilities.
+    """Vectorised region-confined INTENSIVE-margin response (closed form).
 
-    Each firm faces its OWN baseline net VAT rate ``tau0`` (= ``liab/y_obs``,
-    the share of turnover it actually remits — ~3% on average, output VAT minus
-    input credits; NOT the statutory 20%, which is output-only). A reform
-    schedule scales that by the effective-rate fraction ``f(y) in [0,1]``, so the
-    firm's effective rate at turnover ``y`` is ``tau0 * f(y)`` and its
-    iso-elastic interior optimum solves the FOC::
+    Each firm's observed turnover ``y_obs`` is anchored as optimal under the
+    BASELINE schedule (the £85k notch, fraction ``f0``). Under a reform whose
+    fraction on the firm's own region is ``f1``, the formulation-A optimum is::
 
-        (1 - tau0*f(y)) - y*(tau0*f'(y)) = (y/n)**(1/e)   =>   y* = n*(1-tau_eff)**e
+        y_star = y_obs * [(1 - tau_std*f1) / (1 - tau_std*f0)] ** e,
 
-    for the locally-relevant effective rate ``tau_eff``. This makes ``e`` the SOLE
-    governing knob: the response to the net-of-tax rate has elasticity exactly
-    ``e``, and as ``e -> 0`` every firm freezes at ``y* = n``, with the recovered
-    ``n -> y_obs``, so the behavioural cost collapses onto the STATIC cost
-    (cross-check 4). The EXTENSIVE margin (bunching / de-registration) is the
-    separate analytic object (dominated region + marginal buncher) and is NOT
-    re-litigated here, so a small intensive elasticity does not spuriously empty
-    the registered population.
+    the deductible share cancelling in the ratio, then clipped to the reform
+    region containing ``y_obs``. Firms whose region fraction is unchanged
+    (``f1 = f0``) do not move; released firms (``f1 = 0 < f0``) expand toward
+    their frictionless optimum but remit nothing; band firms scale up as the
+    band rate falls, clipped at the band top. Crossing a notch (the extensive
+    margin) is out of scope by construction — see the module docstring.
 
-    Implementation: a damped fixed-point on ``y = n*(1 - tau0*f(y))**e``, robust
-    for both the flat-rate bands (immediate convergence) and the continuously
-    varying taper. ``n`` below the schedule's registration threshold stays at
-    ``n`` (unregistered; ``f=0``). Non-finite / non-positive ``n`` is returned
-    unchanged. Returns ``y_star`` (£), same shape as ``n``.
+    ``n`` and ``tau0`` are accepted for API compatibility; the formulation-A
+    response ratio requires neither (the statutory ``tau_std`` and the
+    schedule fractions pin it). ``schedule`` must be piecewise flat (a
+    ``.regions`` attribute); the taper has ``regions = None`` and raises.
+    Returns ``y_star`` (£), same shape as ``y_obs``.
     """
-    n = np.asarray(n, dtype=float)
-    tau0 = np.broadcast_to(np.asarray(tau0, dtype=float), n.shape).astype(float)
-    good = np.isfinite(n) & (n > 0)
+    regions = getattr(schedule, "regions", None)
+    if regions is None:
+        raise ValueError(
+            "region-confined intensive solve requires a piecewise-flat "
+            "schedule; the graduated taper is excluded from the behavioural "
+            "layer (its rate varies continuously with turnover)."
+        )
+    if y_obs is None:
+        raise TypeError("forward_solve_iso_batch requires y_obs (observed £)")
 
-    T_sched = _schedule_notch_threshold(schedule, T)
+    y_obs = np.asarray(y_obs, dtype=float)
+    good = np.isfinite(y_obs) & (y_obs > 0)
 
-    # Fixed-point for the registered interior optimum y = n*(1 - tau0*f(y))**e.
-    # Start at y=n; damped update keeps it stable through the taper band.
-    y = np.where(good, n, 1.0)
-    for _ in range(fp_iter):
-        f = np.asarray(schedule(y), dtype=float)
-        tau_eff = np.clip(tau0 * f, 0.0, 0.999)
-        y_new = n * (1.0 - tau_eff) ** e
-        y = 0.5 * y + 0.5 * y_new
+    f0 = np.asarray(base_schedule(y_obs), dtype=float)
+    f1 = np.asarray(schedule(y_obs), dtype=float)
 
-    # A firm whose frictionless optimum is below the schedule's registration
-    # threshold is unregistered and simply locates at n (no tax wedge).
-    y = np.where(n < T_sched, n, y)
+    ratio = ((1.0 - tau_std * f1) / (1.0 - tau_std * f0)) ** e
+    y_star = y_obs * ratio
 
-    return np.where(good, y, n)
+    # Clip into the reform region containing y_obs. Region membership follows
+    # the schedule callable itself (fraction match), so boundary conventions
+    # (e.g. an inclusive band top) agree exactly with the static evaluation.
+    penny = 0.01
+    for lo, hi, frac in regions:
+        member = good & (np.abs(f1 - frac) < 1e-12) & (y_obs >= lo)
+        if not np.any(member):
+            continue
+        if np.isfinite(hi):
+            f_at_hi = float(np.asarray(schedule(np.array([hi])), dtype=float)[0])
+            hi_clip = hi if abs(f_at_hi - frac) < 1e-12 else hi - penny
+        else:
+            hi_clip = np.inf
+        y_star = np.where(member, np.clip(y_star, lo, hi_clip), y_star)
+
+    return np.where(good, y_star, y_obs)
 
 
-def forward_solve_iso(n, e, schedule, tau0=TAU_MAX, **kw):
+def forward_solve_iso(y_obs, e, schedule, tau0=TAU_MAX, **kw):
     """Scalar wrapper around :func:`forward_solve_iso_batch`.
 
-    ``tau0`` defaults to the statutory ``TAU_MAX`` so the elasticity cross-check
-    (which probes the registered optimum ``n*(1-tau)**e``) uses the full
-    statutory wedge; the population revenue solve passes each firm's own net rate.
+    The first argument is the firm's observed (baseline-anchored) turnover in
+    pounds; the response ratio is governed solely by ``e``, the statutory rate,
+    and the baseline/reform schedule fractions at that turnover.
     """
     out = forward_solve_iso_batch(
-        np.atleast_1d(float(n)), e, schedule, tau0, **kw)
+        None, e, schedule, tau0, y_obs=np.atleast_1d(float(y_obs)), **kw)
     return float(out[0])
 
 
@@ -329,23 +371,22 @@ def reform_revenue(
     ``df`` must provide ``turnover`` (£), ``liab`` (£, baseline net VAT
     remittance), and ``weight``.
 
-    Each firm faces its OWN baseline net VAT rate ``tau0 = liab/y_obs`` (~3% of
-    turnover on average — the share it actually remits, output VAT minus input
-    credits). A reform schedule scales that by the effective-rate fraction
-    ``f(y)``, so the firm's effective rate is ``tau0 * f(y)`` and its remittance
-    is ``liab * (y/y_obs) * f(y)`` (net VAT proportional to turnover).
+    A firm's remittance under a schedule with effective-rate fraction ``f(y)``
+    is ``liab * (y/y_obs) * f(y)``: net VAT stays proportional to turnover
+    (value added a fixed share) and the schedule fraction is applied.
 
-    BASELINE (£85k notch) and REFORM are evaluated SYMMETRICALLY through the same
-    iso-elastic forward solve:
+    BASELINE (£85k notch) and REFORM are evaluated SYMMETRICALLY through the
+    same region-confined forward solve:
 
     * STATIC (``behavioural=False``): turnover fixed at observed; only the
       effective-rate fraction changes (notch ``f=1`` above T* vs the reform's
       ``f``).  This reproduces the trusted static reform costs.
-    * BEHAVIOURAL: firms in ``[band_lo, band_hi]`` re-optimise turnover under the
-      iso-elastic model with elasticity ``e`` — under the £85k notch for the
-      baseline (``t_notch``) and under the reform schedule (``t_new``). As
-      ``e -> 0`` both freeze at observed turnover, so the behavioural cost
-      converges to the static cost (cross-check 4).
+    * BEHAVIOURAL: firms in ``[band_lo, band_hi]`` re-optimise turnover within
+      their own schedule region (formulation-A ratio, elasticity ``e``) — under
+      the £85k notch for the baseline (``t_notch``, which reproduces observed
+      turnover exactly: the accounting anchor) and under the reform schedule
+      (``t_new``). As ``e -> 0`` the ratio -> 1, so the behavioural cost
+      collapses onto the static cost exactly (cross-check 4).
 
     Returns a dict with baseline/reform revenue, the change vs baseline, the
     number of firms re-optimising, the near-threshold mass change, and the
@@ -356,6 +397,8 @@ def reform_revenue(
     w = df["weight"].to_numpy(dtype=float)
 
     # Firm-specific baseline net VAT rate (share of turnover actually remitted).
+    # Not needed for the formulation-A response ratio (the deductible share
+    # cancels); retained for diagnostics.
     with np.errstate(divide="ignore", invalid="ignore"):
         tau0 = np.where(t_obs > 0, liab / t_obs, 0.0)
 
@@ -363,15 +406,20 @@ def reform_revenue(
     idx = np.where(band)[0]
 
     if behavioural:
-        n = recover_ability(t_obs, e, T=T, tau=tau0)
         t_new = t_obs.copy()
         t_new[idx] = forward_solve_iso_batch(
-            n[idx], e, schedule, tau0[idx], T=T)
-        # Baseline turnover under the £85k notch via the SAME machinery — the
-        # apples-to-apples reference (both worlds re-optimised identically).
+            None, e, schedule, tau0[idx], T=T, y_obs=t_obs[idx])
+        # Baseline turnover under the £85k notch via the SAME machinery — this
+        # must reproduce observed turnover exactly (accounting anchor).
         t_notch = t_obs.copy()
         t_notch[idx] = forward_solve_iso_batch(
-            n[idx], e, schedule_notch, tau0[idx], T=T)
+            None, e, schedule_notch, tau0[idx], T=T, y_obs=t_obs[idx])
+        anchor_gap = float(np.max(np.abs(t_notch - t_obs))) if idx.size else 0.0
+        if anchor_gap > 1e-6:
+            raise AssertionError(
+                f"baseline solve failed to reproduce observed turnover "
+                f"(max gap £{anchor_gap:.4f}) — accounting anchor violated"
+            )
     else:
         t_new = t_obs
         t_notch = t_obs
@@ -500,22 +548,19 @@ def crosscheck(verbose=True, data_path=REFORM_DATA):
         # The two solves must agree with each other to ±£200.
         check(f"buncher agreement(e={e})", nH_iso, nH, 200.0, " GBP")
 
-    # 3. ELASTICITY CHECK: d ln(y*)/d ln(1-tau) = e for a registered firm.
-    #    The firm faces effective rate tau0*f(y); with tau0=TAU_MAX and a flat
-    #    fraction f=tau/TAU_MAX the effective rate is exactly tau, so the
-    #    registered optimum is y* = n*(1-tau)**e. Perturb tau and confirm the
-    #    log-response equals the input e (e is the governing knob).
-    n_test = 200_000.0
+    # 3. ELASTICITY CHECK: d ln(y*)/d ln(1 - tau*f) = e for a registered firm.
+    #    Probe two wide reduced-rate bands (fractions 0.5 and 0.6, effective
+    #    rates 10% and 12%); the log response ratio must equal e exactly.
+    y_probe = 200_000.0
     for e in (0.05, 0.17, 0.32):
-        tau_a, dtau = 0.20, 0.01
-        def flat(tau):
-            return lambda y: (np.asarray(y, dtype=float) >= T_STAR).astype(float) * (tau / TAU_MAX)
-        y0 = forward_solve_iso(n_test, e, flat(tau_a), tau0=TAU_MAX)
-        y1 = forward_solve_iso(n_test, e, flat(tau_a + dtau), tau0=TAU_MAX)
-        elas = (np.log(y1) - np.log(y0)) / (np.log(1 - (tau_a + dtau)) - np.log(1 - tau_a))
-        check(f"elasticity d ln y*/d ln(1-tau) (e={e})", elas, e, 0.02, "")
+        s_a = make_schedule_reduced_rate(0.10, top=1e9)
+        s_b = make_schedule_reduced_rate(0.12, top=1e9)
+        y_a = forward_solve_iso(y_probe, e, s_a)
+        y_b = forward_solve_iso(y_probe, e, s_b)
+        elas = (np.log(y_a) - np.log(y_b)) / (np.log(1 - 0.10) - np.log(1 - 0.12))
+        check(f"elasticity d ln y*/d ln(1-tau f) (e={e})", elas, e, 1e-9, "")
 
-    # Static + behavioural(e->0) reform costs.
+    # Static + behavioural reform costs on the in-repository population.
     df = load_reform_data(data_path)
     t = df["turnover"].to_numpy()
     liab = df["liab"].to_numpy()
@@ -524,14 +569,27 @@ def crosscheck(verbose=True, data_path=REFORM_DATA):
     record("baseline registered base", base / 1e9, " bn")
 
     reforms = build_reforms()
-    e_lim = 0.001  # e -> 0 limit
+    static_costs = {}
     for rname, (sched, _label) in reforms.items():
-        # Static.
+        # Static (all reforms, including the taper).
         rs = reform_revenue(df, sched, E_HEADLINE, behavioural=False)
+        static_costs[rname] = rs["d_rev"]
         record(f"static {rname}", rs["d_rev"], " GBP")
-        # 4. e -> 0 behavioural must converge to the static cost.
-        rb = reform_revenue(df, sched, e_lim, behavioural=True)
-        check(f"behavioural(e->0) {rname}", rb["d_rev"], rs["d_rev"], 20e6, " GBP")
+        if getattr(sched, "regions", None) is None:
+            continue  # taper: behavioural layer excluded (non-flat schedule)
+        # 4. e -> 0 nesting must be EXACT (to £0.1m at e = 1e-6). The baseline
+        # reproduction (check 5) is asserted inside reform_revenue itself.
+        rb = reform_revenue(df, sched, 1e-6, behavioural=True)
+        check(f"behavioural(e->0) {rname}", rb["d_rev"], rs["d_rev"], 0.1e6, " GBP")
+
+    # 6. Raise-to-£100k invariance: a pure level move has NO intensive-margin
+    # revenue offset — behavioural cost equals static cost at EVERY swept e
+    # (released firms leave the base; no other firm's effective rate changes).
+    sched_raise, _ = reforms["raise100k"]
+    for e in ELASTICITIES:
+        rb = reform_revenue(df, sched_raise, e, behavioural=True)
+        check(f"raise100k behavioural==static (e={e})",
+              rb["d_rev"], static_costs["raise100k"], 0.1e6, " GBP")
 
     if verbose:
         print("CROSSCHECK PASSED — analytic invariants and repo-data checks passed:")

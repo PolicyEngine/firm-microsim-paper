@@ -71,7 +71,7 @@ def estimate(turnover: np.ndarray, weight: np.ndarray, label: str) -> dict:
     r = _run_estimator(turnover, weight, T_STAR)
     print(
         f"  {label:<28s} b={r['b']:+.4f}  E={r['E']:>10,.0f}  "
-        f"b_llat={r['b_llat']:.3f}  y_R={r['y_R']:.2f}  sigma={r['sigma']:.3f}"
+        f"b_llat={r['b_llat']:.3f}  y_R={r['y_R']:.2f}"
     )
     return r
 

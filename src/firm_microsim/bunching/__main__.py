@@ -41,7 +41,7 @@ def main() -> None:
         if args.no_bootstrap:
             res = est.estimate()
             print(f"  b = {res['b']:.4f}   excess mass E = {res['E']:,.0f}   "
-                  f"sigma = {res['sigma']:.3f}")
+                  f"y_R = {res['y_R']:.2f}")
             print(f"  b (LLAT normalisation) = {res['b_llat']:.3f}  "
                   f"(cf. LLAT 2021: 1.361)")
         else:
