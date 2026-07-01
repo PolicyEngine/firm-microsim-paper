@@ -1,0 +1,26 @@
+Generating bunching figures...
+Generating bunching_analysis_85k.png...
+  saved /private/tmp/claude-501/-Users-maxghenis/a15bbb6c-8c15-4740-b985-f511b978ea75/scratchpad/fmp-fix/results/bunching_analysis_85k.png
+Generating bunching_analysis_90k.png...
+  saved /private/tmp/claude-501/-Users-maxghenis/a15bbb6c-8c15-4740-b985-f511b978ea75/scratchpad/fmp-fix/results/bunching_analysis_90k.png
+  done.
+
+============================================================
+  Bunching — vintage 2023-24
+============================================================
+              point        se     ci_lo    ci_hi  n_boot
+parameter                                               
+b         -0.138518  0.003692 -0.145714 -0.13173     200
+b_llat     0.000000  0.000000  0.000000  0.00000     200
+E          0.000000  0.000000  0.000000  0.00000     200
+dyR        0.000000  0.000000  0.000000  0.00000     200
+
+============================================================
+  Bunching — vintage 2024-25
+============================================================
+                   point          se          ci_lo          ci_hi  n_boot
+parameter                                                                 
+b               1.221842    0.011326       1.201835       1.246055     200
+b_llat         21.209037    0.155598      20.950416      21.555931     200
+E          195866.619141  800.316808  194332.289630  197654.675963     200
+dyR            15.000000    0.000000      15.000000      15.000000     200

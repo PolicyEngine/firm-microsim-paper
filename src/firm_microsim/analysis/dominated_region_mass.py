@@ -14,7 +14,7 @@ The dominated-region width is the exact Kleven-Waseem ``a = T* * tau/(1-tau)``
 from ``notch/model.py``. We also report the analogous masses for the
 reform-shrunk bands at lower headline rates (15% -> width £15,000, 10% ->
 width £9,444), and sanity-check the counterfactual band mass against the paper's
-excess-mass E and displaced share Pi recovered from ``bunching/model.py``.
+excess-mass E and mass-conservation geometry recovered from ``bunching/model.py``.
 
 Run:  firm-microsim-dominated-region
 Out:  results/dominated_region_mass.txt
@@ -74,12 +74,11 @@ def main() -> None:
 
     # --- Build observed + mass-conserving counterfactual densities ----------
     est = BunchingEstimator(VINTAGE)
-    res = est.estimate()  # full reduced-form bunching solve (E, Pi, y_R, ...)
+    res = est.estimate()  # full reduced-form bunching solve (E, y_R, ...)
     centres = res["centres"]
     f_obs = res["f_obs"]
     f_cf = res["f_cf"]
     E = res["E"]            # excess mass below T* (weighted firms)
-    Pi = res["Pi"]          # displaced share
     y_R = res["y_R"]        # endogenous marginal buncher (£k)
     Delta_R = res["Delta_R"]
 
@@ -198,24 +197,27 @@ def main() -> None:
           f" = TOTAL {s['total_obs']:,.0f}  (baseline {base['obs']:,.0f},"
           f" {100*(s['total_obs']/base['obs']-1):+.1f}%)")
     W("")
-    W("CONSISTENCY CHECK vs paper's reduced-form bunching:")
+    W("REDUCED-FORM BUNCHING on this population (context for the masses above):")
     W(f"  excess mass below T*       E       = {E:,.0f} firms")
     W(f"  missing mass above T*      Delta_R = {Delta_R:,.0f} firms")
-    W(f"  displaced share            Pi      = {Pi:.3f}")
     W(f"  marginal buncher           y_R     = GBP {y_R*1000:,.0f}")
     W(f"  NET displaced mass in 20% dominated band = {missing_in_band:,.0f} firms")
-    W(f"  -> NET band mass / E               = {missing_in_band/E:.2f}" if E else "")
-    W(f"  -> NET band mass / Delta_R         = {missing_in_band/Delta_R:.2f}" if Delta_R else "")
     W("")
-    W("  By mass conservation the excess mass E (~8.7k) that bunches just below")
-    W("  T* is the mass that, absent the notch, would have spread into the region")
-    W("  above T*. The NET displaced mass in the dominated band (~13.7k) is the")
-    W("  same order of magnitude as E and Delta_R (~9.2k) -- it slightly exceeds")
-    W("  them because the wide 21.25k band also captures part of the smooth")
-    W("  density deficit beyond the marginal buncher y_R = GBP 90,583, not just")
-    W("  the bunching window. CONSISTENT: no order-of-magnitude discrepancy.")
-    W("  (The TOTAL CF density in the band, 150k, is NOT the displaced mass and")
-    W("  should not be compared to E -- that would be a category error.)")
+    if E < 100:
+        W("  The estimator finds NO excess mass below the threshold on this")
+        W("  population (E ~ 0): the corrected net-liability calibration produces")
+        W("  no synthetic bunching, so the dominated-region masses above are")
+        W("  TARGET-BAND GEOMETRY (weighted firms located in each band), not")
+        W("  behavioural displacement. The band masses answer 'how many weighted")
+        W("  firms sit where the schedule makes location dominated', which is the")
+        W("  policy-relevant exposure count for each reform variant.")
+    else:
+        W("  By mass conservation the excess mass E that bunches just below T*")
+        W("  is the mass that, absent the notch, would have spread into the")
+        W("  region above T*. Compare magnitudes of E, Delta_R, and the NET band")
+        W("  mass; the wide band also captures smooth-density deficit beyond y_R.")
+        W("  (The TOTAL CF density in the band is NOT the displaced mass and")
+        W("  should not be compared to E -- that would be a category error.)")
     W("")
     W(f"  total observed weighted mass on [{est.firms['annual_turnover_k'].min():.0f},"
       f"{est.firms['annual_turnover_k'].max():.0f}] est. range = {total_obs_mass:,.0f}")
