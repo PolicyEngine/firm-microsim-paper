@@ -1,0 +1,56 @@
+2026-07-02 09:48:38,249 - INFO - Generating synthetic firms (threshold=£85k, seed=99, device=cpu)
+2026-07-02 09:48:38,250 - INFO - Loading processed input tables from /private/tmp/claude-501/-Users-maxghenis/a15bbb6c-8c15-4740-b985-f511b978ea75/scratchpad/fmp-fix/data/processed/2023-24
+2026-07-02 09:48:38,255 - INFO -   ons_turnover                 89 rows
+2026-07-02 09:48:38,255 - INFO -   ons_employment               89 rows
+2026-07-02 09:48:38,255 - INFO -   hmrc_population_band         20 rows
+2026-07-02 09:48:38,255 - INFO -   hmrc_population_sector       89 rows
+2026-07-02 09:48:38,255 - INFO -   hmrc_liability_band          20 rows
+2026-07-02 09:48:38,255 - INFO -   hmrc_liability_sector        88 rows
+2026-07-02 09:48:38,258 - INFO - Near-threshold targets: 25 OBR £1k bins over [65k, 90k], interpolated 2023-24 profile, total 453,902 firms
+2026-07-02 09:48:38,258 - INFO - ONS total firms: 2,724,775
+2026-07-02 09:48:38,258 - INFO - HMRC VAT-registered firms (latest year): 2,178,960
+2026-07-02 09:48:38,258 - INFO - Generating base firms from ONS structure...
+2026-07-02 09:48:38,549 - INFO - Generated 2,724,775 base firms
+2026-07-02 09:48:38,564 - INFO - Generating input values...
+2026-07-02 09:48:38,764 - INFO - Input/output ratio: mean=0.60 std=0.19; mean value-added share=0.40; firms with negative value added: 0
+2026-07-02 09:48:38,765 - INFO - Assigning employment from ONS distribution...
+2026-07-02 09:48:42,644 - INFO - Target matrix shape: (133, 2724775)
+2026-07-02 09:48:42,644 - INFO - Targets: 7 turnover + 88 sector + 7 employment + 0 VAT-liability sector + 6 VAT-liability band + 25 near-threshold = 133
+2026-07-02 09:48:42,644 - INFO - Starting multi-objective weight optimization...
+2026-07-02 09:48:43,627 - INFO - Iteration 0: loss = 0.165361
+2026-07-02 09:48:50,278 - INFO - Iteration 100: loss = 0.070695
+2026-07-02 09:48:56,458 - INFO - Iteration 200: loss = 0.050949
+2026-07-02 09:49:02,768 - INFO - Iteration 300: loss = 0.046097
+2026-07-02 09:49:09,075 - INFO - Iteration 400: loss = 0.045659
+2026-07-02 09:49:16,273 - INFO - Iteration 500: loss = 0.045449
+2026-07-02 09:49:22,942 - INFO - Iteration 600: loss = 0.045464
+2026-07-02 09:49:31,390 - INFO - Iteration 700: loss = 0.045198
+2026-07-02 09:49:40,197 - INFO - Iteration 800: loss = 0.045094
+2026-07-02 09:49:48,090 - INFO - Iteration 900: loss = 0.045053
+2026-07-02 09:49:55,083 - INFO - Optimization complete. Turnover-band fit:
+2026-07-02 09:49:55,083 - INFO -   £1_to_Threshold              861989 vs       767160 (87.6%)
+2026-07-02 09:49:55,083 - INFO -   £Threshold_to_£150k          331486 vs       305320 (91.4%)
+2026-07-02 09:49:55,084 - INFO -   £150k_to_£300k               364374 vs       334470 (91.1%)
+2026-07-02 09:49:55,084 - INFO -   £300k_to_£500k               197046 vs       184080 (93.0%)
+2026-07-02 09:49:55,084 - INFO -   £500k_to_£1m                 192508 vs       180500 (93.3%)
+2026-07-02 09:49:55,084 - INFO -   £1m_to_£10m                  251403 vs       235060 (93.0%)
+2026-07-02 09:49:55,084 - INFO -   Greater_than_£10m             47439 vs        44680 (93.8%)
+2026-07-02 09:49:55,084 - INFO - Adding 216,500 zero/negative-turnover firms (HMRC)...
+2026-07-02 09:49:55,113 - INFO - Added 216,457 zero-turnover firms
+2026-07-02 09:49:55,113 - INFO - Assigning employment from ONS distribution...
+2026-07-02 09:49:56,135 - INFO - Assigning VAT registration flags...
+2026-07-02 09:49:56,140 - INFO - Voluntary VAT row rate: 0.884 (target 678,350 / base-weighted rows 767,160)
+2026-07-02 09:49:56,151 - INFO - VAT: 1957615 mandatory + 678470 voluntary = 2636085 registered
+2026-07-02 09:49:56,151 - INFO - Assembling final DataFrame...
+2026-07-02 09:49:56,504 - INFO - Generated 2,941,232 rows, weighted population 2,462,702
+2026-07-02 09:49:57,624 - INFO - VAT liability £1-to-Threshold (informational, NOT calibrated): 27.6%
+2026-07-02 09:49:57,624 - INFO - === CALIBRATION SUMMARY (threshold £85k) ===
+2026-07-02 09:49:57,624 - INFO - HMRC Turnover Bands:     93.7%
+2026-07-02 09:49:57,625 - INFO - ONS Population:          90.4%
+2026-07-02 09:49:57,625 - INFO - Employment Bands:        77.0%
+2026-07-02 09:49:57,625 - INFO - Sector Distribution:     92.8%
+2026-07-02 09:49:57,625 - INFO - VAT Liability by Band:   91.3%
+2026-07-02 09:49:57,625 - INFO - Overall Accuracy (5 calibrated dims): 89.0%
+2026-07-02 09:49:57,625 - INFO - VAT Liability by Sector: 45.0%  [informational, NOT calibrated]
+2026-07-02 09:49:57,625 - INFO - Total Population:        2,462,702 firms
+2026-07-02 09:50:02,457 - INFO - Wrote 2,941,232 rows to /private/tmp/claude-501/-Users-maxghenis/a15bbb6c-8c15-4740-b985-f511b978ea75/scratchpad/fmp-fix/data/synthetic/seed_check_99.csv (142.7 MB)

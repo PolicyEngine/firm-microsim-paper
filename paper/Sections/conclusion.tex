@@ -7,105 +7,129 @@ synthetic-data generator---for replication. Its value is as usable policy
 infrastructure rather than a structural identification result: I make no claim to
 recover policy-invariant firm primitives, unlike \citet{garicano2016} and
 \citet{gourioroys2014}. The analysis is anchored to the 2023--24 data year, in
-which the statutory threshold was \pounds85{,}000. Table~\ref{tab:summary}
-collects the headline objects.
+which the statutory threshold was \pounds85{,}000, with a second 2024--25
+population (threshold \pounds90{,}000) for the forward sweep.
+Table~\ref{tab:summary} collects the headline objects.
 
 \begin{table}[t]
 \centering
-\caption{Summary of headline estimates. This table consolidates results reported
-and defined in the body sections cross-referenced below; it is a reference summary,
-not a new analysis. All quantities refer to the \pounds85{,}000 data-year baseline.
-Static revenue figures are 2025--26.}
+\caption{Summary of headline estimates, consolidating results defined in the
+body sections cross-referenced below. Rows 1--2 are 2025--26 figures (the
+anchor on the 2023--24 population, the sweep on the 2024--25 population at its
+\pounds90{,}000 baseline); the remaining rows refer to the \pounds85{,}000
+data-year baseline.}
 \label{tab:summary}
 \small
 \begin{tabular}{@{}llll@{}}
 \toprule
 Object & Symbol / definition & Value & Source \\
 \midrule
-Static cost, \pounds85k to \pounds90k anchor & --- & $\approx-\pounds175$m & \S\ref{sec:static} \\
-Static sweep, \pounds90k baseline & per \pounds5k step & $\sim\pounds150$--$220$m & Table~\ref{tab:static_revenue} \\
-Dominated region (misallocation zone) & $a=T^{*}\tau/(1-\tau)$ & \pounds21{,}250 & \S\ref{ssec:dominated} \\
-Firms in the dominated band (weighted) & --- & $\approx137{,}000$ & \S\ref{ssec:dominated} \\
-Behavioural raise-to-\pounds100k ($e=0.05$--$0.32$) & $e$-sensitivity range & $-\pounds444$m to $-\pounds111$m & \S\ref{sec:behavioural} \\
+Static cost, \pounds85k to \pounds90k anchor & dereg.\ / retention conventions & $-\pounds323$m / $-\pounds184$m & Section~\ref{sec:static} \\
+Static sweep, \pounds90k baseline & per \pounds5k step & \pounds230m--\pounds265m & Table~\ref{tab:static_revenue} \\
+Dominated region & $a=T^{*}\tau/(1-\tau)$ & \pounds21{,}250 & Section~\ref{ssec:dominated} \\
+Firms in the dominated band (weighted) & --- & $\approx156{,}000$ & Section~\ref{ssec:dominated} \\
+Raise to \pounds100k, static and behavioural & invariant in $e$ & $-\pounds753$m & Sections~\ref{sec:static}, \ref{sec:behavioural} \\
+Graduated taper, static & --- & $-\pounds520$m & Section~\ref{ssec:schedule_costs} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Findings.} Four results stand out. First, the static pipeline
-reproduces HMRC's costing of the \pounds85{,}000 to \pounds90{,}000 move to within
-about \pounds10m (\pounds175m against \pounds185m)---a consistency check, since the
-microdata are calibrated to HMRC aggregates---and prices a menu of level and
-schedule reforms on a common \pounds85{,}000/\pounds183.6bn base: \(-\)\pounds508m
-to raise the threshold to \pounds100{,}000, \(-\)\pounds336m for a graduated taper,
-and \(-\)\pounds343m and \(-\)\pounds171m for $10\%$ and $15\%$ banded reduced
-rates. Second, the notch's distortion is captured exactly by its dominated region,
-the \citet{klevenwaseem2013} width $a=T^{*}\tau/(1-\tau)=\pounds21{,}250$---an
-accounting identity rather than a new structural result, but one spanning a
-populous range of roughly $137{,}000$ firms---a range that fiscal drag widens
-further: with the \pounds90{,}000 threshold now frozen in nominal terms, ageing
-the turnover distribution forward draws about $14\%$ more firms into the dominated
-region by 2028--29 (roughly $130{,}000$ to $148{,}000$), with the just-below,
-bunching-exposed band growing about $9.5\%$ (roughly $41{,}000$ to $45{,}000$).
-Setting cost against distortion is
-instructive: raising the threshold is the most expensive option yet merely
-relocates the zone, and a banded reduced rate does not shrink the distortion
-either---it lowers the largest single notch (from \pounds17{,}000 to \pounds12{,}750
-at a $15\%$ band) but, because the band reverts to the standard rate at its
-\pounds105{,}000 top, adds a secondary notch, leaving the total dominated-turnover
-width essentially unchanged (\pounds21{,}562 at $15\%$, \pounds22{,}569 at $10\%$,
-both marginally above the \pounds21{,}250 baseline). Only the graduated taper,
-being continuous, removes the distortion entirely, and for less. Third, the open
-data reproduce the published density step at the threshold, but a placebo test
-shows the apparent excess mass is inherited from the coarse HMRC band targets
-rather than firm behaviour---it collapses from $8{,}712$ to roughly $99$ weighted
-firms when the target step is removed---so behavioural bunching is not identified
-on these data; the bunching ratio and implied elasticities are relegated to the
-appendix and labelled non-identified, and the behavioural evidence on threshold
-bunching remains the administrative estimate of \citet{liuetal2021}. Fourth, the
-framework also prices each reform \emph{behaviourally}, with a structural simulator
-that re-optimises firms under the reformed schedule conditional on an assumed
-turnover elasticity $e$ (Section~\ref{sec:behavioural}). Because $e$ is not
-identified on these synthetic data---the placebo shows the bunching is
-mechanical---I report the behavioural cost as an $e$-sensitivity range that nests
-the static cost as $e\to0$. Conditional on an assumed $e$, modelled responses partly
-offset the static costs: at an illustrative midpoint $e=0.17$ the raise to
-\pounds100{,}000 falls from \pounds508m static to about \pounds292m, the $10\%$
-band from \pounds343m to \pounds273m, and the $15\%$ band from \pounds171m to
-\pounds135m, as firms broaden the base when the effective rate falls. The
-$e$-range $\{0.05,0.17,0.32\}$ is a sensitivity range whose only externally
-anchored point is the lower end $e=0.05$; the $0.17$ and $0.32$ values are implied
-by the notch geometry, not identified from the data. I report no behavioural cost for the
-graduated taper: its behavioural response is not credibly identified, because its
-base-broadening and marginal-rate channels pull in opposite directions and the
-iso-elastic cost cannot net them, so only its static cost and dominated-region
-removal are reported. The static costs and the dominated region remain the robust,
-$e$-free anchors; the behavioural magnitudes are conditional on the assumed $e$.
+\paragraph{Findings.} Four results stand out. First, the static pipeline prices
+level and schedule reforms on a common \pounds85{,}000 / \pounds184.8bn base
+(\(-\)\pounds753m to raise the threshold to \pounds100{,}000, \(-\)\pounds520m
+for a graduated taper, \(-\)\pounds484m and \(-\)\pounds242m for $10\%$ and
+$15\%$ banded reduced rates), and its anchor costing of the \pounds85{,}000 to
+\pounds90{,}000 move tracks HMRC's published figure once the deregistration
+convention is stated: the full-deregistration convention overshoots
+($-$\pounds323m against the published $-$\pounds185m in 2025--26, consistent
+with the official costing's phased registration response), the retention
+convention matches the published 2025--26 figure to \pounds1m
+($-$\pounds184.1m against $-$\pounds185m), and both conventions reproduce the
+official profile's
+narrowing and its 2028--29 sign change under the uprated counterfactual
+threshold path.
 
-\paragraph{Limitations and future work.} The model is a turnover-tax-notch
-approximation: it treats VAT as a cost on turnover, whereas real VAT is levied on
-value added with input reclaim, and roughly 43\% of below-threshold firms register
-voluntarily \citep{liuetal2021}, so the effective notch is smaller than a flat
-treatment implies. The dominated-region width indexes the misallocation distortion
-only and omits the compliance and administrative-cost saving that a \emph{higher}
-threshold delivers by removing small firms from VAT---the classic rationale for a
-high registration threshold \citep{keenmintz2004}---so the efficiency comparison is
-partial; a full welfare/MVPF accounting would net these compliance costs against
-the misallocation distortion. The menu reforms are also costed only in aggregate:
+Second, the notch's distortion is captured exactly by its dominated region, the
+\citet{klevenwaseem2013} width $a=T^{*}\tau/(1-\tau)=\pounds21{,}250$---an
+accounting identity rather than a new structural result, but one that is
+invariant to the firm's input share under the value-added formulation and
+spans a populous range of roughly $156{,}000$ weighted firms. Setting cost
+against distortion on this metric: raising the threshold carries the largest
+static cost and relocates the region without changing its width; a banded
+reduced rate lowers the largest single notch (from \pounds17{,}000 to
+\pounds12{,}750 at $15\%$) but adds a secondary notch at the band top, leaving
+the total dominated width essentially unchanged (\pounds21{,}562 at $15\%$,
+\pounds22{,}569 at $10\%$); only the graduated taper removes the dominated
+region, at a static cost of \(-\)\pounds520m against the $10\%$ band's
+\(-\)\pounds484m, which removes none of it. The metric indexes misallocation
+only; the limitations paragraph below states what it omits.
+
+Third, the synthetic data carry a transparency lesson: sub-band structure in
+band-calibrated microdata is exactly what its targets put there, so it
+supports no bunching inference in either direction. The 2023--24 population's
+near-threshold profile is calibrated to the OBR's published
+\pounds1{,}000-band data, and the estimator reads it back as target-inherited
+excess mass ($E=7{,}933$); a placebo that regenerates without the fine
+targets returns zero; and the 2024--25 vintage, which has no fine targets,
+shows the coarse \pounds90{,}000 band edge alone yielding an excess-bunching
+statistic within 10\% of the administrative estimate---coincidental,
+specification-unstable, and behaviour-free. A redesigned power test confirms
+the estimator detects moderate genuine signals (recovering half to two-thirds
+of 5{,}000--8{,}000-firm injections, attenuated, never inflated). An earlier draft
+of this paper reported ``reproducing'' the administrative density step at
+\pounds85{,}000 when a liability mis-scaling manufactured it; the paper now
+documents the artifact, its correction, and the replacement of optimiser
+side-effects with published fine-band targets as the sharpest demonstration of
+the lesson. The behavioural evidence on threshold bunching remains the
+administrative estimate of \citet{liuetal2021}.
+
+Fourth, the behavioural layer's contribution is a robustness statement: on the
+intensive margin, naming an elasticity barely moves the static costings. A
+pure level rise has exactly zero intensive-margin offset at every $e$---released
+firms leave the VAT base, so their expansion is untaxed, and boundary-crossers
+optimally bunch below the new threshold---and the reduced-rate bands' offsets
+stay under $6\%$ of the static cost across $e\in\{0.05,0.17,0.32\}$ (the
+$10\%$ band falls from \pounds484m to \pounds475m at $e=0.17$). The
+graduated taper is priced only statically: its continuously varying rate is
+outside the flat-rate machinery. The behavioural uncertainty that could move
+these costings materially sits on the extensive margin---registration and
+location choice at the notch---which these data cannot identify and the paper
+prices only through its exact analytic geometry.
+
+\paragraph{Limitations and future work.} The model abstracts from several
+margins, each stated where it binds. It has no firm location choice and no
+extensive-margin response; voluntary registration enters only as a
+registration-rate parameter and a retention sensitivity, not a choice model;
+net-repayment traders are outside the liability model
+(Section~\ref{sec:data}); the statutory rolling registration test is
+approximated by a data-year turnover test on total rather than taxable
+turnover; the near-threshold profile rests on two stated assumptions (the
+2023--24 interpolation between the OBR's 2019--20 outturn and 2025--26
+frozen-threshold projection, and the shape-only, side-consistent treatment
+of the OBR bins, whose chart universe differs from the ONS frame);
+and the calibrated revenue bases sit about $5.8\%$ above the HMRC
+liability-by-band target sums, with band-level calibration between $79\%$ and
+$94\%$ (Section~\ref{sec:static}, footnote). The dominated-region width
+indexes the misallocation distortion only and omits the compliance and
+administrative-cost saving that a \emph{higher} threshold delivers by removing
+small firms from VAT---the classic rationale for a high registration threshold
+\citep{keenmintz2004}---so the efficiency comparison is partial; it likewise
+books no compliance saving to the taper or reduced rate, which keep every band
+firm inside the VAT system, and a taper's administrability (an effective rate
+that depends on annual turnover cannot be charged on invoices, so a real
+design would operate as remittance-side relief) is a design question the
+costing does not address. The menu reforms are costed only in aggregate:
 because VAT liability by sector is excluded from the calibration optimiser
-(Section~\ref{sec:data}), the framework does not yet report the sectoral incidence
-of a taper or reduced rate---which sectors gain and by how much---a cut of obvious
-policy interest that I leave to future work. The microdata are synthetic and calibrated to coarse aggregate
-bands---which is why the behavioural magnitudes are reported only conditional on an
-assumed elasticity rather than as estimates---and the analysis is
-partial-equilibrium, abstracting from pass-through into prices \citep{benedek2015,
-belloncopestake2022}. The conditional behavioural costing is now done
-(Section~\ref{sec:behavioural}), but on synthetic data the turnover elasticity $e$
-it requires is assumed, not identified; the chief outstanding task is therefore to
-\emph{identify} $e$ from administrative micro-data, which would turn the present
-$e$-sensitivity range into a point estimate. A welfare/MVPF analysis modelling
-value added and input reclaim would in turn convert the dominated-region distortion
-into cost--benefit terms and support revenue-neutral schedule designs that
-neutralise the notch at no net fiscal cost. Above all, validation against
-administrative firm-level data with
-genuine location choice would replace the present internal-consistency checks with
-out-of-sample tests and let the framework identify firm bunching directly.
+(Section~\ref{sec:data}), the framework does not yet report the sectoral
+incidence of a taper or reduced rate, a cut of obvious policy interest, and
+the split of band-total liability across sub-band turnover---which the anchor
+and relocation costings use---rests on the generator's common input-share
+distribution rather than on sector-composition data. The
+analysis is partial-equilibrium, abstracting from pass-through into prices
+\citep{benedek2015,belloncopestake2022}. The chief outstanding empirical task
+is to \emph{identify} the turnover elasticity from administrative micro-data,
+which would turn the $e$-sensitivity range into a point estimate; a
+welfare/MVPF accounting would net compliance costs against the misallocation
+distortion and support revenue-neutral schedule designs. Above all, validation
+against administrative firm-level data with genuine location choice would
+replace the present internal-consistency checks with out-of-sample tests.

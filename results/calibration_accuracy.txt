@@ -8,40 +8,40 @@ dimensions and excludes the VAT-liability-by-sector diagnostic.
   Vintage 2023-24  |  threshold £85k
 ================================================================
   rows (firm types):   2,941,232
-  weighted population: 2,481,542 firms
+  weighted population: 2,460,542 firms
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
-  HMRC Turnover Bands              93.0%        7.0%
-  ONS Population                   91.1%        8.9%
-  Employment Bands                 78.2%       21.8%
-  Sector Distribution              92.5%        7.5%
-  VAT Liability by Band            94.6%        5.4%
+  HMRC Turnover Bands              93.8%        6.2%
+  ONS Population                   90.3%        9.7%
+  Employment Bands                 77.9%       22.1%
+  Sector Distribution              92.7%        7.3%
+  VAT Liability by Band            91.3%        8.7%
 ----------------------------------------------------------------
-  Overall (5 calibrated dims)       89.9%       10.1%
+  Overall (5 calibrated dims)       89.2%       10.8%
 ----------------------------------------------------------------
   Informational diagnostic (not a calibration target):
-  VAT Liability by Sector          47.1%       52.9%
+  VAT Liability by Sector          45.2%       54.8%
 ================================================================
 
 ================================================================
   Vintage 2024-25  |  threshold £90k
 ================================================================
   rows (firm types):   2,945,974
-  weighted population: 2,577,078 firms
+  weighted population: 2,531,324 firms
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
-  HMRC Turnover Bands              92.7%        7.3%
-  ONS Population                   94.2%        5.8%
-  Employment Bands                 89.7%       10.3%
-  Sector Distribution              94.5%        5.5%
-  VAT Liability by Band            81.4%       18.6%
+  HMRC Turnover Bands              93.1%        6.9%
+  ONS Population                   92.6%        7.4%
+  Employment Bands                 92.4%        7.6%
+  Sector Distribution              94.2%        5.8%
+  VAT Liability by Band            92.0%        8.0%
 ----------------------------------------------------------------
-  Overall (5 calibrated dims)       90.5%        9.5%
+  Overall (5 calibrated dims)       92.8%        7.2%
 ----------------------------------------------------------------
   Informational diagnostic (not a calibration target):
-  VAT Liability by Sector          44.5%       55.5%
+  VAT Liability by Sector          44.8%       55.2%
 ================================================================
 
 Done: 2/2 vintage(s) reported.

@@ -14,7 +14,7 @@ The dominated-region width is the exact Kleven-Waseem ``a = T* * tau/(1-tau)``
 from ``notch/model.py``. We also report the analogous masses for the
 reform-shrunk bands at lower headline rates (15% -> width £15,000, 10% ->
 width £9,444), and sanity-check the counterfactual band mass against the paper's
-excess-mass E and displaced share Pi recovered from ``bunching/model.py``.
+excess-mass E and mass-conservation geometry recovered from ``bunching/model.py``.
 
 Run:  firm-microsim-dominated-region
 Out:  results/dominated_region_mass.txt
@@ -52,6 +52,11 @@ RATE_VARIANTS = [
     ("10% band", 0.10),
 ]
 
+# Reduced-rate band runs [T*, T*+BAND_WIDTH]; at the band top it reverts to the
+# standard rate tau, creating a SECOND notch whose dominated width is
+#   a' = T1 * (tau - r) / (1 - tau),  T1 = T* + BAND_WIDTH.
+REDUCED_RATE_BAND_WIDTH = 20.0  # £k (band [85k, 105k] in the paper)
+
 
 def mass_in_band(centres, density, lo, hi, bin_width=BIN_WIDTH):
     """Integrate a binned density over [lo, hi) -> weighted firm count.
@@ -69,12 +74,11 @@ def main() -> None:
 
     # --- Build observed + mass-conserving counterfactual densities ----------
     est = BunchingEstimator(VINTAGE)
-    res = est.estimate()  # full reduced-form bunching solve (E, Pi, y_R, ...)
+    res = est.estimate()  # full reduced-form bunching solve (E, y_R, ...)
     centres = res["centres"]
     f_obs = res["f_obs"]
     f_cf = res["f_cf"]
     E = res["E"]            # excess mass below T* (weighted firms)
-    Pi = res["Pi"]          # displaced share
     y_R = res["y_R"]        # endogenous marginal buncher (£k)
     Delta_R = res["Delta_R"]
 
@@ -104,6 +108,24 @@ def main() -> None:
             "obs": obs,
             "cf": cf,
             "net": cf - obs,   # net missing (displaced) mass in band
+        })
+
+    # --- Secondary dominated region at the reduced-rate band top ------------
+    # A banded reduced rate reverts to the standard rate tau at the band top
+    # T1, creating a SECOND notch with dominated width a' = T1*(tau-r)/(1-tau).
+    # The total dominated turnover under a reduced rate is primary + secondary.
+    band_top = t_star + REDUCED_RATE_BAND_WIDTH      # £105k
+    sec_rows = []
+    for label, tau_r in RATE_VARIANTS[1:]:           # 15% and 10% only
+        a_sec = band_top * (TAU - tau_r) / (1.0 - TAU)
+        lo, hi = band_top, band_top + a_sec
+        obs = mass_in_band(centres, f_obs, lo, hi)
+        cf = mass_in_band(centres, f_cf, lo, hi)
+        prim = next(r for r in rows if r["tau"] == tau_r)
+        sec_rows.append({
+            "label": label, "tau": tau_r, "a_sec": a_sec,
+            "lo": lo, "hi": hi, "obs": obs, "cf": cf,
+            "prim_obs": prim["obs"], "total_obs": prim["obs"] + obs,
         })
 
     # Baseline (20%) is the paper's actual dominated region.
@@ -164,24 +186,38 @@ def main() -> None:
     W(f"  10% -> band width GBP {rows[2]['a']*1000:,.0f}: net displaced = {rows[2]['net']:,.0f} firms"
       f"  (CF total {rows[2]['cf']:,.0f})")
     W("")
-    W("CONSISTENCY CHECK vs paper's reduced-form bunching:")
+    W(f"SECONDARY NOTCH at the reduced-rate band top (T1 = GBP {band_top*1000:,.0f}):")
+    W("  A banded reduced rate reverts to tau=20% at T1, adding a SECOND")
+    W("  dominated region a' = T1*(tau-r)/(1-tau). Total dominated turnover and")
+    W("  mass = primary [T*, T*+a] + secondary [T1, T1+a'].")
+    for s in sec_rows:
+        W(f"  {s['label']:<9} secondary [{s['lo']:.0f}, {s['hi']:.3f}) "
+          f"width GBP {s['a_sec']*1000:,.0f}  OBS = {s['obs']:,.0f}")
+        W(f"            primary OBS {s['prim_obs']:,.0f} + secondary OBS {s['obs']:,.0f}"
+          f" = TOTAL {s['total_obs']:,.0f}  (baseline {base['obs']:,.0f},"
+          f" {100*(s['total_obs']/base['obs']-1):+.1f}%)")
+    W("")
+    W("REDUCED-FORM BUNCHING on this population (context for the masses above):")
     W(f"  excess mass below T*       E       = {E:,.0f} firms")
     W(f"  missing mass above T*      Delta_R = {Delta_R:,.0f} firms")
-    W(f"  displaced share            Pi      = {Pi:.3f}")
     W(f"  marginal buncher           y_R     = GBP {y_R*1000:,.0f}")
     W(f"  NET displaced mass in 20% dominated band = {missing_in_band:,.0f} firms")
-    W(f"  -> NET band mass / E               = {missing_in_band/E:.2f}" if E else "")
-    W(f"  -> NET band mass / Delta_R         = {missing_in_band/Delta_R:.2f}" if Delta_R else "")
     W("")
-    W("  By mass conservation the excess mass E (~8.7k) that bunches just below")
-    W("  T* is the mass that, absent the notch, would have spread into the region")
-    W("  above T*. The NET displaced mass in the dominated band (~13.7k) is the")
-    W("  same order of magnitude as E and Delta_R (~9.2k) -- it slightly exceeds")
-    W("  them because the wide 21.25k band also captures part of the smooth")
-    W("  density deficit beyond the marginal buncher y_R = GBP 90,583, not just")
-    W("  the bunching window. CONSISTENT: no order-of-magnitude discrepancy.")
-    W("  (The TOTAL CF density in the band, 150k, is NOT the displaced mass and")
-    W("  should not be compared to E -- that would be a category error.)")
+    if E < 100:
+        W("  The estimator finds NO excess mass below the threshold on this")
+        W("  population (E ~ 0): the corrected net-liability calibration produces")
+        W("  no synthetic bunching, so the dominated-region masses above are")
+        W("  TARGET-BAND GEOMETRY (weighted firms located in each band), not")
+        W("  behavioural displacement. The band masses answer 'how many weighted")
+        W("  firms sit where the schedule makes location dominated', which is the")
+        W("  policy-relevant exposure count for each reform variant.")
+    else:
+        W("  By mass conservation the excess mass E that bunches just below T*")
+        W("  is the mass that, absent the notch, would have spread into the")
+        W("  region above T*. Compare magnitudes of E, Delta_R, and the NET band")
+        W("  mass; the wide band also captures smooth-density deficit beyond y_R.")
+        W("  (The TOTAL CF density in the band is NOT the displaced mass and")
+        W("  should not be compared to E -- that would be a category error.)")
     W("")
     W(f"  total observed weighted mass on [{est.firms['annual_turnover_k'].min():.0f},"
       f"{est.firms['annual_turnover_k'].max():.0f}] est. range = {total_obs_mass:,.0f}")

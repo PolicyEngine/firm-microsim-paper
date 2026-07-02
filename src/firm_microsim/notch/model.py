@@ -44,8 +44,10 @@ from firm_microsim.config import SYNTHETIC_DATA_DIR, VINTAGES
 TAU = 0.20          # statutory UK VAT rate (full effective rate once registered)
 ALPHA = 0.989       # returns-to-scale (near-CRS; flags taxed-branch degeneracy)
 
-# Structural turnover elasticities for the marginal-buncher solve, calibrated to
-# the paper's reduced-form bunching estimates (median ~0.17, mean ~0.32).
+# ASSUMED turnover elasticities for the marginal-buncher solve. These are the
+# midpoint and upper sweep values of the paper's e-sensitivity analysis (see
+# dynamic.model.ELASTICITIES); they are assumption choices, NOT identified from
+# the synthetic data and NOT derived from the reduced-form bunching outputs.
 E_MEDIAN = 0.17
 E_MEAN = 0.32
 

@@ -71,7 +71,7 @@ def estimate(turnover: np.ndarray, weight: np.ndarray, label: str) -> dict:
     r = _run_estimator(turnover, weight, T_STAR)
     print(
         f"  {label:<28s} b={r['b']:+.4f}  E={r['E']:>10,.0f}  "
-        f"b_llat={r['b_llat']:.3f}  y_R={r['y_R']:.2f}  sigma={r['sigma']:.3f}"
+        f"b_llat={r['b_llat']:.3f}  y_R={r['y_R']:.2f}"
     )
     return r
 
@@ -160,6 +160,9 @@ def build_regenerate_placebo() -> dict:
         data.hmrc_bands = dict(data.hmrc_bands)
         data.hmrc_bands["£1_to_Threshold"] = dens * T_STAR
         data.hmrc_bands["£Threshold_to_£150k"] = dens * (150.0 - T_STAR)
+        # Remove the OBR near-threshold shape targets as well: the placebo
+        # world has NO fine structure in its targets at all.
+        data.near_threshold_bins = None
         return data
 
     gen_mod.load_data = patched_load

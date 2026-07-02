@@ -108,7 +108,9 @@ def main(argv=None):
     for rname, (sched, label) in reforms.items():
         rs = reform_revenue(df, sched, E_HEADLINE, behavioural=False)
         beh = {}
-        if args.behavioural:
+        # The taper (regions=None) is excluded from the behavioural layer: its
+        # rate varies continuously, so the region-confined solve is undefined.
+        if args.behavioural and getattr(sched, "regions", None) is not None:
             for e in elasticities:
                 beh[e] = reform_revenue(df, sched, e, behavioural=True)
 

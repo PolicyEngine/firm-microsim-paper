@@ -68,6 +68,12 @@ VINTAGES: Dict[str, Dict[str, float]] = {
 }
 DEFAULT_VINTAGE: str = os.environ.get("DATA_VINTAGE", "2023-24")
 
+# Standard UK VAT rate. A registered firm's net VAT liability is this rate
+# applied to its value added (turnover less inputs):
+#   v_i = STANDARD_VAT_RATE * (turnover_i - inputs_i).
+# This is the single place the rate is set.
+STANDARD_VAT_RATE: float = 0.20
+
 # Processed input file names (placed in PROCESSED_DATA_DIR by an upstream
 # ETL process). These map onto the original ONS + HMRC official tables.
 INPUT_FILES: Dict[str, str] = {
@@ -135,6 +141,9 @@ class Config:
     employment_importance: float = 1.0
     vat_liability_sector_importance: float = 1.0
     vat_liability_band_importance: float = 2.0
+    # Near-threshold OBR £1k-band targets (EFO Mar-2023 Chart C data;
+    # applied only at the £85k threshold — see data_loader).
+    near_threshold_importance: float = 5.0
 
     # Whether to include VAT-liability-by-sector as a calibration target.
     # Disabled by default: the model does not yet calibrate the input/output
@@ -143,6 +152,22 @@ class Config:
     # informational diagnostic (see validate.py). Restore once input/output
     # calibration exists — tracked in the GitHub issues.
     calibrate_vat_liability_sector: bool = False
+    # Calibrate the near-threshold £1k-band shape to the OBR Chart C data
+    # (2023-24 / £85k vintage only; the chart covers the £85k era).
+    calibrate_near_threshold: bool = True
+
+    # --- Fast-iteration stratified sampling -------------------------------
+    # 1.0 / 1.0 = full synthetic census (release builds). Lower fractions
+    # thin the draws, carrying the removed mass as per-stratum base weights
+    # (strata: sector x HMRC band x inside/outside the analysis window), so
+    # every calibration target remains a TRUE total at any fraction. The
+    # analysis window keeps a higher fraction for near-threshold density
+    # resolution; a per-stratum floor protects sparse sector x band cells.
+    sample_tail_fraction: float = 1.0
+    sample_window_fraction: float = 1.0
+    sample_window_lo_k: float = 15.0
+    sample_window_hi_k: float = 150.0
+    sample_cell_floor: int = 40
 
     # --- Paths (overridable) ---------------------------------------------
     data_dir: Path = DATA_DIR

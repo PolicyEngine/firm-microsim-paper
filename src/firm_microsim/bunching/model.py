@@ -18,8 +18,11 @@ mass-conservation constraint imposed:
     above), rather than fixed at an arbitrary window.
 
 From these objects it computes the bunching ratio ``b``, excess mass ``E``, the
-CES/logit substitution elasticity ``sigma``, the local (notch-width) turnover
-elasticity, and bootstrap standard errors.
+mass-conservation geometry (``Delta_R``, ``y_R``), and bootstrap standard
+errors. It deliberately reports NO elasticities: with the notch geometry these
+data produce, no elasticity is identified from the density alone (see the
+paper's placebo), and earlier wedge-normalised "elasticity" outputs inherited
+an ad hoc ``tau/2`` normalisation from a deleted smoothed-schedule model.
 
 Normalisation note (literature comparability)
 ---------------------------------------------
@@ -54,7 +57,6 @@ RANGE_HI = 140.0        # estimation range upper edge (£1,000)
 
 DEFAULT_DEGREE = 7      # counterfactual polynomial degree
 DEFAULT_WINDOW = 15.0   # excluded window half-width either side of t* (£1,000)
-TAU_E = 0.05            # effective wedge for the CES substitution elasticity
 
 N_BOOT = 200            # bootstrap replications
 RNG_SEED = 20240617
@@ -255,72 +257,6 @@ def excess_bunching_llat(
 
 
 # ---------------------------------------------------------------------------
-# Elasticities
-# ---------------------------------------------------------------------------
-
-def substitution_elasticity(
-    q_N_obs: float,
-    q_R_obs: float,
-    q_N_cf: float,
-    q_R_cf: float,
-    tau_e: float = TAU_E,
-) -> float:
-    """CES/logit share equation: ``sigma = ln(RR) / ln(1 + tau_e)``.
-
-    ``RR = (q_R_cf / q_N_cf) / (q_R_obs / q_N_obs)`` is the relative-risk of the
-    above/below share between counterfactual and observed worlds.
-    """
-    if min(q_N_obs, q_R_obs, q_N_cf, q_R_cf) <= 0:
-        return np.nan
-    rr = (q_R_cf / q_N_cf) / (q_R_obs / q_N_obs)
-    if rr <= 0:
-        return np.nan
-    return float(np.log(rr) / np.log(1 + tau_e))
-
-
-def local_turnover_elasticity(
-    centres: np.ndarray,
-    f_obs: np.ndarray,
-    f_cf: np.ndarray,
-    t_star: float,
-    window_lo: float,
-    y_R: float,
-) -> tuple[float, float]:
-    """Local (notch-width, Method B) turnover elasticity.
-
-    Following the notch logic of Kleven--Waseem, the excess turnover span of the
-    marginal buncher identifies an elasticity relative to the effective wedge:
-
-        eps = (dy / t_star) / tau_eff,   tau_eff = TAU_MAX / 2
-
-    (``tau(t_star) = tau_max / 2`` holds at the threshold for any sigmoid
-    steepness, so ``tau_eff`` is steepness-invariant.)
-
-    Returns ``(eps_median, eps_marginal)``: the bunching-mass-weighted median of
-    bin-level implied elasticities across the manipulation window, and the
-    headline marginal-buncher elasticity built from ``dyR = y_R - t_star``.
-    """
-    tau_eff = TAU_MAX / 2.0
-    mask = (centres >= t_star - window_lo) & (centres <= y_R)
-    excess = np.maximum(f_obs[mask] - f_cf[mask], 0.0)
-    dy = np.abs(centres[mask] - t_star)
-    eps_bins = (dy / t_star) / tau_eff
-
-    if excess.sum() <= 0:
-        return np.nan, np.nan
-
-    order = np.argsort(eps_bins)
-    e_sorted = eps_bins[order]
-    w_sorted = excess[order]
-    cw = np.cumsum(w_sorted) / np.sum(w_sorted)
-    eps_median = float(np.interp(0.5, cw, e_sorted))
-
-    dyR = max(y_R - t_star, 0.0)
-    eps_marginal = float((dyR / t_star) / tau_eff)
-    return eps_median, eps_marginal
-
-
-# ---------------------------------------------------------------------------
 # Single-pass estimator
 # ---------------------------------------------------------------------------
 
@@ -331,9 +267,12 @@ def _run_estimator(
     degree: int = DEFAULT_DEGREE,
     window_lo: float = DEFAULT_WINDOW,
     window_hi: float = DEFAULT_WINDOW,
-    tau_e: float = TAU_E,
 ) -> dict:
-    """Run the full mass-conserving estimator once and return all statistics."""
+    """Run the full mass-conserving estimator once and return all statistics.
+
+    Reports density geometry only (``b``, ``b_llat``, ``E``, ``Delta_R``,
+    ``y_R``, ``dyR``); no elasticity is identified from these data.
+    """
     centres, f_obs = bin_density(turnover, weight)
     f_cf = fit_counterfactual(centres, f_obs, t_star, degree, window_lo, window_hi)
     E, Delta_R, y_R, dyR = locate_marginal_buncher(
@@ -342,12 +281,7 @@ def _run_estimator(
     b, q_N_obs, q_R_obs, q_N_cf, q_R_cf = bunching_stats(
         centres, f_obs, f_cf, t_star, window_lo, y_R
     )
-    sigma = substitution_elasticity(q_N_obs, q_R_obs, q_N_cf, q_R_cf, tau_e)
-    eps_median, eps_marginal = local_turnover_elasticity(
-        centres, f_obs, f_cf, t_star, window_lo, y_R
-    )
     b_llat = excess_bunching_llat(centres, f_obs, f_cf, t_star, window_lo, y_R)
-    Pi = 1 - (1 + tau_e) ** (-sigma) if np.isfinite(sigma) else np.nan
     return {
         "b": b,
         "b_llat": b_llat,
@@ -355,10 +289,6 @@ def _run_estimator(
         "Delta_R": Delta_R,
         "y_R": y_R,
         "dyR": dyR,
-        "sigma": sigma,
-        "Pi": Pi,
-        "eps_local_median": eps_median,
-        "eps_marginal": eps_marginal,
         "centres": centres,
         "f_obs": f_obs,
         "f_cf": f_cf,
@@ -411,13 +341,11 @@ class BunchingEstimator:
         degree: int = DEFAULT_DEGREE,
         window_lo: float = DEFAULT_WINDOW,
         window_hi: float = DEFAULT_WINDOW,
-        tau_e: float = TAU_E,
     ) -> dict:
         """Point estimates over the full weighted sample.
 
         Returns a dict with ``b``, ``b_llat``, ``E``, ``Delta_R``, ``y_R``,
-        ``dyR``, ``sigma``, ``Pi``, ``eps_local_median``, ``eps_marginal``, and
-        the binned ``centres``, ``f_obs``, ``f_cf`` arrays.
+        ``dyR``, and the binned ``centres``, ``f_obs``, ``f_cf`` arrays.
         """
         return _run_estimator(
             self.firms["annual_turnover_k"].to_numpy(),
@@ -426,7 +354,6 @@ class BunchingEstimator:
             degree=degree,
             window_lo=window_lo,
             window_hi=window_hi,
-            tau_e=tau_e,
         )
 
     def bootstrap(
@@ -446,14 +373,17 @@ class BunchingEstimator:
         w = self.firms["weight"].to_numpy()
         n = len(turnover)
         p = w / w.sum()
+        # Each replicate carries uniform weights summing to the ORIGINAL
+        # weighted mass W (draws are already probability-proportional-to-w);
+        # unit weights would rescale mass statistics such as E by n/W.
+        rep_w = np.full(n, w.sum() / n)
 
-        keys = ["b", "b_llat", "E", "sigma", "Pi",
-                "eps_local_median", "eps_marginal", "dyR"]
+        keys = ["b", "b_llat", "E", "dyR"]
         rows = []
         for _ in range(n_boot):
             idx = rng.choice(n, size=n, replace=True, p=p)
             res = _run_estimator(
-                turnover[idx], np.ones(n), self.t_star, **kw
+                turnover[idx], rep_w, self.t_star, **kw
             )
             rows.append({k: res[k] for k in keys})
         return pd.DataFrame(rows)
@@ -482,13 +412,11 @@ class BunchingEstimator:
         self,
         degrees: tuple[int, ...] = (5, 6, 7, 8),
         windows: tuple[float, ...] = (10.0, 15.0, 20.0, 25.0),
-        tau_es: tuple[float, ...] = (0.025, 0.05, 0.075, 0.10),
     ) -> dict[str, pd.DataFrame]:
-        """Point-estimate sensitivity grids.
+        """Point-estimate sensitivity grid.
 
-        Returns ``{"degree_window": df, "tau_e": df}``: the first sweeps the
-        counterfactual polynomial degree against the exclusion window
-        (symmetric), the second sweeps the effective wedge ``tau_e``.
+        Returns ``{"degree_window": df}``: the counterfactual polynomial degree
+        swept against the (symmetric) exclusion window.
         """
         turnover = self.firms["annual_turnover_k"].to_numpy()
         w = self.firms["weight"].to_numpy()
@@ -507,17 +435,7 @@ class BunchingEstimator:
                         "b": r["b"],
                         "b_llat": r["b_llat"],
                         "E": r["E"],
-                        "sigma": r["sigma"],
-                        "eps_local_median": r["eps_local_median"],
                     }
                 )
 
-        te_rows = []
-        for te in tau_es:
-            r = _run_estimator(turnover, w, self.t_star, tau_e=te)
-            te_rows.append({"tau_e": te, "sigma": r["sigma"], "Pi": r["Pi"]})
-
-        return {
-            "degree_window": pd.DataFrame(dw_rows),
-            "tau_e": pd.DataFrame(te_rows),
-        }
+        return {"degree_window": pd.DataFrame(dw_rows)}

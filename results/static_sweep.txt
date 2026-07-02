@@ -1,0 +1,49 @@
+STATIC RESULTS DUMP
+==========================================================================
+
+Anchor reform (85k -> 90k, 2023-24 vintage = HMRC's pre-reform basis)
+model vs HMRC published costing (Spring Budget 2024), by fiscal year;
+baseline column = counterfactual threshold path (85/85/87/89/92k).
+--------------------------------------------------------------------------
+   year  hmrc_impact_m  policyengine_impact_m
+2024-25         -150.0                 -316.6
+2025-26         -185.0                 -322.9
+2026-27         -125.0                 -195.1
+2027-28          -50.0                  -66.4
+2028-29           65.0                  102.9
+
+Voluntary-retention sensitivity (anchor, per year): headline assumes
+every released firm deregisters (full liability lost). If the Liu et
+al. (2021) voluntary share (43%) of released-firm liability is
+retained, the impact scales accordingly:
+  2024-25: headline -316.6m -> retention-adjusted -180.5m (HMRC -150m)
+  2025-26: headline -322.9m -> retention-adjusted -184.1m (HMRC -185m)
+  2026-27: headline -195.1m -> retention-adjusted -111.2m (HMRC -125m)
+  2027-28: headline -66.4m -> retention-adjusted -37.8m (HMRC -50m)
+  2028-29: headline +102.9m -> retention-adjusted +58.7m (HMRC +65m)
+
+Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)
+counterfactual method: smooth above-threshold extrapolation (degree 1)
+--------------------------------------------------------------------------
+ threshold_k  revenue_change_m  firms_change_k
+        70.0       1042.801081      145.683685
+        75.0        776.246417      107.201802
+        80.0        513.594682       70.093893
+        85.0        254.845876       34.359959
+        90.0         -0.000000       -0.000000
+        95.0       -250.942947      -32.985985
+       100.0       -497.982966      -64.597995
+       105.0       -741.120055      -94.836030
+       110.0       -980.354215     -123.700091
+       115.0      -1215.685446     -151.190177
+       120.0      -1447.113747     -177.306289
+
+Total VAT revenue at GBP 90k, 2025-26: 200.9bn
+Total VAT revenue at GBP 90k, 2026-27: 206.1bn
+
+Bases and calibration-target comparison
+--------------------------------------------------------------------------
+  2023-24: registered base (>= threshold, unaged) = 184.8bn
+  2024-25: registered base (>= threshold, unaged) = 190.7bn
+
+Sweep thresholds: [70000, 75000, 80000, 85000, 90000, 95000, 100000, 105000, 110000, 115000, 120000]

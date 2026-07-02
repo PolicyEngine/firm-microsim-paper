@@ -17,8 +17,11 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 
-from .calibration import EMPLOYMENT_BANDS, VAT_LIABILITY_BANDS
-from .config import Config
+from .calibration import (
+    EMPLOYMENT_BANDS,
+    VAT_LIABILITY_BANDS_CALIBRATED,
+)
+from .config import Config, STANDARD_VAT_RATE
 from .data_loader import LoadedData
 
 logger = logging.getLogger(__name__)
@@ -127,7 +130,7 @@ def validate(
     threshold = config.vat_threshold
     df = synthetic_df.copy()
     df["hmrc_band"] = df["annual_turnover_k"].apply(lambda t: _hmrc_band_name(t, threshold))
-    df["vat_liability_k"] = df["annual_turnover_k"] - df["annual_input_k"]
+    df["vat_liability_k"] = STANDARD_VAT_RATE * (df["annual_turnover_k"] - df["annual_input_k"])
     df["sic_numeric"] = df["sic_code"].astype(int)
     df["weighted_liability_m"] = df["vat_liability_k"] * df["weight"] / 1000.0
     all_bands = df.groupby("hmrc_band")["weight"].sum()
@@ -200,8 +203,19 @@ def validate(
             float(synth_liab_band.get(band, 0.0)),
             float(data.vat_liability_bands[band]),
         )
-        for band in VAT_LIABILITY_BANDS
+        for band in VAT_LIABILITY_BANDS_CALIBRATED
     ]
+    # The below-threshold liability band is NOT calibrated (voluntary
+    # registrants' net remittances are outside the liability model); log it
+    # as an informational diagnostic, like VAT liability by sector.
+    below_acc = _accuracy(
+        float(synth_liab_band.get("£1_to_Threshold", 0.0)),
+        float(data.vat_liability_bands["£1_to_Threshold"]),
+    )
+    logger.info(
+        "VAT liability £1-to-Threshold (informational, NOT calibrated): %.1f%%",
+        100.0 * below_acc,
+    )
     vat_liability_band_accuracy = (
         float(np.mean(liab_band_accs)) if liab_band_accs else 0.0
     )

@@ -50,7 +50,7 @@ from .calibration import (
     build_target_matrix,
     optimize_weights,
 )
-from .config import Config, DEFAULT_CONFIG
+from .config import Config, DEFAULT_CONFIG, STANDARD_VAT_RATE
 from .data_loader import LoadedData, load_data
 from .validate import ValidationReport, validate
 
@@ -138,9 +138,12 @@ def generate_input_values(
 ) -> Tensor:
     """Draw per-firm input expenditure (£k) from Beta input/output ratios.
 
-    Most firms get inputs at 60-95% of turnover (positive VAT liability);
-    sector-specific shifts allow some firms inputs > turnover (negative
-    liability), matching HMRC's negative net-liability sectors.
+    The input/output ratio is centred near 0.6 (value added ~40% of turnover,
+    in line with the UK non-financial business economy) with sector-specific
+    shifts, and clamped to [0.1, 0.95] so value added is always strictly
+    positive. Net VAT liability is then the standard rate applied to value
+    added (see :func:`generate_synthetic_firms`); the model is a standard-rate
+    turnover-tax approximation and does not represent net-repayment positions.
 
     Args:
         turnover_values: Per-firm turnover (£k).
@@ -154,7 +157,7 @@ def generate_input_values(
     n_firms = len(turnover_values)
 
     base_ratios = torch.distributions.Beta(4.0, 2.0).sample((n_firms,)).to(device)
-    scaled = 0.3 + base_ratios * 1.0  # map [0,1] -> [0.3, 1.3]
+    scaled = 0.2 + base_ratios * 0.6  # map [0,1] -> [0.2, 0.8]; Beta(4,2) mean -> 0.6
     sector_noise = torch.randn(n_firms, device=device) * 0.15
 
     sic_np = sic_codes.cpu().numpy()
@@ -166,21 +169,23 @@ def generate_input_values(
     scaled = scaled + neg_t.float() * (torch.rand(n_firms, device=device) * 0.3)
     scaled = scaled - high_t.float() * (torch.rand(n_firms, device=device) * 0.2)
 
-    # Floor the input/output ratio at 0.6 (value-added <= 40% of turnover).
-    # A lower floor lets a few firms get implausibly low input (VA up to 90%
-    # of turnover), which both produces unrealistic per-firm VAT liabilities
-    # and lets the weight optimiser concentrate huge weights on those outliers
-    # to hit the liability targets — distorting the near-threshold density and
-    # the static threshold sweep. 0.6 matches the documented 60-95% intent.
-    final_ratios = torch.clamp(scaled + sector_noise, 0.6, 1.5)
+    # Clamp the input/output ratio to [0.1, 0.95]: value added is always
+    # strictly positive (between 5% and 90% of turnover), so no firm has inputs
+    # exceeding turnover. The upper bound 0.95 rules out negative net VAT
+    # liability (the model is a standard-rate approximation that abstracts from
+    # net-repayment positions); the lower bound 0.1 prevents implausibly high
+    # value added that the weight optimiser could exploit with outlier weights.
+    final_ratios = torch.clamp(scaled + sector_noise, 0.1, 0.95)
     input_values = torch.where(
         turnover_values > 0, turnover_values * final_ratios, torch.zeros_like(turnover_values)
     )
 
     logger.info(
-        "Input/output ratio: mean=%.2f std=%.2f; firms with negative VAT liability: %s",
+        "Input/output ratio: mean=%.2f std=%.2f; mean value-added share=%.2f; "
+        "firms with negative value added: %s",
         final_ratios.mean().item(),
         final_ratios.std().item(),
+        (1.0 - final_ratios).mean().item(),
         f"{int((final_ratios > 1.0).sum().item()):,}",
     )
     return input_values
@@ -236,8 +241,84 @@ def assign_employment(
     return torch.tensor(values, dtype=torch.float32, device=device)
 
 
+def stratified_thin(
+    turnover_values: Tensor, sic_codes: Tensor, config: Config
+) -> tuple[Tensor, Tensor]:
+    """Stratified thinning for fast iteration builds.
+
+    Keeps rows inside the analysis window ``[sample_window_lo_k,
+    sample_window_hi_k]`` at ``sample_window_fraction`` and rows outside it at
+    ``sample_tail_fraction``, with at least ``sample_cell_floor`` retained rows
+    per stratum. Strata are sector x HMRC band x window-side. Each retained
+    row carries a base weight equal to its stratum's rows-drawn / rows-kept
+    ratio, so base-weighted totals reproduce the full draw's totals exactly
+    per stratum, and every calibration target remains a true total.
+
+    Returns ``(keep_indices, base_weights_for_kept_rows)``.
+    """
+    import numpy as np
+    from .calibration import map_to_hmrc_bands
+
+    t = turnover_values.cpu().numpy()
+    sic = sic_codes.cpu().numpy()
+    band = map_to_hmrc_bands(turnover_values, config.vat_threshold).cpu().numpy()
+    in_window = (
+        (t >= config.sample_window_lo_k) & (t <= config.sample_window_hi_k)
+    )
+    frac = np.where(in_window, config.sample_window_fraction, config.sample_tail_fraction)
+
+    rng = np.random.default_rng(config.seed + 1)
+    u = rng.random(len(t))
+    keep = u < frac
+
+    # Per-stratum floor + exact ratio base weights.
+    df = pd.DataFrame({"sic": sic, "band": band, "win": in_window, "keep": keep})
+    df["order"] = u  # deterministic per-stratum top-up ordering
+    grp = df.groupby(["sic", "band", "win"], sort=False)
+    floor = config.sample_cell_floor
+    kept_counts = grp["keep"].transform("sum")
+    sizes = grp["keep"].transform("size")
+    need_topup = (kept_counts < np.minimum(floor, sizes)) & (~df["keep"])
+    if need_topup.any():
+        # Keep the lowest-u unkept rows per deficient stratum up to the floor.
+        deficit = (np.minimum(floor, sizes) - kept_counts).clip(lower=0)
+        sel = df.index[need_topup]
+        rank = (
+            df.loc[sel]
+            .groupby(["sic", "band", "win"], sort=False)["order"]
+            .rank(method="first")
+        )
+        topup_idx = sel[rank.to_numpy() <= deficit.loc[sel].to_numpy()]
+        df.loc[topup_idx, "keep"] = True
+
+    kept_counts = df.groupby(["sic", "band", "win"], sort=False)["keep"].transform("sum")
+    base = (sizes / kept_counts.replace(0, 1)).to_numpy()
+
+    keep_np = df["keep"].to_numpy()
+    keep_idx = torch.tensor(np.where(keep_np)[0], device=config.device)
+    base_kept = torch.tensor(
+        base[keep_np], dtype=turnover_values.dtype, device=config.device
+    )
+    logger.info(
+        "Stratified thinning: kept %s of %s rows (%.1f%%); base weights "
+        "1.0-%.1f; window [%.0fk, %.0fk] at %.0f%%, tails at %.0f%%",
+        f"{int(keep_np.sum()):,}",
+        f"{len(keep_np):,}",
+        100.0 * keep_np.mean(),
+        float(base_kept.max().item()),
+        config.sample_window_lo_k,
+        config.sample_window_hi_k,
+        100.0 * config.sample_window_fraction,
+        100.0 * config.sample_tail_fraction,
+    )
+    return keep_idx, base_kept
+
+
 def assign_vat_flags(
-    turnover_values: Tensor, hmrc_bands: Dict[str, float], config: Config
+    turnover_values: Tensor,
+    hmrc_bands: Dict[str, float],
+    config: Config,
+    base_weights: Tensor | None = None,
 ) -> Tensor:
     """Assign VAT registration flags.
 
@@ -259,18 +340,21 @@ def assign_vat_flags(
     device = config.device
 
     below = (turnover_values > 0) & (turnover_values <= threshold)
-    n_below = int(below.sum().item())
+    if base_weights is None:
+        n_below = float(below.sum().item())
+    else:
+        n_below = float(base_weights[below].sum().item())
     target_below = float(hmrc_bands["£1_to_Threshold"])
     voluntary_rate = target_below / n_below if n_below > 0 else 0.15
     logger.info(
-        "Voluntary VAT row rate: %.3f (target %s / synthetic rows %s)",
+        "Voluntary VAT row rate: %.3f (target %s / base-weighted rows %s)",
         voluntary_rate,
         f"{target_below:,.0f}",
-        f"{n_below:,}",
+        f"{n_below:,.0f}",
     )
 
     mandatory = turnover_values > threshold
-    if n_below > 0:
+    if int(below.sum().item()) > 0:
         voluntary = below & (torch.rand(len(turnover_values), device=device) < voluntary_rate)
     else:
         voluntary = torch.zeros_like(below)
@@ -328,6 +412,7 @@ def generate(
     threshold: Optional[float] = None,
     seed: Optional[int] = None,
     output: Optional[str] = None,
+    fast: bool = False,
     write: bool = True,
     return_report: bool = False,
 ):
@@ -368,6 +453,11 @@ def generate(
         overrides["vat_threshold"] = float(threshold)
     if seed is not None:
         overrides["seed"] = int(seed)
+    if fast:
+        overrides.update(
+            sample_window_fraction=0.30,
+            sample_tail_fraction=0.05,
+        )
     if overrides:
         # replace() re-runs Config.__post_init__, which re-derives
         # processed_dir from the (possibly new) data_vintage.
@@ -386,6 +476,15 @@ def generate(
 
     base_sic, base_turnover = generate_base_firms(data.ons_turnover, cfg.device)
     base_input = generate_input_values(base_turnover, base_sic, cfg.device)
+
+    # Fast-iteration mode: stratified thinning with per-stratum base weights.
+    if cfg.sample_tail_fraction < 1.0 or cfg.sample_window_fraction < 1.0:
+        keep_idx, base_weights = stratified_thin(base_turnover, base_sic, cfg)
+        base_sic = base_sic[keep_idx]
+        base_turnover = base_turnover[keep_idx]
+        base_input = base_input[keep_idx]
+    else:
+        base_weights = torch.ones_like(base_turnover)
 
     # Temporary per-firm employment-band assignment for the target matrix.
     tmp_emp = assign_employment(len(base_sic), data.ons_employment, cfg.device)
@@ -406,16 +505,27 @@ def generate(
         data.ons_employment,
         data.hmrc_liability_sector,
         data.vat_liability_bands,
+        near_threshold_bins=getattr(data, "near_threshold_bins", None),
+        base_weights=base_weights,
     )
 
-    weights = optimize_weights(cfg, target_matrix, target_values, spec)
+    weights = optimize_weights(
+        cfg, target_matrix, target_values, spec, base_weights=base_weights
+    )
 
     final_sic, final_turnover, final_input, final_weights = _add_zero_turnover_firms(
         base_sic, base_turnover, base_input, weights, data.hmrc_bands, cfg.device
     )
 
     employment = assign_employment(len(final_sic), data.ons_employment, cfg.device)
-    vat_flags = assign_vat_flags(final_turnover, data.hmrc_bands, cfg)
+    # Zero-turnover rows appended above carry base weight 1 (never thinned).
+    n_extra = len(final_turnover) - len(base_weights)
+    final_base = torch.cat(
+        [base_weights, torch.ones(n_extra, device=cfg.device, dtype=base_weights.dtype)]
+    )
+    vat_flags = assign_vat_flags(
+        final_turnover, data.hmrc_bands, cfg, base_weights=final_base
+    )
 
     logger.info("Assembling final DataFrame...")
     sic_np = final_sic.cpu().numpy().astype(int)
@@ -427,7 +537,7 @@ def generate(
             "sic_code": [str(s).zfill(5) for s in sic_np],
             "annual_turnover_k": turnover_np,
             "annual_input_k": input_np,
-            "vat_liability_k": turnover_np - input_np,
+            "vat_liability_k": STANDARD_VAT_RATE * (turnover_np - input_np),
             "employment": employment.cpu().numpy().astype(int),
             "weight": final_weights.cpu().numpy(),
             "vat_registered": vat_flags.cpu().numpy().astype(bool),

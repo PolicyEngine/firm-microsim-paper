@@ -29,7 +29,7 @@ from firm_microsim.figures import (
     _style_ax,
 )
 
-from .model import FISCAL_YEARS, POLICY_THRESHOLD, StaticVATModel
+from .model import POLICY_THRESHOLD, StaticVATModel
 
 REF_GREY = "#888888"      # current-threshold reference line
 HMRC_COLOR = PALETTE[4]   # lighter teal for the HMRC series
@@ -87,7 +87,10 @@ def plot_hmrc_comparison(model: StaticVATModel) -> None:
     b2 = ax.bar(x + w / 2, df["policyengine_impact_m"], w, label="Model estimate",
                 color=PRIMARY, zorder=3)
     ax.axhline(0, color="black", linewidth=0.8, zorder=2)
-    ax.set_ylim(-265, 110)
+    # Headroom scales with the data so bar labels never clip.
+    lo = min(df["hmrc_impact_m"].min(), df["policyengine_impact_m"].min())
+    hi = max(df["hmrc_impact_m"].max(), df["policyengine_impact_m"].max())
+    ax.set_ylim(lo * 1.35, hi * 1.25)
 
     # Value label on each bar (£m), padded clear of the bar end.
     for bars in (b1, b2):
@@ -96,13 +99,6 @@ def plot_hmrc_comparison(model: StaticVATModel) -> None:
             ax.text(bar.get_x() + bar.get_width() / 2, h + (5 if h > 0 else -5),
                     f"£{int(round(h))}m", ha="center",
                     va="bottom" if h > 0 else "top", fontsize=TICK_SIZE - 2)
-
-    # Baseline / policy threshold values under each fiscal-year group.
-    for i, fy in enumerate(FISCAL_YEARS):
-        ax.text(i, -220,
-                f"Baseline: £{fy['baseline'] / 1000:.0f}k\n"
-                f"Policy: £{fy['policy'] / 1000:.0f}k",
-                ha="center", va="top", fontsize=TICK_SIZE - 3, color="#666666")
 
     ax.set_xticks(x)
     ax.set_xticklabels(df["year"])

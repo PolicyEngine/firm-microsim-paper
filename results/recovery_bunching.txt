@@ -1,73 +1,39 @@
-RECOVERY / COVERAGE TEST — £85k UK VAT bunching estimator (vintage 2023-24)
+RECOVERY / POWER TEST — £85k UK VAT bunching estimator (vintage 2023-24)
 ==============================================================================
 
-Purpose
--------
-The placebo (results/placebo_bunching.txt) shows the estimator returns no
-bunching when none is present (no false positive). This test shows the
-complementary property: the estimator has POWER to recover a real
-behavioural response of KNOWN magnitude (coverage / recovery).
-
-Method
+Design
 ------
-1. Baseline: take the actual £85k synthetic firms and apply the Placebo-A
-   reweighting (smooth log-quadratic density across £85k, no step), giving
-   a null world with b=-0.0626, headline E=0, signed
-   below-threshold excess = -8,927 (a small density DEFICIT).
-2. Injection: relocate a KNOWN mass E_true from a donor window just above
-   the threshold [85, 100) to a bunching window just below it
-   [75, 85), with a triangular profile peaking at £85k.
-   This is mass-conserving and is the firm location-choice the generator
-   lacks. The relocated mass IS the injected excess mass E_true.
-3. Run the SAME estimator (bunching.model._run_estimator, degree=7,
-   window=±15k) and record recovered excess and b_hat.
-
-
-Measurement note. The headline E floors per-bin excess at zero
-(max(f_obs-f_cf,0)). Because the smoothed baseline sits in a signed
-deficit just below £85k, the floor hides the part of an injected spike
-that merely refills that deficit. The PRIMARY recovery quantity is the
-CHANGE in the SIGNED below-threshold excess relative to baseline
-(E_recovered = signed_excess - baseline signed_excess), which is the
-deficit-differenced coverage measure. The floored E_hat is also reported.
+1. Baseline: the £85k synthetic firms under the Placebo-A reweighting
+   (smooth log-quadratic density across £85k), a step-free null world:
+   b=-0.0591, E=0, y_R=84.00.
+2. Injection (Kleven–Waseem-consistent): firms in the donor region
+   (85, 112] relocate to [80, 85) with probability
+   declining linearly from the threshold to zero at the true marginal
+   buncher y_R = 112 — so the missing-mass region extends
+   12k BEYOND the ±15k exclusion window, as with
+   genuine bunching. Mass is conserved.
+3. Score with the HEADLINE estimator outputs only (floored excess mass
+   E, endogenous y_R): no side statistics that require knowing the null.
 
 Results
 -------
-    E_true  E_recovered  recovery  E_hat(fl)    b_hat   b_llat     y_R
-----------------------------------------------------------------------
-     2,000        1,792    89.6%          0  -0.0500    0.000   84.00
-     5,000        4,479    89.6%        932  -0.0312    0.103   86.48
-     8,000        7,167    89.6%      2,912  -0.0123    0.341   88.74
+    E_true      E_hat  recovery  y_R_hat    b_hat   b_llat
+----------------------------------------------------------
+     2,000        298    14.9%    85.79  -0.0468    0.032
+     5,000      2,445    48.9%    91.89  -0.0281    0.309
+     8,000      4,918    61.5%   100.00  -0.0094    0.809
 
-Baseline (null, no injection): b=-0.0626  E=0  signed_excess=-8,927
-Mean recovery across magnitudes: 89.6%  (monotone in E_true: True)
+Baseline (null, no injection): b=-0.0591  E=0  y_R=84.00
+True marginal buncher: y_R = 112. Mean recovery: 41.8% (monotone in E_true: True).
 
-Verdict
+Reading
 -------
-The estimator HAS POWER: every injected behavioural signal is detected,
-the recovered excess rises monotonically with E_true (monotone=True),
-and the bunching ratio b_hat moves steadily up from the baseline as the
-injection grows. Recovery is approximately unbiased (recovers ~90% of injected mass). The ~10% shortfall is a known,
-benign attenuation: the degree-7 polynomial counterfactual partially
-re-absorbs the injected spike and the fixed ±15k exclusion window clips
-its tails, so the estimator slightly UNDER-states a true response — it
-does not over-state one. Combined with the placebo (no false positive
-when behaviour is absent), this completes the validation: the estimator
-has BOTH no-false-positive AND power to detect a genuine location-choice
-response.
-
-Caveat for the floored E. Read on its own, the headline E badly
-understates small injections (E_hat=0 at E_true=2,000) ONLY because the
-smoothed baseline starts in a below-threshold deficit that the spike must
-first refill before any POSITIVE excess registers. This is a property of
-the flooring, not a failure of power, which is why the signed-excess
-change is the correct coverage measure.
-
-One-line summary for the paper
-------------------------------
-In a recovery exercise that injects behavioural bunching of known
-magnitude (E_true = 2,000/5,000/8,000 firms) into a step-free synthetic
-population, the estimator detects every signal and recovers ~90% of
-the injected excess mass (slightly attenuated, never inflated), confirming
-it has power; together with the placebo's null result this shows the
-estimator is both specific (no false positive) and sensitive (has power).
+Recovery below 100% is genuine estimator attenuation, now measured
+rather than asserted: the counterfactual is fitted on bins that include
+the depressed (100, 112] missing-mass region outside the exclusion
+window, pulling the fitted counterfactual down and truncating the
+measured missing mass; the mass-conservation search then places y_R_hat
+accordingly. The estimator under-states a true response and does not
+over-state one; together with the placebo's null result (no false
+positive on a step-free world) this characterises the estimator as
+specific and, with quantified attenuation, sensitive.

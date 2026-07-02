@@ -7,16 +7,16 @@ aggregates. This appendix records the implementation detail deferred from that
 account.
 
 Each of the approximately $2.94$ million firm rows carries a turnover, an input
-expenditure, a calibration weight, and a registration status; the weights are
-chosen so the weighted totals reproduce the official targets while the population
-sums to about $2.5$ million firms. Because the population is calibrated \emph{to} the HMRC aggregates,
-agreement between my weighted outputs and those aggregates is a check of
-\emph{internal consistency}, not external validation: any target used in
-calibration is reproduced by construction. I therefore read the
-$\sim\!90\%$ calibration accuracy, and the close match of the static
-\pounds85{,}000\,\(\to\)\,\pounds90{,}000 costing to HMRC's published figures, as
-consistency checks on the pipeline rather than out-of-sample tests of firm
-behaviour.
+expenditure, a net VAT liability ($v_i = 0.20\,(y_i - x_i)$), a calibration
+weight, and a registration status; the weights are chosen so the weighted
+totals reproduce the official targets while the population sums to about
+$2.5$ million firms. Because the population is calibrated \emph{to} the HMRC
+aggregates, agreement between my weighted outputs and those aggregates is a
+check of \emph{internal consistency}, not external validation: any target used
+in calibration is reproduced by construction. The headline calibration
+accuracies (89.2\% and 92.8\% for the two vintages) and the anchor comparison
+of Section~\ref{sec:static} are therefore consistency checks on the pipeline,
+not out-of-sample tests of firm behaviour.
 
 The reported calibration score is a bounded summary statistic. For each
 dimension I compute
@@ -41,18 +41,21 @@ at commit \texttt{cd98b5c} and PolicyEngine/populace pull request 223 at commit
 processed numeric inputs exactly after dropping presentation-only labels,
 totals, and the HMRC ``Unknown'' column that the generator does not calibrate:
 six normalized source tables checked, zero mismatches, and maximum numeric
-difference zero. A 1,000-iteration Populace run from those targets generated
-2,946,015 firm rows. Its own validator reports a 93.8 percent overall
-calibration score, compared with the paper validator's 90.5 percent score for
-the same vintage, but this overall comparison is not like-for-like: HMRC
-turnover-band accuracy uses different band sets, and sector distribution
-reflects different calibration-target definitions. The directly comparable rows
-are ONS population, employment bands, and VAT liability by turnover band.
-Populace hits VAT liability by turnover band more closely, while its weighted
-population (2,945,777 versus 2,577,078) differs more from the paper population.
-VAT liability by sector remains an informational diagnostic
-in both runs. The comparison table and structured provenance are reproduced by
-\texttt{firm-microsim-populace-ledger} and checked into
+difference zero. (The ``2024--25 vintage'' here denotes the HMRC/ONS
+statistical release labelled 2024--25, the same target tables the paper's
+2024--25 population calibrates to.) A 1,000-iteration Populace run from those
+targets generated 2,946,015 firm rows; its validator reported a 93.8 percent
+overall score against the paper validator's then-90.5 percent, a comparison
+that is not like-for-like (different band sets and sector-target definitions).
+Two caveats now attach to that pinned snapshot. First, it predates this
+paper's net-liability correction (Section~\ref{sec:data}, footnote): both
+generators at the pin date shared the mis-scaled $v_i = y_i - x_i$ convention,
+so the experimental Populace firm generator inherits the same defect, which I
+have reported upstream; the target-parity result (zero mismatches) is
+unaffected, since it concerns the input tables, not the generated population.
+Second, the paper validator's scores on the corrected build are 89.2 percent
+(2023--24) and 92.8 percent (2024--25). The comparison table and structured provenance are
+reproduced by \texttt{firm-microsim-populace-ledger} and checked into
 \texttt{results/populace\_ledger\_comparison.txt} and
 \texttt{results/populace\_ledger\_provenance.json}.
 

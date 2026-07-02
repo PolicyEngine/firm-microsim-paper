@@ -1,0 +1,10 @@
+GENERATOR-SEED SENSITIVITY (full-size 2023-24 builds; seeds 42/7/99)
+definitive build: OBR near-threshold targets, side-consistent frame
+scaling, no below-threshold liability calibration
+======================================================================
+run                      E  b_llat  raise £m  taper £m  base £bn
+seed 42 (paper)      7,933    1.91     752.9     519.6     184.8
+seed 7               7,750    1.88     754.2     520.9     184.7
+seed 99              8,072    1.93     749.9     517.9     184.8
+
+half-range across seeds: E ±161 | b_llat ±0.02 | raise ±£2.1m | taper ±£1.5m | base ±£0.08bn
