@@ -687,18 +687,18 @@ export function DominatedRegionSlide() {
               height={1846}
             />
           </div>
-        </div>
-        <div>
-          <SlideTitle kicker="The distortion">
-            The dominated region: an elasticity-free distortion
-          </SlideTitle>
-          <div className="mt-4">
+          <div className="mt-3">
             <Caption className="text-center">The notch in the firm’s profit:</Caption>
             <DisplayEq
               tex="\pi(y)=\begin{cases} y-c(y), & y\lt T^{*}\\ (1-\tau)\,y-c(y), & y\ge T^{*}\end{cases}"
               className="mt-2 text-[1rem]"
             />
           </div>
+        </div>
+        <div>
+          <SlideTitle kicker="The distortion">
+            The dominated region: an elasticity-free distortion
+          </SlideTitle>
           <BList
             className="mt-6"
             size="text-lg"
