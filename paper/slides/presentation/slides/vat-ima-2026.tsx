@@ -643,6 +643,12 @@ export function BunchingMechanicalSlide() {
           <Caption className="flex-none text-center">
             2023–24 at £85k: {teal("E = 7,873 — inherited from the OBR targets")}
           </Caption>
+          <div className="mt-3">
+            <Caption className="text-center">
+              Excess mass over a polynomial no-bunching counterfactual <Math tex="g" />:
+            </Caption>
+            <DisplayEq tex="b=\dfrac{B(y^{*})}{g(y^{*})}\approx\dfrac{\Delta y^{*}}{y^{*}}" className="mt-2 text-[1rem]" />
+          </div>
         </div>
         <div>
           <SlideTitle kicker="The distortion">
