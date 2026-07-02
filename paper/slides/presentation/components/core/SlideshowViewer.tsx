@@ -92,7 +92,7 @@ function SlideshowViewerClient({ config }: SlideshowViewerProps) {
       >
         <div className="slide-active">{currentSlideElement}</div>
 
-        {isExport && (
+        {(isExport || isFullscreen) && (
           <div className="pointer-events-none fixed bottom-0 right-0 z-50 flex h-18 items-center px-8 text-white">
             <span className="text-sm font-semibold">
               {currentSlide < (config.mainSlideCount ?? slides.length)
