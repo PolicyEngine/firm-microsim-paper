@@ -924,9 +924,9 @@ export function ConclusionSlide() {
                   notch; prices level / shape / rate reforms {teal("three ways")}.
                 </>,
                 <>
-                  <span className="font-semibold text-pe-dark">Static:</span> mechanical conventions
-                  overshoot HMRC’s anchor early; retention {teal("matches 2025–26 to £1m (−£184.1m vs −£185m)")},
-                  reproducing the sign flip; raising to £100k costs £753m, the taper £520m.
+                  <span className="font-semibold text-pe-dark">Static:</span> retention{" "}
+                  {teal("matches 2025–26 to £1m (−£184.1m vs −£185m)")}, reproducing the sign flip;
+                  raising to £100k costs £753m, the taper £520m.
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Distortion:</span> the dominated region{" "}
