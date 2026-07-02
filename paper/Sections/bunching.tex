@@ -32,10 +32,16 @@ removed the step entirely; the near-threshold profile is now supplied by the
 OBR targets instead, as published data rather than an optimiser
 side-effect.\footnote{The defect and its diagnosis are recorded
 in the replication repository (issue \#15); the near-threshold targets are
-issue \#23. Aggregate calibration scores
-barely moved under either change---the optimiser hit the band totals every
-time---which is itself part of the lesson: aggregate fit does not discipline
-sub-band shape.} A plausible-looking, literature-adjacent bunching statistic
+issue \#23. A second correction followed: the below-threshold HMRC liability
+total, which belongs to voluntary registrants the liability model does not
+represent, was initially calibrated against the whole below-threshold
+population, draining weights around the fine-target window; on an
+intermediate build it also manufactured a spectacular ($E\approx196{,}000$),
+specification-robust artifact at the \pounds90{,}000 band edge. It is now an
+informational diagnostic (Section~\ref{sec:data}). Aggregate calibration
+scores barely moved under any of these changes---the optimiser hit the band
+totals every time---which is itself part of the lesson: aggregate fit does
+not discipline sub-band shape.} A plausible-looking, literature-adjacent bunching statistic
 was manufactured by an accounting bug in the data layer and survived until the
 liability accounting was audited. I report this openly because it is the
 sharpest available demonstration of the section's thesis.
@@ -78,37 +84,36 @@ no behavioural mass to convert.
 \subsection{Results: a target-inherited signal at \pounds85{,}000, a spurious one at \pounds90{,}000}
 
 Applied to the 2023--24 population at the \pounds85{,}000 threshold, the
-estimator returns an excess mass of $E = 14{,}663$ weighted firms (bootstrap
-SE $526$) and a bunching ratio $b = 0.109$ (SE $0.004$): it reads back the
-bunching profile that the OBR \pounds1{,}000-band targets place in the file
-(Section~\ref{sec:data}). This is target inheritance, not behaviour---the
-generator contains no firm location-choice---and the placebo below proves it
-by deletion. On the \citet{liuetal2021} normalisation the target-inherited
-excess is $b_{\mathrm{LLAT}} = 2.86$, roughly twice their administrative
-$1.361$; the two are not comparable estimates of the same object, since LLAT's
-sample ends in 2014--15 while the OBR profile embeds the far deeper bunching
-of the frozen-threshold era (their bunching counts nearly double between
-2017--18 and 2025--26).
+estimator returns an excess mass of $E = 7{,}873$ weighted firms: it reads
+back the bunching profile that the OBR \pounds1{,}000-band targets place in
+the file (Section~\ref{sec:data}). This is target inheritance, not
+behaviour---the generator contains no firm location-choice---and the placebo
+below proves it by deletion. On the \citet{liuetal2021} normalisation the
+target-inherited excess is $b_{\mathrm{LLAT}} = 2.55$, roughly 1.9 times
+their administrative $1.361$; the two are not comparable estimates of the same
+object, since LLAT's sample ends in 2014--15 while the OBR profile embeds the
+far deeper bunching of the frozen-threshold era (their bunching counts nearly
+double between 2017--18 and 2025--26). Mass conservation locates the
+manipulation-window edge at the search bound ($y_R = \pounds100$k),
+consistent with the OBR profile's missing mass extending past
+$+\pounds15$k---as LLAT's own $+\pounds24$k window did.
 
-Applied to the 2024--25 population at the \pounds90{,}000 threshold, the same
-estimator returns an enormous apparent signal: excess mass of about
-$195{,}900$ weighted firms, with the manipulation-window edge pinned at the
-search bound---roughly fifteen times the administrative excess-bunching ratio
-of \citet{liuetal2021} on the like-for-like normalisation. No reading of the
-administrative literature supports a response of this size; it is a
-calibration artifact sitting exactly on the \pounds90{,}000 HMRC band edge for
-that vintage, where the \pounds1--\pounds90{,}000 and
-\pounds90{,}000--\pounds150{,}000 band targets meet. The pair of results is
-the section's central exhibit (Figure~\ref{fig:bunch85}): where fine targets
-exist, the estimator recovers exactly the shape they encode; where they do
-not, it reads a band-scale discontinuity as a bunching signal an order of
-magnitude beyond anything behavioural---and both readings are properties of
-the targets, not of firms. Specification sensitivity separates the two cases:
-the target-inherited excess at \pounds85{,}000 varies with the polynomial
-degree and window (roughly $8{,}000$--$15{,}000$ in the interior cells), as a
-local data feature should, while the \pounds90{,}000 artifact is
-$195{,}000$--$212{,}000$ in \emph{every} cell of the grid
-(Appendix~\ref{app:inference}).
+Applied to the 2024--25 population at the \pounds90{,}000 threshold---which
+has \emph{no} fine targets---the same estimator returns $E = 11{,}072$ and
+$b_{\mathrm{LLAT}} = 1.23$: within ten per cent of \citet{liuetal2021}'s
+administrative $1.361$. Nothing behavioural produced it. It is the coarse
+\pounds90{,}000 band edge, where the \pounds1--\pounds90{,}000 and
+\pounds90{,}000--\pounds150{,}000 targets meet, read through the estimator;
+its magnitude swings four-fold across estimator specifications
+($E$ between roughly $8{,}600$ and $36{,}700$ over the degree--window grid,
+Appendix~\ref{app:inference}) and the manipulation-window edge sits at the
+search bound. The pair of results is the section's central exhibit
+(Figure~\ref{fig:bunch85}): where fine targets exist, the estimator recovers
+exactly the shape they encode; where they do not, band geometry alone can
+manufacture a bunching statistic in the publishable range of the
+literature---a researcher looking to ``validate'' synthetic data against
+\citet{liuetal2021} would have found agreement here, and it would have meant
+nothing.
 
 \begin{figure}[htbp]
 \centering
@@ -116,19 +121,20 @@ $195{,}000$--$212{,}000$ in \emph{every} cell of the grid
     \includegraphics[width=0.48\textwidth]{figures/bunching_analysis_85k.png}
 }
 \hfill
-\subfigure[2024--25 population, \pounds90{,}000 threshold: spurious excess mass]{
+\subfigure[2024--25 population, \pounds90{,}000: band-edge artifact]{
     \includegraphics[width=0.48\textwidth]{figures/bunching_analysis_90k.png}
 }
 \caption{Observed synthetic firm density and polynomial no-bunching
 counterfactual at each vintage's registration threshold. Panel (a): the
 2023--24 population reproduces the administratively observed bunching profile
 because it is calibrated to the OBR \pounds1{,}000-band targets; the
-estimator reads the target-inherited excess back as $E = 14{,}663$
-($b = 0.109$). Panel (b): the 2024--25 population, which has no fine targets,
-shows a very large spurious signal at \pounds90{,}000
-($E \approx 196{,}000$ weighted firms) at the HMRC calibration-band edge.
-Neither is behavioural: the generator has no firm location-choice, so all
-sub-band structure is inherited from the targets and the weight optimiser.}
+estimator reads the target-inherited excess back as $E = 7{,}873$
+($b_{\mathrm{LLAT}} = 2.55$). Panel (b): the 2024--25 population has no fine
+targets, and its coarse \pounds90{,}000 band edge alone yields
+$E = 11{,}072$ with $b_{\mathrm{LLAT}} = 1.23$---within 10\% of the
+administrative estimate, coincidentally and unstably. Neither is behavioural:
+the generator has no firm location-choice, so all sub-band structure is
+inherited from the targets and the weight optimiser.}
 \label{fig:bunch85}
 \end{figure}
 
@@ -148,12 +154,12 @@ re-calibrate from scratch with \emph{no} fine structure in the targets at
 all: the OBR near-threshold bins are removed and the two HMRC band counts
 straddling the threshold are replaced by a split implied by one common
 density. The results track the targets exactly. The control---calibrated to
-the OBR profile---returns $E = 14{,}663$ ($b = 0.109$); Placebo~A returns
-$E = 323$ ($b = -0.014$); Placebo~B returns $E = 0$ ($b = -0.274$). Deleting
-the fine targets deletes the ``bunching''; and where a coarse step is present
-in the targets---as at the 2024--25 vintage's \pounds90{,}000 band edge---the
-estimator faithfully reads it as (spurious) mass. Inserting or removing
-structure in the targets inserts or removes ``bunching'' in the estimates.
+the OBR profile---returns $E = 7{,}873$; Placebo~A returns $E = 0$
+($b = -0.060$); Placebo~B returns $E = 0$ ($b = -0.073$). Deleting the fine
+targets deletes the ``bunching''; and where a coarse step is present in the
+targets---as at the 2024--25 vintage's \pounds90{,}000 band edge---the
+estimator reads it as (artifactual) mass. Inserting or removing structure in
+the targets inserts or removes ``bunching'' in the estimates.
 
 \subsection{Power (recovery) test}
 \label{ssec:bunch-recovery}
@@ -165,17 +171,16 @@ just below the threshold from a donor region extending to a true marginal
 buncher at \pounds112{,}000---beyond the estimator's exclusion window, as with
 genuine bunching---with relocation probability declining linearly in distance
 from the threshold. Scored by the headline estimator with no reference to the
-known null, injected excess masses of $2{,}000$, $5{,}000$ and $8{,}000$
-weighted firms are recovered at $55\%$, $75\%$ and $82\%$ respectively, with
-the estimated marginal-buncher location attenuated toward the threshold
-(\pounds87{,}700--\pounds95{,}100 against the true \pounds112{,}000). The
+known null, injected excess masses of $5{,}000$ and $8{,}000$ weighted firms
+are recovered at $50\%$ and $62\%$ respectively, while a small $2{,}000$-firm
+injection sits near the detection floor ($15\%$); the estimated
+marginal-buncher location is attenuated toward the threshold throughout. The
 attenuation has a measured mechanical source: part of the missing-mass region
 lies outside the exclusion window, where it pulls the fitted counterfactual
 down. The estimator therefore \emph{under}-states a true response, more
 severely for small ones, and does not over-state one---so the target-inherited
-$E=14{,}663$ at \pounds85{,}000 is, if anything, an attenuated reading of the
-targeted profile, while the \pounds90{,}000 artifact is far too large for
-attenuation to explain away.\footnote{An earlier
+$E=7{,}873$ at \pounds85{,}000 is, if anything, an attenuated reading of the
+targeted profile.\footnote{An earlier
 version of this exercise relocated mass entirely within the exclusion window,
 which the counterfactual fit cannot see by construction; its reported
 ``$\sim$90\% recovery'' measured deposit bookkeeping, not estimator power. The
@@ -190,9 +195,11 @@ HMRC micro-data over 2004--05 to 2014--15, during which the threshold rose
 from \pounds58{,}000 to \pounds81{,}000, with an excess-bunching ratio of
 $b = 1.361$ (SE $0.202$) around the year-specific threshold and a manipulation
 window of $-\pounds14{,}000$ to $+\pounds24{,}000$. My data's
-$b_{\mathrm{LLAT}} = 2.86$ is not a second estimate of their parameter: it is
+$b_{\mathrm{LLAT}} = 2.55$ is not a second estimate of their parameter: it is
 the OBR target profile read back through their normalisation, on a
-deeper-bunching era.\footnote{The earlier draft's
+deeper-bunching era; and the uncalibrated 2024--25 vintage's
+$b_{\mathrm{LLAT}} = 1.23$, despite sitting within 10\% of their estimate,
+is not one either---it is band geometry.\footnote{The earlier draft's
 $b_{\mathrm{LLAT}} = 0.94$, read against LLAT's $1.361$, illustrated how a
 band-inherited artifact can land in the publishable range of the literature;
 that artifact's disappearance under the liability correction, and its

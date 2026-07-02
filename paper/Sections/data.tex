@@ -92,10 +92,19 @@ profile---the region that coarse bands alone leave to the weight optimiser
 (Section~\ref{sec:bunching}). No fine bands are published for the
 \pounds90{,}000 threshold era, so the 2024--25 vintage keeps coarse bands
 only. Turnover-band and near-threshold targets carry the largest $\lambda_k$,
-followed by VAT liability by band. VAT liability by sector is reported as an
-informational diagnostic but excluded from the optimizer, because the
-generator draws a common input-share distribution with sector shifts rather
-than calibrating the input/output tax structure by sector. The problem is
+followed by VAT liability by band. Two liability dimensions are reported as
+informational diagnostics but excluded from the optimizer. VAT liability by
+sector is excluded because the generator draws a common input-share
+distribution with sector shifts rather than calibrating the input/output tax
+structure by sector. The below-threshold liability band
+(\pounds1--threshold, \pounds1.46bn in 2023--24) is excluded because that
+total is remitted by voluntary registrants---input-reclaim traders averaging
+about \pounds2{,}150 of net remittance---whom the model's
+standard-rate-on-value-added liability does not represent
+(Section~\ref{sec:background}); imposing it on the whole below-threshold
+population would force the optimiser to suppress weights in the
+\pounds50{,}000--\pounds85{,}000 region, distorting the near-threshold
+shape the fine targets exist to pin. The problem is
 solved by gradient descent, and the symmetric loss keeps targets of very
 different magnitudes on a common scale.
 
@@ -118,9 +127,9 @@ below-threshold voluntary registration as a separate weighted calibration
 target. The resulting dataset comprises approximately $2.94$~million firm
 records per vintage, weighted to represent roughly $2.5$~million registered
 businesses. Checked against the official sources along every calibrated
-dimension, both vintages attain an overall calibration accuracy of 89.4\%,
-with dimension scores ranging from 77.9\% (2023--24 employment bands) and
-79.0\% (2024--25 liability by band) to 94.4\%; Appendix~\ref{app:data} reports
+dimension, the vintages attain overall calibration accuracies of 89.2\%
+(2023--24) and 92.8\% (2024--25), with dimension scores ranging from 77.9\%
+(2023--24 employment bands) to 94.2\%; Appendix~\ref{app:data} reports
 the full table. The headline is the mean of five calibrated-dimension scores,
 each clipped at zero as $\max\{0,1-\lvert \widehat{T}-T\rvert/\lvert T\rvert\}$;
 it excludes the VAT-liability-by-sector diagnostic described above.
@@ -159,8 +168,7 @@ Section~\ref{sec:behavioural}.
 \pounds1{,}000 bins), 2023--24. The near-threshold profile---rising into the
 \pounds85{,}000 threshold and stepping down across it---is calibrated to the
 OBR's published \pounds1{,}000-band counts and is therefore target-inherited,
-not behavioural (Section~\ref{sec:bunching}). The seam at \pounds65{,}000
-marks the edge of the published fine-band window; the \pounds150{,}000 step is
+not behavioural (Section~\ref{sec:bunching}). The \pounds150{,}000 step is
 an HMRC calibration-band edge.}
 \label{fig:turnover_dist}
 \end{figure}

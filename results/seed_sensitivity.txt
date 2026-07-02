@@ -1,0 +1,8 @@
+GENERATOR-SEED SENSITIVITY (full-size 2023-24 builds; seeds 42/7/99)
+======================================================================
+run                     E  b_llat  raise £m  taper £m  base £bn
+seed 42 (paper)     7,873    2.55     783.8     497.1     184.8
+seed 7              7,691    2.49     783.7     497.1     184.7
+seed 99             8,005    2.59     782.4     495.6     184.8
+
+half-range across seeds: E ±157 | b_llat ±0.05 | raise ±£0.7m | taper ±£0.8m | base ±£0.08bn

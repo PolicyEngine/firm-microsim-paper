@@ -156,6 +156,19 @@ class Config:
     # (2023-24 / £85k vintage only; the chart covers the £85k era).
     calibrate_near_threshold: bool = True
 
+    # --- Fast-iteration stratified sampling -------------------------------
+    # 1.0 / 1.0 = full synthetic census (release builds). Lower fractions
+    # thin the draws, carrying the removed mass as per-stratum base weights
+    # (strata: sector x HMRC band x inside/outside the analysis window), so
+    # every calibration target remains a TRUE total at any fraction. The
+    # analysis window keeps a higher fraction for near-threshold density
+    # resolution; a per-stratum floor protects sparse sector x band cells.
+    sample_tail_fraction: float = 1.0
+    sample_window_fraction: float = 1.0
+    sample_window_lo_k: float = 15.0
+    sample_window_hi_k: float = 150.0
+    sample_cell_floor: int = 40
+
     # --- Paths (overridable) ---------------------------------------------
     data_dir: Path = DATA_DIR
     processed_dir: Path = PROCESSED_DATA_DIR / DEFAULT_VINTAGE

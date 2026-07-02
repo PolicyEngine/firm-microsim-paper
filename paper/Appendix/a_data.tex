@@ -13,10 +13,10 @@ totals reproduce the official targets while the population sums to about
 $2.5$ million firms. Because the population is calibrated \emph{to} the HMRC
 aggregates, agreement between my weighted outputs and those aggregates is a
 check of \emph{internal consistency}, not external validation: any target used
-in calibration is reproduced by construction. The $89.4\%$ calibration
-accuracy and the anchor comparison of Section~\ref{sec:static} are therefore
-consistency checks on the pipeline, not out-of-sample tests of firm
-behaviour.
+in calibration is reproduced by construction. The headline calibration
+accuracies (89.2\% and 92.8\% for the two vintages) and the anchor comparison
+of Section~\ref{sec:static} are therefore consistency checks on the pipeline,
+not out-of-sample tests of firm behaviour.
 
 The reported calibration score is a bounded summary statistic. For each
 dimension I compute
@@ -53,8 +53,8 @@ generators at the pin date shared the mis-scaled $v_i = y_i - x_i$ convention,
 so the experimental Populace firm generator inherits the same defect, which I
 have reported upstream; the target-parity result (zero mismatches) is
 unaffected, since it concerns the input tables, not the generated population.
-Second, the paper validator's score on the corrected build is 89.4 percent
-for both vintages. The comparison table and structured provenance are
+Second, the paper validator's scores on the corrected build are 89.2 percent
+(2023--24) and 92.8 percent (2024--25). The comparison table and structured provenance are
 reproduced by \texttt{firm-microsim-populace-ledger} and checked into
 \texttt{results/populace\_ledger\_comparison.txt} and
 \texttt{results/populace\_ledger\_provenance.json}.

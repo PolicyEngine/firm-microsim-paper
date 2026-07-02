@@ -144,15 +144,20 @@ firm-microsim-report
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
-| HMRC turnover bands | 93.9% | 93.5% |
-| ONS population | 90.3% | 94.0% |
-| Employment bands | 77.9% | 86.1% |
-| Sector distribution | 92.5% | 94.4% |
-| VAT liability by band | 92.6% | 79.0% |
-| **Overall (5 calibrated dimensions)** | **89.4%** | **89.4%** |
+| HMRC turnover bands | 93.8% | 93.1% |
+| ONS population | 90.3% | 92.6% |
+| Employment bands | 77.9% | 92.4% |
+| Sector distribution | 92.7% | 94.2% |
+| VAT liability by band (6 calibrated bands) | 91.3% | 92.0% |
+| **Overall (5 calibrated dimensions)** | **89.2%** | **92.8%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
-an informational diagnostic only (45.1% / 43.4%). The model draws per-firm input
+an informational diagnostic only, and neither is the **below-threshold
+(£1-to-Threshold) liability band**: its HMRC total is remitted by voluntary
+registrants (input-reclaim traders averaging ~£2,150 net) whom the
+standard-rate-on-value-added liability model does not represent, so calibrating
+it against the whole below-threshold population distorts near-threshold
+weights (see the paper's data section). The model draws per-firm input
 shares (mean value-added share ≈ 40%) and sets net liability
 `v = 0.20 × (turnover − input)` — the standard rate applied to value added — but
 does not yet calibrate the **input/output tax structure by sector**, so
@@ -165,6 +170,17 @@ build set `v = turnover − input` (no 0.20 factor); the correction and its
 consequences are documented in
 [#15](https://github.com/PolicyEngine/firm-microsim-paper/issues/15) and the
 paper's Section 5.
+
+## Fast iteration builds
+
+`firm-microsim --fast` runs the full pipeline on a stratified sample (~15% of
+rows: 30% inside the £15k–£150k analysis window, 5% outside, per-stratum
+floors), carrying the thinned mass as base weights so every calibration target
+remains a true total. A vintage builds in ~15 seconds instead of ~13 minutes;
+headline aggregates reproduce the full build within ~0.3% and local bunching
+statistics within ~5%. Use for development only — release artifacts are
+full-size. Generator-seed sensitivity of the full build is recorded in
+`results/seed_sensitivity.txt` (E ±2%, reform costs ±£1m across seeds).
 
 ## Populace/Ledger migration check
 

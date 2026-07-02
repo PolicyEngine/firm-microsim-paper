@@ -32,7 +32,8 @@ logger = logging.getLogger(__name__)
 # ONS employment-size bands (used for both targets and validation).
 EMPLOYMENT_BANDS: List[str] = ["0-4", "5-9", "10-19", "20-49", "50-99", "100-249", "250+"]
 
-# VAT-liability turnover bands above the Negative_or_Zero band.
+# VAT-liability turnover bands above the Negative_or_Zero band (validation
+# reports all of these).
 VAT_LIABILITY_BANDS: List[str] = [
     "£1_to_Threshold",
     "£Threshold_to_£150k",
@@ -42,6 +43,16 @@ VAT_LIABILITY_BANDS: List[str] = [
     "£1m_to_£10m",
     "Greater_than_£10m",
 ]
+
+# Bands actually CALIBRATED for liability. The £1_to_Threshold band is
+# excluded: its HMRC total is remitted by below-threshold VOLUNTARY
+# registrants, whose input-reclaim-driven net remittances (~£2,150 average)
+# the model's standard-rate-on-value-added liability does not represent.
+# Imposing that total on the whole below-threshold population forces the
+# optimiser to crush weights in the £50k-£85k region (the visible seam at the
+# OBR window edge). It is reported as an informational diagnostic instead,
+# like VAT liability by sector.
+VAT_LIABILITY_BANDS_CALIBRATED: List[str] = VAT_LIABILITY_BANDS[1:]
 
 
 def map_to_hmrc_bands(turnover_values: Tensor, threshold: float) -> Tensor:
@@ -131,7 +142,7 @@ class TargetSpec:
         self.n_sectors = n_sectors
         self.n_employment = len(EMPLOYMENT_BANDS)
         self.n_vat_sectors = n_vat_sectors
-        self.n_vat_bands = len(VAT_LIABILITY_BANDS)
+        self.n_vat_bands = len(VAT_LIABILITY_BANDS_CALIBRATED)
         self.n_near = n_near
 
         self.turnover_start = 0
@@ -155,6 +166,7 @@ def build_target_matrix(
     vat_liability_sector_df: pd.DataFrame,
     vat_liability_bands: dict,
     near_threshold_bins: pd.DataFrame | None = None,
+    base_weights: Tensor | None = None,
 ) -> Tuple[Tensor, Tensor, TargetSpec]:
     """Construct the calibration target matrix and target vector.
 
@@ -176,6 +188,8 @@ def build_target_matrix(
     device = config.device
     threshold = config.vat_threshold
     n_firms = len(turnover_values)
+    if base_weights is None:
+        base_weights = torch.ones_like(turnover_values)
 
     sector_rows = hmrc_sector_df[hmrc_sector_df["Trade_Sector"] != "Total"].copy()
     if config.calibrate_vat_liability_sector:
@@ -220,7 +234,7 @@ def build_target_matrix(
         target_matrix[row, mask] = vat_liability_values[mask]
 
     # VAT-liability-by-band targets.
-    for offset, band_name in enumerate(VAT_LIABILITY_BANDS):
+    for offset, band_name in enumerate(VAT_LIABILITY_BANDS_CALIBRATED):
         row = spec.vat_band_start + offset
         mask = _band_membership_mask(turnover_values, band_name, threshold)
         target_matrix[row, mask] = vat_liability_values[mask]
@@ -232,7 +246,7 @@ def build_target_matrix(
         below = near_threshold_bins[near_threshold_bins["bin_lo_k"] < threshold]
         below_lo = float(below["bin_lo_k"].min())
         window_mask = (turnover_values > below_lo) & (turnover_values <= threshold)
-        window_rows = float(window_mask.sum().item())
+        window_rows = float(base_weights[window_mask].sum().item())
         below_total = float(below["count"].sum())
         for offset, (_, bin_row) in enumerate(near_threshold_bins.iterrows()):
             lo = float(bin_row["bin_lo_k"])
@@ -254,9 +268,10 @@ def build_target_matrix(
                 near_targets.append(float(bin_row["count"]))
 
     # ---- Target values --------------------------------------------------
-    # £1_to_Threshold keeps the ONS structure (current synthetic count);
-    # all higher bands match HMRC.
-    ons_threshold_count = float((band_indices == 1).sum().item())
+    # £1_to_Threshold keeps the ONS structure (the base-weighted synthetic
+    # count, which equals the row count on unsampled builds); all higher
+    # bands match HMRC.
+    ons_threshold_count = float(base_weights[band_indices == 1].sum().item())
     turnover_targets = [
         ons_threshold_count,
         hmrc_bands["£Threshold_to_£150k"],
@@ -285,7 +300,7 @@ def build_target_matrix(
         float(r.iloc[-1]) * 1000.0 for _, r in vat_liability_sector_rows.iterrows()
     ]
     vat_liability_band_targets = [
-        float(vat_liability_bands[band]) * 1000.0 for band in VAT_LIABILITY_BANDS
+        float(vat_liability_bands[band]) * 1000.0 for band in VAT_LIABILITY_BANDS_CALIBRATED
     ]
 
     target_values_list = (
@@ -337,6 +352,7 @@ def optimize_weights(
     target_matrix: Tensor,
     target_values: Tensor,
     spec: TargetSpec,
+    base_weights: Tensor | None = None,
 ) -> Tensor:
     """Optimize per-firm weights to match all targets simultaneously.
 
@@ -358,7 +374,14 @@ def optimize_weights(
     device = config.device
     _, n_firms = target_matrix.shape
 
-    log_weights = torch.zeros(n_firms, device=device, requires_grad=True)
+    # Under stratified sampling, weights start at (and the L1 penalty pulls
+    # toward) the per-stratum base weights that carry the thinned mass, so a
+    # sampled build is the same optimisation problem around a rescaled prior.
+    if base_weights is None:
+        base_log = torch.zeros(n_firms, device=device)
+    else:
+        base_log = torch.log(base_weights.to(device))
+    log_weights = base_log.clone().requires_grad_(True)
     optimizer = torch.optim.Adam([log_weights], lr=config.learning_rate)
     importance = _importance_weights(spec, config, device)
 
@@ -385,7 +408,9 @@ def optimize_weights(
         weighted_loss = sre_loss * importance
         total_loss = torch.mean(weighted_loss)
         # Keep the regularizer on the same normalized scale as the target loss.
-        total_loss = total_loss + config.l1_reg_coef * torch.mean(torch.abs(log_weights))
+        total_loss = total_loss + config.l1_reg_coef * torch.mean(
+            torch.abs(log_weights - base_log)
+        )
 
         total_loss.backward()
         torch.nn.utils.clip_grad_norm_([log_weights], max_norm=config.grad_clip_norm)

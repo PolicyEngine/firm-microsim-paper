@@ -1,12 +1,12 @@
 ==============================================================================
   PLACEBO BUNCHING TEST  (vintage 2023-24, threshold £85k)
 ==============================================================================
-  ACTUAL (control)             b=+0.1088  E=    14,663  b_llat=2.863  y_R=98.62
-  PLACEBO A (reweight)         b=-0.0135  E=       323  b_llat=0.047  y_R=85.17
+  ACTUAL (control)             b=+0.0098  E=     7,873  b_llat=2.549  y_R=100.00
+  PLACEBO A (reweight)         b=-0.0600  E=         0  b_llat=0.000  y_R=84.00
 
   Density step at £85k (firms per £1k, 80-85 vs 85-90):
-    ACTUAL  : below=11,208  above=10,733  step=+4.4%
-    PLACEBO A: below=6,656  above=6,516  step=+2.1%
+    ACTUAL  : below=11,208  above=10,734  step=+4.4%
+    PLACEBO A: below=9,038  above=8,582  step=+5.3%
 
-  PLACEBO B (regenerate)       b=-0.2735  E=         0  b_llat=0.535  y_R=85.00
+  PLACEBO B (regenerate)       b=-0.0729  E=         0  b_llat=0.395  y_R=85.00
 Wrote /private/tmp/claude-501/-Users-maxghenis/a15bbb6c-8c15-4740-b985-f511b978ea75/scratchpad/fmp-fix/results/placebo_bunching.txt

@@ -51,6 +51,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="Random seed for reproducibility (default: %(default)s).",
     )
     parser.add_argument(
+        "--fast",
+        action="store_true",
+        help="Fast-iteration build: stratified thinning (30%% of rows in the "
+        "£15k-£150k analysis window, 5%% elsewhere, per-stratum floors), with "
+        "thinned mass carried as base weights so all targets stay true totals. "
+        "~10x fewer rows and proportionally faster calibration; expect ~1-3%% "
+        "Monte Carlo drift in local statistics. NOT for release artifacts.",
+    )
+    parser.add_argument(
         "--output",
         type=str,
         default=None,
@@ -66,13 +75,13 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run_pipeline(seed: int) -> None:
+def run_pipeline(seed: int, fast: bool = False) -> None:
     """Full data build: every vintage -> calibration report -> figures."""
     from . import figures, report
 
     for vintage in VINTAGES:
         logging.info("=== Generating vintage %s ===", vintage)
-        generate(vintage=vintage, seed=seed,
+        generate(vintage=vintage, seed=seed, fast=fast,
                  output=f"synthetic_firms_{vintage}.csv")
     report.main()           # writes results/calibration_accuracy.txt
     figures.generate_all()  # writes results/*.png
@@ -96,9 +105,10 @@ def main() -> None:
             threshold=args.threshold,
             seed=args.seed,
             output=args.output,
+            fast=args.fast,
         )
     else:
-        run_pipeline(seed=args.seed)
+        run_pipeline(seed=args.seed, fast=args.fast)
 
 
 if __name__ == "__main__":

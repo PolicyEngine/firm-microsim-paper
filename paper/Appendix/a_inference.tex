@@ -3,14 +3,15 @@
 
 This appendix documents the inference procedure for the reduced-form bunching
 results of Section~\ref{sec:bunching}: the mass-conservation constraint that
-disciplines the counterfactual density, the bootstrap that delivers standard
-errors, sensitivity to the polynomial degree and exclusion window, the placebo
-tests, and the power (recovery) test. All numbers are produced by the released
-estimator (fixed seed, $B=200$ bootstrap replications) run on the regenerated
-weighted synthetic populations for both vintages; the machine-readable
-artifacts are \texttt{results/bunching\_inference.txt},
-\texttt{results/placebo\_bunching.txt} and
-\texttt{results/recovery\_bunching.txt}. The estimator reports the geometry
+disciplines the counterfactual density, why no standard errors are reported,
+sensitivity to the polynomial degree, the exclusion window, and the generator
+seed, the placebo tests, and the power (recovery) test. All numbers are
+produced by the released estimator run on the regenerated weighted synthetic
+populations for both vintages; the machine-readable artifacts are
+\texttt{results/bunching\_inference.txt},
+\texttt{results/placebo\_bunching.txt},
+\texttt{results/recovery\_bunching.txt} and
+\texttt{results/seed\_sensitivity.txt}. The estimator reports the geometry
 only---the bunching ratio $b$, its \citet{liuetal2021}-normalised counterpart
 $b_{\mathrm{LLAT}}$, the excess mass $E$, and the mass-conservation objects
 ($\Delta_R$, $y_R$)---and computes no elasticities: the mapping from excess
@@ -46,43 +47,44 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-On the 2023--24 population the constraint locates the marginal-buncher edge
-at $y_R = \pounds98.6$k for the target-inherited profile, while on the
-2024--25 population it binds at the window edge ($y_R$ pinned at
-$T^{*}+\pounds15$k), a symptom that the ``signal'' there is not the local
-spike the estimator is designed for but a band-scale target artifact.
+On both populations the constraint binds at or near the window edge
+($y_R = \pounds100$k at \pounds85{,}000; $\pounds101$k at \pounds90{,}000):
+the OBR profile's missing mass extends beyond $+\pounds15$k (as does the
+administrative pattern---LLAT's window reaches $+\pounds24$k), and the
+2024--25 band-edge artifact is not a local spike at all.
 
-\subsubsection*{Bootstrap standard errors}
+\subsubsection*{Why no standard errors are reported}
 
-I compute standard errors by a firm-level bootstrap. In each of $B=200$
-replications I draw $n$ firms with replacement with probability proportional
-to survey weight, assign each replicate uniform weights summing to the
-\emph{original weighted mass} $W$, re-bin, and re-run the entire
-estimator.\footnote{An earlier version assigned unit weights, so each
-replicate's total mass was the row count $n$ rather than $W$, scaling mass
-statistics such as $E$ by $n/W$ (visible as an off-centre bootstrap CI). The
-correction leaves scale-free statistics such as $b$ unaffected.} The standard
-error of each statistic is the standard deviation of its bootstrap
-distribution; the $95\%$ interval is the $2.5$th--$97.5$th percentile range.
-Because these replications resample $\approx 2.94$ million \emph{constructed}
-synthetic rows, whose number is an analyst choice, the resulting intervals
-quantify the estimator's dispersion under resampling of a synthetic file of
-chosen size; they should not be read as population sampling error about UK
-firms. Table~\ref{tab:boot} reports both vintages.
+Earlier drafts attached bootstrap standard errors to the bunching statistics
+(resampling firm rows with replacement and re-running the estimator). Those
+numbers are not reported anywhere in this paper, because the exercise has no
+estimand: the synthetic file is a deterministic construction from published
+targets, not a sample from a population, and row-resampling dispersion scales
+as $1/\sqrt{n}$ in a row count the analyst chooses. A standard error that can
+be made arbitrarily small by generating more synthetic rows conveys precision
+that does not exist. Two reportable quantities replace them. First, the
+specification grids below, which show how the point estimates move with the
+estimator's own knobs. Second, generator-seed sensitivity
+(\texttt{results/seed\_sensitivity.txt}): regenerating the full 2023--24
+population under three seeds moves $E$ by $\pm157$ firms ($\pm2\%$),
+$b_{\mathrm{LLAT}}$ by $\pm0.05$, the raise-to-\pounds100k cost by
+$\pm\pounds0.7$m, and the registered base by $\pm\pounds0.08$bn---the
+pipeline's actual Monte Carlo error. Table~\ref{tab:boot} reports the point
+estimates.
 
 \begin{table}[t]
 \centering
-\caption{Bootstrap inference ($B=200$ firm resamples), both vintages,
-degree-7 polynomial, $\pm\pounds15$k window.}
+\caption{Headline bunching statistics (point estimates; degree-7 polynomial,
+$\pm\pounds15$k window). Uncertainty is characterised by the specification
+grids and the generator-seed sensitivity, not by standard errors---see the
+text.}
 \label{tab:boot}
-\begin{tabular}{llrrr}
+\begin{tabular}{lrrr}
 \toprule
-Vintage & Statistic & Point & Std.\ error & 95\% CI \\
+Vintage & $E$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 \midrule
-2023--24 (\pounds85k) & Bunching ratio $b$ & $0.109$ & $0.004$ & $[0.100,\ 0.117]$ \\
-2023--24 (\pounds85k) & Excess mass $E$    & $14{,}663$ & $526$ & $[13{,}683,\ 15{,}662]$ \\
-2024--25 (\pounds90k) & Bunching ratio $b$ & $1.222$  & $0.011$ & $[1.202,\ 1.246]$ \\
-2024--25 (\pounds90k) & Excess mass $E$    & $195{,}867$ & $800$ & $[194{,}332,\ 197{,}655]$ \\
+2023--24 (\pounds85k, OBR fine targets) & $7{,}873$ & $2.55$ & $100.0$ \\
+2024--25 (\pounds90k, coarse bands only) & $11{,}072$ & $1.23$ & $101.0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -92,16 +94,16 @@ Vintage & Statistic & Point & Std.\ error & 95\% CI \\
 Table entries for a grid of polynomial degree $\in\{5,6,7,8\}$ and symmetric
 exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
 \texttt{results/bunching\_inference.txt}; the pattern matters more than the
-cells. On the 2023--24 population the target-inherited excess behaves like a
-local data feature: $E$ ranges over roughly $8{,}000$--$15{,}000$ in the
-interior cells (degrees 6--7, windows \pounds10--15k) and inflates in the
-wide-window corner cells, where the polynomial confuses the profile's
-shoulders with its counterfactual. On the 2024--25 population the spurious signal
-is robust in \emph{every one} of the sixteen cells ($E$ between $195{,}000$
-and $212{,}000$): no specification choice
-rescues the estimator from reading the \pounds90{,}000 band edge as bunching.
-Specification robustness is therefore no defence against target-inherited
-artifacts---a caution for any bunching exercise on calibrated synthetic data.
+cells. On the 2023--24 population the target-inherited excess ranges over
+roughly $6{,}700$--$9{,}700$ in the interior cells (degrees 6--7, windows
+\pounds10--15k), inflating in the corner cells where the polynomial confuses
+the profile's shoulders with its counterfactual. On the 2024--25 population
+the band-edge artifact swings four-fold across the grid ($E$ between roughly
+$8{,}600$ and $36{,}700$; $b_{\mathrm{LLAT}}$ between $0.94$ and $4.46$)
+while its headline cell lands within 10\% of the administrative estimate:
+neither specification stability nor literature-proximity certifies a
+synthetic bunching statistic---a caution for any bunching exercise on
+calibrated synthetic data.
 
 \subsubsection*{Placebo tests}
 
@@ -109,8 +111,8 @@ The placebo makes the target-inheritance mechanism precise by manipulating the
 calibration targets and re-running the estimator
 (Table~\ref{tab:placebo}; Section~\ref{ssec:bunch-placebo} describes the
 constructions). The estimates track the targets exactly: the control,
-calibrated to the OBR fine-band profile, returns $E=14{,}663$; Placebo~A
-(smooth reweighting) returns $E=323$; and Placebo~B (no fine targets,
+calibrated to the OBR fine-band profile, returns $E=7{,}873$; Placebo~A
+(smooth reweighting) returns $E=0$; and Placebo~B (no fine targets,
 un-stepped coarse bands, full regeneration and recalibration) returns $E=0$.
 Removing structure from the targets removes structure from the estimates
 because the targets are the only place sub-band structure can come from: the
@@ -122,11 +124,11 @@ generator has no firm location-choice.
 \label{tab:placebo}
 \begin{tabular}{lrr}
 \toprule
-Population & $b$ & $E$ \\
+Population & $b_{\mathrm{LLAT}}$ & $E$ \\
 \midrule
-Actual (control, OBR fine-band targets)   & $0.109$ & $14{,}663$ \\
-Placebo A (reweight density smooth)       & $-0.014$ & $323$ \\
-Placebo B (no fine targets, un-stepped)   & $-0.274$ & $0$ \\
+Actual (control, OBR fine-band targets)   & $2.549$ & $7{,}873$ \\
+Placebo A (reweight density smooth)       & $0.000$ & $0$ \\
+Placebo B (no fine targets, un-stepped)   & $0.395$ & $0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -154,28 +156,30 @@ attenuation mechanism was wrong. The redesigned test supersedes it.}
 \centering
 \caption{Power (recovery) test on the step-free population:
 Kleven--Waseem-consistent injections with true marginal buncher at
-\pounds112{,}000. Baseline (no injection): $E=323$.}
+\pounds112{,}000. Baseline (no injection): $E=0$.}
 \label{tab:recovery}
 \begin{tabular}{rrrr}
 \toprule
 $E_{\mathrm{true}}$ (injected) & $E_{\mathrm{hat}}$ & Recovery & $\hat y_R$ (true 112) \\
 \midrule
-$2{,}000$ & $1{,}099$ & $54.9\%$ & $87.7$ \\
-$5{,}000$ & $3{,}768$ & $75.4\%$ & $92.0$ \\
-$8{,}000$ & $6{,}557$ & $82.0\%$ & $95.1$ \\
+$2{,}000$ & $308$ & $15.4\%$ & $85.8$ \\
+$5{,}000$ & $2{,}475$ & $49.5\%$ & $100.0$ \\
+$8{,}000$ & $4{,}967$ & $62.1\%$ & $100.0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Every injected signal is detected, recovery rises with signal size, and the
-estimator \emph{under}-states the truth rather than inflating it. The
+Recovery rises with signal size---half to two-thirds of moderate
+(5{,}000--8{,}000-firm) injections, while a small 2{,}000-firm injection sits
+near the detection floor---and the estimator \emph{under}-states the truth
+rather than inflating it. The
 attenuation has a measured mechanical source: the depressed bins between the
 window top (\pounds100k) and the true marginal buncher (\pounds112k) enter the
 counterfactual fit and pull it down, truncating measured missing mass and
 drawing $\hat y_R$ toward the threshold. The implication is the one
 Section~\ref{sec:bunching} turns on: the target-inherited excess on the
-2023--24 data is read with the same attenuation a genuine signal would face
-(so the estimator, if anything, under-states the targeted profile), and the
-2024--25 artifact is two orders of magnitude beyond anything attenuation
-could explain. Both tests are part of the released code and are
+2023--24 data is read with the same attenuation a genuine signal would face,
+so the estimator, if anything, under-states the targeted profile; and no
+attenuation argument can turn the 2024--25 band-edge artifact into
+behaviour. Both tests are part of the released code and are
 fully reproducible.
