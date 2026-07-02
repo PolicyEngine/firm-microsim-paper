@@ -29,7 +29,7 @@ from firm_microsim.figures import (
     _style_ax,
 )
 
-from .model import FISCAL_YEARS, POLICY_THRESHOLD, StaticVATModel
+from .model import POLICY_THRESHOLD, StaticVATModel
 
 REF_GREY = "#888888"      # current-threshold reference line
 HMRC_COLOR = PALETTE[4]   # lighter teal for the HMRC series
