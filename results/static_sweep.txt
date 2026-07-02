@@ -6,21 +6,21 @@ model vs HMRC published costing (Spring Budget 2024), by fiscal year;
 baseline column = counterfactual threshold path (85/85/87/89/92k).
 --------------------------------------------------------------------------
    year  hmrc_impact_m  policyengine_impact_m
-2024-25         -150.0                 -243.0
-2025-26         -185.0                 -247.8
-2026-27         -125.0                 -152.3
-2027-28          -50.0                  -52.1
-2028-29           65.0                  107.0
+2024-25         -150.0                 -358.7
+2025-26         -185.0                 -365.8
+2026-27         -125.0                 -219.7
+2027-28          -50.0                  -74.8
+2028-29           65.0                  100.6
 
 Voluntary-retention sensitivity (anchor, per year): headline assumes
 every released firm deregisters (full liability lost). If the Liu et
 al. (2021) voluntary share (43%) of released-firm liability is
 retained, the impact scales accordingly:
-  2024-25: headline -243.0m -> retention-adjusted -138.5m (HMRC -150m)
-  2025-26: headline -247.8m -> retention-adjusted -141.2m (HMRC -185m)
-  2026-27: headline -152.3m -> retention-adjusted -86.8m (HMRC -125m)
-  2027-28: headline -52.1m -> retention-adjusted -29.7m (HMRC -50m)
-  2028-29: headline +107.0m -> retention-adjusted +61.0m (HMRC +65m)
+  2024-25: headline -358.7m -> retention-adjusted -204.5m (HMRC -150m)
+  2025-26: headline -365.8m -> retention-adjusted -208.5m (HMRC -185m)
+  2026-27: headline -219.7m -> retention-adjusted -125.2m (HMRC -125m)
+  2027-28: headline -74.8m -> retention-adjusted -42.6m (HMRC -50m)
+  2028-29: headline +100.6m -> retention-adjusted +57.3m (HMRC +65m)
 
 Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)
 counterfactual method: smooth above-threshold extrapolation (degree 1)
@@ -43,7 +43,7 @@ Total VAT revenue at GBP 90k, 2026-27: 210.2bn
 
 Bases and calibration-target comparison
 --------------------------------------------------------------------------
-  2023-24: registered base (>= threshold, unaged) = 184.7bn
+  2023-24: registered base (>= threshold, unaged) = 184.8bn
   2024-25: registered base (>= threshold, unaged) = 190.8bn
 
 Sweep thresholds: [70000, 75000, 80000, 85000, 90000, 95000, 100000, 105000, 110000, 115000, 120000]

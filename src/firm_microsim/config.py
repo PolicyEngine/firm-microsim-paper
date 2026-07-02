@@ -141,6 +141,9 @@ class Config:
     employment_importance: float = 1.0
     vat_liability_sector_importance: float = 1.0
     vat_liability_band_importance: float = 2.0
+    # Near-threshold OBR £1k-band targets (EFO Mar-2023 Chart C data;
+    # applied only at the £85k threshold — see data_loader).
+    near_threshold_importance: float = 5.0
 
     # Whether to include VAT-liability-by-sector as a calibration target.
     # Disabled by default: the model does not yet calibrate the input/output
@@ -149,6 +152,9 @@ class Config:
     # informational diagnostic (see validate.py). Restore once input/output
     # calibration exists — tracked in the GitHub issues.
     calibrate_vat_liability_sector: bool = False
+    # Calibrate the near-threshold £1k-band shape to the OBR Chart C data
+    # (2023-24 / £85k vintage only; the chart covers the £85k era).
+    calibrate_near_threshold: bool = True
 
     # --- Paths (overridable) ---------------------------------------------
     data_dir: Path = DATA_DIR

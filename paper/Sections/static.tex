@@ -35,7 +35,7 @@ theoretical-liability (VTTL-style) base, not the published cash-receipts line
 (around \pounds169bn in 2023--24; OBR forecast near \pounds180bn for 2025--26),
 which is reduced by refunds, the VAT gap, and collection timing. The unaged
 bases also sit about 5.8\% above the HMRC liability-by-band target sums they
-are calibrated toward (\pounds184.7bn against \pounds174.6bn above-threshold in
+are calibrated toward (\pounds184.8bn against \pounds174.6bn above-threshold in
 2023--24; \pounds190.8bn against \pounds180.4bn in 2024--25): the multi-target
 optimiser trades the liability totals off against the count targets, and the
 liability-by-band calibration scores (92.6\% and 79.0\%) bound the shortfall.
@@ -58,18 +58,20 @@ the measure's impact shrinks over the forecast and changes sign in 2028--29,
 when the counterfactual threshold overtakes \pounds90{,}000. The official
 profile is $-$150, $-$185, $-$125, $-$50, $+$65 \pounds m. My mechanical
 costing depends on the deregistration convention. If every released firm
-deregisters, the model gives $-$243, $-$248, $-$152, $-$52, $+$107: it
+deregisters, the model gives $-$359, $-$366, $-$220, $-$75, $+$101: it
 reproduces the sign, the narrowing profile, and the 2028--29 turning point,
-but overshoots the official magnitudes in the early years ($-$243 against
-$-$150 in 2024--25; $-$248 against $-$185 in 2025--26).
+but overshoots the official magnitudes in the early years ($-$359 against
+$-$150 in 2024--25; $-$366 against $-$185 in 2025--26).
 If instead the \citet{liuetal2021} voluntary-registration share (43\%) of
-released-firm liability is retained, the model gives $-$139, $-$141, $-$87,
-$-$30, $+$61. HMRC's published number lies between the two conventions in
-every year of the forecast (Figure~\ref{fig:hmrc_validation}). That is the
-honest reading of the anchor: the official costing embeds a registration
-response (HMRC expected roughly 28{,}000 fewer registrants in the first year,
-against about 34{,}000 firms in the released band here), and the static
-pipeline brackets it with transparent, mechanical conventions. Because my
+released-firm liability is retained, the model gives $-$205, $-$209, $-$125,
+$-$43, $+$57: still above the official number in the first two years, matching
+it in 2026--27 ($-$125.2 against $-$125), and close thereafter
+(Figure~\ref{fig:hmrc_validation}). That is the honest reading of the anchor:
+the official costing embeds a phased registration response (HMRC expected
+roughly 28{,}000 fewer registrants in the first year, against about 54{,}000
+firms in the released band here, now pinned by the OBR fine-band targets), so
+mechanical conventions overshoot while the response phases in and converge to
+the official profile as it completes. Because my
 microdata are calibrated to HMRC VAT aggregates, even a close match would
 confirm internal consistency rather than out-of-sample accuracy.
 
@@ -81,10 +83,12 @@ from \pounds85{,}000 to \pounds90{,}000 (the April~2024 change), my estimate ver
 HMRC's published costing, 2024--25 to 2028--29. Both series narrow over the
 forecast and turn positive by 2028--29 because the costing baseline is a
 counterfactual threshold path that resumes uprating after March~2026 and
-overtakes \pounds90{,}000; the published number lies between the model's
-full-deregistration and voluntary-retention conventions in every year. Because
-the microdata are calibrated to HMRC aggregates, this is a consistency check,
-not an out-of-sample validation.}
+overtakes \pounds90{,}000. The mechanical full-deregistration estimate
+overshoots the official costing while its phased registration response builds,
+converging from 2026--27; the voluntary-retention convention matches the
+official 2026--27 figure to \pounds0.2m. Because the microdata are calibrated
+to HMRC and OBR aggregates, this is a consistency check, not an out-of-sample
+validation.}
 \label{fig:hmrc_validation}
 \end{figure}
 
@@ -166,7 +170,7 @@ static principle---re-applying a tax rule to the fixed turnover distribution, wi
 no behavioural response---also costs reforms that change the \emph{shape} of the
 schedule rather than merely its position. I consider four reforms and report
 their first-order revenue effects against a common baseline: the
-\pounds85{,}000-notch / \pounds184.7bn 2023--24 base. (This 2023--24 data-year base
+\pounds85{,}000-notch / \pounds184.8bn 2023--24 base. (This 2023--24 data-year base
 differs from the \pounds204.6bn figure in the sweep above, which runs on the
 2024--25 vintage aged to 2025--26 at the post-reform \pounds90{,}000 threshold;
 the schedule reforms are costed in the data year to match the bunching and
@@ -178,37 +182,39 @@ the baseline.
 
 \paragraph{Threshold relocation.} Raising the threshold from \pounds85{,}000 to
 \pounds100{,}000 releases the firms with turnover in
-$[\pounds85{,}000, \pounds100{,}000)$---about $103{,}100$ firms---from the VAT
-net, for a static revenue change of \(-\)\pounds698m on the common base. Because
+$[\pounds85{,}000, \pounds100{,}000)$---about $116{,}700$ firms---from the VAT
+net, for a static revenue change of \(-\)\pounds783m on the common base. Because
 the released band lies \emph{above} the data-year threshold, its liabilities are
-directly calibrated and the band can be summed directly; the sweep's
-smooth-counterfactual method applied to the same move gives \(-\)\pounds686m and
-$98{,}900$ firms, within 2\% of the direct sum, so the two methods agree where
-they overlap. On this common base the level move carries the largest static
+directly calibrated (and its lower reach pinned by the OBR fine-band targets),
+so the band is summed directly; the sweep's smooth-counterfactual method, which
+irons out the near-threshold concentration by construction, gives
+\(-\)\pounds702m and $102{,}000$ firms, 10\% below the direct sum---a gap that
+now measures the real, target-pinned concentration of firms just above the
+threshold rather than an optimiser artifact. On this common base the level move carries the largest static
 cost of the menu and leaves the dominated region in place, relocating it to the
 new cutoff (Section~\ref{sec:model}); the taper removes the dominated region at
-a static cost of \(-\)\pounds466m. Which matters more depends on what the
+a static cost of \(-\)\pounds550m. Which matters more depends on what the
 reader wants from the reform---the dominated-region metric indexes
 misallocation only, and Section~\ref{sec:conclusion} discusses what it omits.
 
 \paragraph{Graduated taper.} A graduated taper replaces the discrete notch with an
 effective rate that phases linearly from $0\%$ at \pounds85{,}000 to the full $20\%$
 at \pounds105{,}000. Firms in the band remit a tapered rather than a full rate on
-their (fixed) turnover; mechanically this reduces revenue by \(-\)\pounds466m, with
-about $133{,}200$ firms in the \pounds85{,}000--\pounds105{,}000 band facing a lower
+their (fixed) turnover; mechanically this reduces revenue by \(-\)\pounds550m, with
+about $145{,}100$ firms in the \pounds85{,}000--\pounds105{,}000 band facing a lower
 effective rate.
 
 \paragraph{Banded reduced rate.} A banded reduced rate charges firms in the
 \pounds85{,}000--\pounds105{,}000 band a reduced rate
 $\tau_{\text{low}}\in\{10\%,15\%\}$ in place of the standard $20\%$, with $20\%$
-retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds460m
-at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds230m at $\tau_{\text{low}}=15\%$,
-again with about $133{,}200$ firms in the band facing the lower rate.
+retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds497m
+at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds248m at $\tau_{\text{low}}=15\%$,
+again with about $145{,}100$ firms in the band facing the lower rate.
 
 \begin{table}[htbp]
 \centering
 \caption{Static, behaviour-free revenue effect of the four reforms relative to the
-common \pounds85{,}000-notch / \pounds184.7bn 2023--24 baseline. Each reform is
+common \pounds85{,}000-notch / \pounds184.8bn 2023--24 baseline. Each reform is
 costed mechanically by re-applying its schedule to the fixed turnover distribution,
 with no behavioural response.}
 \label{tab:schedule_costs}
@@ -216,10 +222,10 @@ with no behavioural response.}
 \toprule
 Reform & Lever & Static revenue (\pounds m) \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-698$ \\
-Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-466$ \\
-Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-460$ \\
-Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-230$ \\
+Raise threshold to \pounds100{,}000 & Location & $-783$ \\
+Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-550$ \\
+Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-497$ \\
+Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-248$ \\
 \bottomrule
 \end{tabular}
 \end{table}

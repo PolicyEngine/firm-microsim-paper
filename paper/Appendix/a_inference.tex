@@ -46,11 +46,11 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-On the corrected 2023--24 population the constraint is degenerate---there is
-no excess mass to reconcile ($E=0$)---while on the 2024--25 population it
-binds at the window edge ($y_R$ pinned at $T^{*}+\pounds15$k), a symptom that
-the ``signal'' there is not the local spike the estimator is designed for but
-a band-scale target artifact.
+On the 2023--24 population the constraint locates the marginal-buncher edge
+at $y_R = \pounds98.6$k for the target-inherited profile, while on the
+2024--25 population it binds at the window edge ($y_R$ pinned at
+$T^{*}+\pounds15$k), a symptom that the ``signal'' there is not the local
+spike the estimator is designed for but a band-scale target artifact.
 
 \subsubsection*{Bootstrap standard errors}
 
@@ -79,8 +79,8 @@ degree-7 polynomial, $\pm\pounds15$k window.}
 \toprule
 Vintage & Statistic & Point & Std.\ error & 95\% CI \\
 \midrule
-2023--24 (\pounds85k) & Bunching ratio $b$ & $-0.139$ & $0.004$ & $[-0.146,\ -0.132]$ \\
-2023--24 (\pounds85k) & Excess mass $E$    & $0$      & $0$     & $[0,\ 0]$ \\
+2023--24 (\pounds85k) & Bunching ratio $b$ & $0.109$ & $0.004$ & $[0.100,\ 0.117]$ \\
+2023--24 (\pounds85k) & Excess mass $E$    & $14{,}663$ & $526$ & $[13{,}683,\ 15{,}662]$ \\
 2024--25 (\pounds90k) & Bunching ratio $b$ & $1.222$  & $0.011$ & $[1.202,\ 1.246]$ \\
 2024--25 (\pounds90k) & Excess mass $E$    & $195{,}867$ & $800$ & $[194{,}332,\ 197{,}655]$ \\
 \bottomrule
@@ -92,12 +92,13 @@ Vintage & Statistic & Point & Std.\ error & 95\% CI \\
 Table entries for a grid of polynomial degree $\in\{5,6,7,8\}$ and symmetric
 exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
 \texttt{results/bunching\_inference.txt}; the pattern matters more than the
-cells. On the 2023--24 population the null is stable: $E=0$ in every interior
-cell (degrees 6--7, all windows), with small positive artifacts only in the
-fragile corners (degree 5 or 8 with the widest windows, where the polynomial
-under- or over-fits the wings). On the 2024--25 population the spurious signal
+cells. On the 2023--24 population the target-inherited excess behaves like a
+local data feature: $E$ ranges over roughly $8{,}000$--$15{,}000$ in the
+interior cells (degrees 6--7, windows \pounds10--15k) and inflates in the
+wide-window corner cells, where the polynomial confuses the profile's
+shoulders with its counterfactual. On the 2024--25 population the spurious signal
 is robust in \emph{every one} of the sixteen cells ($E$ between $195{,}000$
-and $212{,}000$; $b$ between $0.73$ and $1.90$): no specification choice
+and $212{,}000$): no specification choice
 rescues the estimator from reading the \pounds90{,}000 band edge as bunching.
 Specification robustness is therefore no defence against target-inherited
 artifacts---a caution for any bunching exercise on calibrated synthetic data.
@@ -107,13 +108,13 @@ artifacts---a caution for any bunching exercise on calibrated synthetic data.
 The placebo makes the target-inheritance mechanism precise by manipulating the
 calibration targets and re-running the estimator
 (Table~\ref{tab:placebo}; Section~\ref{ssec:bunch-placebo} describes the
-constructions). On the corrected 2023--24 population all three worlds agree
-with the null: the control has no excess mass to begin with, Placebo~A
-(smooth reweighting) returns $E=27$, and Placebo~B (un-stepped HMRC band
-targets, full regeneration and recalibration) returns $E=0$. Removing
-structure from the targets removes structure from the estimates because the
-targets are the only place sub-band structure can come from: the generator has
-no firm location-choice.
+constructions). The estimates track the targets exactly: the control,
+calibrated to the OBR fine-band profile, returns $E=14{,}663$; Placebo~A
+(smooth reweighting) returns $E=323$; and Placebo~B (no fine targets,
+un-stepped coarse bands, full regeneration and recalibration) returns $E=0$.
+Removing structure from the targets removes structure from the estimates
+because the targets are the only place sub-band structure can come from: the
+generator has no firm location-choice.
 
 \begin{table}[t]
 \centering
@@ -123,9 +124,9 @@ no firm location-choice.
 \toprule
 Population & $b$ & $E$ \\
 \midrule
-Actual (control)                          & $-0.139$ & $0$ \\
-Placebo A (reweight density smooth)       & $-0.020$ & $27$ \\
-Placebo B (un-stepped HMRC band targets)  & $-0.274$ & $0$ \\
+Actual (control, OBR fine-band targets)   & $0.109$ & $14{,}663$ \\
+Placebo A (reweight density smooth)       & $-0.014$ & $323$ \\
+Placebo B (no fine targets, un-stepped)   & $-0.274$ & $0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -153,15 +154,15 @@ attenuation mechanism was wrong. The redesigned test supersedes it.}
 \centering
 \caption{Power (recovery) test on the step-free population:
 Kleven--Waseem-consistent injections with true marginal buncher at
-\pounds112{,}000. Baseline (no injection): $E=27$.}
+\pounds112{,}000. Baseline (no injection): $E=323$.}
 \label{tab:recovery}
 \begin{tabular}{rrrr}
 \toprule
 $E_{\mathrm{true}}$ (injected) & $E_{\mathrm{hat}}$ & Recovery & $\hat y_R$ (true 112) \\
 \midrule
-$2{,}000$ & $859$    & $42.9\%$ & $87.3$ \\
-$5{,}000$ & $3{,}538$ & $70.8\%$ & $92.4$ \\
-$8{,}000$ & $6{,}347$ & $79.3\%$ & $96.4$ \\
+$2{,}000$ & $1{,}099$ & $54.9\%$ & $87.7$ \\
+$5{,}000$ & $3{,}768$ & $75.4\%$ & $92.0$ \\
+$8{,}000$ & $6{,}557$ & $82.0\%$ & $95.1$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -172,8 +173,9 @@ attenuation has a measured mechanical source: the depressed bins between the
 window top (\pounds100k) and the true marginal buncher (\pounds112k) enter the
 counterfactual fit and pull it down, truncating measured missing mass and
 drawing $\hat y_R$ toward the threshold. The implication is the one
-Section~\ref{sec:bunching} turns on: the absence of bunching on the corrected
-2023--24 data is a property of the \emph{data}, not a failure of the method,
-while the 2024--25 artifact is two orders of magnitude beyond anything
-attenuation could explain. Both tests are part of the released code and are
+Section~\ref{sec:bunching} turns on: the target-inherited excess on the
+2023--24 data is read with the same attenuation a genuine signal would face
+(so the estimator, if anything, under-states the targeted profile), and the
+2024--25 artifact is two orders of magnitude beyond anything attenuation
+could explain. Both tests are part of the released code and are
 fully reproducible.

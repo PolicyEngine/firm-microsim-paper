@@ -411,6 +411,7 @@ def generate(
         data.ons_employment,
         data.hmrc_liability_sector,
         data.vat_liability_bands,
+        near_threshold_bins=getattr(data, "near_threshold_bins", None),
     )
 
     weights = optimize_weights(cfg, target_matrix, target_values, spec)

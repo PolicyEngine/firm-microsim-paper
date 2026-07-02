@@ -160,6 +160,9 @@ def build_regenerate_placebo() -> dict:
         data.hmrc_bands = dict(data.hmrc_bands)
         data.hmrc_bands["£1_to_Threshold"] = dens * T_STAR
         data.hmrc_bands["£Threshold_to_£150k"] = dens * (150.0 - T_STAR)
+        # Remove the OBR near-threshold shape targets as well: the placebo
+        # world has NO fine structure in its targets at all.
+        data.near_threshold_bins = None
         return data
 
     gen_mod.load_data = patched_load

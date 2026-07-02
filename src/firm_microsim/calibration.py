@@ -126,19 +126,21 @@ class TargetSpec:
     original script.
     """
 
-    def __init__(self, n_sectors: int, n_vat_sectors: int) -> None:
+    def __init__(self, n_sectors: int, n_vat_sectors: int, n_near: int = 0) -> None:
         self.n_turnover = 7
         self.n_sectors = n_sectors
         self.n_employment = len(EMPLOYMENT_BANDS)
         self.n_vat_sectors = n_vat_sectors
         self.n_vat_bands = len(VAT_LIABILITY_BANDS)
+        self.n_near = n_near
 
         self.turnover_start = 0
         self.sector_start = self.n_turnover
         self.employment_start = self.sector_start + self.n_sectors
         self.vat_sector_start = self.employment_start + self.n_employment
         self.vat_band_start = self.vat_sector_start + self.n_vat_sectors
-        self.n_targets = self.vat_band_start + self.n_vat_bands
+        self.near_start = self.vat_band_start + self.n_vat_bands
+        self.n_targets = self.near_start + self.n_near
 
 
 def build_target_matrix(
@@ -152,6 +154,7 @@ def build_target_matrix(
     ons_employment_df: pd.DataFrame,
     vat_liability_sector_df: pd.DataFrame,
     vat_liability_bands: dict,
+    near_threshold_bins: pd.DataFrame | None = None,
 ) -> Tuple[Tensor, Tensor, TargetSpec]:
     """Construct the calibration target matrix and target vector.
 
@@ -184,7 +187,8 @@ def build_target_matrix(
         # (Still reported as an informational diagnostic by validate.py.)
         vat_liability_sector_rows = vat_liability_sector_df.iloc[0:0].copy()
 
-    spec = TargetSpec(len(sector_rows), len(vat_liability_sector_rows))
+    n_near = 0 if near_threshold_bins is None else len(near_threshold_bins)
+    spec = TargetSpec(len(sector_rows), len(vat_liability_sector_rows), n_near)
     target_matrix = torch.zeros(spec.n_targets, n_firms, device=device)
 
     band_indices = map_to_hmrc_bands(turnover_values, threshold)
@@ -220,6 +224,34 @@ def build_target_matrix(
         row = spec.vat_band_start + offset
         mask = _band_membership_mask(turnover_values, band_name, threshold)
         target_matrix[row, mask] = vat_liability_values[mask]
+
+    # Near-threshold £1k-bin membership rows (bins are (lo, lo+1], matching
+    # the coarse-band edge conventions). Target values are assembled below.
+    near_targets: list[float] = []
+    if n_near:
+        below = near_threshold_bins[near_threshold_bins["bin_lo_k"] < threshold]
+        below_lo = float(below["bin_lo_k"].min())
+        window_mask = (turnover_values > below_lo) & (turnover_values <= threshold)
+        window_rows = float(window_mask.sum().item())
+        below_total = float(below["count"].sum())
+        for offset, (_, bin_row) in enumerate(near_threshold_bins.iterrows()):
+            lo = float(bin_row["bin_lo_k"])
+            row = spec.near_start + offset
+            mask = (turnover_values > lo) & (turnover_values <= lo + 1.0)
+            target_matrix[row, mask] = 1.0
+            if lo < threshold:
+                # SHAPE target: OBR profile share of the below-threshold
+                # window, scaled to the synthetic population's own row count
+                # there (the OBR chart counts a narrower universe than the
+                # ONS business frame below the threshold).
+                near_targets.append(
+                    float(bin_row["count"]) / below_total * window_rows
+                )
+            else:
+                # DIRECT count target: above the threshold every firm is
+                # VAT-registered, the same universe as the OBR chart and the
+                # coarse HMRC band these bins refine.
+                near_targets.append(float(bin_row["count"]))
 
     # ---- Target values --------------------------------------------------
     # £1_to_Threshold keeps the ONS structure (current synthetic count);
@@ -262,17 +294,19 @@ def build_target_matrix(
         + employment_targets
         + vat_liability_sector_targets
         + vat_liability_band_targets
+        + near_targets
     )
     target_values = torch.tensor(target_values_list, dtype=torch.float32, device=device)
 
     logger.info("Target matrix shape: %s", tuple(target_matrix.shape))
     logger.info(
         "Targets: 7 turnover + %d sector + %d employment + %d VAT-liability sector "
-        "+ %d VAT-liability band = %d",
+        "+ %d VAT-liability band + %d near-threshold = %d",
         spec.n_sectors,
         spec.n_employment,
         spec.n_vat_sectors,
         spec.n_vat_bands,
+        spec.n_near,
         spec.n_targets,
     )
     return target_matrix, target_values, spec
@@ -291,6 +325,9 @@ def _importance_weights(spec: TargetSpec, config: Config, device: str) -> Tensor
     )
     w[spec.vat_band_start : spec.vat_band_start + spec.n_vat_bands] = (
         config.vat_liability_band_importance
+    )
+    w[spec.near_start : spec.near_start + spec.n_near] = (
+        config.near_threshold_importance
     )
     return w
 

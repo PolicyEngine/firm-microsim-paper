@@ -75,13 +75,29 @@ loss with per-target importance weights $\lambda_k$,
 \]
 the final term a mean absolute penalty on the log-weights. The targets are the
 HMRC VAT-registered counts by turnover band and by sector, the HMRC net VAT
-liability by turnover band, and the ONS employment-band totals; turnover-band
-targets carry the largest $\lambda_k$, followed by VAT liability by band. VAT
-liability by sector is reported as an informational diagnostic but excluded from
-the optimizer, because the generator draws a common input-share distribution
-with sector shifts rather than calibrating the input/output tax structure by
-sector. The problem is solved by gradient descent, and the symmetric loss keeps
-targets of very different magnitudes on a common scale.
+liability by turnover band, the ONS employment-band totals, and---for the
+2023--24 vintage---the OBR's published near-threshold profile: the March 2023
+\emph{Economic and Fiscal Outlook} Chart~C data give HMRC counts of businesses
+by \pounds1{,}000 turnover band over \pounds65{,}000--\pounds90{,}000
+\citep{obr2023vat}, which I interpolate to the 2023--24 data year between the
+2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. The five
+bins at or above the threshold enter as direct count targets (every
+firm there is VAT-registered, the same universe as the coarse HMRC band they
+refine); the twenty bins below the threshold enter as \emph{shape} targets,
+normalised over the \pounds65{,}000--\pounds85{,}000 window and scaled to the
+synthetic population's own mass there, because the chart counts a narrower
+universe than the ONS business frame below the threshold. These fine targets
+pin the near-threshold density to the administratively observed bunching
+profile---the region that coarse bands alone leave to the weight optimiser
+(Section~\ref{sec:bunching}). No fine bands are published for the
+\pounds90{,}000 threshold era, so the 2024--25 vintage keeps coarse bands
+only. Turnover-band and near-threshold targets carry the largest $\lambda_k$,
+followed by VAT liability by band. VAT liability by sector is reported as an
+informational diagnostic but excluded from the optimizer, because the
+generator draws a common input-share distribution with sector shifts rather
+than calibrating the input/output tax structure by sector. The problem is
+solved by gradient descent, and the symmetric loss keeps targets of very
+different magnitudes on a common scale.
 
 A firm is registered with certainty when its data-year turnover exceeds the
 threshold $T^{*}$. This is an approximation to the statutory test, which is a
@@ -116,13 +132,17 @@ targets step down across the threshold---678{,}350 firms in the
 \pounds85{,}000--\pounds150{,}000, or roughly $8{,}000$ against $4{,}700$ firms
 per \pounds1{,}000 of band width---and the calibrated population necessarily
 inherits that band-average step. The \emph{local} shape within a few thousand
-pounds of the threshold, however, is not pinned by any target: it is an
-equilibrium of the weight optimiser, and in the corrected calibration the local
-density steps \emph{up} across \pounds85{,}000 (about $5{,}400$ firms per
-\pounds1{,}000 just below against $7{,}300$ just above)---the opposite of the
-bunching pattern in administrative data \citep{obr2023vat,liuetal2021}. This is
-the central data caveat of the paper: no sub-band feature of band-calibrated
-synthetic data, in either direction, carries behavioural information
+pounds of the threshold is pinned by the OBR near-threshold targets described
+above: the calibrated density rises into the threshold (about $13{,}800$ firms
+per \pounds1{,}000 in the \pounds84{,}000--\pounds85{,}000 bin), steps down
+across it (about $11{,}500$ just above), and declines through the band---the
+administratively observed bunching profile \citep{obr2023vat,liuetal2021},
+present in the file because it is targeted, not because any synthetic firm
+chooses it. In an earlier build without these targets the local shape was an
+unpinned optimiser equilibrium (and, under the pre-correction liability scale,
+a spurious bunching look-alike); the central data caveat of the paper stands
+in all three configurations: no sub-band feature of band-calibrated synthetic
+data carries behavioural information beyond what its targets put there
 (Section~\ref{sec:bunching} quantifies this with placebo and recovery tests).
 Counterfactual policies---including the \pounds85{,}000 to \pounds90{,}000
 reform and the forward threshold sweep of Section~\ref{sec:static}---are
@@ -136,9 +156,11 @@ Section~\ref{sec:behavioural}.
 \centering
 \includegraphics[width=0.74\textwidth]{figures/turnover_distribution_85k.png}
 \caption{Synthetic firm turnover distribution (weighted firm counts,
-\pounds1{,}000 bins), 2023--24. The band-average density steps down across the
-\pounds85{,}000 threshold and again at \pounds150{,}000; both are edges of the
-HMRC calibration bands, and the within-band shape between them is an optimiser
-equilibrium, not data (Section~\ref{sec:bunching}).}
+\pounds1{,}000 bins), 2023--24. The near-threshold profile---rising into the
+\pounds85{,}000 threshold and stepping down across it---is calibrated to the
+OBR's published \pounds1{,}000-band counts and is therefore target-inherited,
+not behavioural (Section~\ref{sec:bunching}). The seam at \pounds65{,}000
+marks the edge of the published fine-band window; the \pounds150{,}000 step is
+an HMRC calibration-band edge.}
 \label{fig:turnover_dist}
 \end{figure}
