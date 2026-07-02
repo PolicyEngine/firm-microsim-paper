@@ -243,29 +243,41 @@ def build_target_matrix(
     # the coarse-band edge conventions). Target values are assembled below.
     near_targets: list[float] = []
     if n_near:
+        # SHAPE-ONLY targets on BOTH sides of the threshold: each side takes
+        # the OBR profile's within-side shape, scaled to the synthetic frame's
+        # own base-weighted mass on that side. The OBR chart counts HMRC
+        # traders (a different unit and, below the threshold, a different
+        # universe than the ONS business frame), so its LEVELS are not
+        # imported on either side; mixing direct counts on one side with
+        # frame-scaled shape on the other inverted the cross-threshold
+        # ordering (more mass just above than just below - economically
+        # backwards for a liability notch). With side-consistent scaling the
+        # cross-threshold ratio is the frame's own, and the OBR data supply
+        # only the within-side profile (the rise into the threshold and the
+        # decline beyond it).
         below = near_threshold_bins[near_threshold_bins["bin_lo_k"] < threshold]
+        above = near_threshold_bins[near_threshold_bins["bin_lo_k"] >= threshold]
         below_lo = float(below["bin_lo_k"].min())
-        window_mask = (turnover_values > below_lo) & (turnover_values <= threshold)
-        window_rows = float(base_weights[window_mask].sum().item())
+        above_hi = float(above["bin_lo_k"].max()) + 1.0
+        below_mask = (turnover_values > below_lo) & (turnover_values <= threshold)
+        above_mask = (turnover_values > threshold) & (turnover_values <= above_hi)
+        below_rows = float(base_weights[below_mask].sum().item())
+        above_rows = float(base_weights[above_mask].sum().item())
         below_total = float(below["count"].sum())
+        above_total = float(above["count"].sum())
         for offset, (_, bin_row) in enumerate(near_threshold_bins.iterrows()):
             lo = float(bin_row["bin_lo_k"])
             row = spec.near_start + offset
             mask = (turnover_values > lo) & (turnover_values <= lo + 1.0)
             target_matrix[row, mask] = 1.0
             if lo < threshold:
-                # SHAPE target: OBR profile share of the below-threshold
-                # window, scaled to the synthetic population's own row count
-                # there (the OBR chart counts a narrower universe than the
-                # ONS business frame below the threshold).
                 near_targets.append(
-                    float(bin_row["count"]) / below_total * window_rows
+                    float(bin_row["count"]) / below_total * below_rows
                 )
             else:
-                # DIRECT count target: above the threshold every firm is
-                # VAT-registered, the same universe as the OBR chart and the
-                # coarse HMRC band these bins refine.
-                near_targets.append(float(bin_row["count"]))
+                near_targets.append(
+                    float(bin_row["count"]) / above_total * above_rows
+                )
 
     # ---- Target values --------------------------------------------------
     # £1_to_Threshold keeps the ONS structure (the base-weighted synthetic

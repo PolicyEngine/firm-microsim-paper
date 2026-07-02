@@ -1,32 +1,30 @@
-BUNCHING INFERENCE — definitive build (OBR targets; no below-threshold
-liability calibration). Point estimates and specification grids only:
-no bootstrap SEs are reported — the synthetic file is a deterministic
-construction, so row-resampling dispersion has no estimand and scales
-with the analyst-chosen row count. Uncertainty = the grids below plus
-results/seed_sensitivity.txt (generator-seed dispersion).
+BUNCHING INFERENCE — definitive build (OBR shape targets, side-consistent
+frame scaling; no below-threshold liability calibration). Points + grids
+only; see 'Why no standard errors are reported' in the paper appendix and
+results/seed_sensitivity.txt for generator-seed dispersion.
 ==========================================================================
 
 --- Vintage 2023-24 (threshold GBP 85k) ---
-E = 7,873 | b_llat = 2.549 | b = 0.0098 | y_R = 100.00
+E = 7,933 | b_llat = 1.911 | b = 0.0106 | y_R = 100.00
 
 Degree x window sensitivity (point estimates):
  degree  window         b   b_llat            E
-      5    10.0  0.120439 3.200120 11013.392427
-      5    15.0  0.062258 3.066512 10433.042493
-      5    20.0  0.051464 3.172092 11428.943358
-      5    25.0  0.073416 4.096691 17902.800125
-      6    10.0  0.083991 2.715061  8989.732207
-      6    15.0 -0.003381 2.056741  6687.240289
-      6    20.0 -0.056587 1.408037  4689.933712
-      6    25.0 -0.085520 0.975156  3545.392007
-      7    10.0  0.094102 2.989130  9724.411833
-      7    15.0  0.009830 2.548821  7873.081305
-      7    20.0 -0.037223 1.934362  6052.435571
-      7    25.0 -0.059431 1.502397  4874.574626
-      8    10.0  0.167279 4.035538 14509.667352
-      8    15.0  0.095686 3.882279 13861.461045
-      8    20.0  0.074891 4.041864 14926.300372
-      8    25.0  0.185941 8.147296 40307.297293
+      5    10.0  0.121455 2.540936 11083.763899
+      5    15.0  0.062952 2.409029 10496.139158
+      5    20.0  0.051871 2.531571 11481.096823
+      5    25.0  0.073787 3.426838 17978.098315
+      6    10.0  0.084931 2.071682  9047.128648
+      6    15.0 -0.002772 1.491790  6734.180107
+      6    20.0 -0.056319 0.904710  4707.063377
+      6    25.0 -0.085257 0.528752  3562.712992
+      7    10.0  0.095200 2.338710  9791.845330
+      7    15.0  0.010598 1.910717  7932.578238
+      7    20.0 -0.036794 1.379028  6094.394467
+      7    25.0 -0.058932 1.001457  4913.878747
+      8    10.0  0.168343 3.354124 14588.584354
+      8    15.0  0.096421 3.209501 13943.573789
+      8    20.0  0.075002 3.360832 14954.732208
+      8    25.0  0.186001 7.434261 40321.093337
 
 --- Vintage 2024-25 (threshold GBP 90k) ---
 E = 11,072 | b_llat = 1.230 | b = 0.0739 | y_R = 101.01

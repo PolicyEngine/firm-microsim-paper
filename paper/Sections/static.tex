@@ -58,17 +58,17 @@ the measure's impact shrinks over the forecast and changes sign in 2028--29,
 when the counterfactual threshold overtakes \pounds90{,}000. The official
 profile is $-$150, $-$185, $-$125, $-$50, $+$65 \pounds m. My mechanical
 costing depends on the deregistration convention. If every released firm
-deregisters, the model gives $-$358, $-$366, $-$219, $-$75, $+$101: it
+deregisters, the model gives $-$317, $-$323, $-$195, $-$66, $+$103: it
 reproduces the sign, the narrowing profile, and the 2028--29 turning point,
-but overshoots the official magnitudes in the early years ($-$358 against
-$-$150 in 2024--25; $-$366 against $-$185 in 2025--26).
+but overshoots the official magnitudes throughout ($-$317 against
+$-$150 in 2024--25; $-$323 against $-$185 in 2025--26).
 If instead the \citet{liuetal2021} voluntary-registration share (43\%) of
-released-firm liability is retained, the model gives $-$204, $-$208, $-$125,
-$-$43, $+$57: still above the official number in the first two years, matching
-it in 2026--27 ($-$125.1 against $-$125), and close thereafter
-(Figure~\ref{fig:hmrc_validation}). That is the honest reading of the anchor:
+released-firm liability is retained, the model gives $-$180, $-$184, $-$111,
+$-$38, $+$59: above the official number in the first year, matching it to
+\pounds1m in 2025--26 ($-$184.1 against $-$185), and modestly below it
+thereafter (Figure~\ref{fig:hmrc_validation}). That is the honest reading of the anchor:
 the official costing embeds a phased registration response (HMRC expected
-roughly 28{,}000 fewer registrants in the first year, against about 54{,}000
+roughly 28{,}000 fewer registrants in the first year, against about 48{,}000
 firms in the released band here, now pinned by the OBR fine-band targets), so
 mechanical conventions overshoot while the response phases in and converge to
 the official profile as it completes. Because my
@@ -84,9 +84,9 @@ HMRC's published costing, 2024--25 to 2028--29. Both series narrow over the
 forecast and turn positive by 2028--29 because the costing baseline is a
 counterfactual threshold path that resumes uprating after March~2026 and
 overtakes \pounds90{,}000. The mechanical full-deregistration estimate
-overshoots the official costing while its phased registration response builds,
-converging from 2026--27; the voluntary-retention convention matches the
-official 2026--27 figure to \pounds0.1m. Because the microdata are calibrated
+overshoots the official costing while its phased registration response builds;
+the voluntary-retention convention matches the official 2025--26 figure to
+\pounds1m and runs modestly below it thereafter. Because the microdata are calibrated
 to HMRC and OBR aggregates, this is a consistency check, not an out-of-sample
 validation.}
 \label{fig:hmrc_validation}
@@ -182,8 +182,8 @@ the baseline.
 
 \paragraph{Threshold relocation.} Raising the threshold from \pounds85{,}000 to
 \pounds100{,}000 releases the firms with turnover in
-$[\pounds85{,}000, \pounds100{,}000)$---about $116{,}500$ firms---from the VAT
-net, for a static revenue change of \(-\)\pounds784m on the common base. Because
+$[\pounds85{,}000, \pounds100{,}000)$---about $111{,}900$ firms---from the VAT
+net, for a static revenue change of \(-\)\pounds753m on the common base. Because
 the released band lies \emph{above} the data-year threshold, its liabilities are
 directly calibrated (and its lower reach pinned by the OBR fine-band targets),
 so the band is summed directly; the sweep's smooth-counterfactual method, which
@@ -193,22 +193,22 @@ now measures the real, target-pinned concentration of firms just above the
 threshold rather than an optimiser artifact. On this common base the level move carries the largest static
 cost of the menu and leaves the dominated region in place, relocating it to the
 new cutoff (Section~\ref{sec:model}); the taper removes the dominated region at
-a static cost of \(-\)\pounds550m. Which matters more depends on what the
+a static cost of \(-\)\pounds520m. Which matters more depends on what the
 reader wants from the reform---the dominated-region metric indexes
 misallocation only, and Section~\ref{sec:conclusion} discusses what it omits.
 
 \paragraph{Graduated taper.} A graduated taper replaces the discrete notch with an
 effective rate that phases linearly from $0\%$ at \pounds85{,}000 to the full $20\%$
 at \pounds105{,}000. Firms in the band remit a tapered rather than a full rate on
-their (fixed) turnover; mechanically this reduces revenue by \(-\)\pounds550m, with
+their (fixed) turnover; mechanically this reduces revenue by \(-\)\pounds520m, with
 about $144{,}800$ firms in the \pounds85{,}000--\pounds105{,}000 band facing a lower
 effective rate.
 
 \paragraph{Banded reduced rate.} A banded reduced rate charges firms in the
 \pounds85{,}000--\pounds105{,}000 band a reduced rate
 $\tau_{\text{low}}\in\{10\%,15\%\}$ in place of the standard $20\%$, with $20\%$
-retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds497m
-at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds249m at $\tau_{\text{low}}=15\%$,
+retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds484m
+at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds242m at $\tau_{\text{low}}=15\%$,
 again with about $144{,}800$ firms in the band facing the lower rate.
 
 \begin{table}[htbp]
@@ -222,10 +222,10 @@ with no behavioural response.}
 \toprule
 Reform & Lever & Static revenue (\pounds m) \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-784$ \\
-Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-550$ \\
-Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-497$ \\
-Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-249$ \\
+Raise threshold to \pounds100{,}000 & Location & $-753$ \\
+Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-520$ \\
+Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-484$ \\
+Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-242$ \\
 \bottomrule
 \end{tabular}
 \end{table}

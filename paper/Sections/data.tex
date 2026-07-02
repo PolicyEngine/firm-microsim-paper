@@ -80,13 +80,20 @@ liability by turnover band, the ONS employment-band totals, and---for the
 \emph{Economic and Fiscal Outlook} Chart~C data give HMRC counts of businesses
 by \pounds1{,}000 turnover band over \pounds65{,}000--\pounds90{,}000
 \citep{obr2023vat}, which I interpolate to the 2023--24 data year between the
-2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. The five
-bins at or above the threshold enter as direct count targets (every
-firm there is VAT-registered, the same universe as the coarse HMRC band they
-refine); the twenty bins below the threshold enter as \emph{shape} targets,
-normalised over the \pounds65{,}000--\pounds85{,}000 window and scaled to the
-synthetic population's own mass there, because the chart counts a narrower
-universe than the ONS business frame below the threshold. These fine targets
+2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. All twenty-five bins enter as \emph{shape} targets, applied
+side-consistently: each side of the threshold takes the OBR profile's
+within-side shape, normalised over its own window
+(\pounds65{,}000--\pounds85{,}000 below; \pounds85{,}000--\pounds90{,}000
+above) and scaled to the synthetic population's own mass there. The chart
+counts HMRC traders---a different unit and, below the threshold, a
+substantially narrower universe than the ONS business frame---so its levels
+are not imported on either side. An earlier build that mixed conventions
+(direct counts above the threshold, frame-scaled shape below) placed more
+mass just above the threshold than just below it, inverting the
+administrative profile's cross-threshold ordering; under side-consistent
+scaling the cross-threshold step comes from the frame's own band structure
+and the OBR data supply only the within-side geometry---the rise into the
+threshold and the decline beyond it. These fine targets
 pin the near-threshold density to the administratively observed bunching
 profile---the region that coarse bands alone leave to the weight optimiser
 (Section~\ref{sec:bunching}). No fine bands are published for the
@@ -144,7 +151,7 @@ inherits that band-average step. The \emph{local} shape within a few thousand
 pounds of the threshold is pinned by the OBR near-threshold targets described
 above: the calibrated density rises into the threshold (about $13{,}800$ firms
 per \pounds1{,}000 in the \pounds84{,}000--\pounds85{,}000 bin), steps down
-across it (about $11{,}500$ just above), and declines through the band---the
+across it (about $10{,}300$ just above), and declines through the band---the
 administratively observed bunching profile \citep{obr2023vat,liuetal2021},
 present in the file because it is targeted, not because any synthetic firm
 chooses it. In an earlier build without these targets the local shape was an
@@ -172,7 +179,10 @@ not behavioural (Section~\ref{sec:bunching}). Levels reflect the ONS
 VAT/PAYE-registered frame: unregistered businesses---most of the
 below-threshold mass, and most of the cross-threshold cliff, in all-business
 administrative charts---are outside it, so level comparisons to such charts
-are not like-for-like. The \pounds150{,}000 step is an HMRC
-calibration-band edge.}
+are not like-for-like. The steps at \pounds90{,}000 (about $9{,}100$ firms
+per \pounds1{,}000 in the last OBR-pinned bin against about $6{,}800$ in the
+first unpinned bin) and \pounds150{,}000 are calibration-target
+boundaries---the top of the OBR fine-band window and an HMRC band edge
+respectively---not features of the underlying firm distribution.}
 \label{fig:turnover_dist}
 \end{figure}

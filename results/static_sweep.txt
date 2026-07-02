@@ -6,21 +6,21 @@ model vs HMRC published costing (Spring Budget 2024), by fiscal year;
 baseline column = counterfactual threshold path (85/85/87/89/92k).
 --------------------------------------------------------------------------
    year  hmrc_impact_m  policyengine_impact_m
-2024-25         -150.0                 -358.3
-2025-26         -185.0                 -365.5
-2026-27         -125.0                 -219.4
-2027-28          -50.0                  -74.7
-2028-29           65.0                  100.7
+2024-25         -150.0                 -316.6
+2025-26         -185.0                 -322.9
+2026-27         -125.0                 -195.1
+2027-28          -50.0                  -66.4
+2028-29           65.0                  102.9
 
 Voluntary-retention sensitivity (anchor, per year): headline assumes
 every released firm deregisters (full liability lost). If the Liu et
 al. (2021) voluntary share (43%) of released-firm liability is
 retained, the impact scales accordingly:
-  2024-25: headline -358.3m -> retention-adjusted -204.2m (HMRC -150m)
-  2025-26: headline -365.5m -> retention-adjusted -208.3m (HMRC -185m)
-  2026-27: headline -219.4m -> retention-adjusted -125.1m (HMRC -125m)
-  2027-28: headline -74.7m -> retention-adjusted -42.6m (HMRC -50m)
-  2028-29: headline +100.7m -> retention-adjusted +57.4m (HMRC +65m)
+  2024-25: headline -316.6m -> retention-adjusted -180.5m (HMRC -150m)
+  2025-26: headline -322.9m -> retention-adjusted -184.1m (HMRC -185m)
+  2026-27: headline -195.1m -> retention-adjusted -111.2m (HMRC -125m)
+  2027-28: headline -66.4m -> retention-adjusted -37.8m (HMRC -50m)
+  2028-29: headline +102.9m -> retention-adjusted +58.7m (HMRC +65m)
 
 Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)
 counterfactual method: smooth above-threshold extrapolation (degree 1)

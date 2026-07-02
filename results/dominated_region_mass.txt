@@ -14,16 +14,16 @@ Bands measured on the WEIGHTED synthetic firm population.
 
 rate / band            width a (GBP)      band (GBP k)         OBS          CF   NET disp.
 ------------------------------------------------------------------------------------------
-20% (baseline notch)          21,250     [85, 106.250)     159,886     154,165      -5,721
-15% band                      15,000     [85, 100.000)     120,538     113,104      -7,434
-10% band                       9,444      [85, 94.444)      89,862      79,604     -10,258
+20% (baseline notch)          21,250     [85, 106.250)     156,040     153,747      -2,293
+15% band                      15,000     [85, 100.000)     115,929     112,830      -3,100
+10% band                       9,444      [85, 94.444)      84,661      79,432      -5,230
 ------------------------------------------------------------------------------------------
 
 INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
-  Observed firms in dominated region ........      159,886
-  Counterfactual total density in band (CF)..      154,165
-  NET displaced mass in band (CF - OBS) .....       -5,721
-  CF mass as share of firms near threshold ..        0.498
+  Observed firms in dominated region ........      156,040
+  Counterfactual total density in band (CF)..      153,747
+  NET displaced mass in band (CF - OBS) .....       -2,293
+  CF mass as share of firms near threshold ..        0.503
 
   Note: the headline displaced-mass number is NET (CF - OBS), not the
   total CF density. The band is wide, so most CF firms in it would
@@ -31,23 +31,23 @@ INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
   NET deficit is the mass the notch evacuates from the dominated region.
 
 REFORM-SHRUNK BANDS (net displaced mass):
-  15% -> band width GBP 15,000: net displaced = -7,434 firms  (CF total 113,104)
-  10% -> band width GBP 9,444: net displaced = -10,258 firms  (CF total 79,604)
+  15% -> band width GBP 15,000: net displaced = -3,100 firms  (CF total 112,830)
+  10% -> band width GBP 9,444: net displaced = -5,230 firms  (CF total 79,432)
 
 SECONDARY NOTCH at the reduced-rate band top (T1 = GBP 105,000):
   A banded reduced rate reverts to tau=20% at T1, adding a SECOND
   dominated region a' = T1*(tau-r)/(1-tau). Total dominated turnover and
   mass = primary [T*, T*+a] + secondary [T1, T1+a'].
-  15% band  secondary [105, 111.562) width GBP 6,563  OBS = 36,040
-            primary OBS 120,538 + secondary OBS 36,040 = TOTAL 156,578  (baseline 159,886, -2.1%)
-  10% band  secondary [105, 118.125) width GBP 13,125  OBS = 68,842
-            primary OBS 89,862 + secondary OBS 68,842 = TOTAL 158,704  (baseline 159,886, -0.7%)
+  15% band  secondary [105, 111.562) width GBP 6,563  OBS = 36,746
+            primary OBS 115,929 + secondary OBS 36,746 = TOTAL 152,675  (baseline 156,040, -2.2%)
+  10% band  secondary [105, 118.125) width GBP 13,125  OBS = 70,179
+            primary OBS 84,661 + secondary OBS 70,179 = TOTAL 154,840  (baseline 156,040, -0.8%)
 
 REDUCED-FORM BUNCHING on this population (context for the masses above):
-  excess mass below T*       E       = 7,873 firms
-  missing mass above T*      Delta_R = 7,150 firms
+  excess mass below T*       E       = 7,933 firms
+  missing mass above T*      Delta_R = 5,761 firms
   marginal buncher           y_R     = GBP 100,000
-  NET displaced mass in 20% dominated band = -5,721 firms
+  NET displaced mass in 20% dominated band = -2,293 firms
 
   By mass conservation the excess mass E that bunches just below T*
   is the mass that, absent the notch, would have spread into the
@@ -56,6 +56,6 @@ REDUCED-FORM BUNCHING on this population (context for the masses above):
   (The TOTAL CF density in the band is NOT the displaced mass and
   should not be compared to E -- that would be a category error.)
 
-  total observed weighted mass on [20,140] est. range = 936,169
+  total observed weighted mass on [20,140] est. range = 935,138
 
 script: firm-microsim-dominated-region
