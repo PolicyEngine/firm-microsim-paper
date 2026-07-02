@@ -501,8 +501,9 @@ def cli(argv=None):
         Path(txt).write_text("\n".join(lines) + "\n")
         print("\n".join(lines))
         print(f"\nWrote {txt}")
-        return res
-    return main(argv)
+        return None
+    main(argv)
+    return None
 
 
 if __name__ == "__main__":

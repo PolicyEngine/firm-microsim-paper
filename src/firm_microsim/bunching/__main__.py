@@ -17,14 +17,18 @@ from .model import BunchingEstimator
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="firm-microsim-bunching",
-        description="Regenerate the bunching figure and print estimates.",
+        description="Regenerate the bunching figure and print point estimates.",
     )
     parser.add_argument("--vintage", action="append", choices=["2023-24", "2024-25"],
                         help="Vintage(s) to run (default: both).")
     parser.add_argument("--n-boot", type=int, default=200,
-                        help="Bootstrap replications for SEs (default: 200).")
-    parser.add_argument("--no-bootstrap", action="store_true",
-                        help="Skip bootstrap SEs (point estimates only).")
+                        help="Bootstrap replications when --bootstrap is set "
+                        "(default: 200).")
+    parser.add_argument("--bootstrap", action="store_true",
+                        help="Also print row-resampling bootstrap dispersion. "
+                        "Exploratory only: the paper reports no standard "
+                        "errors (deterministic construction, no estimand); "
+                        "see the inference appendix.")
     parser.add_argument("--figures-only", action="store_true",
                         help="Only regenerate figures; skip printed estimates.")
     args = parser.parse_args()
@@ -38,14 +42,14 @@ def main() -> None:
     for v in vintages:
         print(f"\n{'=' * 60}\n  Bunching — vintage {v}\n{'=' * 60}")
         est = BunchingEstimator(v)
-        if args.no_bootstrap:
+        if args.bootstrap:
+            print(est.summary(n_boot=args.n_boot).to_string())
+        else:
             res = est.estimate()
             print(f"  b = {res['b']:.4f}   excess mass E = {res['E']:,.0f}   "
-                  f"y_R = {res['y_R']:.2f}")
+                  f"Delta_R = {res['Delta_R']:,.0f}   y_R = {res['y_R']:.2f}")
             print(f"  b (LLAT normalisation) = {res['b_llat']:.3f}  "
                   f"(cf. LLAT 2021: 1.361)")
-        else:
-            print(est.summary(n_boot=args.n_boot).to_string())
 
 
 if __name__ == "__main__":
