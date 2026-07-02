@@ -599,12 +599,9 @@ export function ReformMenuSlide() {
           ))}
         </div>
         <Caption className="mt-6 max-w-6xl">
-          Common £85,000-notch / £184.8bn 2023–24 base (near-threshold profile calibrated to OBR
-          £1k-band data).{" "}
-          {teal("The level move carries the largest static cost and removes none of the dominated region")};
-          the taper removes all of it (−£520m, against the 10% band’s −£484m). “Split in two” = a
-          second notch appears where the reduced-rate band ends (£105k reverts to 20%), so the empty
-          band is fragmented, not shrunk.
+          Common £85,000-notch, 2023–24 base.{" "}
+          {teal("The level move costs the most and removes none of the dominated region")} — only
+          the taper removes it. “Split in two” = a second notch where the reduced-rate band ends.
         </Caption>
         <SeeAppendix to={SLIDE.appBehav}>behavioural costs across e — appendix</SeeAppendix>
       </div>
