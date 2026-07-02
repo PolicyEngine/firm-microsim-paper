@@ -691,18 +691,18 @@ export function DominatedRegionSlide() {
               height={1846}
             />
           </div>
-          <div className="mt-3">
+        </div>
+        <div>
+          <SlideTitle kicker="The distortion">
+            The dominated region: an elasticity-free distortion
+          </SlideTitle>
+          <div className="mt-4">
             <Caption className="text-center">The notch in the firm’s profit:</Caption>
             <DisplayEq
               tex="\pi(y)=\begin{cases} y-c(y), & y\lt T^{*}\\ (1-\tau)\,y-c(y), & y\ge T^{*}\end{cases}"
               className="mt-2 text-[1rem]"
             />
           </div>
-        </div>
-        <div>
-          <SlideTitle kicker="The distortion">
-            The dominated region: an elasticity-free distortion
-          </SlideTitle>
           <BList
             className="mt-6"
             size="text-lg"
@@ -877,7 +877,7 @@ export function BehaviouralLayerSlide() {
             size="text-lg"
             items={[
               <>
-                Region-confined iso-elastic simulator (value-added base, formulation A) re-optimises
+                Region-confined iso-elastic simulator (value-added base) re-optimises
                 each firm within its schedule region, with <Math tex="e" /> {teal("assumed")}, not
                 identified; sweep <Math tex="e\in\{0.05,0.17,0.32\}" />.
               </>,
@@ -900,11 +900,6 @@ export function BehaviouralLayerSlide() {
                 Static cost is the exact <Math tex="e\to0" /> limit; <Math tex="e=0.05" /> is the
                 external anchor (Kleven and Waseem, 2013), Liu et al.’s UK estimates (~0.09–0.14)
                 fall in the swept range.
-              </>,
-              <>
-                Taper excluded (continuously varying rate — outside the flat-rate machinery). The
-                behavioural uncertainty that matters is {teal("extensive")}: registration and
-                location choice, which these data cannot identify.
               </>,
             ]}
           />
