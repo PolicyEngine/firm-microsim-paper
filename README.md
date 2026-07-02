@@ -173,14 +173,15 @@ paper's Section 5.
 
 ## Fast iteration builds
 
-`firm-microsim --fast` runs the full pipeline on a stratified sample (~15% of
+`firm-microsim --fast` runs the full pipeline on a stratified sample (~20% of
 rows: 30% inside the £15k–£150k analysis window, 5% outside, per-stratum
 floors), carrying the thinned mass as base weights so every calibration target
 remains a true total. A vintage builds in ~15 seconds instead of ~13 minutes;
 headline aggregates reproduce the full build within ~0.3% and local bunching
 statistics within ~5%. Use for development only — release artifacts are
 full-size. Generator-seed sensitivity of the full build is recorded in
-`results/seed_sensitivity.txt` (E ±2%, reform costs ±£1m across seeds).
+`results/seed_sensitivity.txt` (E ±2%, raise ±£2.1m / taper ±£1.5m across
+seeds; reproduce with `scripts/seed_sensitivity.py`).
 
 ## Populace/Ledger migration check
 
@@ -218,7 +219,8 @@ targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
 replicate the paper's generated synthetic population: Populace's shared optimizer
 landed at 93.8% overall accuracy under its own validator versus the paper's
-then-90.5% (89.4% on the corrected build), but that overall pair is **not
+then-90.5% (2024-25 scores 92.8% on the corrected build,
+`results/calibration_accuracy.txt`), but that overall pair is **not
 like-for-like**: HMRC turnover-band accuracy uses different band sets, and sector
 distribution reflects different calibration-target definitions. The directly
 comparable rows are ONS population, employment bands, and VAT liability by
@@ -270,9 +272,11 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
 - `vat_threshold_revenue_impact.png` — the £85k→£90k anchor reform vs HMRC's
   published costing, by fiscal year. **Built on the £85k / 2023-24 vintage** —
   the pre-reform basis HMRC actually had at the 6 March 2024 costing (the
-  threshold was still £85k until 1 April 2024). Model −171/−175/−110/−38/+72.5
-  vs HMRC −150/−185/−125/−50/+65 £m; both turn positive by 2028-29. Affected
-  firms ≈ 32.6k registered, next to HMRC's published 28,000.
+  threshold was still £85k until 1 April 2024). Full-deregistration model
+  −317/−323/−195/−66/+103 vs HMRC −150/−185/−125/−50/+65 £m (43% voluntary
+  retention: −180/−184/−111/−38/+59); both turn positive by 2028-29. Released
+  band holds ≈ 48k registered firms, next to HMRC's published 28,000 expected
+  first-year deregistrations. See `results/static_sweep.txt`.
 - `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the forward static
   sweep of registration thresholds (£70k–£120k) vs the current £90k baseline,
   **on the £90k / 2024-25 vintage**.

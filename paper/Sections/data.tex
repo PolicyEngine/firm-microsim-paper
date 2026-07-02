@@ -80,7 +80,9 @@ liability by turnover band, the ONS employment-band totals, and---for the
 \emph{Economic and Fiscal Outlook} Chart~C data give HMRC counts of businesses
 by \pounds1{,}000 turnover band over \pounds65{,}000--\pounds90{,}000
 \citep{obr2023vat}, which I interpolate to the 2023--24 data year between the
-2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. All twenty-five bins enter as \emph{shape} targets, applied
+2019--20 outturn and the OBR's 2025--26 frozen-threshold projection (the
+chart's final row, the \pounds90{,}000 bin, lies beyond the fine window and
+is not used). All twenty-five bins enter as \emph{shape} targets, applied
 side-consistently: each side of the threshold takes the OBR profile's
 within-side shape, normalised over its own window
 (\pounds65{,}000--\pounds85{,}000 below; \pounds85{,}000--\pounds90{,}000
@@ -93,10 +95,12 @@ mass just above the threshold than just below it, inverting the
 administrative profile's cross-threshold ordering; under side-consistent
 scaling the cross-threshold step comes from the frame's own band structure
 and the OBR data supply only the within-side geometry---the rise into the
-threshold and the decline beyond it. These fine targets
-pin the near-threshold density to the administratively observed bunching
-profile---the region that coarse bands alone leave to the weight optimiser
-(Section~\ref{sec:bunching}). No fine bands are published for the
+threshold and the decline beyond it. These fine targets pin the
+near-threshold density to the OBR profile's within-side geometry at
+frame-implied levels---the region that coarse bands alone leave to the weight
+optimiser (Section~\ref{sec:bunching}); the resulting cross-threshold step
+($-25\%$) is about half the OBR chart's own ($-60\%$), because the chart's
+below-threshold universe is narrower than the frame. No fine bands are published for the
 \pounds90{,}000 threshold era, so the 2024--25 vintage keeps coarse bands
 only. Turnover-band and near-threshold targets carry the largest $\lambda_k$,
 followed by VAT liability by band. Two liability dimensions are reported as
@@ -152,7 +156,7 @@ pounds of the threshold is pinned by the OBR near-threshold targets described
 above: the calibrated density rises into the threshold (about $13{,}800$ firms
 per \pounds1{,}000 in the \pounds84{,}000--\pounds85{,}000 bin), steps down
 across it (about $10{,}300$ just above), and declines through the band---the
-administratively observed bunching profile \citep{obr2023vat,liuetal2021},
+administratively observed bunching geometry \citep{obr2023vat,liuetal2021},
 present in the file because it is targeted, not because any synthetic firm
 chooses it. In an earlier build without these targets the local shape was an
 unpinned optimiser equilibrium (and, under the pre-correction liability scale,
@@ -183,6 +187,8 @@ are not like-for-like. The steps at \pounds90{,}000 (about $9{,}100$ firms
 per \pounds1{,}000 in the last OBR-pinned bin against about $6{,}800$ in the
 first unpinned bin) and \pounds150{,}000 are calibration-target
 boundaries---the top of the OBR fine-band window and an HMRC band edge
-respectively---not features of the underlying firm distribution.}
+respectively---not features of the underlying firm distribution. The
+\pounds90{,}000 boundary lies inside the bunching estimator's fit range;
+Appendix~\ref{app:inference} measures its effect on the headline statistics.}
 \label{fig:turnover_dist}
 \end{figure}

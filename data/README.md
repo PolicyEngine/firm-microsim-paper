@@ -203,6 +203,12 @@ tables). This output is **not committed** to the repository — it is regenerate
 by running the package. Only `.gitkeep` is tracked so the directory exists on a
 fresh clone. See the top-level README / package docs for the generation command.
 
-Because the synthetic population file can be large, it is configured for Git LFS
-in `.gitattributes` for the case where someone does choose to track it; by
-default `.gitignore` excludes `data/synthetic/*.csv`.
+The synthetic population CSVs are not tracked: `.gitignore` excludes
+`data/synthetic/*.csv` (no Git LFS involved), and the pipeline regenerates
+them from the committed raw workbooks.
+
+`data/processed/obr_vat_bunching.csv` holds the OBR's Chart 3.C £1,000-band
+business counts (Economic and Fiscal Outlook, March 2023, chapter-3 workbook,
+OGL v3.0), extracted as documented in `scripts/plot_obr_bunching.py`; the
+2023-24 calibration interpolates its 2019-20 outturn and 2025-26
+frozen-threshold projection columns (`src/firm_microsim/data_loader.py`).

@@ -68,9 +68,13 @@ def _vintage_lines(vintage: str) -> list[str]:
     )
     out.append("-" * 64)
     diag = rep.vat_liability_sector * 100.0
-    out.append("  Informational diagnostic (not a calibration target):")
+    below = rep.vat_liability_below_threshold * 100.0
+    out.append("  Informational diagnostics (not calibration targets):")
     out.append(
         f"  {'VAT Liability by Sector':<26}{diag:>11.1f}%{100.0 - diag:>11.1f}%"
+    )
+    out.append(
+        f"  {'VAT Liability below Thresh.':<26}{below:>10.1f}%{100.0 - below:>11.1f}%"
     )
     out.append("=" * 64)
     return out
@@ -110,7 +114,7 @@ def main(write: bool = True) -> str:
     return report
 
 
-def cli(argv: list[str] | None = None) -> str:
+def cli(argv: list[str] | None = None) -> None:
     """Console entry point."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -119,7 +123,7 @@ def cli(argv: list[str] | None = None) -> str:
         help="Print the report without writing results/calibration_accuracy.txt.",
     )
     args = parser.parse_args(argv)
-    return main(write=not args.no_write)
+    main(write=not args.no_write)
 
 
 if __name__ == "__main__":

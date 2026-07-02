@@ -267,6 +267,11 @@ def format_comparison_report(
     lines = [
         "# Populace/Ledger firm-generation comparison",
         "",
+        "NOTE: the 'Paper 2024-25' column below is the pinned 2026-06-30",
+        "PRE-CORRECTION build (see paper appendix on data); current-build",
+        "scores are in results/calibration_accuracy.txt (92.8% overall,",
+        "92.0% liability-by-band).",
+        "",
         "Reference run:",
         "",
         "- Status: pinned to merged Ledger and Populace snapshots",

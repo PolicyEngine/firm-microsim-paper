@@ -47,11 +47,19 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-On both populations the constraint binds at or near the window edge
-($y_R = \pounds100$k at \pounds85{,}000; $\pounds101$k at \pounds90{,}000):
-the OBR profile's missing mass extends beyond $+\pounds15$k (as does the
-administrative pattern---LLAT's window reaches $+\pounds24$k), and the
-2024--25 band-edge artifact is not a local spike at all.
+The constraint's behaviour differs by vintage, diagnostically so. On the
+2024--25 population it is satisfied in the interior ($y_R = \pounds101$k,
+$\Delta_R = 11{,}452 \ge E$): the band-edge artifact is not a local spike.
+On the 2023--24 population it \emph{fails to bind}: the walk is censored at
+the search cap ($y_R = \pounds100\text{k} = T^{*}+W$) with
+$\Delta_R = 5{,}761 < E = 7{,}933$, and decomposing the missing mass locates
+all of it in $(\pounds90\text{k},\pounds100\text{k}]$ and none in the
+OBR-pinned $(\pounds85\text{k},\pounds90\text{k}]$ segment. The
+counterfactual exceeds the observed density only beyond the \pounds90{,}000
+fine-target boundary---the same calibration-band-edge mechanism as the
+2024--25 exhibit, operating inside the headline estimator's own window---so
+the reported $y_R$ is a property of the target boundary, not evidence of
+administrative-style missing mass.
 
 \subsubsection*{Why no standard errors are reported}
 
@@ -69,8 +77,14 @@ estimator's own knobs. Second, generator-seed sensitivity
 population under three seeds moves $E$ by $\pm161$ firms ($\pm2\%$),
 $b_{\mathrm{LLAT}}$ by $\pm0.02$, the raise-to-\pounds100k cost by
 $\pm\pounds2.1$m, and the registered base by $\pm\pounds0.08$bn---the
-pipeline's actual Monte Carlo error. Table~\ref{tab:boot} reports the point
-estimates.
+pipeline's actual Monte Carlo error. Table~\ref{tab:boot} reports the point estimates. Two conventions matter for
+reading them. Bins are centred on integer \pounds k values (edges at
+half-integers), so the bin containing the threshold spans
+\pounds84.5k--\pounds85.5k and its mass is attributed to the above side,
+attenuating $E$ and $\Delta_R$ relative to edge-aligned binning. And $E$ sums
+the \emph{positive part} of the observed-minus-counterfactual gap in the
+excluded window below the threshold; the net gap there is $1{,}570$, so the
+statistic reads gross rather than net excess.
 
 \begin{table}[t]
 \centering
@@ -79,12 +93,12 @@ $\pm\pounds15$k window). Uncertainty is characterised by the specification
 grids and the generator-seed sensitivity, not by standard errors---see the
 text.}
 \label{tab:boot}
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrr}
 \toprule
-Vintage & $E$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
+Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 \midrule
-2023--24 (\pounds85k, OBR fine targets) & $7{,}933$ & $1.91$ & $100.0$ \\
-2024--25 (\pounds90k, coarse bands only) & $11{,}072$ & $1.23$ & $101.0$ \\
+2023--24 (\pounds85k, OBR fine targets) & $7{,}933$ & $5{,}761$ & $1.91$ & $100.0$ \\
+2024--25 (\pounds90k, coarse bands only) & $11{,}072$ & $11{,}452$ & $1.23$ & $101.0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -96,7 +110,7 @@ exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
 \texttt{results/bunching\_inference.txt}; the pattern matters more than the
 cells. On the 2023--24 population the target-inherited excess ranges over
 roughly $6{,}700$--$9{,}800$ in the interior cells (degrees 6--7, windows
-\pounds10--15k), inflating in the corner cells where the polynomial confuses
+\pounds10--15k; 4 of the 16 grid cells), inflating in the corner cells where the polynomial confuses
 the profile's shoulders with its counterfactual. On the 2024--25 population
 the band-edge artifact swings four-fold across the grid ($E$ between roughly
 $8{,}600$ and $36{,}700$; $b_{\mathrm{LLAT}}$ between $0.94$ and $4.46$)

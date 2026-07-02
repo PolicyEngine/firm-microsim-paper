@@ -5,7 +5,7 @@ results/seed_sensitivity.txt for generator-seed dispersion.
 ==========================================================================
 
 --- Vintage 2023-24 (threshold GBP 85k) ---
-E = 7,933 | b_llat = 1.911 | b = 0.0106 | y_R = 100.00
+E = 7,933 | Delta_R = 5,761 | b_llat = 1.911 | b = 0.0106 | y_R = 100.00
 
 Degree x window sensitivity (point estimates):
  degree  window         b   b_llat            E
@@ -27,7 +27,7 @@ Degree x window sensitivity (point estimates):
       8    25.0  0.186001 7.434261 40321.093337
 
 --- Vintage 2024-25 (threshold GBP 90k) ---
-E = 11,072 | b_llat = 1.230 | b = 0.0739 | y_R = 101.01
+E = 11,072 | Delta_R = 11,452 | b_llat = 1.230 | b = 0.0739 | y_R = 101.01
 
 Degree x window sensitivity (point estimates):
  degree  window        b   b_llat            E

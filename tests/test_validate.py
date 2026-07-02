@@ -26,6 +26,7 @@ def test__given_sector_liability_diagnostic__then_overall_excludes_it():
         employment=0.7,
         sector=0.6,
         vat_liability_sector=0.0,
+            vat_liability_below_threshold=0.0,
         vat_liability_band=0.5,
         total_population=100.0,
     )

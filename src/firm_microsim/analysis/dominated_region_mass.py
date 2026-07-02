@@ -61,12 +61,22 @@ REDUCED_RATE_BAND_WIDTH = 20.0  # £k (band [85k, 105k] in the paper)
 def mass_in_band(centres, density, lo, hi, bin_width=BIN_WIDTH):
     """Integrate a binned density over [lo, hi) -> weighted firm count.
 
-    ``density`` is counts-per-unit-turnover (counts / bin_width), so the mass is
-    ``sum(density[bins in band]) * bin_width``. A bin is in the band if its
-    centre is in [lo, hi).
+    Each bin spans [centre - bin_width/2, centre + bin_width/2); its
+    contribution is its density times its overlap with [lo, hi), so partial
+    bins at the band edges count fractionally. (An earlier version used
+    bin-centre membership, which shifted every band by half a bin.)
     """
-    mask = (centres >= lo) & (centres < hi)
-    return float(np.sum(density[mask]) * bin_width)
+    left = centres - bin_width / 2.0
+    right = centres + bin_width / 2.0
+    overlap = np.clip(np.minimum(right, hi) - np.maximum(left, lo), 0.0, None)
+    return float(np.sum(density * overlap / bin_width))
+
+
+def mass_in_band_exact(turnover, weight, lo, hi):
+    """Weighted firm mass with turnover in [lo, hi), exact microdata masks."""
+    import numpy as _np
+    m = (turnover >= lo) & (turnover < hi)
+    return float(_np.sum(weight[m]))
 
 
 def main() -> None:
@@ -94,10 +104,12 @@ def main() -> None:
 
     # --- Per-variant dominated-region masses --------------------------------
     rows = []
+    tk = est.firms["annual_turnover_k"].to_numpy()
+    wt = est.firms["weight"].to_numpy()
     for label, tau in RATE_VARIANTS:
         a = t_star * tau / (1.0 - tau)          # Kleven-Waseem width (£k)
         lo, hi = t_star, t_star + a
-        obs = mass_in_band(centres, f_obs, lo, hi)
+        obs = mass_in_band_exact(tk, wt, lo, hi)
         cf = mass_in_band(centres, f_cf, lo, hi)
         rows.append({
             "label": label,
@@ -119,7 +131,7 @@ def main() -> None:
     for label, tau_r in RATE_VARIANTS[1:]:           # 15% and 10% only
         a_sec = band_top * (TAU - tau_r) / (1.0 - TAU)
         lo, hi = band_top, band_top + a_sec
-        obs = mass_in_band(centres, f_obs, lo, hi)
+        obs = mass_in_band_exact(tk, wt, lo, hi)
         cf = mass_in_band(centres, f_cf, lo, hi)
         prim = next(r for r in rows if r["tau"] == tau_r)
         sec_rows.append({
@@ -152,6 +164,8 @@ def main() -> None:
     W("")
     W("Dominated region (Kleven-Waseem):  a = T* * tau/(1-tau)")
     W("Bands measured on the WEIGHTED synthetic firm population.")
+    W("  OBS uses exact band masks on the microdata; CF integrates the binned")
+    W("  counterfactual with fractional edge-bin overlap.")
     W("  OBS = observed weighted firms in band")
     W("  CF  = weighted firms the mass-conserving no-bunching counterfactual")
     W("        density places in band  (total smooth density across the band)")

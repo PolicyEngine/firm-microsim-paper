@@ -27,7 +27,10 @@ where $T_{\min}=\min(T,T_0)$ and $T_{\max}=\max(T,T_0)$: lowering the threshold 
 firms into the net and raises revenue, while raising it releases firms and loses
 revenue. The estimate is the mechanical reclassification effect and excludes the
 behavioural response of Section~\ref{sec:behavioural}. I age the microdata to a
-given fiscal year by a cumulative nominal-growth factor. At the \pounds90{,}000
+given fiscal year by a cumulative nominal-growth factor; band membership is
+evaluated on data-year turnover against each year's nominal thresholds, and
+only liabilities are aged---an approximation stated because a fully aged band
+would shift membership toward the pinned near-threshold density. At the \pounds90{,}000
 threshold this puts total VAT revenue at \pounds200.9bn in 2025--26 and
 \pounds206.1bn in 2026--27.\footnote{These aggregates are weighted sums of the
 synthetic registered population's net VAT liabilities aged forward---a
@@ -36,7 +39,8 @@ theoretical-liability (VTTL-style) base, not the published cash-receipts line
 which is reduced by refunds, the VAT gap, and collection timing. The unaged
 bases also sit about 5.8\% above the HMRC liability-by-band target sums they
 are calibrated toward (\pounds184.8bn against \pounds174.6bn above-threshold in
-2023--24; \pounds190.7bn against \pounds180.4bn in 2024--25): the multi-target
+2023--24; \pounds190.7bn against \pounds180.4bn in 2024--25, and by $9.8\%$
+in the \pounds85{,}000--\pounds150{,}000 band specifically): the multi-target
 optimiser trades the liability totals off against the count targets, and the
 liability-by-band calibration scores (91.3\% and 92.0\%) bound the shortfall.
 Band-to-band \emph{differences}, which drive every costing in the paper, are
@@ -64,16 +68,25 @@ but overshoots the official magnitudes throughout ($-$317 against
 $-$150 in 2024--25; $-$323 against $-$185 in 2025--26).
 If instead the \citet{liuetal2021} voluntary-registration share (43\%) of
 released-firm liability is retained, the model gives $-$180, $-$184, $-$111,
-$-$38, $+$59: above the official number in the first year, matching it to
-\pounds1m in 2025--26 ($-$184.1 against $-$185), and modestly below it
-thereafter (Figure~\ref{fig:hmrc_validation}). That is the honest reading of the anchor:
+$-$38, $+$59: above the official number in the first year, close to it
+in 2025--26 ($-$184.1 against $-$185), and modestly below it thereafter
+(Figure~\ref{fig:hmrc_validation}). That is the honest reading of the anchor:
 the official costing embeds a phased registration response (HMRC expected
 roughly 28{,}000 fewer registrants in the first year, against about 48{,}000
 firms in the released band here, now pinned by the OBR fine-band targets), so
-mechanical conventions overshoot while the response phases in and converge to
-the official profile as it completes. Because my
+the full-deregistration convention overshoots throughout, and the retention
+convention crosses the official path---above it in the first year, below it
+from 2026--27. Because my
 microdata are calibrated to HMRC VAT aggregates, even a close match would
-confirm internal consistency rather than out-of-sample accuracy.
+confirm internal consistency rather than out-of-sample accuracy. The
+sub-\pounds1m agreement in 2025--26 is, in particular, finer than the model's
+own liability level supports: the \pounds85{,}000--\pounds150{,}000 band's
+calibrated liability sits $9.8\%$ above its HMRC target total (footnote
+above), and rescaling the released band to target puts the retention figure
+near $-\pounds168$m---the year-2 agreement is a coincidence within that error
+band, not model precision. The retention share is itself a convention: LLAT's
+roughly $43\%$ is a \emph{firm} share among all below-threshold eligibles,
+applied here as a liability share among just-released firms.
 
 \begin{figure}[htbp]
 \centering
@@ -85,8 +98,9 @@ forecast and turn positive by 2028--29 because the costing baseline is a
 counterfactual threshold path that resumes uprating after March~2026 and
 overtakes \pounds90{,}000. The mechanical full-deregistration estimate
 overshoots the official costing while its phased registration response builds;
-the voluntary-retention convention matches the official 2025--26 figure to
-\pounds1m and runs modestly below it thereafter. Because the microdata are calibrated
+the voluntary-retention convention runs close to the official figure in
+2025--26 and modestly below it thereafter; agreement finer than the
+calibrated liability level supports is coincidental (see text). Because the microdata are calibrated
 to HMRC and OBR aggregates, this is a consistency check, not an out-of-sample
 validation.}
 \label{fig:hmrc_validation}
@@ -95,7 +109,8 @@ validation.}
 \paragraph{A menu of threshold locations.} I next cost a menu of further threshold
 locations, taking the post-reform \pounds90{,}000 threshold as the baseline. This
 sweep runs on the 2024--25 vintage population (Section~\ref{sec:data}), whose
-liability-by-band calibration is the marginally weaker of the two (91.3\% against 92.0\%; both vintages score about 90\% overall). Each row of
+liability-by-band calibration is the marginally stronger of the two (92.0\%
+against 91.3\%; both vintages score about 90\% overall). Each row of
 Table~\ref{tab:static_revenue} costs a move of the threshold to a new location for
 2025--26, holding the turnover distribution fixed, so the revenue change reflects
 only the reclassification of firms into or out of the VAT net. Because the
@@ -188,7 +203,7 @@ the released band lies \emph{above} the data-year threshold, its liabilities are
 directly calibrated (and its lower reach pinned by the OBR fine-band targets),
 so the band is summed directly; the sweep's smooth-counterfactual method, which
 irons out the near-threshold concentration by construction, gives
-\(-\)\pounds702m and $102{,}000$ firms, 10\% below the direct sum---a gap that
+\(-\)\pounds697m and $100{,}700$ firms, 7\% and 10\% below the direct sum---a gap that
 now measures the real, target-pinned concentration of firms just above the
 threshold rather than an optimiser artifact. On this common base the level move carries the largest static
 cost of the menu and leaves the dominated region in place, relocating it to the
@@ -201,7 +216,7 @@ misallocation only, and Section~\ref{sec:conclusion} discusses what it omits.
 effective rate that phases linearly from $0\%$ at \pounds85{,}000 to the full $20\%$
 at \pounds105{,}000. Firms in the band remit a tapered rather than a full rate on
 their (fixed) turnover; mechanically this reduces revenue by \(-\)\pounds520m, with
-about $144{,}800$ firms in the \pounds85{,}000--\pounds105{,}000 band facing a lower
+about $140{,}800$ firms in the \pounds85{,}000--\pounds105{,}000 band facing a lower
 effective rate.
 
 \paragraph{Banded reduced rate.} A banded reduced rate charges firms in the
@@ -209,7 +224,7 @@ effective rate.
 $\tau_{\text{low}}\in\{10\%,15\%\}$ in place of the standard $20\%$, with $20\%$
 retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds484m
 at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds242m at $\tau_{\text{low}}=15\%$,
-again with about $144{,}800$ firms in the band facing the lower rate.
+again with about $140{,}800$ firms in the band facing the lower rate.
 
 \begin{table}[htbp]
 \centering

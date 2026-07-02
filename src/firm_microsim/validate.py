@@ -43,6 +43,7 @@ class ValidationReport:
     employment: float
     sector: float
     vat_liability_sector: float  # informational diagnostic, NOT calibrated
+    vat_liability_below_threshold: float  # informational diagnostic, NOT calibrated
     vat_liability_band: float
     total_population: float
 
@@ -226,6 +227,7 @@ def validate(
         employment=employment_accuracy,
         sector=sector_accuracy,
         vat_liability_sector=vat_liability_sector_accuracy,
+        vat_liability_below_threshold=below_acc,
         vat_liability_band=vat_liability_band_accuracy,
         total_population=total_weighted,
     )
