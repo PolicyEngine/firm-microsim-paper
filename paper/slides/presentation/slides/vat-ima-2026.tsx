@@ -412,12 +412,10 @@ export function TurnoverDistSlide() {
           />
         </div>
         <Caption className="mt-4 max-w-6xl">
-          The near-threshold profile is {teal("calibrated to the OBR’s published £1k-band counts")}:
-          density rises into the threshold and steps down across it — the administratively observed
-          bunching shape, {teal("inherited from targets, not from firm behaviour")} (placebo later).
-          Levels are the {teal("VAT/PAYE-registered frame")}: unregistered sole traders — most of
-          the cross-threshold cliff in all-business charts — are outside it. The £150,000 step sits
-          on an HMRC calibration-band edge.
+          Near-threshold profile {teal("calibrated to the OBR’s published £1k-band counts")} — the
+          bunching shape is {teal("inherited from targets, not firm behaviour")} (placebo later).
+          Levels are the {teal("VAT/PAYE-registered frame")}; the £150,000 step is an HMRC band
+          edge.
         </Caption>
       </div>
     </Slide>
