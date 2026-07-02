@@ -887,16 +887,6 @@ export function BehaviouralLayerSlide() {
                 so −£784m static {teal("is")} the behavioural cost.
               </>,
               <>
-                Reduced-rate offsets are {teal("second order")} (&lt;4% even at{" "}
-                <Math tex="e=0.32" />):
-                <SubList
-                  items={[
-                    <>10% band: £497m → <span className="font-semibold text-pe-teal">£488m</span> at e = 0.17</>,
-                    <>15% band: £249m → <span className="font-semibold text-pe-teal">£241m</span> at e = 0.17</>,
-                  ]}
-                />
-              </>,
-              <>
                 Static cost is the exact <Math tex="e\to0" /> limit; <Math tex="e=0.05" /> is the
                 external anchor (Kleven and Waseem, 2013), Liu et al.’s UK estimates (~0.09–0.14)
                 fall in the swept range.
