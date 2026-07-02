@@ -944,11 +944,6 @@ export function ConclusionSlide() {
                   margin barely moves the costings — zero offset for a level rise, &lt;6% for the
                   bands; conditional on assumed <Math tex="e" />.
                 </>,
-                <>
-                  <span className="font-semibold text-pe-dark">Transparency:</span> the
-                  near-threshold shape is {teal("calibrated to published OBR £1k-band data")};
-                  placebo and power tests show the estimator reads targets, not behaviour.
-                </>,
               ]}
             />
           </div>
@@ -964,11 +959,6 @@ export function ConclusionSlide() {
                   choice; ~43% voluntary registration (Liu et al., 2021) enters only as a rate and
                   a retention sensitivity; net-repayment traders unmodelled;{" "}
                   {teal("sector-grounded δ from ONS Supply–Use to come")}.
-                </>,
-                <>
-                  <span className="font-semibold text-pe-dark">Partial efficiency metric</span> —
-                  dominated-region width indexes misallocation only; a full welfare / MVPF accounting
-                  (Keen and Mintz, 2004) is needed.
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Aggregate only</span> — no sectoral
