@@ -285,9 +285,9 @@ export function ThisPaperSlide() {
             </>,
             <>
               <span className="font-semibold text-pe-dark">Headline:</span> only the graduated taper
-              removes the notch’s dominated region (−£466m, close to the 10% band’s −£460m); a level
-              rise carries the largest static cost, relocates the region — and has{" "}
-              {teal("exactly zero intensive-margin behavioural offset")}.
+              removes the notch’s dominated region (−£550m, against −£497m for a 10% band that
+              removes none of it); a level rise carries the largest static cost (−£783m), relocates
+              the region — and has {teal("exactly zero intensive-margin behavioural offset")}.
             </>,
           ]}
         />
@@ -369,6 +369,7 @@ export function DataSlide() {
                   items={[
                     <>ONS <em>UK Business: Activity, Size and Location</em> — firm counts by sector × turnover band</>,
                     <>HMRC <em>VAT Annual Statistics</em> — registered counts by band / sector, net VAT liability by band</>,
+                    <>OBR <em>EFO</em> (Mar 2023) Chart C — £1k-band counts £65k–£90k, pinning the near-threshold bunching profile</>,
                   ]}
                 />
               </>,
@@ -411,10 +412,10 @@ export function TurnoverDistSlide() {
           />
         </div>
         <Caption className="mt-4 max-w-6xl">
-          The {teal("band-average")} density steps down across {teal("£85,000")} and{" "}
-          {teal("£150,000")} — both are {teal("HMRC calibration-band edges")}. The{" "}
-          <em>local</em> shape near the threshold is an optimiser equilibrium, not data: no sub-band
-          feature carries behavioural information — quantified later by placebo and power tests.
+          The near-threshold profile is {teal("calibrated to the OBR’s published £1k-band counts")}:
+          density rises into the threshold and steps down across it — the administratively observed
+          bunching shape, {teal("inherited from targets, not from firm behaviour")} (placebo later).
+          The £150,000 step sits on an HMRC calibration-band edge; the seam at £65k is the edge of the published fine-band window.
         </Caption>
       </div>
     </Slide>
@@ -497,12 +498,15 @@ export function ValidationSlide() {
                 estimate vs HMRC’s published costing — under two released-firm conventions.
               </>,
               <>
-                {teal("2025–26: −£248m (all deregister) / −£141m (43% voluntary retention)")} —
-                HMRC’s −£185m {teal("lies between the two in every forecast year")}.
+                Early years overshoot:{" "}
+                {teal("2025–26: −£366m (all deregister) / −£209m (43% voluntary retention)")} vs
+                HMRC’s −£185m — consistent with HMRC embedding a{" "}
+                {teal("phased registration response")} (~28k fewer registrants in year 1).
               </>,
               <>
-                Both reproduce the narrowing profile and the 2028–29 sign flip: the costing baseline
-                is an {teal("uprated counterfactual threshold path")} that overtakes £90k.
+                Later years converge: {teal("2026–27: −£125.2m vs HMRC’s −£125m")} under retention;
+                both conventions reproduce the 2028–29 sign flip via the{" "}
+                {teal("uprated counterfactual threshold path")}.
               </>,
               <>
                 Microdata are calibrated to HMRC aggregates <Math tex="\Rightarrow" /> a{" "}
@@ -554,16 +558,16 @@ export function StaticSweepSlide() {
 
 export function ReformMenuSlide() {
   const rows: { reform: string; lever: string; stat: string; region: ReactNode; hi?: boolean }[] = [
-    { reform: "Raise to £100k", lever: "Level", stat: "−£698m", region: "relocated" },
+    { reform: "Raise to £100k", lever: "Level", stat: "−£783m", region: "relocated" },
     {
       reform: "Taper £85–105k",
       lever: "Shape",
-      stat: "−£466m",
+      stat: "−£550m",
       region: <span className="font-bold text-pe-teal">removed</span>,
       hi: true,
     },
-    { reform: "Reduced 10%", lever: "Rate", stat: "−£460m", region: "split in two" },
-    { reform: "Reduced 15%", lever: "Rate", stat: "−£230m", region: "split in two" },
+    { reform: "Reduced 10%", lever: "Rate", stat: "−£497m", region: "split in two" },
+    { reform: "Reduced 15%", lever: "Rate", stat: "−£248m", region: "split in two" },
   ];
   return (
     <Slide>
@@ -594,11 +598,12 @@ export function ReformMenuSlide() {
           ))}
         </div>
         <Caption className="mt-6 max-w-6xl">
-          Common £85,000-notch / £184.7bn 2023–24 base.{" "}
+          Common £85,000-notch / £184.8bn 2023–24 base (near-threshold profile calibrated to OBR
+          £1k-band data).{" "}
           {teal("The level move carries the largest static cost and removes none of the dominated region")};
-          the taper removes all of it, at a cost close to the 10% band’s. “Split in two” = a second
-          notch appears where the reduced-rate band ends (£105k reverts to 20%), so the empty band is
-          fragmented, not shrunk.
+          the taper removes all of it (−£550m, against the 10% band’s −£497m). “Split in two” = a
+          second notch appears where the reduced-rate band ends (£105k reverts to 20%), so the empty
+          band is fragmented, not shrunk.
         </Caption>
         <SeeAppendix to={SLIDE.appBehav}>behavioural costs across e — appendix</SeeAppendix>
       </div>
@@ -634,7 +639,7 @@ export function BunchingMechanicalSlide() {
             />
           </div>
           <Caption className="flex-none text-center">
-            2023–24 at £85k: {teal("E = 0")}, b = −0.139
+            2023–24 at £85k: {teal("E = 14,663 — inherited from the OBR targets")}
           </Caption>
           <div className="min-h-0 flex-1">
             <Figure
@@ -650,32 +655,36 @@ export function BunchingMechanicalSlide() {
         </div>
         <div>
           <SlideTitle kicker="The distortion">
-            Synthetic data carry no bunching signal — in either direction
+            The near-threshold shape is target-inherited — provably
           </SlideTitle>
           <BList
             className="mt-6"
             size="text-lg"
             items={[
               <>
-                Same generator, two calibrations: {teal("nothing")} at £85k;{" "}
-                {teal("a huge spurious signal")} at the £90k band edge — robust in all 16
-                degree×window cells, ~15× Liu et al.’s estimate.
+                The 2023–24 file reproduces the administrative bunching profile{" "}
+                {teal("because it is calibrated to it")} (OBR £1k-band targets); the estimator
+                reads back <Math tex="E=14{,}663" /> (b = 0.109).
               </>,
               <>
-                {teal("Placebo")}: manipulate the band targets <Math tex="\Rightarrow" /> the
-                “signal” follows the targets, not firms (the generator has no location choice).
+                {teal("Placebo")}: regenerate {teal("without")} the fine targets{" "}
+                <Math tex="\Rightarrow E = 0" /> — the estimator reads targets, not firms (the
+                generator has no location choice).
               </>,
               <>
-                {teal("Power test")}: injected true bunching {teal("is")} detected (43–79%
-                recovered, attenuated, never inflated) — the null is a property of the data, not
-                the method.
+                The uncalibrated 2024–25 vintage shows the reverse: {teal("a spurious E ≈ 196,000")}{" "}
+                exactly on the £90k band edge, robust in all 16 degree×window cells.
               </>,
               <>
-                An earlier draft “reproduced” the £85k step ({" "}
-                <Math tex="E=8{,}712" />): a {teal("liability mis-scaling artifact")}, now
-                corrected and documented openly.
+                {teal("Power test")}: injected true bunching {teal("is")} detected (55–82%
+                recovered, attenuated, never inflated).
               </>,
-              <>Genuine threshold bunching remains the administrative fact of Liu et al. (2021).</>,
+              <>
+                An earlier draft manufactured the step via a{" "}
+                {teal("liability mis-scaling")} — corrected and documented openly. No behavioural
+                claim is made from synthetic data; the administrative fact remains Liu et al.
+                (2021).
+              </>,
             ]}
           />
         </div>
@@ -721,7 +730,7 @@ export function DominatedRegionSlide() {
                 The {teal("dominated region")} is the band just above <Math tex="T^{*}" /> where no
                 firm locates: <Math tex="a = T^{*}\dfrac{\tau}{1-\tau} =" /> {teal("£21,250")}.
               </>,
-              <>Interval (£85,000, £106,250), ≈144,000 weighted firms.</>,
+              <>Interval (£85,000, £106,250), ≈160,000 weighted firms.</>,
               <>
                 Depends on <Math tex="\tau" /> and <Math tex="T^{*}" /> {teal("alone")} — no
                 elasticity, and {teal("invariant to the firm’s input share")}: under the value-added
@@ -770,8 +779,8 @@ export function WhichReformsSlide() {
           ]}
         />
         <p className="mt-8 text-center text-2xl font-semibold text-pe-dark">
-          Only the taper removes the dominated region (−£466m) — the 10% band costs about the same
-          (−£460m) and removes none of it.
+          Only the taper removes the dominated region (−£550m); the 10% band costs −£497m and
+          removes none of it.
         </p>
       </div>
     </Slide>
@@ -890,15 +899,15 @@ export function BehaviouralLayerSlide() {
               <>
                 {teal("A level rise has exactly zero intensive-margin offset at every e")}: released
                 firms leave the VAT base (their expansion is untaxed), crossers optimally bunch —
-                so −£698m static {teal("is")} the behavioural cost.
+                so −£783m static {teal("is")} the behavioural cost.
               </>,
               <>
                 Reduced-rate offsets are {teal("second order")} (&lt;4% even at{" "}
                 <Math tex="e=0.32" />):
                 <SubList
                   items={[
-                    <>10% band: £460m → <span className="font-semibold text-pe-teal">£452m</span> at e = 0.17</>,
-                    <>15% band: £230m → <span className="font-semibold text-pe-teal">£223m</span> at e = 0.17</>,
+                    <>10% band: £497m → <span className="font-semibold text-pe-teal">£487m</span> at e = 0.17</>,
+                    <>15% band: £248m → <span className="font-semibold text-pe-teal">£241m</span> at e = 0.17</>,
                   ]}
                 />
               </>,
@@ -953,9 +962,9 @@ export function ConclusionSlide() {
                   notch; prices level / shape / rate reforms {teal("three ways")}.
                 </>,
                 <>
-                  <span className="font-semibold text-pe-dark">Static:</span> two mechanical
-                  conventions {teal("bracket HMRC’s anchor in every year")} (−£248m / −£141m vs
-                  −£185m); raising to £100k costs £698m, the taper £466m.
+                  <span className="font-semibold text-pe-dark">Static:</span> mechanical conventions
+                  overshoot HMRC’s anchor early and {teal("match it by 2026–27 (−£125.2m vs −£125m)")},
+                  reproducing the sign flip; raising to £100k costs £783m, the taper £550m.
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Distortion:</span> the dominated region{" "}
@@ -969,10 +978,10 @@ export function ConclusionSlide() {
                   bands; conditional on assumed <Math tex="e" />.
                 </>,
                 <>
-                  <span className="font-semibold text-pe-dark">Transparency:</span>{" "}
-                  band-calibrated synthetic data {teal("cannot support bunching inference")} in
-                  either direction — shown by placebo, power test, and the paper’s own documented
-                  correction.
+                  <span className="font-semibold text-pe-dark">Transparency:</span> the
+                  near-threshold shape is {teal("calibrated to published OBR £1k-band data")};
+                  placebo and power tests show the estimator reads targets, not behaviour — in both
+                  directions (spurious signal at the uncalibrated £90k band edge).
                 </>,
               ]}
             />
@@ -1107,6 +1116,10 @@ export function AppendixGenSlide() {
                 <Math tex="v_i=0.20\,(y_i-x_i)" /> — the standard rate on value added.
               </>,
               <>
+                Near-threshold £1k bins (£65k–£90k) target the OBR Chart C profile: direct counts
+                above the threshold, shape (window-normalised) below it.
+              </>,
+              <>
                 Each firm gets a positive weight <Math tex="w_i=e^{\theta_i}" />; weighted target{" "}
                 <Math tex="\widehat{T}_k(\theta)=\sum_i a_{ki}w_i" />.
               </>,
@@ -1139,9 +1152,9 @@ export function AppendixBehavSlide() {
     <><Math tex="e{=}0.32" /></>,
   ];
   const rows = [
-    ["Raise to £100k", "−£698m", "−£698m", "−£698m", "−£698m"],
-    ["Reduced 10% band", "−£460m", "−£458m", "−£452m", "−£444m"],
-    ["Reduced 15% band", "−£230m", "−£228m", "−£223m", "−£217m"],
+    ["Raise to £100k", "−£783m", "−£783m", "−£783m", "−£783m"],
+    ["Reduced 10% band", "−£497m", "−£494m", "−£487m", "−£479m"],
+    ["Reduced 15% band", "−£248m", "−£246m", "−£241m", "−£234m"],
   ];
   return (
     <Slide>
