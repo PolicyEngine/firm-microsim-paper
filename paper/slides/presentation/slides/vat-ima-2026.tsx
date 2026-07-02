@@ -527,7 +527,7 @@ export function StaticSweepSlide() {
           Static sweep: cost of moving the threshold
         </SlideTitle>
         <Caption className="mt-3 max-w-6xl text-sm">
-          Validated on the one move HMRC published, {teal("now sweep the whole schedule")} — the same
+          Checked against the one move HMRC published, {teal("now sweep the whole schedule")} — the same
           mechanical reclassification at every threshold.
         </Caption>
         <div className="mt-3 grid min-h-0 flex-1 grid-cols-2 grid-rows-1 gap-6">
