@@ -285,8 +285,8 @@ export function ThisPaperSlide() {
             </>,
             <>
               <span className="font-semibold text-pe-dark">Headline:</span> only the graduated taper
-              removes the notch’s dominated region (−£550m, against −£497m for a 10% band that
-              removes none of it); a level rise carries the largest static cost (−£784m), relocates
+              removes the notch’s dominated region (−£520m, against −£484m for a 10% band that
+              removes none of it); a level rise carries the largest static cost (−£753m), relocates
               the region — and has {teal("exactly zero intensive-margin behavioural offset")}.
             </>,
           ]}
@@ -500,13 +500,12 @@ export function ValidationSlide() {
                 estimate vs HMRC’s published costing — under two released-firm conventions.
               </>,
               <>
-                Early years overshoot:{" "}
-                {teal("2025–26: −£366m (all deregister) / −£209m (43% voluntary retention)")} vs
-                HMRC’s −£185m — consistent with HMRC embedding a{" "}
+                Full deregistration overshoots:{" "}
+                {teal("2025–26: −£323m vs HMRC’s −£185m")} — consistent with HMRC embedding a{" "}
                 {teal("phased registration response")} (~28k fewer registrants in year 1).
               </>,
               <>
-                Later years converge: {teal("2026–27: −£125.1m vs HMRC’s −£125m")} under retention;
+                43% voluntary retention {teal("matches 2025–26 to £1m: −£184.1m vs HMRC’s −£185m")};
                 both conventions reproduce the 2028–29 sign flip via the{" "}
                 {teal("uprated counterfactual threshold path")}.
               </>,
@@ -560,16 +559,16 @@ export function StaticSweepSlide() {
 
 export function ReformMenuSlide() {
   const rows: { reform: string; lever: string; stat: string; region: ReactNode; hi?: boolean }[] = [
-    { reform: "Raise to £100k", lever: "Level", stat: "−£784m", region: "relocated" },
+    { reform: "Raise to £100k", lever: "Level", stat: "−£753m", region: "relocated" },
     {
       reform: "Taper £85–105k",
       lever: "Shape",
-      stat: "−£550m",
+      stat: "−£520m",
       region: <span className="font-bold text-pe-teal">removed</span>,
       hi: true,
     },
-    { reform: "Reduced 10%", lever: "Rate", stat: "−£497m", region: "split in two" },
-    { reform: "Reduced 15%", lever: "Rate", stat: "−£249m", region: "split in two" },
+    { reform: "Reduced 10%", lever: "Rate", stat: "−£484m", region: "split in two" },
+    { reform: "Reduced 15%", lever: "Rate", stat: "−£242m", region: "split in two" },
   ];
   return (
     <Slide>
@@ -603,7 +602,7 @@ export function ReformMenuSlide() {
           Common £85,000-notch / £184.8bn 2023–24 base (near-threshold profile calibrated to OBR
           £1k-band data).{" "}
           {teal("The level move carries the largest static cost and removes none of the dominated region")};
-          the taper removes all of it (−£550m, against the 10% band’s −£497m). “Split in two” = a
+          the taper removes all of it (−£520m, against the 10% band’s −£484m). “Split in two” = a
           second notch appears where the reduced-rate band ends (£105k reverts to 20%), so the empty
           band is fragmented, not shrunk.
         </Caption>
@@ -641,7 +640,7 @@ export function BunchingMechanicalSlide() {
             />
           </div>
           <Caption className="flex-none text-center">
-            2023–24 at £85k: {teal("E = 7,873 — inherited from the OBR targets")}
+            2023–24 at £85k: {teal("E = 7,933 — inherited from the OBR targets")}
           </Caption>
           <div className="mt-3">
             <Caption className="text-center">
@@ -661,7 +660,7 @@ export function BunchingMechanicalSlide() {
               <>
                 The 2023–24 file reproduces the administrative bunching profile{" "}
                 {teal("because it is calibrated to it")} (OBR £1k-band targets); the estimator
-                reads back <Math tex="E=7{,}873" />.
+                reads back <Math tex="E=7{,}933" />.
               </>,
               <>
                 {teal("Placebo")}: regenerate {teal("without")} the fine targets{" "}
@@ -717,7 +716,7 @@ export function DominatedRegionSlide() {
                 The {teal("dominated region")} is the band just above <Math tex="T^{*}" /> where no
                 firm locates: <Math tex="a = T^{*}\dfrac{\tau}{1-\tau} =" /> {teal("£21,250")}.
               </>,
-              <>Interval (£85,000, £106,250), ≈160,000 weighted firms.</>,
+              <>Interval (£85,000, £106,250), ≈156,000 weighted firms.</>,
               <>
                 Depends on <Math tex="\tau" /> and <Math tex="T^{*}" /> {teal("alone")} — no
                 elasticity, and {teal("invariant to the firm’s input share")}: under the value-added
@@ -766,7 +765,7 @@ export function WhichReformsSlide() {
           ]}
         />
         <p className="mt-8 text-center text-2xl font-semibold text-pe-dark">
-          Only the taper removes the dominated region (−£550m); the 10% band costs −£497m and
+          Only the taper removes the dominated region (−£520m); the 10% band costs −£484m and
           removes none of it.
         </p>
       </div>
@@ -886,7 +885,7 @@ export function BehaviouralLayerSlide() {
               <>
                 {teal("A level rise has exactly zero intensive-margin offset at every e")}: released
                 firms leave the VAT base (their expansion is untaxed), crossers optimally bunch —
-                so −£784m static {teal("is")} the behavioural cost.
+                so −£753m static {teal("is")} the behavioural cost.
               </>,
               <>
                 Static cost is the exact <Math tex="e\to0" /> limit; <Math tex="e=0.05" /> is the
@@ -935,8 +934,8 @@ export function ConclusionSlide() {
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Static:</span> mechanical conventions
-                  overshoot HMRC’s anchor early and {teal("match it by 2026–27 (−£125.1m vs −£125m)")},
-                  reproducing the sign flip; raising to £100k costs £784m, the taper £550m.
+                  overshoot HMRC’s anchor early; retention {teal("matches 2025–26 to £1m (−£184.1m vs −£185m)")},
+                  reproducing the sign flip; raising to £100k costs £753m, the taper £520m.
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Distortion:</span> the dominated region{" "}
@@ -946,7 +945,7 @@ export function ConclusionSlide() {
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Behavioural:</span> the intensive
-                  margin barely moves the costings — zero offset for a level rise, &lt;4% for the
+                  margin barely moves the costings — zero offset for a level rise, &lt;6% for the
                   bands; conditional on assumed <Math tex="e" />.
                 </>,
                 <>
@@ -1087,8 +1086,9 @@ export function AppendixGenSlide() {
                 <Math tex="v_i=0.20\,(y_i-x_i)" /> — the standard rate on value added.
               </>,
               <>
-                Near-threshold £1k bins (£65k–£90k) target the OBR Chart C profile: direct counts
-                above the threshold, shape (window-normalised) below it.
+                Near-threshold £1k bins (£65k–£90k) target the OBR Chart C profile as{" "}
+                {teal("shape only, side-consistently")}: each side normalised over its own window
+                and scaled to the frame’s own mass there — chart levels are never imported.
               </>,
               <>
                 Each firm gets a positive weight <Math tex="w_i=e^{\theta_i}" />; weighted target{" "}
@@ -1123,9 +1123,9 @@ export function AppendixBehavSlide() {
     <><Math tex="e{=}0.32" /></>,
   ];
   const rows = [
-    ["Raise to £100k", "−£784m", "−£784m", "−£784m", "−£784m"],
-    ["Reduced 10% band", "−£497m", "−£494m", "−£488m", "−£480m"],
-    ["Reduced 15% band", "−£249m", "−£246m", "−£241m", "−£235m"],
+    ["Raise to £100k", "−£753m", "−£753m", "−£753m", "−£753m"],
+    ["Reduced 10% band", "−£484m", "−£481m", "−£475m", "−£467m"],
+    ["Reduced 15% band", "−£242m", "−£240m", "−£235m", "−£228m"],
   ];
   return (
     <Slide>
@@ -1162,7 +1162,7 @@ export function AppendixBehavSlide() {
         <Caption className="mt-6 max-w-6xl">
           The raise is {teal("invariant in e")} — released firms leave the VAT base, so their
           expansion is untaxed and crossers optimally bunch below the new threshold. Band offsets
-          stay under 4% (a larger <Math tex="e" /> makes them slightly cheaper). The taper is
+          stay under 6% (a larger <Math tex="e" /> makes them slightly cheaper). The taper is
           omitted — its rate varies continuously, outside the flat-rate machinery. The{" "}
           <Math tex="e\to0" /> limit reproduces the static costs {teal("exactly")} (asserted in
           code to £0.1m).
