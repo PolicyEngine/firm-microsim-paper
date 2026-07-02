@@ -790,17 +790,9 @@ export function FirmProblemSlide() {
           <SlideTitle kicker="Behavioural layer">
             The firm’s problem: VAT on <em className="italic">value added</em>
           </SlideTitle>
-          <p className="mt-6 text-lg leading-snug text-slate-700">
-            A firm of ability <Math tex="n" /> chooses turnover <Math tex="y" /> to maximise
-          </p>
-          <div className="my-4">
-            <DisplayEq
-              tex="\pi(y)=(1-\delta)\bigl(1-\tau f(y)\bigr)\,y-C(y;n,e)"
-              className="text-[1.15rem]"
-            />
-          </div>
           <BList
-            size="text-lg"
+            className="mt-8"
+            size="text-xl"
             items={[
               <>
                 VAT falls on {teal("value added")} <Math tex="(1-\delta)y" />, not whole turnover;{" "}
@@ -831,6 +823,15 @@ export function FirmProblemSlide() {
               alt="Optima of the value-added formulation-A profit under a hard notch vs a graduated taper"
               width={3863}
               height={1628}
+            />
+          </div>
+          <div className="mt-4">
+            <Caption className="text-center">
+              A firm of ability <Math tex="n" /> chooses turnover <Math tex="y" /> to maximise
+            </Caption>
+            <DisplayEq
+              tex="\pi(y)=(1-\delta)\bigl(1-\tau f(y)\bigr)\,y-C(y;n,e)"
+              className="mt-2 text-[1.15rem]"
             />
           </div>
           <Caption className="mt-3 text-center">
