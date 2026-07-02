@@ -575,10 +575,10 @@ export function ReformMenuSlide() {
     <Slide>
       <div className="flex h-full flex-col justify-center">
         <SlideTitle kicker="Static costing">The reform menu</SlideTitle>
-        <div className="mt-8 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+        <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
           <div className="grid grid-cols-[1.4fr_1fr_1fr_1.4fr] bg-pe-dark text-lg font-semibold text-white">
             {["Reform", "Lever", "Static", "Dominated region"].map((h, i) => (
-              <div key={h} className={`px-6 py-4 ${i === 2 ? "text-right" : ""}`}>
+              <div key={h} className={`px-6 py-3 ${i === 2 ? "text-right" : ""}`}>
                 {h}
               </div>
             ))}
@@ -586,16 +586,16 @@ export function ReformMenuSlide() {
           {rows.map((r) => (
             <div
               key={r.reform}
-              className={`grid grid-cols-[1.4fr_1fr_1fr_1.4fr] border-t border-slate-200 text-xl ${
+              className={`grid grid-cols-[1.4fr_1fr_1fr_1.4fr] border-t border-slate-200 text-lg ${
                 r.hi ? "bg-pe-light" : "bg-white"
               }`}
             >
-              <div className="px-6 py-4 font-semibold text-pe-dark">{r.reform}</div>
-              <div className="px-6 py-4 text-slate-600">{r.lever}</div>
-              <div className="px-6 py-4 text-right font-semibold tabular-nums text-slate-800">
+              <div className="px-6 py-3 font-semibold text-pe-dark">{r.reform}</div>
+              <div className="px-6 py-3 text-slate-600">{r.lever}</div>
+              <div className="px-6 py-3 text-right font-semibold tabular-nums text-slate-800">
                 {r.stat}
               </div>
-              <div className="px-6 py-4 text-slate-700">{r.region}</div>
+              <div className="px-6 py-3 text-slate-700">{r.region}</div>
             </div>
           ))}
         </div>
