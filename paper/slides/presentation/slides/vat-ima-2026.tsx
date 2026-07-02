@@ -63,7 +63,7 @@ function SubList({ items }: { items: ReactNode[] }) {
   return (
     <ul className="mt-2 space-y-1.5">
       {items.map((item, i) => (
-        <li key={i} className="flex gap-3 text-lg leading-snug text-slate-500">
+        <li key={i} className="flex gap-3 text-xl leading-snug text-slate-500">
           <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-slate-300" />
           <div>{item}</div>
         </li>
@@ -73,7 +73,7 @@ function SubList({ items }: { items: ReactNode[] }) {
 }
 
 function Caption({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <p className={`text-base leading-snug text-slate-500 ${className}`}>{children}</p>;
+  return <p className={`text-lg leading-snug text-slate-500 ${className}`}>{children}</p>;
 }
 
 /** Auto-fitting centred display equation. */
@@ -130,7 +130,7 @@ const teal = (children: ReactNode) => (
 export function TitleSlide() {
   return (
     <CoverSlide
-      title="A Firm-Level Microsimulation for VAT Policy Analysis"
+      title="An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
       event="IMA World Congress 2026 · Brussels · Parallel Session 4A"
       date="2026-07-01"
       speakers={speakers}
@@ -190,7 +190,7 @@ export function WhyThresholdSlide() {
             </>,
             <>
               Threshold was {teal("£85,000")} (2023–24), raised to {teal("£90,000")} on 1 April 2024
-              — after a seven-year nominal freeze, the longest in the tax’s history.
+              — after a seven-year nominal freeze.
             </>,
             <>
               Among the highest thresholds in the OECD, and it sits in a <em>dense</em> part of the
@@ -214,7 +214,7 @@ export function FirmsClusterSlide() {
       src: "/figures/firms_by_turnover_band_85k.png",
       w: 2636,
       h: 1784,
-      cap: "All UK firms by turnover band (ONS)",
+      cap: "VAT/PAYE-registered businesses by turnover band (ONS)",
     },
     {
       src: "/figures/vat_firms_by_turnover_band_85k.png",
@@ -285,8 +285,9 @@ export function ThisPaperSlide() {
             </>,
             <>
               <span className="font-semibold text-pe-dark">Headline:</span> only the graduated taper
-              removes the notch’s distortion; raising the threshold is the dearest, least efficient
-              option.
+              removes the notch’s dominated region (−£520m, against −£484m for a 10% band that
+              removes none of it); a level rise carries the largest static cost (−£753m), relocates
+              the region — and has {teal("exactly zero intensive-margin behavioural offset")}.
             </>,
           ]}
         />
@@ -299,7 +300,7 @@ export function LiteratureSlide() {
   const rows: [ReactNode, string][] = [
     [
       <>Bunching / notch methodology — source of the “dominated region”</>,
-      "Saez (2010); Kleven and Waseem (2013); Kleven (2016)",
+      "Chetty et al. (2011); Saez (2010); Kleven and Waseem (2013); Kleven (2016)",
     ],
     [
       <>VAT registration threshold (empirical)</>,
@@ -356,7 +357,7 @@ export function DataSlide() {
           </SlideTitle>
           <BList
             className="mt-8"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 {teal("No open firm-level VAT microdata exist")} <Math tex="\Rightarrow" /> build a
@@ -367,7 +368,8 @@ export function DataSlide() {
                 <SubList
                   items={[
                     <>ONS <em>UK Business: Activity, Size and Location</em> — firm counts by sector × turnover band</>,
-                    <>HMRC <em>VAT Annual Statistics</em> — registered counts and net VAT liability by band / sector</>,
+                    <>HMRC <em>VAT Annual Statistics</em> — registered counts by band / sector, net VAT liability by band</>,
+                    <>OBR <em>EFO</em> (Mar 2023) Chart C — £1k-band counts £65k–£90k, pinning the near-threshold bunching profile</>,
                   ]}
                 />
               </>,
@@ -377,8 +379,8 @@ export function DataSlide() {
           <SeeAppendix to={SLIDE.appGen}>how firms are built — appendix</SeeAppendix>
         </div>
         <div className="space-y-4">
-          <Stat value="≈2.94m" label="firm records" sub="weighted to ≈2.5m UK firms" />
-          <Stat value="≈90%" label="calibration accuracy" sub="across five calibrated dimensions" />
+          <Stat value="≈2.94m" label="firm records" sub="weighted to ≈2.5m registered businesses" />
+          <Stat value="89.2%" label="calibration accuracy" sub="five calibrated dimensions (92.8% for 2024–25)" />
           <Stat value="2023–24" label="data year" sub="ONS + HMRC published aggregates" />
         </div>
       </div>
@@ -410,9 +412,10 @@ export function TurnoverDistSlide() {
           />
         </div>
         <Caption className="mt-4 max-w-6xl">
-          Density steps down at the {teal("£85,000")} registration threshold and again at the{" "}
-          {teal("£150,000")} Flat Rate Scheme ceiling. {teal("The step is inherited from coarse HMRC band targets")}{" "}
-          — quantified later by a placebo test.
+          Near-threshold profile {teal("calibrated to the OBR’s published £1k-band counts")} — the
+          bunching shape is {teal("inherited from targets, not firm behaviour")} (placebo later).
+          Levels are the {teal("VAT/PAYE-registered frame")}; the £150,000 step is an HMRC band
+          edge.
         </Caption>
       </div>
     </Slide>
@@ -450,7 +453,7 @@ export function StaticCostingSlide() {
           <SlideTitle kicker="Static costing">Mechanical reclassification</SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 Turnover held fixed <Math tex="\Rightarrow" /> revenue moves only through firms whose{" "}
@@ -485,19 +488,25 @@ export function ValidationSlide() {
           height={1781}
         />
         <div>
-          <SlideTitle kicker="Static costing">Validation: the April-2024 anchor reform</SlideTitle>
+          <SlideTitle kicker="Static costing">The April-2024 anchor reform</SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 Cost the <Math tex="\text{£}85\text{k}\to\text{£}90\text{k}" /> April-2024 rise, my
-                estimate vs HMRC’s published costing.
+                estimate vs HMRC’s published costing — under two released-firm conventions.
               </>,
               <>
-                {teal("2025–26: £175m vs £185m")} — agree within £7–21m per year across the horizon.
+                Full deregistration overshoots:{" "}
+                {teal("2025–26: −£323m vs HMRC’s −£185m")} — consistent with HMRC embedding a{" "}
+                {teal("phased registration response")} (~28k fewer registrants in year 1).
               </>,
-              <>Both turn to a small <em>gain</em> by 2028–29 as fiscal drag lifts the frozen baseline.</>,
+              <>
+                43% voluntary retention {teal("matches 2025–26 to £1m: −£184.1m vs HMRC’s −£185m")};
+                both conventions reproduce the 2028–29 sign flip via the{" "}
+                {teal("uprated counterfactual threshold path")}.
+              </>,
               <>
                 Microdata are calibrated to HMRC aggregates <Math tex="\Rightarrow" /> a{" "}
                 {teal("consistency check")}, not out-of-sample validation.
@@ -518,7 +527,7 @@ export function StaticSweepSlide() {
           Static sweep: cost of moving the threshold
         </SlideTitle>
         <Caption className="mt-3 max-w-6xl text-sm">
-          Validated on the one move HMRC published, {teal("now sweep the whole schedule")} — the same
+          Checked against the one move HMRC published, {teal("now sweep the whole schedule")} — the same
           mechanical reclassification at every threshold.
         </Caption>
         <div className="mt-3 grid min-h-0 flex-1 grid-cols-2 grid-rows-1 gap-6">
@@ -536,9 +545,10 @@ export function StaticSweepSlide() {
           />
         </div>
         <Caption className="mt-3 max-w-6xl text-sm">
-          From a £90k base (£203.8bn), roughly linear, {teal("≈£150–220m per £5k step")}: e.g.{" "}
-          {teal("−£374m")} to raise to £100k, {teal("+£665m")} to lower to £70k. Even a £30k rise to
-          £120k costs ~£1.2bn — under 0.6% of the base.
+          From a £90k base (£200.9bn, 2024–25 vintage), roughly linear,{" "}
+          {teal("≈£230–265m per £5k step")}: e.g. {teal("−£498m")} to raise to £100k,{" "}
+          {teal("+£1,043m")} to lower to £70k. A £30k rise to £120k costs ~£1.4bn — 0.7% of the
+          base.
         </Caption>
       </div>
     </Slide>
@@ -547,25 +557,25 @@ export function StaticSweepSlide() {
 
 export function ReformMenuSlide() {
   const rows: { reform: string; lever: string; stat: string; region: ReactNode; hi?: boolean }[] = [
-    { reform: "Raise to £100k", lever: "Level", stat: "−£508m", region: "relocated" },
+    { reform: "Raise to £100k", lever: "Level", stat: "−£753m", region: "relocated" },
     {
       reform: "Taper £85–105k",
       lever: "Shape",
-      stat: "−£336m",
+      stat: "−£520m",
       region: <span className="font-bold text-pe-teal">removed</span>,
       hi: true,
     },
-    { reform: "Reduced 10%", lever: "Rate", stat: "−£343m", region: "split in two" },
-    { reform: "Reduced 15%", lever: "Rate", stat: "−£171m", region: "split in two" },
+    { reform: "Reduced 10%", lever: "Rate", stat: "−£484m", region: "split in two" },
+    { reform: "Reduced 15%", lever: "Rate", stat: "−£242m", region: "split in two" },
   ];
   return (
     <Slide>
       <div className="flex h-full flex-col justify-center">
         <SlideTitle kicker="Static costing">The reform menu</SlideTitle>
-        <div className="mt-8 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+        <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
           <div className="grid grid-cols-[1.4fr_1fr_1fr_1.4fr] bg-pe-dark text-lg font-semibold text-white">
             {["Reform", "Lever", "Static", "Dominated region"].map((h, i) => (
-              <div key={h} className={`px-6 py-4 ${i === 2 ? "text-right" : ""}`}>
+              <div key={h} className={`px-6 py-3 ${i === 2 ? "text-right" : ""}`}>
                 {h}
               </div>
             ))}
@@ -573,23 +583,23 @@ export function ReformMenuSlide() {
           {rows.map((r) => (
             <div
               key={r.reform}
-              className={`grid grid-cols-[1.4fr_1fr_1fr_1.4fr] border-t border-slate-200 text-xl ${
+              className={`grid grid-cols-[1.4fr_1fr_1fr_1.4fr] border-t border-slate-200 text-lg ${
                 r.hi ? "bg-pe-light" : "bg-white"
               }`}
             >
-              <div className="px-6 py-4 font-semibold text-pe-dark">{r.reform}</div>
-              <div className="px-6 py-4 text-slate-600">{r.lever}</div>
-              <div className="px-6 py-4 text-right font-semibold tabular-nums text-slate-800">
+              <div className="px-6 py-3 font-semibold text-pe-dark">{r.reform}</div>
+              <div className="px-6 py-3 text-slate-600">{r.lever}</div>
+              <div className="px-6 py-3 text-right font-semibold tabular-nums text-slate-800">
                 {r.stat}
               </div>
-              <div className="px-6 py-4 text-slate-700">{r.region}</div>
+              <div className="px-6 py-3 text-slate-700">{r.region}</div>
             </div>
           ))}
         </div>
         <Caption className="mt-6 max-w-6xl">
-          Common £85,000-notch / £183.6bn 2023–24 base. {teal("The level move is the most expensive yet removes no distortion")};
-          the taper removes it entirely for less. “Split in two” = a second notch appears where the
-          reduced-rate band ends (£105k reverts to 20%), so the empty band is fragmented, not shrunk.
+          Common £85,000-notch, 2023–24 base.{" "}
+          {teal("The level move costs the most and removes none of the dominated region")} — only
+          the taper removes it. “Split in two” = a second notch where the reduced-rate band ends.
         </Caption>
         <SeeAppendix to={SLIDE.appBehav}>behavioural costs across e — appendix</SeeAppendix>
       </div>
@@ -615,15 +625,18 @@ export function BunchingMechanicalSlide() {
   return (
     <Slide>
       <div className="grid h-full grid-cols-[1fr_1fr] items-center gap-10">
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex min-h-0 flex-col justify-center gap-2 self-stretch">
           <div className="min-h-0 flex-1">
             <Figure
               src="/figures/bunching_analysis_85k.png"
-              alt="Reproduced density step at £85k vs a polynomial no-bunching counterfactual"
+              alt="2023-24 population at £85k: no excess mass over the counterfactual"
               width={2611}
               height={1790}
             />
           </div>
+          <Caption className="flex-none text-center">
+            2023–24 at £85k: {teal("E = 7,933 — inherited from the OBR targets")}
+          </Caption>
           <div className="mt-3">
             <Caption className="text-center">
               Excess mass over a polynomial no-bunching counterfactual <Math tex="g" />:
@@ -632,24 +645,27 @@ export function BunchingMechanicalSlide() {
           </div>
         </div>
         <div>
-          <SlideTitle kicker="The distortion">Bunching in the synthetic data is mechanical</SlideTitle>
+          <SlideTitle kicker="The distortion">
+            The near-threshold shape is target-inherited — provably
+          </SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
-                Reproduced density step: ratio <Math tex="b=0.060" /> (SE 0.005), excess mass{" "}
-                <Math tex="E=8{,}712" /> firms (SE 662).
+                The 2023–24 file reproduces the administrative bunching profile{" "}
+                {teal("because it is calibrated to it")} (OBR £1k-band targets); the estimator
+                reads back <Math tex="E=7{,}933" />.
               </>,
               <>
-                {teal("Placebo")}: remove the step from the calibration target{" "}
-                <Math tex="\Rightarrow E" /> collapses to {teal("0–99 firms")}.
+                {teal("Placebo")}: regenerate {teal("without")} the fine targets{" "}
+                <Math tex="\Rightarrow E = 0" /> — the estimator reads targets, not firms (the
+                generator has no location choice).
               </>,
               <>
-                So the step is {teal("inherited from coarse HMRC bands")}, not firm behaviour — the
-                generator has no location choice.
+                No behavioural claim is made from synthetic data; the administrative fact remains
+                Liu et al. (2021).
               </>,
-              <>Genuine threshold bunching remains the administrative fact of Liu et al. (2021).</>,
             ]}
           />
         </div>
@@ -685,7 +701,7 @@ export function DominatedRegionSlide() {
           </SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 At <Math tex="T^{*}" />, profit jumps <em>down</em> by{" "}
@@ -695,10 +711,12 @@ export function DominatedRegionSlide() {
                 The {teal("dominated region")} is the band just above <Math tex="T^{*}" /> where no
                 firm locates: <Math tex="a = T^{*}\dfrac{\tau}{1-\tau} =" /> {teal("£21,250")}.
               </>,
-              <>Interval (£85,000, £106,250), ≈137,000 weighted firms.</>,
+              <>Interval (£85,000, £106,250), ≈156,000 weighted firms.</>,
               <>
                 Depends on <Math tex="\tau" /> and <Math tex="T^{*}" /> {teal("alone")} — no
-                elasticity. An order of magnitude wider than a kink’s ~£1k.
+                elasticity, and {teal("invariant to the firm’s input share")}: under the value-added
+                formulation the deductible share cancels. An order of magnitude wider than a kink’s
+                ~£1k.
               </>,
             ]}
           />
@@ -742,7 +760,8 @@ export function WhichReformsSlide() {
           ]}
         />
         <p className="mt-8 text-center text-2xl font-semibold text-pe-dark">
-          Only the taper removes the distortion — and for less (£336m).
+          Only the taper removes the dominated region (−£520m); the 10% band costs −£484m and
+          removes none of it.
         </p>
       </div>
     </Slide>
@@ -771,17 +790,9 @@ export function FirmProblemSlide() {
           <SlideTitle kicker="Behavioural layer">
             The firm’s problem: VAT on <em className="italic">value added</em>
           </SlideTitle>
-          <p className="mt-6 text-lg leading-snug text-slate-700">
-            A firm of ability <Math tex="n" /> chooses turnover <Math tex="y" /> to maximise
-          </p>
-          <div className="my-4">
-            <DisplayEq
-              tex="\pi(y)=(1-\delta)\bigl(1-\tau f(y)\bigr)\,y-C(y;n,e)"
-              className="text-[1.15rem]"
-            />
-          </div>
           <BList
-            size="text-lg"
+            className="mt-8"
+            size="text-xl"
             items={[
               <>
                 VAT falls on {teal("value added")} <Math tex="(1-\delta)y" />, not whole turnover;{" "}
@@ -797,9 +808,10 @@ export function FirmProblemSlide() {
                 construction: large deductible input purchases.
               </>,
               <>
-                Optimum <Math tex="y^{\star}=n\bigl[(1-\delta)(1-\tau)\bigr]^{e}" />.{" "}
-                <Math tex="\delta" /> is parametric for now — ONS Supply–Use value-added shares to
-                come.
+                Optimum <Math tex="y^{\star}=n\bigl[(1-\delta)(1-\tau)\bigr]^{e}" />; in the reform
+                response ratio {teal("δ cancels")}, so the intensive response needs only{" "}
+                <Math tex="e" /> and the schedule. Per-firm <Math tex="\delta_i" /> is drawn (mean VA
+                share 40%); grounding it in ONS Supply–Use tables by sector is future work.
               </>,
             ]}
           />
@@ -811,6 +823,15 @@ export function FirmProblemSlide() {
               alt="Optima of the value-added formulation-A profit under a hard notch vs a graduated taper"
               width={3863}
               height={1628}
+            />
+          </div>
+          <div className="mt-4">
+            <Caption className="text-center">
+              A firm of ability <Math tex="n" /> chooses turnover <Math tex="y" /> to maximise
+            </Caption>
+            <DisplayEq
+              tex="\pi(y)=(1-\delta)\bigl(1-\tau f(y)\bigr)\,y-C(y;n,e)"
+              className="mt-2 text-[1.15rem]"
             />
           </div>
           <Caption className="mt-3 text-center">
@@ -846,33 +867,22 @@ export function BehaviouralLayerSlide() {
         </div>
         <div>
           <SlideTitle kicker="Behavioural layer">
-            Conditional on an assumed elasticity
+            The intensive margin barely moves the costings
           </SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
-                Iso-elastic simulator (value-added base, formulation A) re-optimises each firm;
-                flat-rate optimum <Math tex="y=n[(1-\delta)(1-\tau)]^{e}" />, with <Math tex="e" />{" "}
-                {teal("assumed")}, not identified.
+                Region-confined iso-elastic simulator (value-added base) re-optimises
+                each firm within its schedule region, with <Math tex="e" /> {teal("assumed")}, not
+                identified; sweep <Math tex="e\in\{0.05,0.17,0.32\}" />.
               </>,
               <>
-                Sweep <Math tex="e\in\{0.05,0.17,0.32\}" />. At <Math tex="e=0.17" /> base-broadening
-                offsets much of each static loss:
-                <SubList
-                  items={[
-                    <>raise to £100k: £508m → <span className="font-semibold text-pe-teal">£292m</span></>,
-                    <>10% band: £343m → <span className="font-semibold text-pe-teal">£273m</span></>,
-                    <>15% band: £171m → <span className="font-semibold text-pe-teal">£135m</span></>,
-                  ]}
-                />
+                Static cost is the exact <Math tex="e\to0" /> limit; <Math tex="e=0.05" /> is the
+                external anchor (Kleven and Waseem, 2013), Liu et al.’s UK estimates (~0.09–0.14)
+                fall in the swept range.
               </>,
-              <>
-                Static cost is the <Math tex="e\to0" /> limit; only <Math tex="e=0.05" /> has an
-                external anchor (Kleven and Waseem, 2013).
-              </>,
-              <>Taper excluded: its marginal-rate channel is not credibly identified iso-elastically.</>,
             ]}
           />
         </div>
@@ -906,7 +916,7 @@ export function ConclusionSlide() {
               What we find
             </div>
             <BList
-              size="text-base"
+              size="text-lg"
               items={[
                 <>
                   <span className="font-semibold text-pe-dark">What this is:</span> an open,
@@ -914,18 +924,20 @@ export function ConclusionSlide() {
                   notch; prices level / shape / rate reforms {teal("three ways")}.
                 </>,
                 <>
-                  <span className="font-semibold text-pe-dark">Static:</span> reproduces HMRC’s anchor
-                  within ~£10m; raising to £100k costs £508m, the taper £336m.
+                  <span className="font-semibold text-pe-dark">Static:</span> retention{" "}
+                  {teal("matches 2025–26 to £1m (−£184.1m vs −£185m)")}, reproducing the sign flip;
+                  raising to £100k costs £753m, the taper £520m.
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Distortion:</span> the dominated region{" "}
-                  <Math tex="a=\text{£}21{,}250" /> is elasticity-free — {teal("only the taper removes it")};
-                  the level move relocates it, a reduced rate splits it in two.
+                  <Math tex="a=\text{£}21{,}250" /> is elasticity-free and input-share invariant —{" "}
+                  {teal("only the taper removes it")}; the level move relocates it, a reduced rate
+                  splits it in two.
                 </>,
                 <>
-                  <span className="font-semibold text-pe-dark">Behavioural offsets</span> are
-                  conditional on assumed <Math tex="e" />; the static cost and dominated region are the
-                  elasticity-free anchors.
+                  <span className="font-semibold text-pe-dark">Behavioural:</span> the intensive
+                  margin barely moves the costings — zero offset for a level rise, &lt;6% for the
+                  bands; conditional on assumed <Math tex="e" />.
                 </>,
               ]}
             />
@@ -935,18 +947,13 @@ export function ConclusionSlide() {
               Limitations & future work
             </div>
             <BList
-              size="text-base"
+              size="text-lg"
               items={[
                 <>
-                  <span className="font-semibold text-pe-dark">Value added, parametric</span>{" "}
-                  <Math tex="\delta" /> — not yet measured firm by firm ({teal("ONS Supply–Use to come")});
-                  the dominated region still uses the statutory-rate notch, and ~43% voluntary
-                  registration (Liu et al., 2021) is abstracted from.
-                </>,
-                <>
-                  <span className="font-semibold text-pe-dark">Partial efficiency metric</span> —
-                  dominated-region width indexes misallocation only; a full welfare / MVPF accounting
-                  (Keen and Mintz, 2004) is needed.
+                  <span className="font-semibold text-pe-dark">Scope</span> — no firm location
+                  choice; ~43% voluntary registration (Liu et al., 2021) enters only as a rate and
+                  a retention sensitivity; net-repayment traders unmodelled;{" "}
+                  {teal("sector-grounded δ from ONS Supply–Use to come")}.
                 </>,
                 <>
                   <span className="font-semibold text-pe-dark">Aggregate only</span> — no sectoral
@@ -1044,7 +1051,7 @@ export function AppendixGenSlide() {
       <div className="flex h-full flex-col justify-center">
         <SlideTitle kicker="Appendix">How the synthetic firms are built</SlideTitle>
         <div className="mt-6 space-y-4">
-          <p className="text-lg leading-snug text-slate-700">
+          <p className="text-xl leading-snug text-slate-700">
             Draw firms by sector × ONS turnover band; turnover smoothed within band:
           </p>
           <DisplayEq
@@ -1052,11 +1059,17 @@ export function AppendixGenSlide() {
             className="text-[1.05rem]"
           />
           <BList
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
-                Input share <Math tex="x_i=\rho_i y_i" /> (<Math tex="\rho_i\in[0.6,1.5]" />, rescaled
-                Beta) <Math tex="\Rightarrow" /> net VAT base <Math tex="v_i=y_i-x_i" />.
+                Input share <Math tex="x_i=\rho_i y_i" /> (<Math tex="\rho_i\in[0.1,0.95]" />,
+                rescaled Beta, mean 0.6) <Math tex="\Rightarrow" /> net VAT liability{" "}
+                <Math tex="v_i=0.20\,(y_i-x_i)" /> — the standard rate on value added.
+              </>,
+              <>
+                Near-threshold £1k bins (£65k–£90k) target the OBR Chart C profile as{" "}
+                {teal("shape only, side-consistently")}: each side normalised over its own window
+                and scaled to the frame’s own mass there — chart levels are never imported.
               </>,
               <>
                 Each firm gets a positive weight <Math tex="w_i=e^{\theta_i}" />; weighted target{" "}
@@ -1064,14 +1077,14 @@ export function AppendixGenSlide() {
               </>,
             ]}
           />
-          <p className="text-lg leading-snug text-slate-700">
+          <p className="text-xl leading-snug text-slate-700">
             Fit <Math tex="\theta" /> by gradient descent on a symmetric relative-error loss:
           </p>
           <DisplayEq
             tex="L(\theta)=\tfrac{1}{K}\sum_k\lambda_k\min\{(\widehat{T}_k/T_k-1)^2,(T_k/\widehat{T}_k-1)^2\}+\tfrac{\alpha}{N}\sum_i|\theta_i|"
             className="text-[1.05rem]"
           />
-          <p className="text-lg leading-snug text-slate-700">
+          <p className="text-xl leading-snug text-slate-700">
             {teal("The threshold is a generator parameter")}: every counterfactual regenerates a
             fresh, internally consistent population.
           </p>
@@ -1091,9 +1104,9 @@ export function AppendixBehavSlide() {
     <><Math tex="e{=}0.32" /></>,
   ];
   const rows = [
-    ["Raise to £100k", "−£508m", "−£444m", "−£292m", "−£111m"],
-    ["Reduced 10% band", "−£343m", "−£322m", "−£273m", "−£210m"],
-    ["Reduced 15% band", "−£171m", "−£160m", "−£135m", "−£107m"],
+    ["Raise to £100k", "−£753m", "−£753m", "−£753m", "−£753m"],
+    ["Reduced 10% band", "−£484m", "−£481m", "−£475m", "−£467m"],
+    ["Reduced 15% band", "−£242m", "−£240m", "−£235m", "−£228m"],
   ];
   return (
     <Slide>
@@ -1128,9 +1141,12 @@ export function AppendixBehavSlide() {
           ))}
         </div>
         <Caption className="mt-6 max-w-6xl">
-          A larger <Math tex="e" /> makes every flat reform cheaper (base-broadening). The taper is
-          omitted — its channels cannot both be netted iso-elastically. The <Math tex="e\to0" /> limit
-          reproduces the static costs to within ~£1m.
+          The raise is {teal("invariant in e")} — released firms leave the VAT base, so their
+          expansion is untaxed and crossers optimally bunch below the new threshold. Band offsets
+          stay under 6% (a larger <Math tex="e" /> makes them slightly cheaper). The taper is
+          omitted — its rate varies continuously, outside the flat-rate machinery. The{" "}
+          <Math tex="e\to0" /> limit reproduces the static costs {teal("exactly")} (asserted in
+          code to £0.1m).
         </Caption>
         <BackTo to={SLIDE.reformMenu}>back to “The reform menu”</BackTo>
       </div>

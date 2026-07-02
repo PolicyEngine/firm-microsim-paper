@@ -42,6 +42,13 @@ function SlideshowViewerClient({ config }: SlideshowViewerProps) {
       } else if (event.key === "ArrowLeft") {
         event.preventDefault();
         setCurrentSlide((previous) => Math.max(previous - 1, 0));
+      } else if (event.key === "PageDown") {
+        // Conference presenter clickers emit PageDown/PageUp.
+        event.preventDefault();
+        setCurrentSlide((previous) => Math.min(previous + 1, slides.length - 1));
+      } else if (event.key === "PageUp") {
+        event.preventDefault();
+        setCurrentSlide((previous) => Math.max(previous - 1, 0));
       } else if (event.key === "Home") {
         event.preventDefault();
         setCurrentSlide(0);
@@ -84,6 +91,16 @@ function SlideshowViewerClient({ config }: SlideshowViewerProps) {
         onClick={() => setCurrentSlide((previous) => Math.min(previous + 1, slides.length - 1))}
       >
         <div className="slide-active">{currentSlideElement}</div>
+
+        {(isExport || isFullscreen) && (
+          <div className="pointer-events-none fixed bottom-0 right-0 z-50 flex h-18 items-center px-8 text-white">
+            <span className="text-sm font-semibold">
+              {currentSlide < (config.mainSlideCount ?? slides.length)
+                ? `${currentSlide + 1} / ${config.mainSlideCount ?? slides.length}`
+                : "Appendix"}
+            </span>
+          </div>
+        )}
 
         {!isFullscreen && !isExport && (
           <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-50 flex h-18 items-center justify-end gap-4 px-8 text-white">

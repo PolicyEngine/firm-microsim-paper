@@ -33,12 +33,12 @@ import {
 
 export const vatIma2026Config: SlideshowConfig = {
   id: "vat-ima-2026",
-  title: "A Firm-Level Microsimulation for VAT Policy Analysis",
+  title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold",
   description:
     "PolicyEngine conference deck for the IMA World Congress 2026 — costing UK VAT registration-threshold reforms on synthetic firm data.",
   date: "2026-07-01",
   location: "IMA World Congress 2026, Brussels",
-  footerText: "IMA World Congress 2026 · firm microsimulation",
+  footerText: "IMA World Congress 2026 · Firm microsimulation",
   speakers: [{ name: "Vahid Ahmadi", title: "PolicyEngine" }],
   // Slides 0–24 are the main deck; 25+ are appendix (excluded from the counter).
   mainSlideCount: 25,

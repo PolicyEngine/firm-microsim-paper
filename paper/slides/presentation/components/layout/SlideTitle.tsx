@@ -10,7 +10,7 @@ export default function SlideTitle({ children, kicker, className = "" }: SlideTi
   return (
     <div className={className}>
       {kicker && (
-        <div className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-pe-teal">
+        <div className="mb-3 text-base font-bold uppercase tracking-[0.22em] text-pe-teal">
           {kicker}
         </div>
       )}
