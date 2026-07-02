@@ -42,6 +42,13 @@ function SlideshowViewerClient({ config }: SlideshowViewerProps) {
       } else if (event.key === "ArrowLeft") {
         event.preventDefault();
         setCurrentSlide((previous) => Math.max(previous - 1, 0));
+      } else if (event.key === "PageDown") {
+        // Conference presenter clickers emit PageDown/PageUp.
+        event.preventDefault();
+        setCurrentSlide((previous) => Math.min(previous + 1, slides.length - 1));
+      } else if (event.key === "PageUp") {
+        event.preventDefault();
+        setCurrentSlide((previous) => Math.max(previous - 1, 0));
       } else if (event.key === "Home") {
         event.preventDefault();
         setCurrentSlide(0);
