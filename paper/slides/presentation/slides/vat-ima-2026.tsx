@@ -643,17 +643,6 @@ export function BunchingMechanicalSlide() {
           <Caption className="flex-none text-center">
             2023–24 at £85k: {teal("E = 7,873 — inherited from the OBR targets")}
           </Caption>
-          <div className="min-h-0 flex-1">
-            <Figure
-              src="/figures/bunching_analysis_90k.png"
-              alt="2024-25 population at £90k: a large spurious excess-mass signal at the band edge"
-              width={2611}
-              height={1790}
-            />
-          </div>
-          <Caption className="flex-none text-center">
-            2024–25 at £90k: {teal("E = 11,072, b·LLAT = 1.23")} — band edge ≈ the admin estimate, coincidentally
-          </Caption>
         </div>
         <div>
           <SlideTitle kicker="The distortion">
@@ -666,7 +655,7 @@ export function BunchingMechanicalSlide() {
               <>
                 The 2023–24 file reproduces the administrative bunching profile{" "}
                 {teal("because it is calibrated to it")} (OBR £1k-band targets); the estimator
-                reads back <Math tex="E=7{,}873" /> (b·LLAT = 2.55).
+                reads back <Math tex="E=7{,}873" />.
               </>,
               <>
                 {teal("Placebo")}: regenerate {teal("without")} the fine targets{" "}
@@ -674,20 +663,12 @@ export function BunchingMechanicalSlide() {
                 generator has no location choice).
               </>,
               <>
-                The uncalibrated 2024–25 vintage: the coarse £90k band edge alone yields{" "}
-                {teal("b·LLAT = 1.23 — within 10% of Liu et al.’s 1.361")} — coincidental, 4×
-                unstable across specifications, behaviour-free.{" "}
-                {teal("“Validation” would have been found here, and meant nothing.")}
-              </>,
-              <>
                 {teal("Power test")}: moderate injected signals are detected (50–62% recovered,
                 attenuated, never inflated); small ones sit near the detection floor.
               </>,
               <>
-                An earlier draft manufactured the step via a{" "}
-                {teal("liability mis-scaling")} — corrected and documented openly. No behavioural
-                claim is made from synthetic data; the administrative fact remains Liu et al.
-                (2021).
+                No behavioural claim is made from synthetic data; the administrative fact remains
+                Liu et al. (2021).
               </>,
             ]}
           />
@@ -984,8 +965,7 @@ export function ConclusionSlide() {
                 <>
                   <span className="font-semibold text-pe-dark">Transparency:</span> the
                   near-threshold shape is {teal("calibrated to published OBR £1k-band data")};
-                  placebo and power tests show the estimator reads targets, not behaviour — in both
-                  directions (spurious signal at the uncalibrated £90k band edge).
+                  placebo and power tests show the estimator reads targets, not behaviour.
                 </>,
               ]}
             />
