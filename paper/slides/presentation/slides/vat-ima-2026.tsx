@@ -879,11 +879,6 @@ export function BehaviouralLayerSlide() {
                 identified; sweep <Math tex="e\in\{0.05,0.17,0.32\}" />.
               </>,
               <>
-                {teal("A level rise has exactly zero intensive-margin offset at every e")}: released
-                firms leave the VAT base (their expansion is untaxed), crossers optimally bunch —
-                so −£753m static {teal("is")} the behavioural cost.
-              </>,
-              <>
                 Static cost is the exact <Math tex="e\to0" /> limit; <Math tex="e=0.05" /> is the
                 external anchor (Kleven and Waseem, 2013), Liu et al.’s UK estimates (~0.09–0.14)
                 fall in the swept range.
