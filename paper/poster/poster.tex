@@ -43,7 +43,7 @@
 % Uniform subtitle size: author and institute lines render at the same size.
 \setbeamerfont{author}{size=\large}
 \setbeamerfont{institute}{size=\large}
-\title{A Firm-Level Microsimulation for VAT Policy Analysis}
+\title{An Open Firm-Level Microsimulation of the UK VAT Registration Threshold}
 \author{Vahid Ahmadi \quad \faEnvelope~\texttt{vahid@policyengine.org}}
 \institute[PolicyEngine]{PolicyEngine \quad\textbar\quad
   \faGlobe~\texttt{policyengine.org} \quad\textbar\quad
@@ -78,7 +78,7 @@
 
   \begin{figure}
     \centering
-    {\itshape All UK firms by turnover band --- ONS, 2023--24}\\[0.4em]
+    {\itshape VAT/PAYE-registered businesses by turnover band --- ONS, 2023--24}\\[0.4em]
     \includegraphics[width=0.70\colwidth]{figures/firms_by_turnover_band_85k.png}
   \end{figure}
 
@@ -98,15 +98,18 @@
 
   \begin{alertblock}{Contribution}
     {\color{peteal}\bfseries Headline: only the graduated taper removes the
-      notch's distortion; the level move is the dearest and least
-      efficient.}\par\vspace*{0.45em}
+      notch's dominated region (\pounds550m, vs \pounds497m for a 10\% band
+      that removes none); a level rise costs most --- and has exactly zero
+      intensive-margin behavioural offset.}\par\vspace*{0.45em}
     An open, reproducible firm-level microsimulation that:
     \begin{enumerate}
       \item costs \hl{level + shape + rate} reforms on one static basis;
       \item characterises the notch's distortion via its exact,
             \hl{elasticity-free dominated region};
-      \item shows via a \hl{placebo} that synthetic bunching is mechanical;
-      \item adds a conditional \hl{behavioural layer}.
+      \item proves the near-threshold shape is \hl{target-inherited}
+            (OBR-calibrated; placebo-verified) --- in both directions;
+      \item adds a conditional \hl{behavioural layer} with an exact
+            static nesting.
     \end{enumerate}
   \end{alertblock}
 
@@ -115,12 +118,13 @@
   \begin{exampleblock}{Data methodology}
     \leadin{How the synthetic data are built.}
     Draw synthetic firms by sector\,$\times$\,turnover band; give each an
-    input share $x_i=\rho_i y_i$ so value added $v_i=y_i-x_i$ is the net VAT
-    base. Firm weights $w_i=e^{\theta_i}$ are fit by gradient descent to HMRC
-    + ONS aggregates. Crucially, the threshold is a \emph{generator
-    parameter}: every counterfactual --- a higher cutoff, a taper, a reduced
-    rate --- \hl{regenerates} a fresh, internally consistent population, and
-    the whole file is \hl{released openly}.
+    input share $x_i=\rho_i y_i$ and net VAT liability
+    $v_i=0.20\,(y_i-x_i)$ --- the standard rate on value added. Firm weights
+    $w_i=e^{\theta_i}$ are fit by gradient descent to HMRC + ONS aggregates,
+    with the near-threshold \pounds1k-band profile pinned to the
+    \hl{OBR's published Chart~C data}. The threshold is a \emph{generator
+    parameter} --- every counterfactual \hl{regenerates} a fresh
+    population --- and the whole file is \hl{released openly}.
   \end{exampleblock}
 
   \vfill
@@ -136,7 +140,8 @@
     \leadin{\flow The engine behind every costing.}
     \hl{$\approx$2.94m} firm rows weighted to \hl{$\approx$2.5m} UK firms,
     calibrated to HMRC + ONS aggregates (turnover-band counts, sector,
-    employment, net VAT liability by band) at \hl{$\approx$90\% accuracy}.
+    employment, net VAT liability by band) at \hl{89.2\% / 92.8\%}
+    accuracy for the 2023--24 / 2024--25 vintages.
     Calibrated \emph{to} the aggregates, so agreement is an
     \hl{internal-consistency check}, not external validation.
   \end{block}
@@ -152,9 +157,12 @@
     \leadin{Pricing a reform on this data.}
     \[ R(T)=\sum_i w_i\, v_i\,\mathds{1}\{y_i\ge T\} \]
     Revenue moves only through firms whose registration status flips.\\[0.4em]
-    \hl{Validation vs HMRC:} the \pounds85k$\to$\pounds90k April-2024 increase
-    costs \hl{$-$\pounds175m} in 2025--26 vs HMRC's published
-    \hl{$-$\pounds185m} --- agreement \hl{within $\sim$\pounds10m}.
+    \hl{Anchor vs HMRC:} the \pounds85k$\to$\pounds90k April-2024 rise, under
+    two released-firm conventions, \hl{overshoots early} ($-$\pounds366m /
+    $-$\pounds209m retention vs published $-$\pounds185m in 2025--26 ---
+    consistent with HMRC's phased registration response) and
+    \hl{matches by 2026--27} ($-$\pounds125.1m vs $-$\pounds125m), with the
+    2028--29 sign flip reproduced.
   \end{exampleblock}
 
   \begin{figure}
@@ -166,10 +174,10 @@
 
   \begin{block}{Threshold sweep (2025--26)}
     \leadin{Scaling the \emph{level} reform across thresholds.}
-    From a \pounds90k base (\hl{\pounds203.8bn}), the static cost is roughly
-    \hl{linear}, $\approx$\pounds150--220m per \pounds5k step --- e.g.\
-    \hl{$-$\pounds374m} to raise to \pounds100k, \hl{$+$\pounds665m} to lower
-    to \pounds70k.
+    From a \pounds90k base (\hl{\pounds200.9bn}), the static cost is roughly
+    \hl{linear}, $\approx$\pounds230--265m per \pounds5k step --- e.g.\
+    \hl{$-$\pounds498m} to raise to \pounds100k, \hl{$+$\pounds1{,}043m} to
+    lower to \pounds70k.
   \end{block}
 
   \vfill
@@ -182,7 +190,7 @@
 \begin{column}{\colwidth}
 
   \begin{block}{Reform menu}
-    \leadin{\flow Cost and distortion on a common \pounds85k / \pounds183.6bn base.}
+    \leadin{\flow Cost and distortion on a common \pounds85k / \pounds184.8bn base.}
     \centering
     \renewcommand{\arraystretch}{1.45}
     \setlength{\tabcolsep}{1.4em}
@@ -191,24 +199,27 @@
       \toprule
       \textbf{Reform} & \textbf{Type} & \textbf{Static} & \textbf{Dominated region}\\
       \midrule
-      Raise to \pounds100k & Level & $-$\pounds508m & relocated\\
-      Taper \pounds85--105k & Shape & $-$\pounds336m & {\color{pedarkteal}\bfseries removed}\\
-      Reduced 10\% & Rate & $-$\pounds343m & split in two\\
-      Reduced 15\% & Rate & $-$\pounds171m & split in two\\
+      Raise to \pounds100k & Level & $-$\pounds784m & relocated\\
+      Taper \pounds85--105k & Shape & $-$\pounds550m & {\color{pedarkteal}\bfseries removed}\\
+      Reduced 10\% & Rate & $-$\pounds497m & split in two\\
+      Reduced 15\% & Rate & $-$\pounds249m & split in two\\
       \bottomrule
     \end{tabular}
   \end{block}
 
   \vfill
 
-  \begin{block}{Bunching is mechanical}
-    \leadin{A transparency check on the synthetic data.}
-    Estimator: $b=0.060$, excess mass \hl{$E=8{,}712$} firms. A
-    \hl{placebo} collapses $E$ to \hl{0--99} when the step is removed from
-    the calibration target $\Rightarrow$ bunching is inherited from coarse
-    HMRC band targets, \emph{not} firm behaviour. Behavioural bunching is
-    therefore \hl{not identified} on the synthetic data; the administrative
-    estimate of Liu et al.\ (2021) remains the behavioural fact.
+  \begin{block}{The near-threshold shape is target-inherited}
+    \leadin{A transparency result, proved in both directions.}
+    The 2023--24 file reproduces the administrative bunching profile
+    \hl{because it is calibrated to it} (OBR \pounds1k-band targets); the
+    estimator reads back \hl{$E=7{,}873$}. Regenerate \emph{without} those
+    targets $\Rightarrow$ \hl{$E=0$}. And with \emph{no} fine targets, the
+    2024--25 vintage's coarse \pounds90k band edge alone yields
+    \hl{$b_{\mathrm{LLAT}}=1.23$} --- within 10\% of Liu et al.'s (2021)
+    administrative \hl{1.361}, coincidentally and unstably. Synthetic
+    bunching is \hl{never behavioural evidence}; the administrative estimate
+    remains the behavioural fact.
     \begin{figure}
       \centering
       \includegraphics[width=0.74\colwidth]{figures/bunching_analysis_85k.png}
@@ -223,9 +234,9 @@
     threshold. The \hl{dominated region} --- turnover where no firm locates
     because it earns less than at $T^\ast$ --- has exact width
     \[ a=T^\ast\tfrac{\tau}{1-\tau}=\text{\pounds}21{,}250 \]
-    (\pounds85{,}000--\pounds106{,}250), spanning \hl{$\approx$137{,}000}
-    weighted firms. \hl{Exact and elasticity-free} (conditional on the
-    turnover-tax notch).
+    (\pounds85{,}000--\pounds106{,}250), spanning \hl{$\approx$160{,}000}
+    weighted firms. \hl{Exact, elasticity-free, and input-share invariant}
+    (the deductible share cancels in the value-added formulation).
     \begin{figure}
       \centering
       \includegraphics[width=0.72\colwidth]{figures/dynamic_notch_fit_e017.png}
@@ -262,14 +273,15 @@
   \begin{block}{Behavioural layer}
     \leadin{Layering an assumed response on the static costs.}
     Conditional on an \hl{assumed} turnover elasticity $e$ (\emph{not}
-    identified on synthetic data); sweep $e\in\{0.05,0.17,0.32\}$. At the
-    midpoint $e=0.17$, each static cost falls as firms broaden the base:
-    raising to \pounds100k from \pounds508m to \hl{\pounds292m}; the 10\% band
-    \pounds343m to \hl{\pounds273m}; the 15\% band \pounds171m to
-    \hl{\pounds135m}. A larger $e$ makes every reform \hl{cheaper}. The taper
-    is \emph{excluded} --- its base-broadening and marginal-rate channels
-    cannot be netted in the iso-elastic cost. Only $e=0.05$ has an external
-    anchor, so this is a \hl{sensitivity range}, not a forecast.
+    identified on synthetic data); sweep $e\in\{0.05,0.17,0.32\}$. The
+    intensive margin \hl{barely moves the costings}: a level rise has
+    \hl{exactly zero} intensive-margin offset at every $e$ (released firms
+    leave the VAT base, so their expansion is untaxed), and the reduced-rate
+    offsets stay \hl{under 4\%} (10\% band: \pounds497m to \hl{\pounds488m}
+    at $e=0.17$). The taper is \emph{excluded} --- its rate varies
+    continuously, outside the flat-rate machinery. Only $e=0.05$ has an
+    external anchor, so this is a \hl{sensitivity range}, not a forecast ---
+    and the $e\to0$ limit reproduces the static costs \hl{exactly}.
     \begin{figure}
       \centering
       \includegraphics[width=0.80\colwidth]{figures/dynamic_cost_vs_elasticity.png}
@@ -285,13 +297,13 @@
     and rate reforms three ways --- statically, by the exact distortion each
     removes, and behaviourally.\par\vspace*{0.5em}
     \begin{enumerate}
-      \item Prices level + shape + rate on one basis; reproduces HMRC's
-            anchor costing.
+      \item Prices level + shape + rate on one basis; tracks HMRC's anchor
+            costing once the deregistration convention is stated.
       \item On the dominated-region metric, \hl{only the taper removes the
-            distortion} --- the level move is the dearest and least efficient.
-      \item Synthetic bunching is \hl{mechanical} (a transparency lesson) ---
-            no elasticity is read off it.
-      \item Behavioural offsets are conditional on an assumed $e$; the static
+            distortion}; the level move costs most and removes none of it.
+      \item Sub-band structure in calibrated data is \hl{target-inherited} ---
+            never behavioural evidence, in either direction.
+      \item The intensive margin barely moves the static costings; the static
             cost and dominated region are the \hl{elasticity-free anchors}.
     \end{enumerate}
   \end{alertblock}
