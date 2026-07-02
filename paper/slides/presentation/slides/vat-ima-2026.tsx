@@ -63,7 +63,7 @@ function SubList({ items }: { items: ReactNode[] }) {
   return (
     <ul className="mt-2 space-y-1.5">
       {items.map((item, i) => (
-        <li key={i} className="flex gap-3 text-lg leading-snug text-slate-500">
+        <li key={i} className="flex gap-3 text-xl leading-snug text-slate-500">
           <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-slate-300" />
           <div>{item}</div>
         </li>
@@ -73,7 +73,7 @@ function SubList({ items }: { items: ReactNode[] }) {
 }
 
 function Caption({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <p className={`text-base leading-snug text-slate-500 ${className}`}>{children}</p>;
+  return <p className={`text-lg leading-snug text-slate-500 ${className}`}>{children}</p>;
 }
 
 /** Auto-fitting centred display equation. */
@@ -190,7 +190,7 @@ export function WhyThresholdSlide() {
             </>,
             <>
               Threshold was {teal("£85,000")} (2023–24), raised to {teal("£90,000")} on 1 April 2024
-              — after a seven-year nominal freeze, the longest in the tax’s history.
+              — after a seven-year nominal freeze.
             </>,
             <>
               Among the highest thresholds in the OECD, and it sits in a <em>dense</em> part of the
@@ -357,7 +357,7 @@ export function DataSlide() {
           </SlideTitle>
           <BList
             className="mt-8"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 {teal("No open firm-level VAT microdata exist")} <Math tex="\Rightarrow" /> build a
@@ -453,7 +453,7 @@ export function StaticCostingSlide() {
           <SlideTitle kicker="Static costing">Mechanical reclassification</SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 Turnover held fixed <Math tex="\Rightarrow" /> revenue moves only through firms whose{" "}
@@ -491,7 +491,7 @@ export function ValidationSlide() {
           <SlideTitle kicker="Static costing">The April-2024 anchor reform</SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 Cost the <Math tex="\text{£}85\text{k}\to\text{£}90\text{k}" /> April-2024 rise, my
@@ -650,7 +650,7 @@ export function BunchingMechanicalSlide() {
           </SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 The 2023–24 file reproduces the administrative bunching profile{" "}
@@ -701,7 +701,7 @@ export function DominatedRegionSlide() {
           </SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 At <Math tex="T^{*}" />, profit jumps <em>down</em> by{" "}
@@ -871,7 +871,7 @@ export function BehaviouralLayerSlide() {
           </SlideTitle>
           <BList
             className="mt-6"
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 Region-confined iso-elastic simulator (value-added base) re-optimises
@@ -921,7 +921,7 @@ export function ConclusionSlide() {
               What we find
             </div>
             <BList
-              size="text-base"
+              size="text-lg"
               items={[
                 <>
                   <span className="font-semibold text-pe-dark">What this is:</span> an open,
@@ -952,7 +952,7 @@ export function ConclusionSlide() {
               Limitations & future work
             </div>
             <BList
-              size="text-base"
+              size="text-lg"
               items={[
                 <>
                   <span className="font-semibold text-pe-dark">Scope</span> — no firm location
@@ -1056,7 +1056,7 @@ export function AppendixGenSlide() {
       <div className="flex h-full flex-col justify-center">
         <SlideTitle kicker="Appendix">How the synthetic firms are built</SlideTitle>
         <div className="mt-6 space-y-4">
-          <p className="text-lg leading-snug text-slate-700">
+          <p className="text-xl leading-snug text-slate-700">
             Draw firms by sector × ONS turnover band; turnover smoothed within band:
           </p>
           <DisplayEq
@@ -1064,7 +1064,7 @@ export function AppendixGenSlide() {
             className="text-[1.05rem]"
           />
           <BList
-            size="text-lg"
+            size="text-xl"
             items={[
               <>
                 Input share <Math tex="x_i=\rho_i y_i" /> (<Math tex="\rho_i\in[0.1,0.95]" />,
@@ -1082,14 +1082,14 @@ export function AppendixGenSlide() {
               </>,
             ]}
           />
-          <p className="text-lg leading-snug text-slate-700">
+          <p className="text-xl leading-snug text-slate-700">
             Fit <Math tex="\theta" /> by gradient descent on a symmetric relative-error loss:
           </p>
           <DisplayEq
             tex="L(\theta)=\tfrac{1}{K}\sum_k\lambda_k\min\{(\widehat{T}_k/T_k-1)^2,(T_k/\widehat{T}_k-1)^2\}+\tfrac{\alpha}{N}\sum_i|\theta_i|"
             className="text-[1.05rem]"
           />
-          <p className="text-lg leading-snug text-slate-700">
+          <p className="text-xl leading-snug text-slate-700">
             {teal("The threshold is a generator parameter")}: every counterfactual regenerates a
             fresh, internally consistent population.
           </p>
