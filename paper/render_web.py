@@ -163,7 +163,7 @@ def main() -> None:
     body = body_markdown()
     WEB_QMD.write_text(
         f"""---
-title: "A Firm-Level Microsimulation for VAT Policy Analysis"
+title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
 subtitle: "An open firm-level model for UK VAT threshold reform"
 author:
   - name: "Vahid Ahmadi"
