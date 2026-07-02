@@ -663,10 +663,6 @@ export function BunchingMechanicalSlide() {
                 generator has no location choice).
               </>,
               <>
-                {teal("Power test")}: moderate injected signals are detected (50–62% recovered,
-                attenuated, never inflated); small ones sit near the detection floor.
-              </>,
-              <>
                 No behavioural claim is made from synthetic data; the administrative fact remains
                 Liu et al. (2021).
               </>,
