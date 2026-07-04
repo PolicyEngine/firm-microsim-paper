@@ -73,6 +73,14 @@ def main() -> None:
         source = html_dir / name
         if source.exists():
             copy_path(source, SITE_DIR / name)
+
+    # Quarto emits its stylesheets and scripts (quarto-html, manuscript-notebook,
+    # etc.) into a sibling `site_libs/` directory that the rendered HTML links to
+    # by relative path. Without it the page loads unstyled, so it must ship too.
+    site_libs = html_dir / "site_libs"
+    if site_libs.exists():
+        copy_path(site_libs, SITE_DIR / "site_libs")
+
     copy_path(PAPER_DIR / "figures", SITE_DIR / "figures")
 
 

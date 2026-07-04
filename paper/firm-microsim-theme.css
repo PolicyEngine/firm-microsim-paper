@@ -56,6 +56,16 @@ body > :not(header#title-block-header):not(nav#TOC) {
   grid-column: 1;
 }
 
+/* Quarto renders this page through its notebook-preview pipeline, which injects
+   a fixed-position embed header ("Back to Article" / "Download Source") intended
+   for the manuscript notebook view. This standalone paper has no such chrome,
+   and because the page sets `theme: none` its Bootstrap classes (.fixed-top,
+   .bg-primary, .btn) never get styled, so it renders as an unstyled bar pinned
+   over the top of the page and across the title. Remove it entirely. */
+#quarto-embed-header {
+  display: none !important;
+}
+
 header#title-block-header {
   grid-column: 1 / -1;
   margin: 0 0 var(--pe-space-3xl);
