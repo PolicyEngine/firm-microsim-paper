@@ -82,6 +82,8 @@ function SlideshowViewerClient({ config }: SlideshowViewerProps) {
         footerText,
         currentSlide,
         totalSlides: slides.length,
+        mainSlideCount: config.mainSlideCount,
+        isExport,
         goToSlide: (index: number) =>
           setCurrentSlide(Math.max(0, Math.min(index, slides.length - 1))),
       }}
