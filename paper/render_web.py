@@ -138,6 +138,19 @@ def normalize_equations(markdown: str) -> str:
     )
 
 
+def mathjax_safe_pounds(text: str) -> str:
+    r"""Make LaTeX ``\pounds`` render under MathJax.
+
+    Pandoc converts text-mode ``\pounds`` to a literal £, but any ``\pounds``
+    left inside math (e.g. ``$-\pounds292$m``) is passed through to MathJax,
+    which has no such command and prints a red literal ``\pounds``. MathJax
+    does understand ``\unicode{xA3}``, which renders the £ glyph, so swap it in.
+    Every remaining ``\pounds`` at this stage sits inside math, so a plain
+    replacement is safe.
+    """
+    return text.replace(r"\pounds", r"\unicode{xA3}")
+
+
 def frontmatter_abstract() -> str:
     frontmatter = (PAPER_DIR / "frontmatter.tex").read_text()
     match = re.search(
@@ -159,8 +172,8 @@ def body_markdown() -> str:
 
 
 def main() -> None:
-    abstract = frontmatter_abstract()
-    body = body_markdown()
+    abstract = mathjax_safe_pounds(frontmatter_abstract())
+    body = mathjax_safe_pounds(body_markdown())
     WEB_QMD.write_text(
         f"""---
 title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
