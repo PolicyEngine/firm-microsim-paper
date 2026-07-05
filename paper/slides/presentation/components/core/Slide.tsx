@@ -76,6 +76,15 @@ export default function Slide({
   const context = useSlideshowContextSafe();
   const footerText = context?.footerText ?? "";
   const contentRef = useFitToContentBox();
+  // The interactive viewer draws its own counter over the footer; in export
+  // mode that chrome is hidden, so the footer carries the page number instead.
+  const mainCount = context?.mainSlideCount ?? context?.totalSlides ?? 0;
+  const pageLabel =
+    context && context.isExport
+      ? context.currentSlide < mainCount
+        ? `${context.currentSlide + 1} / ${mainCount}`
+        : "Appendix"
+      : null;
 
   return (
     <section
@@ -113,6 +122,11 @@ export default function Slide({
           <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-sm font-medium opacity-90">
             {footerText}
           </div>
+          {pageLabel && (
+            <div className="pointer-events-none absolute right-16 text-sm font-semibold opacity-90">
+              {pageLabel}
+            </div>
+          )}
         </footer>
       )}
     </section>

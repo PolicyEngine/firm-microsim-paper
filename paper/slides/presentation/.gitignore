@@ -26,3 +26,4 @@ next-env.d.ts
 
 # generated deck PDF
 /slides.pdf
+.vercel

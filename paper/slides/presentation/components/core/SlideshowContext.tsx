@@ -10,6 +10,10 @@ export interface SlideshowContextValue {
   footerText: string;
   currentSlide: number;
   totalSlides: number;
+  /** Main-deck slide count; slides at or past this index are appendix. */
+  mainSlideCount?: number;
+  /** True when rendering for PDF export (?export=1) — navigation chrome is hidden. */
+  isExport: boolean;
   /** Jump to a slide by zero-based index (used by in-deck appendix links). */
   goToSlide: (index: number) => void;
 }
