@@ -10,13 +10,9 @@ import render_web
 
 
 PAPER_DIR = Path(__file__).resolve().parent
+BUILD_DIR = PAPER_DIR / "_webbuild"
 SITE_DIR = PAPER_DIR / "site"
-HTML_CANDIDATES = [
-    PAPER_DIR / "web.html",
-    PAPER_DIR / "out" / "web.html",
-    PAPER_DIR / "out" / "web-preview.html",
-]
-ASSET_DIR_NAMES = ["web_files", "web-preview_files"]
+CSS_NAMES = ["pe-tokens.css", "firm-microsim-theme.css"]
 
 
 def copy_path(source: Path, destination: Path) -> None:
@@ -26,62 +22,47 @@ def copy_path(source: Path, destination: Path) -> None:
         shutil.copy2(source, destination)
 
 
-def remove_path(path: Path) -> None:
-    if path.is_dir():
-        shutil.rmtree(path)
-    else:
-        path.unlink(missing_ok=True)
-
-
-def find_rendered_html() -> Path:
-    for path in HTML_CANDIDATES:
-        if path.exists():
-            return path
-    candidates = ", ".join(str(path.relative_to(PAPER_DIR)) for path in HTML_CANDIDATES)
-    raise FileNotFoundError(f"Quarto did not write one of: {candidates}")
-
-
 def main() -> None:
     render_web.main()
-    for path in HTML_CANDIDATES:
-        remove_path(path)
-    for name in ASSET_DIR_NAMES:
-        remove_path(PAPER_DIR / name)
-        remove_path(PAPER_DIR / "out" / name)
+
+    # Render in an isolated directory: paper/_quarto.yml declares a manuscript
+    # project whose article is index.qmd, so rendering web.qmd in paper/ makes
+    # Quarto treat it as an embedded notebook and skip the crossref filter —
+    # equation labels leak as literal text and every `@eq-...` reference
+    # renders as an unresolved citation.
+    shutil.rmtree(BUILD_DIR, ignore_errors=True)
+    BUILD_DIR.mkdir()
+    copy_path(render_web.WEB_QMD, BUILD_DIR / "web.qmd")
+    for name in ["references.bib", *CSS_NAMES]:
+        copy_path(PAPER_DIR / name, BUILD_DIR / name)
+    copy_path(PAPER_DIR / "figures", BUILD_DIR / "figures")
 
     subprocess.run(
         ["quarto", "render", "web.qmd", "--to", "html"],
-        cwd=PAPER_DIR,
+        cwd=BUILD_DIR,
         check=True,
     )
 
-    html_path = find_rendered_html()
-    html_dir = html_path.parent
+    html_path = BUILD_DIR / "web.html"
+    if not html_path.exists():
+        raise FileNotFoundError(f"Quarto did not write {html_path}")
 
     shutil.rmtree(SITE_DIR, ignore_errors=True)
     SITE_DIR.mkdir()
     (SITE_DIR / ".nojekyll").write_text("")
 
     copy_path(html_path, SITE_DIR / "index.html")
-    for name in ["pe-tokens.css", "firm-microsim-theme.css"]:
-        source = html_dir / name
-        if not source.exists():
-            source = PAPER_DIR / name
-        copy_path(source, SITE_DIR / name)
+    for name in CSS_NAMES:
+        copy_path(BUILD_DIR / name, SITE_DIR / name)
 
-    for name in ASSET_DIR_NAMES:
-        source = html_dir / name
-        if source.exists():
-            copy_path(source, SITE_DIR / name)
-
-    # Quarto emits its stylesheets and scripts (quarto-html, manuscript-notebook,
-    # etc.) into a sibling `site_libs/` directory that the rendered HTML links to
-    # by relative path. Without it the page loads unstyled, so it must ship too.
-    site_libs = html_dir / "site_libs"
-    if site_libs.exists():
-        copy_path(site_libs, SITE_DIR / "site_libs")
+    # Quarto emits its stylesheets and scripts into a sibling `web_files/`
+    # directory that the rendered HTML links to by relative path. Without it
+    # the page loads unstyled, so it must ship too.
+    copy_path(BUILD_DIR / "web_files", SITE_DIR / "web_files")
 
     copy_path(PAPER_DIR / "figures", SITE_DIR / "figures")
+
+    shutil.rmtree(BUILD_DIR)
 
 
 if __name__ == "__main__":

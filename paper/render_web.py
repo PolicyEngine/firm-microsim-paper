@@ -112,7 +112,12 @@ def normalize_equations(markdown: str) -> str:
     def replace_equation(match: re.Match[str]) -> str:
         body = match.group("body").strip()
         equation_id = quarto_equation_id(match.group("label"))
-        return f"$$\n{body}\n$$ {{#{equation_id}}}"
+        # Quarto only registers the label when the attributed math is a
+        # standalone block; with --wrap=none the surrounding prose keeps both
+        # the opening and closing `$$` inside one paragraph, the label leaks
+        # as literal page text, and every `@eq-...` reference renders as an
+        # unresolved citation.
+        return f"\n\n$$\n{body}\n$$ {{#{equation_id}}}\n\n"
 
     markdown = re.sub(
         r"\$\$\\begin\{equation\}\s*"
@@ -136,6 +141,36 @@ def normalize_equations(markdown: str) -> str:
         lambda match: f"@{quarto_equation_id(match.group('label'))}",
         markdown,
     )
+
+
+def bibliography_keys() -> frozenset[str]:
+    bibliography = (PAPER_DIR / "references.bib").read_text()
+    return frozenset(
+        re.findall(r"^@\w+\{([^,\s]+)\s*,", bibliography, flags=re.MULTILINE)
+    )
+
+
+def split_glued_citation_keys(markdown: str) -> str:
+    r"""Detach hyphenated suffixes that Pandoc glued onto citation keys.
+
+    ``\citet{liuetal2021}-normalised`` converts to ``@liuetal2021-normalised``,
+    a single unknown citation key, because single internal hyphens are valid
+    key characters. Rewrite any unknown key that extends a real bibliography
+    key to the explicit-key form ``@{liuetal2021}-normalised`` so the suffix
+    stays prose.
+    """
+    keys = bibliography_keys()
+
+    def replace(match: re.Match[str]) -> str:
+        token = match.group(1)
+        if token in keys:
+            return match.group(0)
+        for key in sorted(keys, key=len, reverse=True):
+            if token.startswith(key) and len(token) > len(key):
+                return f"@{{{key}}}{token[len(key):]}"
+        return match.group(0)
+
+    return re.sub(r"@([A-Za-z][\w-]*)", replace, markdown)
 
 
 def mathjax_safe_pounds(text: str) -> str:
@@ -168,6 +203,7 @@ def body_markdown() -> str:
     latex = normalize_for_pandoc(latex)
     body = pandoc_latex_to_markdown(latex)
     body = restore_empty_citation_spans(body)
+    body = split_glued_citation_keys(body)
     return normalize_equations(body)
 
 
