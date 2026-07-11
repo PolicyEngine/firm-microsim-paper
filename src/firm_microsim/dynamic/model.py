@@ -188,10 +188,58 @@ def make_schedule_raise(T_new=100_000.0):
     return sched
 
 
-def schedule_taper(y, T=T_STAR, top=TAPER_TOP):
-    """Graduated taper: effective fraction phases 0 -> 1 linearly over [T, top]."""
+def schedule_taper_average(y, T=T_STAR, top=TAPER_TOP):
+    """Legacy taper: *average* effective fraction phases 0 -> 1 linearly over
+    [T, top].
+
+    Retained only for recosting/comparison. This schedule is NOT monotone in
+    net revenue: with liability tau_max * f(y) * y = tau_max * (y - T) / (top - T)
+    * y, net revenue R(y) = y * (1 - tau_max * (y - T) / (top - T)) peaks strictly
+    inside the band and declines toward ``top``, creating a dominated interval and
+    an implied marginal remittance rate above 100%. Use ``schedule_taper`` for the
+    monotone design.
+    """
     y = np.asarray(y, dtype=float)
     return np.clip((y - T) / (top - T), 0.0, 1.0)
+
+
+schedule_taper_average.regions = None
+
+
+def schedule_taper(y, T=T_STAR, top=TAPER_TOP, tau_max=TAU_MAX):
+    """Marginal-relief taper: the *marginal* remittance rate phases 0 -> tau_max
+    linearly over [T, top], so net revenue is strictly increasing everywhere and
+    no dominated interval exists.
+
+    Liability in the band is the integral of the marginal rate,
+
+        L(y) = tau_max * (y - T)**2 / (2 * (top - T)),
+
+    which as an *average*-rate fraction f (with L = tau_max * f(y) * y) is
+
+        f(y) = (y - T)**2 / (2 * (top - T) * y),          T <= y <= top,
+        f(y) = (y - (top + T) / 2) / y,                   y > top.
+
+    The marginal remittance rate is tau_max * (y - T) / (top - T) <= tau_max < 1
+    throughout the band, so d/dy [ y * (1 - tau_max * f(y)) ] = 1 - marginal rate
+    > 0: net revenue never falls. f is continuous at ``top`` and at ``T`` (f=0).
+
+    Note this design reaches the full standard rate only asymptotically above
+    ``top`` rather than exactly at ``top``: a monotone schedule that hit f=1 at
+    ``top`` is impossible while R(T) = T > 0.8 * top, which is precisely why the
+    original average-rate taper had to dip.
+    """
+    y = np.asarray(y, dtype=float)
+    T = float(T)
+    top = float(top)
+    band = (y >= T) & (y <= top)
+    above = y > top
+    f = np.zeros_like(y, dtype=float)
+    # Guard division by zero at y == 0 (f stays 0 there since band/above are False).
+    safe_y = np.where(y > 0, y, 1.0)
+    f = np.where(band, (y - T) ** 2 / (2.0 * (top - T) * safe_y), f)
+    f = np.where(above, (y - (top + T) / 2.0) / safe_y, f)
+    return f
 
 
 # The taper's fraction varies continuously with y, so it has no flat regions:
