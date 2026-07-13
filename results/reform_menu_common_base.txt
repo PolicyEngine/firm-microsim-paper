@@ -13,7 +13,7 @@ Firms in [85k,105k): 133,988
   HEADLINE (adopt A)             :  -717 m   firms -106.5 (000s)
 
 --- Schedule reforms (computed on the SAME repo-generated base) -----
-  Graduated taper [85k,105k]       :  -7661.0 m   affected firms -1314.4 (000s)
+  Graduated taper [85k,141.7k]     :  -1485.1 m   affected firms -286.2 (000s)
   Reduced rate 10% [85k,105k]      :  -460.0 m   affected firms -134.0 (000s)
   Reduced rate 15% [85k,105k]      :  -230.0 m   affected firms -134.0 (000s)
 
@@ -23,11 +23,12 @@ CORRECTED tab:schedule_costs  (repo-generated GBP85k, 2023-24 unaged)
 Reform                                    Lever              Static (GBPm)
 --------------------------------------------------------------------------
 Raise threshold to GBP100,000             Location                    -717
-Graduated taper [85k,105k]                Shape (phase-in)           -7661
+Graduated taper [85k,141.7k]              Shape (phase-in)           -1485
 Reduced rate 10% [85k,105k]               Rate (step)                 -460
 Reduced rate 15% [85k,105k]               Rate (step)                 -230
 ========================================================================
 
 Firm-in-band counts:
   Raise-to-100k band [85k,100k): 106,518 firms released
-  Taper / reduced-rate band [85k,105k): 133,988 firms
+  Reduced-rate band [85k,105k): 133,988 firms
+  Taper band [85k,141.7k): 286,220 firms
