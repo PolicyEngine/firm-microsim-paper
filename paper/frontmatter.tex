@@ -1,10 +1,27 @@
 \maketitle
 
 \begin{abstract}
-I present an open, reproducible firm-level microsimulation for costing UK VAT registration-threshold reforms, released with its synthetic-data generator. The threshold is a \emph{notch}: once turnover crosses \pounds85{,}000, VAT falls due on a firm's whole base. I build synthetic firm records calibrated to 2023--24 HMRC and OBR statistics, and cost \emph{level}, \emph{shape} (a taper) and \emph{rate} (a reduced-rate band) reforms statically on a common \pounds184.8bn base: raising the threshold to \pounds100{,}000 costs \pounds753m, a taper \pounds520m, and reduced-rate bands \pounds484m and \pounds242m. I characterise the notch by its \emph{dominated region}---the \pounds21{,}250 band above the threshold in which no firm profits from locating---and how each reform changes it. Conditional on an assumed elasticity, intensive-margin responses barely move these costings. The near-threshold shape is target-inherited: a placebo regenerated without the OBR targets returns zero excess mass, so band-calibrated data support no bunching inference.
+\noindent I present an open firm-level microsimulation for transparent, conditional
+costing of UK VAT registration-threshold reforms. The model generates a
+weighted accounting population from public aggregates; it does not recover
+administrative microdata or firm behaviour. On a common 2023--24 baseline, I
+apply \emph{level}, \emph{shape} (a taper), and \emph{rate} (a reduced-rate
+band) scenarios and report their mechanical revenue effects. I characterise
+the notch by its model-implied \emph{dominated region}---a
+\pounds21{,}250 band above the \pounds85{,}000 threshold---and show how each
+schedule changes it. Intensive-margin results are sensitivity exercises
+conditional on a region-confined response model and assumed elasticities; the
+extensive margin is not identified. The near-threshold shape is
+target-inherited, and specification diagnostics show that the synthetic
+data cannot support bunching inference. The exercise therefore supplies reproducible policy scenarios
+and a general warning: calibrated synthetic data cannot create behavioural or
+sub-band fiscal information absent from their targets and maintained
+assumptions.
 \end{abstract}
 
 \vspace{0.3cm}
 \noindent\textbf{Keywords:} value-added tax, microsimulation, tax notch, registration threshold
+
+\noindent\textbf{JEL codes:} H25, H26, C63
 
 \newpage

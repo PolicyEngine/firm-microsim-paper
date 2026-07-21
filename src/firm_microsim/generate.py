@@ -5,9 +5,9 @@ population, calibrated to official statistics:
 
     Stage 1 — Draw a base population from the **ONS Business Structure
     Database**. For each SIC sector and ONS turnover band, draw individual
-    firms with realistic within-band turnover (uniform base + Gaussian noise
-    smoothing). Draw input expenditure (Beta-distributed input/output ratios
-    with sector-specific shifts) and employment (ONS employment-band shares).
+    firms with smooth within-band turnover draws that remain inside their
+    source bands. Draw input expenditure (Beta-distributed input/output ratios
+    with sector-specific shifts) and sector-conditional employment.
 
     Stage 2 — Calibrate per-firm weights via multi-objective optimization so
     the *weighted* population simultaneously matches **HMRC VAT Annual
@@ -21,10 +21,10 @@ population, calibrated to official statistics:
     calibrated target.
 
 VAT registration is then assigned: mandatory above the (single, configurable)
-VAT threshold, plus voluntary below it at an unweighted row-level probability
-derived from HMRC's £1_to_Threshold count.
+VAT threshold, plus a seeded weighted selection below it that matches HMRC's
+£1_to_Threshold registered count to within one calibration weight.
 
-Output: ~2.94M weighted rows summing to ~2.0M firms, written to
+Output: ~2.94M rows with calibration weights, written to
 ``data/synthetic/synthetic_firms.csv`` with columns
 ``sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
 weight, vat_registered``. (A ``productivity`` column is added downstream.)
@@ -56,14 +56,16 @@ from .validate import ValidationReport, validate
 
 logger = logging.getLogger(__name__)
 
-# ONS turnover-band parameters: (min, max, midpoint) in £k.
+# ONS turnover-band parameters: (inclusive lower bound, exclusive upper bound,
+# midpoint) in £k.  The published integer labels are represented as contiguous
+# continuous intervals; e.g. "50-99" means [50, 100), not [50, 99].
 ONS_TURNOVER_BANDS: Dict[str, tuple] = {
-    "0-49": (0, 49, 24.5),
-    "50-99": (50, 99, 74.5),
-    "100-249": (100, 249, 174.5),
-    "250-499": (250, 499, 374.5),
-    "500-999": (500, 999, 749.5),
-    "1000-4999": (1000, 4999, 2999.5),
+    "0-49": (0, 50, 25),
+    "50-99": (50, 100, 75),
+    "100-249": (100, 250, 175),
+    "250-499": (250, 500, 375),
+    "500-999": (500, 1000, 750),
+    "1000-4999": (1000, 5000, 3000),
     "5000+": (5000, 50000, 15000),
 }
 
@@ -87,14 +89,18 @@ _HIGH_LIABILITY_SECTORS = {11, 12, 69, 70, 78}
 def _draw_band_turnover(
     count: int, min_t: float, max_t: float, device: str
 ) -> Tensor:
-    """Draw within-band turnover values with Gaussian noise smoothing."""
+    """Draw smooth turnover values inside a half-open source ONS band.
+
+    A uniform draw is the maximum-entropy allocation given only band
+    membership. Unlike a Beta(2,2) draw applied separately to every band, it
+    does not force density to zero at each published band boundary.
+    """
     if count == 0:
         return torch.empty(0, device=device)
-    band_width = max_t - min_t
-    noise_std = max(25.0, band_width * 0.2)
-    base = min_t + torch.rand(count, device=device) * band_width
-    noise = torch.normal(0, noise_std, (count,), device=device)
-    return torch.clamp(base + noise, min=0.1)
+    lower = max(float(min_t), 0.1)
+    upper = float(max_t)
+    unit = torch.rand(count, device=device)
+    return lower + unit * (upper - lower)
 
 
 def generate_base_firms(
@@ -192,53 +198,72 @@ def generate_input_values(
 
 
 def assign_employment(
-    num_firms: int, ons_employment: pd.DataFrame, device: str
+    sic_codes: Tensor, ons_employment: pd.DataFrame, device: str
 ) -> Tensor:
-    """Assign employment counts using ONS employment-band shares.
+    """Assign employment conditional on the firm's ONS sector.
 
     Args:
-        num_firms: Number of firms to assign.
+        sic_codes: Per-firm SIC sector codes.
         ons_employment: ONS employment-band table.
         device: Torch device.
 
     Returns:
         Per-firm employment counts (float32).
     """
-    logger.info("Assigning employment from ONS distribution...")
+    logger.info("Assigning employment from sector-specific ONS distributions...")
+    num_firms = len(sic_codes)
     sector_rows = ons_employment[
         ~ons_employment["Description"].str.contains("Total", na=False)
     ]
-    band_counts = {
-        band: int(sector_rows[band].fillna(0).sum()) if band in sector_rows.columns else 0
-        for band in EMPLOYMENT_BANDS
+    national = torch.tensor(
+        [float(sector_rows[b].fillna(0).sum()) for b in EMPLOYMENT_BANDS],
+        dtype=torch.float32,
+        device=device,
+    )
+    national = national / national.sum().clamp_min(1.0)
+    row_by_sic = {
+        int(row["SIC Code"]): row
+        for _, row in sector_rows.iterrows()
+        if pd.notna(row.get("SIC Code"))
     }
-    total = sum(band_counts.values()) or 1
 
-    values: list[float] = []
-    for band in EMPLOYMENT_BANDS:
-        target = int(round(num_firms * band_counts[band] / total))
-        if target <= 0:
-            continue
-        min_v, max_v, midpoint = ONS_EMPLOYMENT_BANDS[band]
-        if band == "0-4":
-            v = torch.randint(1, 5, (target,), device=device).float()
-        elif band == "250+":
-            log_mean = torch.log(torch.tensor(float(midpoint), device=device))
-            v = torch.normal(log_mean, 0.8, (target,), device=device).exp()
-            v = torch.clamp(v, min_v, max_v).round()
+    result = torch.empty(num_firms, dtype=torch.float32, device=device)
+    for sic in torch.unique(sic_codes).tolist():
+        idx = torch.where(sic_codes == int(sic))[0]
+        row = row_by_sic.get(int(sic))
+        if row is None:
+            probs = national
         else:
-            u = torch.rand(target, device=device)
-            beta_approx = u.pow(0.5) * (1 - u).pow(2.0)
-            v = (min_v + beta_approx * (max_v - min_v)).round()
-        values.extend(v.cpu().numpy())
+            counts = torch.tensor(
+                [
+                    float(row.get(b, 0)) if pd.notna(row.get(b, 0)) else 0.0
+                    for b in EMPLOYMENT_BANDS
+                ],
+                dtype=torch.float32,
+                device=device,
+            )
+            probs = counts / counts.sum().clamp_min(1.0)
+            if float(counts.sum().item()) == 0:
+                probs = national
 
-    np.random.shuffle(values)
-    if len(values) < num_firms:
-        values.extend([1] * (num_firms - len(values)))
-    else:
-        values = values[:num_firms]
-
-    return torch.tensor(values, dtype=torch.float32, device=device)
+        band_ids = torch.multinomial(probs, len(idx), replacement=True)
+        for band_id, band in enumerate(EMPLOYMENT_BANDS):
+            out_idx = idx[band_ids == band_id]
+            if len(out_idx) == 0:
+                continue
+            min_v, max_v, midpoint = ONS_EMPLOYMENT_BANDS[band]
+            if band == "0-4":
+                values = torch.randint(1, 5, (len(out_idx),), device=device).float()
+            elif band == "250+":
+                log_mean = torch.log(torch.tensor(float(midpoint), device=device))
+                values = torch.normal(log_mean, 0.8, (len(out_idx),), device=device).exp()
+                values = torch.clamp(values, min_v, max_v).round()
+            else:
+                values = torch.randint(
+                    int(min_v), int(max_v) + 1, (len(out_idx),), device=device
+                ).float()
+            result[out_idx] = values
+    return result
 
 
 def stratified_thin(
@@ -318,14 +343,13 @@ def assign_vat_flags(
     turnover_values: Tensor,
     hmrc_bands: Dict[str, float],
     config: Config,
-    base_weights: Tensor | None = None,
+    calibration_weights: Tensor | None = None,
 ) -> Tensor:
     """Assign VAT registration flags.
 
-    Mandatory above the configurable threshold; voluntary below it at an
-    unweighted row-level rate derived from HMRC's £1_to_Threshold count. The
-    weighted below-threshold voluntary count is not an additional calibration
-    target.
+    Mandatory above the configurable threshold; voluntary below it. When final
+    calibration weights are supplied, below-threshold firms are selected in a
+    seeded random order until their cumulative weight reaches the HMRC target.
 
     Args:
         turnover_values: Per-firm turnover (£k).
@@ -340,24 +364,30 @@ def assign_vat_flags(
     device = config.device
 
     below = (turnover_values > 0) & (turnover_values <= threshold)
-    if base_weights is None:
-        n_below = float(below.sum().item())
-    else:
-        n_below = float(base_weights[below].sum().item())
+    weights = (
+        calibration_weights
+        if calibration_weights is not None
+        else torch.ones_like(turnover_values)
+    )
+    n_below = float(weights[below].sum().item())
     target_below = float(hmrc_bands["£1_to_Threshold"])
     voluntary_rate = target_below / n_below if n_below > 0 else 0.15
     logger.info(
-        "Voluntary VAT row rate: %.3f (target %s / base-weighted rows %s)",
+        "Voluntary VAT weighted rate: %.3f (target %s / weighted rows %s)",
         voluntary_rate,
         f"{target_below:,.0f}",
         f"{n_below:,.0f}",
     )
 
     mandatory = turnover_values > threshold
-    if int(below.sum().item()) > 0:
-        voluntary = below & (torch.rand(len(turnover_values), device=device) < voluntary_rate)
-    else:
-        voluntary = torch.zeros_like(below)
+    voluntary = torch.zeros_like(below)
+    candidate_idx = torch.where(below)[0]
+    if len(candidate_idx) > 0:
+        order = candidate_idx[torch.randperm(len(candidate_idx), device=device)]
+        cumulative = torch.cumsum(weights[order], dim=0)
+        cutoff = int(torch.searchsorted(cumulative, target_below).item())
+        cutoff = min(cutoff, len(order) - 1)
+        voluntary[order[: cutoff + 1]] = True
     vat_registered = mandatory | voluntary
     logger.info(
         "VAT: %d mandatory + %d voluntary = %d registered",
@@ -384,9 +414,16 @@ def _add_zero_turnover_firms(
     logger.info("Adding %s zero/negative-turnover firms (HMRC)...", f"{target:,}")
     unique_sics, counts = torch.unique(sic_codes, return_counts=True)
     total = len(sic_codes)
+    exact = target * counts.double() / total
+    allocations = torch.floor(exact).long()
+    remainder = target - int(allocations.sum().item())
+    if remainder > 0:
+        fractional = exact - allocations.double()
+        top = torch.topk(fractional, k=remainder).indices
+        allocations[top] += 1
     add_sics: list[int] = []
-    for sic, count in zip(unique_sics, counts):
-        n = int((target * count.float() / total).item())
+    for sic, n_alloc in zip(unique_sics, allocations):
+        n = int(n_alloc.item())
         add_sics.extend([int(sic.item())] * n)
 
     if not add_sics:
@@ -487,7 +524,7 @@ def generate(
         base_weights = torch.ones_like(base_turnover)
 
     # Temporary per-firm employment-band assignment for the target matrix.
-    tmp_emp = assign_employment(len(base_sic), data.ons_employment, cfg.device)
+    tmp_emp = assign_employment(base_sic, data.ons_employment, cfg.device)
     emp_band_idx = torch.tensor(
         [_employment_band_index(e.item()) for e in tmp_emp],
         dtype=torch.long,
@@ -501,6 +538,7 @@ def generate(
         base_input,
         emp_band_idx,
         data.hmrc_bands,
+        data.ons_total,
         data.hmrc_population_sector,
         data.ons_employment,
         data.hmrc_liability_sector,
@@ -517,14 +555,13 @@ def generate(
         base_sic, base_turnover, base_input, weights, data.hmrc_bands, cfg.device
     )
 
-    employment = assign_employment(len(final_sic), data.ons_employment, cfg.device)
-    # Zero-turnover rows appended above carry base weight 1 (never thinned).
-    n_extra = len(final_turnover) - len(base_weights)
-    final_base = torch.cat(
-        [base_weights, torch.ones(n_extra, device=cfg.device, dtype=base_weights.dtype)]
-    )
+    # Preserve the exact employment assignments used by calibration. Earlier
+    # versions redrew them here, invalidating the employment target matrix.
+    n_extra = len(final_turnover) - len(base_turnover)
+    extra_emp = assign_employment(final_sic[-n_extra:], data.ons_employment, cfg.device)
+    employment = torch.cat([tmp_emp, extra_emp]) if n_extra else tmp_emp
     vat_flags = assign_vat_flags(
-        final_turnover, data.hmrc_bands, cfg, base_weights=final_base
+        final_turnover, data.hmrc_bands, cfg, calibration_weights=final_weights
     )
 
     logger.info("Assembling final DataFrame...")

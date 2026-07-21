@@ -3,20 +3,18 @@
 % Date: June 2020
 %-------------------------------------------------------
 \ProvidesPackage{YGTemplate}
-\usepackage{fontspec}
 \usepackage[english]{babel}
-%\usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{a4wide}
+\usepackage[margin=1.1in]{geometry}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{subfigure}
 \usepackage{float}
-\usepackage{caption, subcaption}
-\usepackage{fnpct}
-\usepackage{kpfonts}    % for nice fonts
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{tikz,pgfplots,pgfplotstable}
+\pgfplotsset{compat=1.18}
 \usepackage{fontawesome}
 \usepackage{psfrag}
 \usetikzlibrary{intersections,patterns,pgfplots.fillbetween}
@@ -37,12 +35,8 @@
 \usepackage{lscape}
 \usepackage{chngcntr}
 \usepackage[hang,flushmargin]{footmisc}
-\usepackage{datetime}
 \usepackage{threeparttable} 
 \usepackage{diagbox}
-\newdateformat{monthyeardate}{%
-  \monthname[\THEMONTH], \THEYEAR}
-
 \newcounter{ltfootnote}
 \renewcommand{\theltfootnote}{\alph{ltfootnote}}
 \makeatletter

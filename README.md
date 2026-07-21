@@ -37,8 +37,9 @@ A two-stage synthetic-population pipeline, parameterised by a single VAT
 threshold:
 
 1. **Draw base firms** from the ONS business structure — sample continuous
-   within-band turnover, employment, and intermediate inputs for individual firms
-   so the population has firm-level resolution the official bands lack.
+   turnover strictly inside each published band, sector-conditional employment,
+   and intermediate inputs. These within-band values are explicit modelling
+   assumptions, not recovered administrative microdata.
 2. **Calibrate firm weights** by multi-objective optimisation (Adam, symmetric
    relative-error loss) so weighted totals reproduce the official targets — HMRC
    VAT-registered counts by turnover band and by sector, ONS employment-band
@@ -72,11 +73,11 @@ with a single switch (see `data/README.md`):
 Install the package in editable mode, then run the package entry points:
 
 ```bash
-uv venv --python 3.13
-uv pip install -e ".[dev]"
+uv sync --extra dev --locked
+uv run python -m pytest
 
-firm-microsim          # ALL DATA: every vintage + calibration report + figures
-firm-microsim-static   # ALL STATIC RESULTS: threshold-reform figures
+uv run firm-microsim          # ALL DATA: every vintage + calibration report + figures
+uv run firm-microsim-static   # ALL STATIC RESULTS: threshold-reform figures
 ```
 
 `firm-microsim` with no arguments runs the full data build — it
@@ -129,6 +130,15 @@ debugging and uses the same shared frontmatter/body inputs.
 The current Vercel deployment is
 <https://firm-microsim-paper.vercel.app/>.
 
+## Citation and licensing
+
+Code in this repository is released under the [MIT License](LICENSE). Cite the
+paper and software using [`CITATION.cff`](CITATION.cff). The archived ONS, HMRC,
+and OBR source files remain subject to their original public-sector terms; the
+MIT licence does not relicense third-party data. A submission release should be
+tagged and archived with a DOI, which can then be added to `CITATION.cff` and
+the manuscript without changing the computational results.
+
 ## Calibration accuracy
 
 The population is calibrated to **five** official ONS + HMRC target groups; the
@@ -144,12 +154,12 @@ firm-microsim-report
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
-| HMRC turnover bands | 93.8% | 93.1% |
-| ONS population | 90.3% | 92.6% |
-| Employment bands | 77.9% | 92.4% |
-| Sector distribution | 92.7% | 94.2% |
-| VAT liability by band (6 calibrated bands) | 91.3% | 92.0% |
-| **Overall (5 calibrated dimensions)** | **89.2%** | **92.8%** |
+| HMRC turnover bands | 97.3% | 96.6% |
+| ONS population | 88.3% | 91.1% |
+| Employment bands | 92.1% | 92.3% |
+| Sector distribution | 90.1% | 90.4% |
+| VAT liability by band (6 calibrated bands) | 96.5% | 97.1% |
+| **Overall (5 calibrated dimensions)** | **92.9%** | **93.5%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
 an informational diagnostic only, and neither is the **below-threshold
@@ -219,7 +229,7 @@ targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
 replicate the paper's generated synthetic population: Populace's shared optimizer
 landed at 93.8% overall accuracy under its own validator versus the paper's
-then-90.5% (2024-25 scores 92.8% on the corrected build,
+then-90.5% (2024-25 scores 93.5% on the corrected build,
 `results/calibration_accuracy.txt`), but that overall pair is **not
 like-for-like**: HMRC turnover-band accuracy uses different band sets, and sector
 distribution reflects different calibration-target definitions. The directly
@@ -273,10 +283,10 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
   published costing, by fiscal year. **Built on the £85k / 2023-24 vintage** —
   the pre-reform basis HMRC actually had at the 6 March 2024 costing (the
   threshold was still £85k until 1 April 2024). Full-deregistration model
-  −317/−323/−195/−66/+103 vs HMRC −150/−185/−125/−50/+65 £m (43% voluntary
-  retention: −180/−184/−111/−38/+59); both turn positive by 2028-29. Released
-  band holds ≈ 48k registered firms, next to HMRC's published 28,000 expected
-  first-year deregistrations. See `results/static_sweep.txt`.
+  −357/−364/−224/−78/+119 vs HMRC −150/−185/−125/−50/+65 £m (43% voluntary
+  retention: −203/−207/−128/−44/+68); both turn positive by 2028-29. The gap
+  shows that registration dynamics and population scope matter. See
+  `results/static_sweep.txt`.
 - `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the forward static
   sweep of registration thresholds (£70k–£120k) vs the current £90k baseline,
   **on the £90k / 2024-25 vintage**.

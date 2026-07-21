@@ -106,6 +106,7 @@ class Config:
         l1_reg_coef: L1 regularization coefficient on log-weights.
         grad_clip_norm: Max gradient norm for clipping.
         turnover_importance: Importance weight on the 7 turnover-band targets.
+        population_importance: Importance weight on the ONS population target.
         sector_importance: Importance weight on HMRC sector targets.
         employment_importance: Importance weight on ONS employment-band targets.
         vat_liability_sector_importance: Weight on VAT-liability-by-sector targets.
@@ -137,6 +138,7 @@ class Config:
 
     # --- Multi-objective importance weights ------------------------------
     turnover_importance: float = 5.0  # turnover bands ~5x (most critical)
+    population_importance: float = 1.0
     sector_importance: float = 1.0
     employment_importance: float = 1.0
     vat_liability_sector_importance: float = 1.0

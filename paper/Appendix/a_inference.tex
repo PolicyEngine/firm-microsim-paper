@@ -4,14 +4,10 @@
 This appendix documents the inference procedure for the reduced-form bunching
 results of Section~\ref{sec:bunching}: the mass-conservation constraint that
 disciplines the counterfactual density, why no standard errors are reported,
-sensitivity to the polynomial degree, the exclusion window, and the generator
-seed, the placebo tests, and the power (recovery) test. All numbers are
+sensitivity to the polynomial degree and exclusion window. All numbers are
 produced by the released estimator run on the regenerated weighted synthetic
-populations for both vintages; the machine-readable artifacts are
-\texttt{results/bunching\_inference.txt},
-\texttt{results/placebo\_bunching.txt},
-\texttt{results/recovery\_bunching.txt} and
-\texttt{results/seed\_sensitivity.txt}. The estimator reports the geometry
+2023--24 population; the retained machine-readable artifact is
+\path{results/bunching_inference.txt}. The estimator reports the geometry
 only---the bunching ratio $b$, its \citet{liuetal2021}-normalised counterpart
 $b_{\mathrm{LLAT}}$, the excess mass $E$, and the mass-conservation objects
 ($\Delta_R$, $y_R$)---and computes no elasticities: the mapping from excess
@@ -47,19 +43,11 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-The constraint's behaviour differs by vintage, diagnostically so. On the
-2024--25 population it is satisfied in the interior ($y_R = \pounds101$k,
-$\Delta_R = 11{,}452 \ge E$): the band-edge artifact is not a local spike.
-On the 2023--24 population it \emph{fails to bind}: the walk is censored at
-the search cap ($y_R = \pounds100\text{k} = T^{*}+W$) with
-$\Delta_R = 5{,}761 < E = 7{,}933$, and decomposing the missing mass locates
-all of it in $(\pounds90\text{k},\pounds100\text{k}]$ and none in the
-OBR-pinned $(\pounds85\text{k},\pounds90\text{k}]$ segment. The
-counterfactual exceeds the observed density only beyond the \pounds90{,}000
-fine-target boundary---the same calibration-band-edge mechanism as the
-2024--25 exhibit, operating inside the headline estimator's own window---so
-the reported $y_R$ is a property of the target boundary, not evidence of
-administrative-style missing mass.
+On the 2023--24 population the baseline gives $E=10{,}418$,
+$\Delta_R=0$, and
+$y_R=\pounds100$k, the search cap. These
+mass-conservation outputs are estimator diagnostics, not evidence of a
+marginal behavioural buncher.
 
 \subsubsection*{Why no standard errors are reported}
 
@@ -70,35 +58,30 @@ estimand: the synthetic file is a deterministic construction from published
 targets, not a sample from a population, and row-resampling dispersion scales
 as $1/\sqrt{n}$ in a row count the analyst chooses. A standard error that can
 be made arbitrarily small by generating more synthetic rows conveys precision
-that does not exist. Two reportable quantities replace them. First, the
-specification grids below, which show how the point estimates move with the
-estimator's own knobs. Second, generator-seed sensitivity
-(\texttt{results/seed\_sensitivity.txt}): regenerating the full 2023--24
-population under three seeds moves $E$ by $\pm161$ firms ($\pm2\%$),
-$b_{\mathrm{LLAT}}$ by $\pm0.02$, the raise-to-\pounds100k cost by
-$\pm\pounds2.1$m, and the registered base by $\pm\pounds0.08$bn---the
-pipeline's actual Monte Carlo error. Table~\ref{tab:boot} reports the point estimates. Two conventions matter for
+that does not exist. The specification grids below instead show how point
+estimates move with the estimator's own choices. A new multi-seed run is
+required before quantifying generator Monte Carlo error after the construction
+changes in this release; the older seed artifact is not used. Table~\ref{tab:boot}
+reports the point estimates. Two conventions matter for
 reading them. Bins are centred on integer \pounds k values (edges at
 half-integers), so the bin containing the threshold spans
 \pounds84.5k--\pounds85.5k and its mass is attributed to the above side,
 attenuating $E$ and $\Delta_R$ relative to edge-aligned binning. And $E$ sums
 the \emph{positive part} of the observed-minus-counterfactual gap in the
-excluded window below the threshold; the net gap there is $1{,}570$, so the
-statistic reads gross rather than net excess.
+excluded window below the threshold, so the statistic reads gross rather than
+net excess.
 
 \begin{table}[t]
 \centering
 \caption{Headline bunching statistics (point estimates; degree-7 polynomial,
-$\pm\pounds15$k window). Uncertainty is characterised by the specification
-grids and the generator-seed sensitivity, not by standard errors---see the
-text.}
+$\pm\pounds15$k window). The specification grid characterises sensitivity;
+standard errors are not reported---see the text.}
 \label{tab:boot}
 \begin{tabular}{lrrrr}
 \toprule
 Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 \midrule
-2023--24 (\pounds85k, OBR fine targets) & $7{,}933$ & $5{,}761$ & $1.91$ & $100.0$ \\
-2024--25 (\pounds90k, coarse bands only) & $11{,}072$ & $11{,}452$ & $1.23$ & $101.0$ \\
+2023--24 (\pounds85k, OBR fine targets) & $10{,}418$ & $0$ & $5.127$ & $100.0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -108,92 +91,7 @@ Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 Table entries for a grid of polynomial degree $\in\{5,6,7,8\}$ and symmetric
 exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
 \texttt{results/bunching\_inference.txt}; the pattern matters more than the
-cells. On the 2023--24 population the target-inherited excess ranges over
-roughly $6{,}700$--$9{,}800$ in the interior cells (degrees 6--7, windows
-\pounds10--15k; 4 of the 16 grid cells), inflating in the corner cells where the polynomial confuses
-the profile's shoulders with its counterfactual. On the 2024--25 population
-the band-edge artifact swings four-fold across the grid ($E$ between roughly
-$8{,}600$ and $36{,}700$; $b_{\mathrm{LLAT}}$ between $0.94$ and $4.46$)
-while its headline cell lands within 10\% of the administrative estimate:
-neither specification stability nor literature-proximity certifies a
-synthetic bunching statistic---a caution for any bunching exercise on
-calibrated synthetic data.
-
-\subsubsection*{Placebo tests}
-
-The placebo makes the target-inheritance mechanism precise by manipulating the
-calibration targets and re-running the estimator
-(Table~\ref{tab:placebo}; Section~\ref{ssec:bunch-placebo} describes the
-constructions). The estimates track the targets exactly: the control,
-calibrated to the OBR fine-band profile, returns $E=7{,}933$; Placebo~A
-(smooth reweighting) returns $E=0$; and Placebo~B (no fine targets,
-un-stepped coarse bands, full regeneration and recalibration) returns $E=0$.
-Removing structure from the targets removes structure from the estimates
-because the targets are the only place sub-band structure can come from: the
-generator has no firm location-choice.
-
-\begin{table}[t]
-\centering
-\caption{Placebo tests, 2023--24 population (\pounds85{,}000 threshold).}
-\label{tab:placebo}
-\begin{tabular}{lrr}
-\toprule
-Population & $b_{\mathrm{LLAT}}$ & $E$ \\
-\midrule
-Actual (control, OBR fine-band targets)   & $1.911$ & $7{,}933$ \\
-Placebo A (reweight density smooth)       & $0.000$ & $0$ \\
-Placebo B (no fine targets, un-stepped)   & $0.395$ & $0$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsubsection*{Power (recovery) test}
-
-The placebo establishes \emph{specificity}: no false positive on step-free
-data. The complementary property is \emph{power}. Starting from the step-free
-Placebo~A population, I inject a Kleven--Waseem-consistent behavioural signal
-of known magnitude: firms in the donor region $(T^{*}, \pounds112\text{k}]$
-relocate to $[\pounds80\text{k}, T^{*})$ with probability declining linearly
-from the threshold to zero at the true marginal buncher
-$y_R^{\mathrm{true}}=\pounds112$k, so the missing-mass region extends
-\pounds12k \emph{beyond} the exclusion window---as with genuine bunching---and
-the counterfactual fit confronts genuinely depressed above-window bins.
-Recovery is scored with the headline estimator alone
-(Table~\ref{tab:recovery}).\footnote{An earlier version of this exercise
-relocated mass entirely \emph{within} the exclusion window. The fitted
-counterfactual is identical across such injections by construction (it is fit
-outside the window and rescaled by total mass, which relocation preserves), so
-that version measured deposit bookkeeping, not power, and its stated
-attenuation mechanism was wrong. The redesigned test supersedes it.}
-
-\begin{table}[t]
-\centering
-\caption{Power (recovery) test on the step-free population:
-Kleven--Waseem-consistent injections with true marginal buncher at
-\pounds112{,}000. Baseline (no injection): $E=0$.}
-\label{tab:recovery}
-\begin{tabular}{rrrr}
-\toprule
-$E_{\mathrm{true}}$ (injected) & $E_{\mathrm{hat}}$ & Recovery & $\hat y_R$ (true 112) \\
-\midrule
-$2{,}000$ & $298$ & $14.9\%$ & $85.8$ \\
-$5{,}000$ & $2{,}445$ & $48.9\%$ & $91.9$ \\
-$8{,}000$ & $4{,}918$ & $61.5\%$ & $100.0$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Recovery rises with signal size---half to two-thirds of moderate
-(5{,}000--8{,}000-firm) injections, while a small 2{,}000-firm injection sits
-near the detection floor---and the estimator \emph{under}-states the truth
-rather than inflating it. The
-attenuation has a measured mechanical source: the depressed bins between the
-window top (\pounds100k) and the true marginal buncher (\pounds112k) enter the
-counterfactual fit and pull it down, truncating measured missing mass and
-drawing $\hat y_R$ toward the threshold. The implication is the one
-Section~\ref{sec:bunching} turns on: the target-inherited excess on the
-2023--24 data is read with the same attenuation a genuine signal would face,
-so the estimator, if anything, under-states the targeted profile; and no
-attenuation argument can turn the 2024--25 band-edge artifact into
-behaviour. Both tests are part of the released code and are
-fully reproducible.
+cells. In the 2023--24 grid, $E$ ranges from zero to about $25{,}100$ firms
+and $b_{\mathrm{LLAT}}$ from zero to about $8.98$. This specification
+sensitivity, together with the absence of a location-choice mechanism in the
+generator, precludes interpreting the baseline as a behavioural estimate.

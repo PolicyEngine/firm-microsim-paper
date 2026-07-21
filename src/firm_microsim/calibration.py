@@ -139,6 +139,7 @@ class TargetSpec:
 
     def __init__(self, n_sectors: int, n_vat_sectors: int, n_near: int = 0) -> None:
         self.n_turnover = 7
+        self.n_population = 1
         self.n_sectors = n_sectors
         self.n_employment = len(EMPLOYMENT_BANDS)
         self.n_vat_sectors = n_vat_sectors
@@ -146,7 +147,8 @@ class TargetSpec:
         self.n_near = n_near
 
         self.turnover_start = 0
-        self.sector_start = self.n_turnover
+        self.population_start = self.n_turnover
+        self.sector_start = self.population_start + self.n_population
         self.employment_start = self.sector_start + self.n_sectors
         self.vat_sector_start = self.employment_start + self.n_employment
         self.vat_band_start = self.vat_sector_start + self.n_vat_sectors
@@ -161,6 +163,7 @@ def build_target_matrix(
     input_values: Tensor,
     employment_band_indices: Tensor,
     hmrc_bands: dict,
+    ons_total: int,
     hmrc_sector_df: pd.DataFrame,
     ons_employment_df: pd.DataFrame,
     vat_liability_sector_df: pd.DataFrame,
@@ -177,6 +180,7 @@ def build_target_matrix(
         input_values: Per-firm input expenditure (£k).
         employment_band_indices: Per-firm ONS employment band index (0-6).
         hmrc_bands: Latest HMRC VAT firm counts by turnover band.
+        ons_total: ONS total firms in the registered-business frame.
         hmrc_sector_df: HMRC VAT population by sector.
         ons_employment_df: ONS employment-band table.
         vat_liability_sector_df: HMRC VAT liability by sector (£m).
@@ -207,14 +211,37 @@ def build_target_matrix(
 
     band_indices = map_to_hmrc_bands(turnover_values, threshold)
 
+    # Expected registration status used by registered-population targets.
+    # Mandatory firms contribute one. Below-threshold firms contribute the
+    # HMRC voluntary-registration share of the base-weighted ONS frame. The
+    # final microdata use a seeded weighted selection with the same total.
+    below_mask = band_indices == 1
+    below_mass = float(base_weights[below_mask].sum().item())
+    voluntary_share = (
+        min(1.0, float(hmrc_bands["£1_to_Threshold"]) / below_mass)
+        if below_mass > 0
+        else 0.0
+    )
+    registration_propensity = torch.zeros_like(turnover_values)
+    registration_propensity[below_mask] = voluntary_share
+    registration_propensity[turnover_values > threshold] = 1.0
+
     # Rows 0-6: turnover bands (band index 1..7 -> rows 0..6).
     for row, band_idx in enumerate(range(1, 8)):
         target_matrix[row, band_indices == band_idx] = 1.0
 
-    # Sector targets (VAT-registered firms, but membership is by SIC).
+    # Negative/zero-turnover firms are appended after calibration with unit
+    # weights. Target the positive-turnover base at the residual needed for
+    # the final population to equal the ONS registered-business total.
+    target_matrix[spec.population_start, :] = 1.0
+
+    # Sector targets count VAT-registered firms, not the full ONS frame. Use
+    # expected registration during differentiable calibration; generate.py
+    # realizes the same below-threshold total after weights are optimized.
     for offset, (_, sector_row) in enumerate(sector_rows.iterrows()):
         sic_code = int(sector_row["Trade_Sector"])
-        target_matrix[spec.sector_start + offset, sic_codes == sic_code] = 1.0
+        mask = sic_codes == sic_code
+        target_matrix[spec.sector_start + offset, mask] = registration_propensity[mask]
 
     # Employment-band targets.
     for band_idx in range(spec.n_employment):
@@ -231,7 +258,9 @@ def build_target_matrix(
         row = spec.vat_sector_start + offset
         sic_code = int(vat_row["Trade_Sector"])
         mask = sic_codes == sic_code
-        target_matrix[row, mask] = vat_liability_values[mask]
+        target_matrix[row, mask] = (
+            vat_liability_values[mask] * registration_propensity[mask]
+        )
 
     # VAT-liability-by-band targets.
     for offset, band_name in enumerate(VAT_LIABILITY_BANDS_CALIBRATED):
@@ -293,6 +322,9 @@ def build_target_matrix(
         hmrc_bands["£1m_to_£10m"],
         hmrc_bands["Greater_than_£10m"],
     ]
+    population_target = max(
+        0.0, float(ons_total) - float(hmrc_bands["Negative_or_Zero"])
+    )
 
     # Value column is the (single) year column, always the last column —
     # year-agnostic so the 2023-24 / 2024-25 vintages both work.
@@ -317,6 +349,7 @@ def build_target_matrix(
 
     target_values_list = (
         turnover_targets
+        + [population_target]
         + sector_targets
         + employment_targets
         + vat_liability_sector_targets
@@ -327,7 +360,7 @@ def build_target_matrix(
 
     logger.info("Target matrix shape: %s", tuple(target_matrix.shape))
     logger.info(
-        "Targets: 7 turnover + %d sector + %d employment + %d VAT-liability sector "
+        "Targets: 7 turnover + 1 population + %d sector + %d employment + %d VAT-liability sector "
         "+ %d VAT-liability band + %d near-threshold = %d",
         spec.n_sectors,
         spec.n_employment,
@@ -343,6 +376,7 @@ def _importance_weights(spec: TargetSpec, config: Config, device: str) -> Tensor
     """Build the per-target importance-weight vector for the loss."""
     w = torch.ones(spec.n_targets, device=device)
     w[spec.turnover_start : spec.turnover_start + spec.n_turnover] = config.turnover_importance
+    w[spec.population_start] = config.population_importance
     w[spec.sector_start : spec.sector_start + spec.n_sectors] = config.sector_importance
     w[spec.employment_start : spec.employment_start + spec.n_employment] = (
         config.employment_importance
@@ -398,6 +432,7 @@ def optimize_weights(
     importance = _importance_weights(spec, config, device)
 
     best_loss = float("inf")
+    best_log_weights = log_weights.detach().clone()
     patience_counter = 0
     epsilon = 1e-6
 
@@ -407,7 +442,7 @@ def optimize_weights(
 
         # Dropout regularization during training.
         dropout_mask = torch.rand_like(weights) < config.dropout_keep_rate
-        weights = weights * dropout_mask
+        weights = weights * dropout_mask / config.dropout_keep_rate
 
         predictions = torch.matmul(target_matrix, weights)
 
@@ -424,16 +459,17 @@ def optimize_weights(
             torch.abs(log_weights - base_log)
         )
 
-        total_loss.backward()
-        torch.nn.utils.clip_grad_norm_([log_weights], max_norm=config.grad_clip_norm)
-        optimizer.step()
-
         loss_val = total_loss.item()
         if loss_val < best_loss:
             best_loss = loss_val
+            best_log_weights = log_weights.detach().clone()
             patience_counter = 0
         else:
             patience_counter += 1
+
+        total_loss.backward()
+        torch.nn.utils.clip_grad_norm_([log_weights], max_norm=config.grad_clip_norm)
+        optimizer.step()
 
         if iteration % 100 == 0:
             logger.info("Iteration %d: loss = %.6f", iteration, loss_val)
@@ -442,7 +478,7 @@ def optimize_weights(
             logger.info("Early stopping at iteration %d", iteration)
             break
 
-    final_weights = torch.exp(log_weights).detach()
+    final_weights = torch.exp(best_log_weights).detach()
     final_predictions = torch.matmul(target_matrix, final_weights)
 
     logger.info("Optimization complete. Turnover-band fit:")

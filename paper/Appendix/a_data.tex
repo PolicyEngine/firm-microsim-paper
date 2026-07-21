@@ -14,7 +14,7 @@ $2.5$ million firms. Because the population is calibrated \emph{to} the HMRC
 aggregates, agreement between my weighted outputs and those aggregates is a
 check of \emph{internal consistency}, not external validation: any target used
 in calibration is reproduced by construction. The headline calibration
-accuracies (89.2\% and 92.8\% for the two vintages) and the anchor comparison
+accuracies (92.9\% and 93.5\% for the two vintages) and the anchor comparison
 of Section~\ref{sec:static} are therefore consistency checks on the pipeline,
 not out-of-sample tests of firm behaviour.
 
@@ -28,6 +28,14 @@ HMRC sector counts, and VAT liability by turnover band. VAT liability by sector
 is excluded from that mean and reported separately as an informational
 diagnostic, because the current generator does not calibrate sector-specific
 input/output VAT structure.
+
+The replication report also publishes the calibration-weight minimum,
+median, upper quantiles, maximum, coefficient of variation, and Kish effective
+sample size. These diagnostics matter because aggregate target agreement can
+coexist with a small number of influential synthetic records. The report is
+generated rather than transcribed, and the test suite verifies source-band
+support, sector-conditional employment assignment, and weighted voluntary
+registration.
 
 \paragraph{Ledger and Populace migration check.} The official target tables are
 being moved into PolicyEngine Ledger, with Populace providing the shared
@@ -53,11 +61,11 @@ generators at the pin date shared the mis-scaled $v_i = y_i - x_i$ convention,
 so the experimental Populace firm generator inherits the same defect, which I
 have reported upstream; the target-parity result (zero mismatches) is
 unaffected, since it concerns the input tables, not the generated population.
-Second, the paper validator's scores on the corrected build are 89.2 percent
-(2023--24) and 92.8 percent (2024--25). The comparison table and structured provenance are
+Second, the paper validator's scores on the corrected build are 92.9 percent
+(2023--24) and 93.5 percent (2024--25). The comparison table and structured provenance are
 reproduced by \texttt{firm-microsim-populace-ledger} and checked into
-\texttt{results/populace\_ledger\_comparison.txt} and
-\texttt{results/populace\_ledger\_provenance.json}.
+\path{results/populace_ledger_comparison.txt} and
+\path{results/populace_ledger_provenance.json}.
 
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
 counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial
