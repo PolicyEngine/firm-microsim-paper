@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software or its generated results, please cite the paper and archived release."
+title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
+type: software
+authors:
+  - family-names: Ahmadi
+    given-names: Vahid
+    email: vahid@policyengine.org
+repository-code: "https://github.com/PolicyEngine/firm-microsim-paper"
+url: "https://firm-microsim-paper.vercel.app/"
+license: MIT
+version: 1.0.0
+date-released: 2026-07-21
+keywords:
+  - VAT
+  - microsimulation
+  - synthetic data
+  - registration threshold

@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import logging
 
+import numpy as np
 import pandas as pd
 
 from .config import RESULTS_DIR, VINTAGES, Config
@@ -77,6 +78,18 @@ def _vintage_lines(vintage: str) -> list[str]:
         f"  {'VAT Liability below Thresh.':<26}{below:>10.1f}%{100.0 - below:>11.1f}%"
     )
     out.append("=" * 64)
+    weights = df["weight"].to_numpy(dtype=float)
+    weight_sum = float(weights.sum())
+    effective_n = weight_sum**2 / float(np.square(weights).sum())
+    quantiles = np.quantile(weights, [0, 0.5, 0.9, 0.99, 1.0])
+    out += [
+        "  Calibration-weight diagnostics:",
+        f"  effective sample size: {effective_n:,.0f} ({effective_n / len(df):.1%} of rows)",
+        "  min / p50 / p90 / p99 / max: "
+        + " / ".join(f"{value:.3f}" for value in quantiles),
+        f"  coefficient of variation: {float(weights.std() / weights.mean()):.3f}",
+        "=" * 64,
+    ]
     return out
 
 

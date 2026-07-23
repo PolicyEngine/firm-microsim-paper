@@ -8,6 +8,8 @@ version = "1.0.0"
 description = "Synthetic firm-level microsimulation for UK VAT threshold policy analysis"
 readme = "README.md"
 requires-python = ">=3.13"
+license = { file = "LICENSE" }
+authors = [{ name = "Vahid Ahmadi", email = "vahid@policyengine.org" }]
 dependencies = [
     "matplotlib>=3.6",
     "numpy>=1.23",
@@ -44,6 +46,7 @@ packages = ["src/firm_microsim"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-ra"
 
 [tool.ruff]
 line-length = 88

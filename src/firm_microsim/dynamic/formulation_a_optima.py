@@ -163,11 +163,20 @@ def make_figure(path, *, n=N_ABILITY, e=E_DEFAULT, deltas=DELTAS) -> Path:
         _style_ax(ax)
 
     axes[0].set_ylabel(r"Value-added profit $\pi_A$ (£k)", fontsize=LABEL_SIZE)
-    axes[0].legend(frameon=False, fontsize=TICK_SIZE, loc="upper left",
-                   title="deductible share")
-    axes[0].get_legend().get_title().set_fontsize(TICK_SIZE)
+    handles, labels = axes[0].get_legend_handles_labels()
+    legend = fig.legend(
+        handles,
+        labels,
+        frameon=False,
+        fontsize=TICK_SIZE,
+        loc="lower center",
+        ncol=3,
+        bbox_to_anchor=(0.5, -0.02),
+        title="deductible share",
+    )
+    legend.get_title().set_fontsize(TICK_SIZE)
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.12, 1, 1))
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=300, bbox_inches="tight")
     plt.close(fig)

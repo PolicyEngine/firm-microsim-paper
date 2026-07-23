@@ -4,8 +4,9 @@
 Studying firm responses at the threshold needs firm-level turnover near the
 cutoff, which the official statistics publish only in coarse turnover bands. I
 therefore build a synthetic firm population calibrated to those aggregates: it
-reproduces the official totals while resolving the individual firm that the
-authorities do not release, opening the analysis to anyone. The same
+reproduces selected official totals while supplying explicitly simulated
+within-band records for accounting exercises. These records are not estimates
+of the confidential firms that the authorities do not release. The same
 calibrate-to-published-aggregates approach underlies open household-level
 tax-benefit microsimulation \citep{policyengine}; here I apply it at the firm
 level. The generator takes the registration threshold as a parameter and is
@@ -21,15 +22,20 @@ experimental Populace firm generator, and Appendix~\ref{app:data} reports the
 parity check between that shared source-of-truth path and the paper inputs.
 
 \paragraph{Construction.} Index firms by $i$. For each sector $s$ and ONS
-turnover band $b=[\underline{b},\overline{b}]$, the \emph{UK Business: Activity,
+turnover band $b=[\underline{b},\overline{b})$, the \emph{UK Business: Activity,
 Size and Location} table gives a business count $N_{s,b}$, and I draw $N_{s,b}$
 firms with within-band turnover
 \[
-  y_i \;=\; \underline{b} + (\overline{b}-\underline{b})\,u_i + \varepsilon_i,
-  \qquad u_i \sim \mathcal{U}(0,1), \;\; \varepsilon_i \sim \mathcal{N}(0,\sigma_b^2),
+  y_i \;=\; \underline{b} + (\overline{b}-\underline{b})\,u_i,
+  \qquad u_i \sim \operatorname{Uniform}(0,1),
 \]
-truncated below at zero, where $\varepsilon_i$ smooths the within-band
-distribution. The ONS register covers businesses registered for VAT and/or
+so every draw remains inside its published source band. This maximum-entropy
+allocation is a maintained assumption, not an observed within-band
+distribution; importantly, it does not force density to zero at every
+published band boundary. I interpret integer-labelled bands as contiguous
+half-open intervals: for example, the published ``50--99'' band is represented
+as $[50,100)$ thousand pounds.
+The ONS register covers businesses registered for VAT and/or
 PAYE---about 2.7 million---so the synthetic population represents that
 registered-business frame, not the full business population of roughly
 5.6 million in the DBT business population estimates; the difference is
@@ -49,13 +55,9 @@ abstracts from net-repayment traders (firms with zero-rated outputs whose input
 reclaim exceeds output VAT---HMRC's negative-liability column); representing
 them requires rated-structure detail (zero, reduced, and exempt output shares)
 that the public aggregates do not resolve by band. Employment is assigned from
-the ONS employment-band shares.\footnote{An earlier draft of this generator set
-$v_i = y_i - x_i$ with $\rho_i \in [0.6, 1.5]$---omitting the factor $\tau$, so
-per-firm liabilities were about five times too large and a large minority of
-firms carried negative value added. The weight optimiser compensated on the
-band totals, leaving aggregate calibration scores similar but distorting the
-near-threshold density; Section~\ref{sec:bunching} documents the consequence
-and the correction.}
+the ONS employment-band shares conditional on each firm's sector, and the same
+assignment is retained through calibration and final output. Appendix~\ref{app:data}
+records the model and data provenance relevant to replication.
 
 The base population reproduces the ONS structure but not
 the HMRC VAT-registered totals, so I re-weight it. Each firm receives a strictly
@@ -65,8 +67,11 @@ $T=(T_k)_{k=1}^{K}$ the weighted synthetic counterpart of target $k$ is
   \widehat{T}_k(\theta) \;=\; \sum_i a_{ki}\, w_i ,
 \]
 where $a_{ki}$ is firm $i$'s contribution to target $k$: an indicator of band or
-sector membership for a count target, and the firm's net liability $v_i$ for a
-VAT-liability target. I choose $\theta$ to minimise a symmetric relative-error
+employment membership for a count target, the expected registration propensity
+times a sector indicator for HMRC registered-sector counts, and the firm's net
+liability $v_i$ for a VAT-liability target. Registration propensity equals one
+above the threshold and the HMRC voluntary-registration share below it. I choose
+$\theta$ to minimise a symmetric relative-error
 loss with per-target importance weights $\lambda_k$,
 \[
   L(\theta) \;=\; \frac{1}{K}\sum_{k} \lambda_k
@@ -76,19 +81,20 @@ loss with per-target importance weights $\lambda_k$,
 the final term a mean absolute penalty on the log-weights. The targets are the
 HMRC VAT-registered counts by turnover band and by sector, the HMRC net VAT
 liability by turnover band, the ONS employment-band totals, and---for the
-2023--24 vintage---the OBR's published near-threshold profile: the March 2023
-\emph{Economic and Fiscal Outlook} Chart~C data give HMRC counts of businesses
-by \pounds1{,}000 turnover band over \pounds65{,}000--\pounds90{,}000
-\citep{obr2023vat}, which I interpolate to the 2023--24 data year between the
-2019--20 outturn and the OBR's 2025--26 frozen-threshold projection (the
-chart's final row, the \pounds90{,}000 bin, lies beyond the fine window and
-is not used). All twenty-five bins enter as \emph{shape} targets, applied
-side-consistently: each side of the threshold takes the OBR profile's
-within-side shape, normalised over its own window
-(\pounds65{,}000--\pounds85{,}000 below; \pounds85{,}000--\pounds90{,}000
-above) and scaled to the synthetic population's own mass there. The chart
-counts HMRC traders---a different unit and, below the threshold, a
-substantially narrower universe than the ONS business frame---so its levels
+2023--24 vintage---the OBR's published near-threshold profile. Chart~C of the
+March 2023 \emph{Economic and Fiscal Outlook} reports HMRC business counts in
+\pounds1{,}000 turnover bands from \pounds65{,}000 to \pounds90{,}000
+\citep{obr2023vat}. I interpolate these counts to 2023--24 between the
+2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. The final
+\pounds90{,}000 row lies beyond the fine window and is not used.
+
+All 25 retained bins enter as \emph{shape} targets. I apply them separately on
+each side of the threshold: the below-threshold profile is normalised over
+\pounds65{,}000--\pounds85{,}000 and the above-threshold profile over
+\pounds85{,}000--\pounds90{,}000. Each is then scaled to the synthetic
+population's mass in its respective window. Chart~C counts HMRC traders, a
+different unit and, below the threshold, a substantially narrower population
+than the ONS business frame, so its levels
 are not imported on either side. An earlier build that mixed conventions
 (direct counts above the threshold, frame-scaled shape below) placed more
 mass just above the threshold than just below it, inverting the
@@ -130,20 +136,28 @@ timing and composition wedges are second order for the aggregates, but they are
 worth naming: the HMRC band tables classify traders by total declared outputs
 (VAT-return Box 6), and the ONS turnover measure is likewise total turnover, so
 the running variable throughout is total rather than taxable turnover. Below
-the threshold a firm registers voluntarily with probability $r = M / n_{<}$,
-where $M$ is the HMRC count of registered firms in the \pounds1--threshold band
-and $n_{<}$ is the unweighted number of synthetic below-threshold firm rows.
-This sets the expected row-level voluntary-registration rate; I do not treat
-below-threshold voluntary registration as a separate weighted calibration
-target. The resulting dataset comprises approximately $2.94$~million firm
+the threshold, candidate firms are placed in a seeded random order and selected
+until their cumulative calibration weight reaches the HMRC count $M$ of
+registered firms in the \pounds1--threshold band. This matches the weighted
+total to within one firm's weight but does not identify which firms register
+voluntarily; their composition remains a modelling assumption. The resulting
+dataset comprises approximately $2.94$~million firm
 records per vintage, weighted to represent roughly $2.5$~million registered
 businesses. Checked against the official sources along every calibrated
-dimension, the vintages attain overall calibration accuracies of 89.2\%
-(2023--24) and 92.8\% (2024--25), with dimension scores ranging from 77.9\%
-(2023--24 employment bands) to 94.2\%; Appendix~\ref{app:data} reports
+dimension, the vintages attain overall calibration accuracies of 92.9\%
+(2023--24) and 93.5\% (2024--25), with calibrated-dimension scores ranging
+from 88.3\% to 97.3\%; Appendix~\ref{app:data} reports
 the full table. The headline is the mean of five calibrated-dimension scores,
 each clipped at zero as $\max\{0,1-\lvert \widehat{T}-T\rvert/\lvert T\rvert\}$;
 it excludes the VAT-liability-by-sector diagnostic described above.
+
+Aggregate fit does not imply record-level representativeness. Kish effective
+sample sizes are 92{,}326 (3.1\% of rows) and 188{,}612 (6.4\%), while maximum
+weights are about 2{,}598 and 1{,}775. Synthetic rows should therefore be read
+as weighted accounting support points, not independent firm observations;
+local and sub-band results can be sensitive to a small number of high-weight
+records. I report rounded scenario estimates and expose the full weight
+diagnostics in the generated calibration report.
 
 \paragraph{The registration threshold in the data.} My primary data year is
 2023--24, when the statutory threshold was \pounds85{,}000. The HMRC band
@@ -163,7 +177,7 @@ unpinned optimiser equilibrium (and, under the pre-correction liability scale,
 a spurious bunching look-alike); the central data caveat of the paper stands
 in all three configurations: no sub-band feature of band-calibrated synthetic
 data carries behavioural information beyond what its targets put there
-(Section~\ref{sec:bunching} quantifies this with placebo and recovery tests).
+(Section~\ref{sec:bunching} quantifies the resulting specification sensitivity).
 Counterfactual policies---including the \pounds85{,}000 to \pounds90{,}000
 reform and the forward threshold sweep of Section~\ref{sec:static}---are
 evaluated on these firms by re-applying the registration rule to the microdata

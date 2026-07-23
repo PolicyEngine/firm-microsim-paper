@@ -23,7 +23,6 @@ from .model import (
     T_STAR,
     TAPER_TOP,
     dominated_region_width,
-    marginal_buncher,
 )
 
 # House style.
@@ -59,43 +58,62 @@ def _save(fig, name: str, *, copy_to_paper: bool = True) -> Path:
 
 
 def fig_notch_fit(df, e, *, lo=50_000.0, hi=160_000.0, name=None) -> Path:
-    """Observed turnover density with the dominated region shaded and n_H(e) marked.
-
-    Clean reconstruction of the old ``notch_model_fit.png`` intent: observed
-    weighted turnover density only, the analytic dominated region ``(T*, T*+a)``
-    shaded, and the iso-elastic marginal buncher ``n_H(e)`` marked. NO frictionless
-    spike, NO fabricated curves.
-    """
-    t = df["turnover"].to_numpy(dtype=float)
-    w = df["weight"].to_numpy(dtype=float)
-    m = (t >= lo) & (t <= hi)
-    t, w = t[m], w[m]
+    """Plot the net-revenue schedule that generates the dominated interval."""
 
     a = dominated_region_width()
-    yH, _ = marginal_buncher(e)
+    fig, (ax, ax_dist) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
 
-    bins = np.arange(lo, hi + 1000.0, 1000.0)
-    centres = 0.5 * (bins[:-1] + bins[1:]) / 1000.0  # £k
-    counts, _ = np.histogram(t, bins=bins, weights=w)
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(centres, counts, width=1.0, color=PRIMARY, zorder=3)
+    below = np.linspace(lo, T_STAR, 300)
+    above = np.linspace(T_STAR, hi, 500)
+    ax.plot(below / 1000.0, below / 1000.0, color=PRIMARY, lw=2.4,
+            label="Below threshold: net revenue = turnover")
+    ax.plot(above / 1000.0, (1.0 - 0.20) * above / 1000.0,
+            color=PALETTE[1], lw=2.4,
+            label="Registered: net revenue = 0.8 × turnover")
 
     # Dominated region (T*, T*+a) shaded.
     ax.axvspan(T_STAR / 1000.0, (T_STAR + a) / 1000.0, color=PALETTE[5],
-               alpha=0.45, zorder=2,
-               label=f"Dominated region (£{T_STAR/1000:.0f}k–£{(T_STAR+a)/1000:.0f}k)")
+               alpha=0.55, zorder=2,
+               label=f"Dominated turnover (£{T_STAR/1000:.0f}k–£{(T_STAR+a)/1000:.2f}k)")
     ax.axvline(T_STAR / 1000.0, color=ACCENT, ls="--", lw=1.5, zorder=4,
-               label=f"VAT threshold (£{T_STAR/1000:.0f}k)")
-    ax.axvline(yH / 1000.0, color=PALETTE[1], ls=":", lw=2.0, zorder=4,
-               label=f"Marginal buncher $y_H(e={e})$ = £{yH/1000:.0f}k")
+               label=f"Threshold (£{T_STAR/1000:.0f}k)")
+    ax.plot([T_STAR / 1000.0, T_STAR / 1000.0],
+            [T_STAR / 1000.0, (1.0 - 0.20) * T_STAR / 1000.0],
+            color=ACCENT, ls="--", lw=1.5, zorder=4)
 
     ax.set_xlim(lo / 1000.0, hi / 1000.0)
-    ax.set_xlabel("Annual turnover (£k)", fontsize=LABEL_SIZE)
-    ax.set_ylabel("Number of firms", fontsize=LABEL_SIZE)
-    ax.legend(frameon=False, fontsize=TICK_SIZE, loc="upper center",
-              bbox_to_anchor=(0.5, -0.14), ncol=2)
+    ax.set_ylim(35, 135)
+    ax.set_ylabel("Net revenue before production costs (£k)", fontsize=LABEL_SIZE)
+    ax.annotate(
+        "VAT notch",
+        xy=(T_STAR / 1000.0, (1.0 - 0.20) * T_STAR / 1000.0),
+        xytext=(72, 55),
+        arrowprops={"arrowstyle": "->", "color": ACCENT},
+        fontsize=TICK_SIZE,
+        color=ACCENT,
+    )
+    ax.text((T_STAR + a / 2) / 1000.0, 43, "strictly dominated turnover",
+            ha="center", va="center", fontsize=TICK_SIZE - 1, color=PALETTE[1])
+    ax.legend(frameon=False, fontsize=TICK_SIZE - 1, loc="upper left", ncol=2)
     _style_ax(ax)
+
+    turnover = df["turnover"].to_numpy(dtype=float)
+    weights = df["weight"].to_numpy(dtype=float)
+    bins = np.arange(lo, hi + 1000.0, 1000.0)
+    centres = 0.5 * (bins[:-1] + bins[1:]) / 1000.0
+    counts, _ = np.histogram(turnover, bins=bins, weights=weights)
+    smooth_counts = np.convolve(counts, np.ones(3) / 3.0, mode="same")
+    ax_dist.plot(centres, smooth_counts, color=PRIMARY, lw=2.2,
+                 label="2023–24 weighted synthetic firms (3-bin mean)")
+    ax_dist.fill_between(centres, smooth_counts, color=PRIMARY, alpha=0.18)
+    ax_dist.axvspan(T_STAR / 1000.0, (T_STAR + a) / 1000.0,
+                    color=PALETTE[5], alpha=0.55, zorder=2)
+    ax_dist.axvline(T_STAR / 1000.0, color=ACCENT, ls="--", lw=1.5, zorder=4)
+    ax_dist.set_ylabel("Weighted firms per £1k", fontsize=LABEL_SIZE)
+    ax_dist.set_xlabel("Annual turnover (£k)", fontsize=LABEL_SIZE)
+    ax_dist.legend(frameon=False, fontsize=TICK_SIZE - 1, loc="upper right")
+    _style_ax(ax_dist)
+    fig.tight_layout()
     if name is None:
         name = f"dynamic_notch_fit_e{str(e).replace('.', '')}.png"
     return _save(fig, name)

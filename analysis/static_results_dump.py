@@ -44,7 +44,7 @@ def main() -> None:
           f"(HMRC {float(row['hmrc_impact_m']):+,.0f}m)")
     W("")
     W("Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)")
-    W("counterfactual method: smooth above-threshold extrapolation (degree 1)")
+    W("method: direct mechanical reclassification on the calibrated population")
     W("-" * 74)
     sweep = sweep_model.threshold_sweep(year="2025-26")
     W(sweep.to_string(index=False))

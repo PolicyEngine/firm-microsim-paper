@@ -128,8 +128,11 @@ class StaticVATModel:
         fit = (centres >= base_k + fit_pad_k) & (centres <= fit_top_k)
         cf_firms = np.polyval(np.polyfit(centres[fit], firms[fit], degree), centres)
         cf_liab = np.polyval(np.polyfit(centres[fit], liab_bin[fit], degree), centres)
-        # clamp tiny negatives from extrapolation
+        # Polynomial extrapolation can become negative below the fit range;
+        # neither a firm count nor aggregate net liability used for a costing
+        # can be negative.
         cf_firms = np.clip(cf_firms, 0.0, None)
+        cf_liab = np.clip(cf_liab, 0.0, None)
         return centres, cf_firms, cf_liab
 
     # -- public results ----------------------------------------------------
@@ -148,22 +151,17 @@ class StaticVATModel:
         """
         thresholds = thresholds or SWEEP_THRESHOLDS
         growth = _fiscal_year(year)["firm_growth"]
-        centres, cf_firms, cf_liab = self._counterfactual_bins(baseline)
-        cf_liab = cf_liab * growth
-        base_k = baseline / 1000.0
+        df = self._aged(growth)
+        base_revenue = self._revenue(df, baseline)
+        base_firms = self._vat_paying_firms(df, baseline)
 
         rows = []
         for t in thresholds:
-            t_k = t / 1000.0
-            lo_k, hi_k = sorted((t_k, base_k))
-            # bins reclassified between the new threshold and the baseline
-            band = (centres >= lo_k) & (centres < hi_k)
-            sign = 1.0 if t_k < base_k else -1.0  # lowering adds firms/revenue
             rows.append(
                 {
-                    "threshold_k": t_k,
-                    "revenue_change_m": sign * cf_liab[band].sum() / 1e6,
-                    "firms_change_k": sign * cf_firms[band].sum() / 1000.0,
+                    "threshold_k": t / 1000.0,
+                    "revenue_change_m": (self._revenue(df, t) - base_revenue) / 1e6,
+                    "firms_change_k": (self._vat_paying_firms(df, t) - base_firms) / 1000.0,
                 }
             )
         return pd.DataFrame(rows)

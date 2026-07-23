@@ -51,6 +51,7 @@ def test_near_targets_are_side_consistent_shapes(frames):
         inputs,
         emp,
         data.hmrc_bands,
+        data.ons_total,
         data.hmrc_population_sector,
         data.ons_employment,
         data.hmrc_liability_sector,
@@ -112,6 +113,7 @@ def test_near_target_rows_select_their_bins(frames):
         inputs,
         emp,
         data.hmrc_bands,
+        data.ons_total,
         data.hmrc_population_sector,
         data.ons_employment,
         data.hmrc_liability_sector,
@@ -124,3 +126,36 @@ def test_near_target_rows_select_their_bins(frames):
         lo = float(row["bin_lo_k"])
         expected = ((turnover > lo) & (turnover <= lo + 1.0)).float()
         assert torch.equal(matrix[spec.near_start + offset], expected)
+
+
+def test_population_target_accounts_for_appended_zero_turnover_firms(frames):
+    cfg, data = frames
+    turnover, sic, inputs, emp, base_weights = _tiny_firms()
+    matrix, values, spec = build_target_matrix(
+        cfg,
+        turnover,
+        sic,
+        inputs,
+        emp,
+        data.hmrc_bands,
+        data.ons_total,
+        data.hmrc_population_sector,
+        data.ons_employment,
+        data.hmrc_liability_sector,
+        data.vat_liability_bands,
+        near_threshold_bins=data.near_threshold_bins,
+        base_weights=base_weights,
+    )
+    assert torch.equal(matrix[spec.population_start], torch.ones(len(turnover)))
+    assert float(values[spec.population_start]) == pytest.approx(
+        data.ons_total - data.hmrc_bands["Negative_or_Zero"]
+    )
+
+
+def test_inverse_dropout_scaling_is_unbiased() -> None:
+    torch.manual_seed(123)
+    keep = 0.8
+    weights = torch.ones(1_000_000)
+    mask = torch.rand_like(weights) < keep
+    dropped = weights * mask / keep
+    assert float(dropped.mean()) == pytest.approx(1.0, abs=0.003)

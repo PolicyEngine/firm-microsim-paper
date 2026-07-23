@@ -3,8 +3,8 @@ definitive build: OBR near-threshold targets, side-consistent frame
 scaling, no below-threshold liability calibration
 ======================================================================
 run                      E  b_llat  raise £m  taper £m  base £bn
-seed 42 (paper)      7,463    1.90     717.0    1485.1     175.2
-seed 7               7,437    1.90     717.8    1487.1     175.4
-seed 99              7,736    1.93     713.5    1481.9     175.4
+seed 42 (paper)     10,418    5.13     876.5    1525.0     175.4
+seed 7              10,196    4.98     874.2    1524.6     175.4
+seed 99             10,338    5.13     876.9    1525.1     175.3
 
-half-range across seeds: E ±150 | b_llat ±0.02 | raise ±£2.1m | taper ±£2.6m | base ±£0.11bn
+half-range across seeds: E ±111 | b_llat ±0.07 | raise ±£1.4m | taper ±£0.3m | base ±£0.03bn
