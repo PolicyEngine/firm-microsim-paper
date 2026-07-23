@@ -110,7 +110,13 @@ from firm_microsim.notch.model import NotchModel
 # ---------------------------------------------------------------------------
 TAU_MAX = 0.20          # standard UK VAT rate (full effective rate once registered)
 T_STAR = 85_000.0       # registration threshold (£)
-TAPER_TOP = 105_000.0   # taper / reduced-rate band upper edge (£)
+TAPER_TOP = 105_000.0   # reduced-rate band upper edge (£)
+# Minimum band top at which a band-confined monotone taper exists: a linear
+# marginal remittance rate phasing 0 -> 100% over [T, top] meets L(top) =
+# tau_max * top (no relief above the band) iff (top - T)/2 = tau_max * top,
+# i.e. top = T / (1 - 2 * tau_max). At tau_max = 0.20 this is £141,666.67 —
+# a 20% VAT taper cannot fit in a £20k band.
+TAPER_WIDE_TOP = T_STAR / (1.0 - 2.0 * TAU_MAX)
 
 # ASSUMED sweep values for the e-sensitivity analysis. None is identified from
 # the synthetic data. The low end (0.05) is the external Kleven-Waseem (2013)
@@ -188,10 +194,112 @@ def make_schedule_raise(T_new=100_000.0):
     return sched
 
 
-def schedule_taper(y, T=T_STAR, top=TAPER_TOP):
-    """Graduated taper: effective fraction phases 0 -> 1 linearly over [T, top]."""
+def schedule_taper_average(y, T=T_STAR, top=TAPER_TOP):
+    """Legacy taper: *average* effective fraction phases 0 -> 1 linearly over
+    [T, top].
+
+    Retained only for recosting/comparison. This schedule is NOT monotone in
+    net revenue: with liability tau_max * f(y) * y = tau_max * (y - T) / (top - T)
+    * y, net revenue R(y) = y * (1 - tau_max * (y - T) / (top - T)) peaks strictly
+    inside the band and declines toward ``top``, creating a dominated interval and
+    an implied marginal remittance rate above 100%. Use ``schedule_taper`` for the
+    monotone design.
+    """
     y = np.asarray(y, dtype=float)
     return np.clip((y - T) / (top - T), 0.0, 1.0)
+
+
+schedule_taper_average.regions = None
+
+
+def schedule_taper_marginal_relief(y, T=T_STAR, top=TAPER_TOP, tau_max=TAU_MAX):
+    """Marginal-relief taper: the *marginal* remittance rate phases 0 -> tau_max
+    linearly over [T, top], so net revenue is strictly increasing everywhere and
+    no dominated interval exists.
+
+    Retained only for comparison — NOT the shipped design. Above ``top`` the
+    liability is tau_max * (y - (top + T)/2) forever, i.e. every firm above the
+    nominal band keeps a permanent relief of tau_max * (top + T)/2 on its
+    remittance base. The policy's incidence is therefore economy-wide above T,
+    not band-confined, and its cost (~£7.7bn) is dominated by firms above the
+    band. Use ``schedule_taper`` (the wide-band design) for a band-confined
+    monotone taper.
+
+    Liability in the band is the integral of the marginal rate,
+
+        L(y) = tau_max * (y - T)**2 / (2 * (top - T)),
+
+    which as an *average*-rate fraction f (with L = tau_max * f(y) * y) is
+
+        f(y) = (y - T)**2 / (2 * (top - T) * y),          T <= y <= top,
+        f(y) = (y - (top + T) / 2) / y,                   y > top.
+
+    The marginal remittance rate is tau_max * (y - T) / (top - T) <= tau_max < 1
+    throughout the band, so d/dy [ y * (1 - tau_max * f(y)) ] = 1 - marginal rate
+    > 0: net revenue never falls. f is continuous at ``top`` and at ``T`` (f=0).
+
+    Note this design reaches the full standard rate only asymptotically above
+    ``top`` rather than exactly at ``top``: a monotone schedule that hit f=1 at
+    ``top`` is impossible while R(T) = T > 0.8 * top, which is precisely why the
+    original average-rate taper had to dip.
+    """
+    y = np.asarray(y, dtype=float)
+    T = float(T)
+    top = float(top)
+    band = (y >= T) & (y <= top)
+    above = y > top
+    f = np.zeros_like(y, dtype=float)
+    # Guard division by zero at y == 0 (f stays 0 there since band/above are False).
+    safe_y = np.where(y > 0, y, 1.0)
+    f = np.where(band, (y - T) ** 2 / (2.0 * (top - T) * safe_y), f)
+    f = np.where(above, (y - (top + T) / 2.0) / safe_y, f)
+    return f
+
+
+schedule_taper_marginal_relief.regions = None
+
+
+def schedule_taper(y, T=T_STAR, top=TAPER_WIDE_TOP, tau_max=TAU_MAX):
+    """Wide-band monotone taper: the *marginal* remittance rate phases 0 -> 100%
+    linearly over [T, top], with ``top = T / (1 - 2 * tau_max)`` chosen so the
+    liability meets the full standard-rate line tau_max * y exactly at ``top``.
+
+    Liability in the band is the integral of the marginal rate m(y) =
+    (y - T) / (top - T):
+
+        L(y) = (y - T)**2 / (2 * (top - T)),          T <= y <= top,
+        L(y) = tau_max * y,                            y > top,
+
+    which as an *average*-rate fraction f (with L = tau_max * f(y) * y) is
+
+        f(y) = (y - T)**2 / (2 * tau_max * (top - T) * y),   T <= y <= top,
+        f(y) = 1,                                             y > top.
+
+    Continuity at ``top`` requires (top - T)/2 = tau_max * top, i.e.
+    top = T / (1 - 2 * tau_max) — £141,666.67 at tau_max = 0.20. The design is
+    band-confined (zero relief above ``top``), continuous at both edges
+    (f(T) = 0, f(top) = 1), and net revenue R(y) = y - L(y) has
+    dR/dy = 1 - m(y) >= 0 throughout, vanishing only at the single point
+    ``top``: no dominated interval of positive measure, at the price of a
+    marginal remittance rate that reaches 100% at the band top.
+
+    A narrower band cannot deliver all three properties at once: with top =
+    £105k, R(top) = 0.8 * 105k = £84k < £85k = R(T), so any band-confined
+    schedule reaching f = 1 at £105k must dip (the legacy average-rate taper's
+    dominated interval), and any monotone alternative must leak relief above
+    the band (the marginal-relief variant's £7.7bn).
+    """
+    y = np.asarray(y, dtype=float)
+    T = float(T)
+    top = float(top)
+    band = (y >= T) & (y <= top)
+    above = y > top
+    f = np.zeros_like(y, dtype=float)
+    # Guard division by zero at y == 0 (f stays 0 there since band/above are False).
+    safe_y = np.where(y > 0, y, 1.0)
+    f = np.where(band, (y - T) ** 2 / (2.0 * tau_max * (top - T) * safe_y), f)
+    f = np.where(above, 1.0, f)
+    return f
 
 
 # The taper's fraction varies continuously with y, so it has no flat regions:
@@ -499,7 +607,7 @@ def build_reforms():
     return {
         "raise100k": (make_schedule_raise(100_000.0),
                       "Raise threshold to £100k"),
-        "taper": (schedule_taper, "Graduated taper (£85k→£105k)"),
+        "taper": (schedule_taper, "Graduated taper (£85k→£141.7k, monotone)"),
         "rate10": (make_schedule_reduced_rate(0.10),
                    "Reduced rate 10% (£85k–£105k)"),
         "rate15": (make_schedule_reduced_rate(0.15),

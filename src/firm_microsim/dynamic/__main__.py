@@ -75,7 +75,7 @@ def main(argv=None):
     lines = []
     lines.append("Iso-elastic (Kleven-Waseem) dynamic VAT-notch simulator — reform results")
     lines.append(f"vintage={args.vintage}  T*=£85,000  tau_max=0.20  "
-                 f"taper/band top=£105,000")
+                 f"reduced-rate band top=£105,000  taper top=£141,667")
     lines.append(f"Repo-generated baseline registered VAT base = £{base_bn:,.3f}bn.")
     lines.append("A SINGLE turnover elasticity e governs the response. The "
                  "behavioural cost is")

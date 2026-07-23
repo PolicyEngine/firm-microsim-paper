@@ -10,7 +10,9 @@ Puts the ENTIRE schedule-reform menu on the SAME basis:
 
 Four reforms, all anchored at the repo-generated GBP85k baseline:
     1. Raise threshold to GBP100,000          (LOCATION)   -- recomputed here
-    2. Graduated taper [85k, 105k]            (SHAPE)      -- recomputed here
+    2. Graduated taper [85k, 141.7k]          (SHAPE)      -- recomputed here
+       (wide-band monotone: marginal rate 0 -> 100% over the band, top =
+        T/(1-2*tau) = GBP141,667, band-confined with no relief above the top)
     3. Banded reduced rate 10% [85k, 105k]    (RATE)       -- recomputed here
     4. Banded reduced rate 15% [85k, 105k]    (RATE)       -- recomputed here
 
@@ -39,7 +41,12 @@ import numpy as np
 import pandas as pd
 
 from firm_microsim.config import REPO_ROOT, RESULTS_DIR, SYNTHETIC_DATA_DIR
-from firm_microsim.dynamic.model import E_HEADLINE, build_reforms, reform_revenue
+from firm_microsim.dynamic.model import (
+    E_HEADLINE,
+    TAPER_WIDE_TOP,
+    build_reforms,
+    reform_revenue,
+)
 
 DATA_CANDIDATES = [
     SYNTHETIC_DATA_DIR / "synthetic_firms_2023-24.csv",
@@ -52,7 +59,7 @@ BAND_TOP = 105000.0       # taper / reduced-rate band top
 
 TABLE_LABELS = {
     "raise100k": "Raise threshold to GBP100,000",
-    "taper": "Graduated taper [85k,105k]",
+    "taper": "Graduated taper [85k,141.7k]",
     "rate10": "Reduced rate 10% [85k,105k]",
     "rate15": "Reduced rate 15% [85k,105k]",
 }
@@ -111,6 +118,7 @@ def main():
     reg = t >= T_STAR
     base_bn = (liab[reg] * w[reg]).sum() / 1e9
     firms_band_85_105 = w[(t >= T_STAR) & (t < BAND_TOP)].sum()
+    firms_band_taper = w[(t >= T_STAR) & (t < TAPER_WIDE_TOP)].sum()
 
     # --- Compute every static reform through the shared dynamic schedule code.
     static_rows = {}
@@ -174,7 +182,8 @@ def main():
     p("")
     p("Firm-in-band counts:")
     p(f"  Raise-to-100k band [85k,100k): {-firms_direct_k*1000:,.0f} firms released")
-    p(f"  Taper / reduced-rate band [85k,105k): {firms_band_85_105:,.0f} firms")
+    p(f"  Reduced-rate band [85k,105k): {firms_band_85_105:,.0f} firms")
+    p(f"  Taper band [85k,141.7k): {firms_band_taper:,.0f} firms")
 
     text = "\n".join(lines)
     print(text)
