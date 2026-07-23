@@ -20,6 +20,7 @@ from .model import (
     TAU_MAX,
     T_STAR,
     TAPER_TOP,
+    TAPER_WIDE_TOP,
     build_reforms,
     crosscheck,
     dominated_region_width,
@@ -35,12 +36,14 @@ from .model import (
     recover_ability,
     reform_revenue,
     schedule_taper,
+    schedule_taper_marginal_relief,
 )
 
 __all__ = [
     "TAU_MAX",
     "T_STAR",
     "TAPER_TOP",
+    "TAPER_WIDE_TOP",
     "ELASTICITIES",
     "E_HEADLINE",
     "iso_cost",
@@ -53,6 +56,7 @@ __all__ = [
     "dominated_region_width",
     "reform_revenue",
     "schedule_taper",
+    "schedule_taper_marginal_relief",
     "make_schedule_raise",
     "make_schedule_reduced_rate",
     "build_reforms",

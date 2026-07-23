@@ -398,6 +398,7 @@ def optimize_weights(
     importance = _importance_weights(spec, config, device)
 
     best_loss = float("inf")
+    best_log_weights = log_weights.detach().clone()
     patience_counter = 0
     epsilon = 1e-6
 
@@ -405,9 +406,14 @@ def optimize_weights(
         optimizer.zero_grad()
         weights = torch.exp(log_weights)
 
-        # Dropout regularization during training.
+        # Dropout regularization during training. Use inverted dropout: the
+        # surviving weights are rescaled by 1 / keep_rate so that the expected
+        # masked total equals the unmasked total. Without this rescale the
+        # optimizer fits ~keep_rate of the mass to the targets, driving the
+        # final (unmasked) totals to target / keep_rate — a systematic upward
+        # bias of ~5.3% at keep_rate = 0.95.
         dropout_mask = torch.rand_like(weights) < config.dropout_keep_rate
-        weights = weights * dropout_mask
+        weights = weights * dropout_mask / config.dropout_keep_rate
 
         predictions = torch.matmul(target_matrix, weights)
 
@@ -431,6 +437,7 @@ def optimize_weights(
         loss_val = total_loss.item()
         if loss_val < best_loss:
             best_loss = loss_val
+            best_log_weights = log_weights.detach().clone()
             patience_counter = 0
         else:
             patience_counter += 1
@@ -442,7 +449,8 @@ def optimize_weights(
             logger.info("Early stopping at iteration %d", iteration)
             break
 
-    final_weights = torch.exp(log_weights).detach()
+    # Restore the best-loss iterate rather than returning the final noisy step.
+    final_weights = torch.exp(best_log_weights).detach()
     final_predictions = torch.matmul(target_matrix, final_weights)
 
     logger.info("Optimization complete. Turnover-band fit:")

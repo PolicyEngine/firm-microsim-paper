@@ -26,11 +26,11 @@ Results
 -------
 population                         b            E   b_llat     y_R
 ------------------------------------------------------------------
-ACTUAL (control)             +0.0106        7,933    1.911  100.00
-PLACEBO A (reweight)         -0.0591            0    0.000   84.00
-PLACEBO B (regenerate)       -0.0729            0    0.395   85.00
+ACTUAL (control)             +0.0100        7,463    1.903  100.00
+PLACEBO A (reweight)         -0.0597            0    0.000   84.00
+PLACEBO B (regenerate)       -0.0762            0    0.333   85.00
 
 Density step at £85k (80-85 vs 85-90 per £1k):
-  ACTUAL   below=11,208 above=9,583 step=+17.0%
-  PLACEBO A below=9,092 above=8,497 step=+7.0%
+  ACTUAL   below=10,639 above=9,119 step=+16.7%
+  PLACEBO A below=8,645 above=8,088 step=+6.9%
 
