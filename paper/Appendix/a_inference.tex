@@ -59,9 +59,12 @@ targets, not a sample from a population, and row-resampling dispersion scales
 as $1/\sqrt{n}$ in a row count the analyst chooses. A standard error that can
 be made arbitrarily small by generating more synthetic rows conveys precision
 that does not exist. The specification grids below instead show how point
-estimates move with the estimator's own choices. A new multi-seed run is
-required before quantifying generator Monte Carlo error after the construction
-changes in this release; the older seed artifact is not used. Table~\ref{tab:boot}
+estimates move with the estimator's own choices. Generator Monte Carlo error is
+quantified separately, by rebuilding the full 2023--24 population under
+alternative generator seeds (\texttt{results/seed\_sensitivity.txt}): across
+seeds the half-ranges are $\pm111$ on $E$, $\pm0.07$ on $b_{\mathrm{LLAT}}$,
+$\pm\pounds1.4$m on the raise costing, $\pm\pounds0.3$m on the taper costing,
+and $\pm\pounds0.03$bn on the registered base. Table~\ref{tab:boot}
 reports the point estimates. Two conventions matter for
 reading them. Bins are centred on integer \pounds k values (edges at
 half-integers), so the bin containing the threshold spans

@@ -58,6 +58,6 @@ REDUCED-FORM BUNCHING on this population (context for the masses above):
   (The TOTAL CF density in the band is NOT the displaced mass and
   should not be compared to E -- that would be a category error.)
 
-  total observed weighted mass on [20,140] est. range = 959,169
+  total observed weighted mass on [20,140] est. range = 959,170
 
 script: firm-microsim-dominated-region

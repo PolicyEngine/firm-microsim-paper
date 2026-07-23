@@ -190,7 +190,7 @@ remains a true total. A vintage builds in ~15 seconds instead of ~13 minutes;
 headline aggregates reproduce the full build within ~0.3% and local bunching
 statistics within ~5%. Use for development only — release artifacts are
 full-size. Generator-seed sensitivity of the full build is recorded in
-`results/seed_sensitivity.txt` (E ±2%, raise ±£2.1m / taper ±£1.5m across
+`results/seed_sensitivity.txt` (E ±111, raise ±£1.4m / taper ±£0.3m across
 seeds; reproduce with `scripts/seed_sensitivity.py`).
 
 ## Populace/Ledger migration check

@@ -1,6 +1,6 @@
 Iso-elastic (Kleven-Waseem) dynamic VAT-notch simulator — reform results
-vintage=2023-24  T*=£85,000  tau_max=0.20  taper/band top=£105,000
-Repo-generated baseline registered VAT base = £175.354bn.
+vintage=2023-24  T*=£85,000  tau_max=0.20  reduced-rate band top=£105,000  taper top=£141,667
+Repo-generated baseline registered VAT base = £175.355bn.
 A SINGLE turnover elasticity e governs the response. The behavioural cost is
 now a defensible e-SENSITIVITY RANGE over e in {0.05,0.17,0.32} (headline 0.17).
 Ability n is an accounting anchor recovered under the £85k notch given e; e is
@@ -16,7 +16,7 @@ Marginal buncher n_H(e) [analytic; £]:
 Reform costs (change vs £85k-notch baseline):
   reform                              static      e=0.05      e=0.17      e=0.32    #reopt(e=0.17)    near-thr Δ
   Raise threshold to £100k        £    -876m  £    -876m  £    -876m  £    -876m         127,261            +0
-  Graduated taper (£85k→£105k)    £    -586m           —           —           —
+  Graduated taper (£85k→£141.7k, monotone)£   -1525m           —           —           —
   Reduced rate 10% (£85k–£105k)   £    -515m  £    -512m  £    -505m  £    -497m         149,581            +0
   Reduced rate 15% (£85k–£105k)   £    -258m  £    -255m  £    -250m  £    -243m         149,581            +0
 

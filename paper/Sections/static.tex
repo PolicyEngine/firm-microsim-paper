@@ -194,19 +194,26 @@ so the band is summed directly; the sweep's smooth-counterfactual method, which
 irons out the near-threshold concentration by construction, gives
 \(-\)\pounds700m and $102{,}400$ firms---a gap that
 now measures the real, target-pinned concentration of firms just above the
-threshold rather than an optimiser artifact. On this common base the level move carries the largest static
-cost of the menu and leaves the dominated region in place, relocating it to the
-new cutoff (Section~\ref{sec:model}); the taper removes the dominated region at
-a static cost of \(-\)\pounds586m. Which matters more depends on what the
+threshold rather than an optimiser artifact. On this common base the level move leaves the dominated region in
+place, relocating it to the new cutoff (Section~\ref{sec:model}) at a static cost
+of \(-\)\pounds876m; the taper removes the dominated region entirely, at the
+menu's largest static cost of \(-\)\pounds1{,}525m, because removal forces its
+relief band out to \pounds141{,}667 (Section~\ref{sec:model}). Which matters more depends on what the
 reader wants from the reform---the dominated-region metric indexes
 misallocation only, and Section~\ref{sec:conclusion} discusses what it omits.
 
-\paragraph{Graduated taper.} A graduated taper replaces the discrete notch with an
-effective rate that phases linearly from $0\%$ at \pounds85{,}000 to the full $20\%$
-at \pounds105{,}000. Firms in the band remit a tapered rather than a full rate on
-their (fixed) turnover; mechanically this reduces revenue by \(-\)\pounds586m, with
-about $151{,}600$ firms in the \pounds85{,}000--\pounds105{,}000 band facing a lower
-effective rate.
+\paragraph{Graduated taper.} A graduated taper replaces the discrete notch with a
+\emph{marginal} remittance rate that phases linearly from $0\%$ at \pounds85{,}000
+to $100\%$ at the band top, so liability is the integral of the marginal rate and
+a firm's \emph{effective} rate rises continuously from $0\%$ to the full $20\%$
+across the band. Keeping net revenue monotone while confining relief to the band
+pins the band top at $T^{*}/(1-2\tau)=\pounds141{,}667$: a taper reaching the full
+rate at \pounds105{,}000 would push net revenue inside the band below its value at
+the threshold, recreating a dominated interval smoothly rather than at a cliff
+(Section~\ref{sec:model}). Firms in the band remit the tapered schedule on their
+(fixed) turnover; mechanically this reduces revenue by \(-\)\pounds1{,}525m, with
+about $290{,}600$ firms in the \pounds85{,}000--\pounds141{,}667 band facing a
+lower effective rate.
 
 \paragraph{Banded reduced rate.} A banded reduced rate charges firms in the
 \pounds85{,}000--\pounds105{,}000 band a reduced rate
@@ -227,7 +234,7 @@ with no behavioural response.}
 Reform & Lever & Static revenue (\pounds m) \\
 \midrule
 Raise threshold to \pounds100{,}000 & Location & $-876$ \\
-Graduated taper $[\pounds85\text{k},\pounds105\text{k}]$ & Shape (phase-in) & $-586$ \\
+Graduated taper $[\pounds85\text{k},\pounds141.7\text{k}]$ & Shape (phase-in) & $-1{,}525$ \\
 Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-515$ \\
 Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-258$ \\
 \bottomrule
