@@ -1,5 +1,5 @@
 ---
-title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
+title: "An Open Firm-Level Microsimulation for UK VAT Threshold Policy Analysis"
 author:
   - name: "Vahid Ahmadi"
     affiliation: "PolicyEngine"
