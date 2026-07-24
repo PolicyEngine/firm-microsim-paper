@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software or its generated results, please cite the paper and archived release."
-title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
+title: "An Open Firm-Level Microsimulation for UK VAT Threshold Policy Analysis"
 type: software
 authors:
   - family-names: Ahmadi
