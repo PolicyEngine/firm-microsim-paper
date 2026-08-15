@@ -212,7 +212,7 @@ def main() -> None:
     body = mathjax_safe_pounds(body_markdown())
     WEB_QMD.write_text(
         f"""---
-title: "An Open Firm-Level Microsimulation of the UK VAT Registration Threshold"
+title: "An Open Firm-Level Microsimulation for UK VAT Threshold Policy Analysis"
 subtitle: "An open firm-level model for UK VAT threshold reform"
 author:
   - name: "Vahid Ahmadi"
