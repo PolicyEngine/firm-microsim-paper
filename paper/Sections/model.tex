@@ -130,8 +130,11 @@ region is exact and follows directly from the notch arithmetic
 of~\eqref{eq:dominated} and~\eqref{eq:dominated-secondary}, with no dependence on
 the cost specification beyond monotonicity, any behavioural elasticity, or any simulated
 re-optimisation. Raising the threshold to \pounds100{,}000 leaves the rate
-unchanged and therefore \emph{relocates} the region without altering its width: it
-is the same \pounds21{,}250 band, transported to the new cutoff. A banded reduced
+unchanged and therefore \emph{relocates} the region---and, because the width is
+proportional to the threshold, \emph{widens} it: at $T^{*}=\pounds100{,}000$,
+$a=\pounds100{,}000\times0.20/0.80=\pounds25{,}000$, so the dominated region
+becomes $(\pounds100{,}000,\ \pounds125{,}000)$. Only the proportional width
+$a/T^{*}=25\%$ is unchanged; the absolute band grows by \pounds3{,}750. A banded reduced
 rate does \emph{not} remove the distortion. It reduces the \emph{largest single}
 notch---the jump at $T^{*}$ falls from $\tau T^{*}=\pounds17{,}000$ to
 $r\,T^{*}=\pounds12{,}750$ at a $15\%$ band rate---but, because the band reverts to
@@ -149,16 +152,18 @@ turnover---has width
 \end{equation}
 giving $\pounds105{,}000\times0.05/0.80=\pounds6{,}562$ at $15\%$ and
 $\pounds105{,}000\times0.10/0.80=\pounds13{,}125$ at $10\%$. The \emph{total}
-dominated-turnover width is therefore $a+a'=\pounds21{,}562$ at $15\%$ and
+dominated-turnover width is therefore $a+a'=\pounds21{,}563$ at $15\%$ and
 $\pounds22{,}569$ at $10\%$---both marginally \emph{above} the $\pounds21{,}250$
 baseline, not below it. The reduced rate splits one wide empty band into two
 narrower ones rather than shrinking the total: it lowers the largest single notch
 (to $\pounds12{,}750$ at $15\%$) at the price of adding a secondary notch of
 $(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this
 (\texttt{results/dominated\_region\_mass.txt}): the primary regions hold about
-$111{,}900$ ($15\%$) and $77{,}300$ ($10\%$) weighted firms, the secondary
-regions add about $34{,}200$ and $65{,}500$, and the totals---$146{,}100$ and
-$142{,}900$---sit within $3.3\%$ of the $147{,}700$-firm baseline band. A
+$131{,}000$ ($15\%$) and $88{,}800$ ($10\%$) weighted firms, the secondary
+regions add about $26{,}700$ and $52{,}500$, and the totals---$157{,}700$ and
+$141{,}300$---lie $0.6\%$ above and $9.9\%$ below the $156{,}700$-firm baseline
+band, the shortfall at $10\%$ reflecting the declining density across the wider
+secondary band rather than any removal of the distortion. A
 graduated taper, by contrast, can remove the dominated region entirely---provided
 its schedule keeps net revenue monotone, and that condition is restrictive. Any
 band-confined schedule whose effective rate reaches the full $\tau$ by
@@ -175,7 +180,7 @@ dominated turnover, with the discrete incentive to suppress turnover, is removed
 entirely. The price of removal is a wide band and a marginal remittance rate
 that reaches $100\%$ at its top. On the dominated-region metric,
 then, only the taper removes the distortion; the reduced rate splits it and the
-level move relocates it. The metric indexes the misallocation distortion
+level move relocates and widens it. The metric indexes the misallocation distortion
 only---what it omits, and how the reforms compare on cost, is taken up in
 Section~\ref{sec:conclusion}. The dominated region is the paper's exact,
 elasticity-free measure of the distortion the notch imposes, and the analytic
