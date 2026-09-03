@@ -46,8 +46,10 @@ $C(y;n_i,e)$ must be understood as the firm's \emph{own-factor production
 cost}---the labour and capital effort the firm itself supplies---and \emph{not} its
 total cost of production. Reading $C$ as total cost would double-count the bought-in
 inputs, which the value-added factor has already removed. Marginal own-factor cost
-is $(y/n)^{1/e}$, so the undistorted optimum is $y=n$: ability $n$ is the firm's
-frictionless turnover. A firm registered under a flat rate ($f\equiv1$) chooses
+is $(y/n)^{1/e}$, so with no tax and no bought-in inputs ($\delta=0$) the
+optimum is $y=n$; with a positive deductible share the untaxed optimum is
+$n(1-\delta)^{e}$, and ability $n$ is the firm's frictionless turnover in the
+own-factor technology. A firm registered under a flat rate ($f\equiv1$) chooses
 \begin{equation}
   y^{*} \;=\; n\,\bigl[(1-\delta)(1-\tau)\bigr]^{e},
   \label{eq:flat-optimum}
@@ -88,8 +90,10 @@ cancel in the ratio:
 The intensive response depends only on $e$, the statutory rate, and the
 schedule fractions---not on $\delta_i$, not on the firm's net remittance rate,
 and not on the recovered ability level. Ability recovery
-($n_i=y_{\mathrm{obs},i}$ below the threshold,
-$n_i=y_{\mathrm{obs},i}/[(1-\delta_i)(1-\tau)]^{e}$ above) is an
+($n_i=y_{\mathrm{obs},i}/(1-\delta_i)^{e}$ below the threshold,
+$n_i=y_{\mathrm{obs},i}/[(1-\delta_i)(1-\tau)]^{e}$ above; the released code
+sets $\delta_i=0$ in this anchor, which is immaterial because no reform number
+depends on it) is an
 \emph{accounting anchor}---it rationalises the observed allocation given
 $e$ and reproduces the baseline by construction---but no reform number below
 depends on it.
@@ -177,8 +181,8 @@ Sections~\ref{sec:static} and~\ref{sec:model}.}
 \end{table}
 
 \paragraph{A level rise has no intensive-margin offset.} The raise-to-
-\pounds100{,}000 row is identical to its static cost at every $e$, and this is
-a result, not a failure to respond. Partition the firms. Those with observed
+\pounds100{,}000 row is identical to its static cost at every $e$; this follows
+from the region-confined convention rather than from a failure to respond. Partition the firms. Those with observed
 turnover below \pounds85{,}000 face $f=0$ before and after; nothing changes.
 Those released by the raise ($y_{\mathrm{obs}}\in[\pounds85\text{k},
 \pounds100\text{k})$) see their rate fall to zero and expand
@@ -187,14 +191,18 @@ $e=0.17$)---but their expansion is \emph{untaxed}: they have left the VAT
 base, so the revenue loss is their full baseline remittance, exactly the
 static figure. Those above \pounds100{,}000 face $f=1$ before and after;
 nothing changes. The only candidates for a taxed response are released firms
-whose expansion would carry them across the new threshold, and for every such
-firm the new notch's bunching condition binds (its ability lies strictly below
-the new marginal buncher), so it optimally stops at the threshold and remits
-nothing. Base broadening from a threshold rise is therefore real economic
-activity but generates no VAT: conditional on this model, the static costing
-of a level move is not an upper bound that behaviour erodes---it \emph{is} the
-behavioural costing on the intensive margin. The simulator asserts this
-invariance programmatically (to \pounds0.1m at each swept $e$).
+whose expansion would carry them across the new threshold. The region-confined
+solve does not evaluate that discrete choice: it clips such firms at the new
+threshold by construction, so the invariance is a property of the maintained
+status convention---released firms deregister and are not permitted to re-cross
+the new notch---rather than a computed statement about their global optimum.
+Under that convention, base broadening from a threshold rise is real economic
+activity that generates no VAT, and the static costing of a level move
+coincides with the intensive-margin behavioural costing. A released firm whose
+ability exceeded the new marginal buncher would instead register at its taxed
+optimum and remit VAT; that is an extensive-margin case outside this exercise.
+The simulator asserts the conditional invariance programmatically (to
+\pounds0.1m at each swept $e$).
 
 \paragraph{Reduced-rate offsets are second order.} A reduced-rate band lowers
 the rate on band firms from $\tau$ to $r$, so each scales up
