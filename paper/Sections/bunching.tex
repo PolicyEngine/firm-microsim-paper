@@ -56,20 +56,26 @@ excluding a manipulation window around the threshold $y^{*}$:
 where $c_j$ is the number of firms in bin $j$, $y_j$ is the distance of bin $j$
 from the threshold, $q$ is the polynomial order, and $[y^{*}_{-},\,y^{*}_{+}]$
 is the excluded window. The fitted polynomial is then projected into the
-excluded region to recover the counterfactual density $g(y)$, with a
-mass-conservation restriction that locates the upper edge of the manipulation
-window endogenously (excess mass below the threshold must equal missing mass
-above it; Appendix~\ref{app:inference}). Excess bunching is the integrated
-difference between the observed and counterfactual densities just below the
-threshold,
+excluded region to recover the counterfactual density $g(y)$. The upper edge
+of the manipulation window, $y_R$, is then searched for by walking upward from
+the threshold until cumulative missing mass equals the excess mass below; when
+the missing mass inside the search window is insufficient---as in the headline
+specification, where the fitted missing mass is zero---$y_R$ is censored at the
+window edge and reported as such (Appendix~\ref{app:inference}). Excess mass is
+the integrated positive part of the gap between the observed density $f$ and
+the counterfactual $g$ in the excluded window below the threshold,
 \[
-  B(y^{*}) \;=\; \int_{y^{*}-\Delta y^{*}}^{y^{*}} g(y)\,\mathrm{d}y
-  \;\approx\; g(y^{*})\,\Delta y^{*},
+  E \;=\; \int_{y^{*}-W}^{y^{*}} \bigl[f(y)-g(y)\bigr]_{+}\,\mathrm{d}y ,
 \]
-the approximation holding when $g$ is locally smooth. The bunching ratio
-$b(y^{*}) = B(y^{*})/g(y^{*}) \approx \Delta y^{*}/y^{*}$ is the width of the
-bunching region expressed as a fraction of the threshold---a normalised
-\emph{ratio}, not an elasticity. The estimator delivers the raw geometry of any
+a gross rather than net statistic. The normalised excess $b_{\mathrm{LLAT}}$
+divides the integrated positive-part gap over the whole manipulation region
+$[y^{*}-W,\,y_R]$ by the average counterfactual height over that region---a
+literature-style normalisation in the spirit of \citet{liuetal2021}, who report
+excess mass relative to the counterfactual density, though it does not
+reproduce their estimator exactly. Because it also counts positive gaps above
+the threshold, $b_{\mathrm{LLAT}}$ is not $E$ divided by a density, and the two
+statistics need not move together. Both are normalised \emph{ratios} of density
+geometry, not elasticities. The estimator delivers the raw geometry of any
 density step at the threshold; whether that step reflects firm behaviour is a
 separate question. The estimator reports geometry only ($b$, excess mass $E$,
 and the mass-conservation objects): no elasticity is computed from it, both
