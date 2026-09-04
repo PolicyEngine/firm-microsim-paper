@@ -105,8 +105,8 @@ def main(argv: list[str] | None = None) -> None:
     lines = [
         "GENERATOR-SEED SENSITIVITY (full-size 2023-24 builds; "
         f"seeds {'/'.join(str(s) for s in args.seeds)})",
-        "definitive build: OBR near-threshold targets, side-consistent frame",
-        "scaling, no below-threshold liability calibration",
+        "two-universe build (#37): ONS-frame rows + HMRC registered-subset rows via",
+        "per-band registration propensity; in-scope liabilities only; scope is a seeded draw",
         "=" * 70,
         f"{'run':<18}{'E':>8}{'b_llat':>8}{'raise £m':>10}{'taper £m':>10}{'base £bn':>10}",
     ]

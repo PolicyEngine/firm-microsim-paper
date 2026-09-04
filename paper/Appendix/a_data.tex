@@ -8,15 +8,42 @@ account.
 
 Each of the approximately $2.94$ million firm rows carries a turnover, an input
 expenditure, a net VAT liability ($v_i = 0.20\,(y_i - x_i)$), a calibration
-weight, and a registration status; the weights are chosen so the weighted
-totals reproduce the official targets while the population sums to about
-$2.5$ million firms. Because the population is calibrated \emph{to} the HMRC
-aggregates, agreement between my weighted outputs and those aggregates is a
-check of \emph{internal consistency}, not external validation: any target used
-in calibration is reproduced by construction. The headline calibration
-accuracies (92.9\% and 93.5\% for the two vintages) and the anchor comparison
-of Section~\ref{sec:static} are therefore consistency checks on the pipeline,
-not out-of-sample tests of firm behaviour.
+weight, a frame indicator, a VAT-scope flag, and a registration flag. The
+weights are chosen so the weighted frame rows reproduce the ONS enterprise
+total and employment bands while the weighted registered rows reproduce the
+HMRC trader counts and liability totals (Table~\ref{tab:calibration}). Because
+the population is calibrated \emph{to} the HMRC aggregates, agreement between
+my weighted outputs and those aggregates is a check of \emph{internal
+consistency}, not external validation; the turnover-band rows in particular
+hold by construction through the registration propensity. The headline
+calibration accuracies (98.0\% and 98.0\% for the two
+vintages) and the anchor comparison of Section~\ref{sec:static} are therefore
+consistency checks on the pipeline, not out-of-sample tests of firm behaviour.
+
+\begin{table}[htbp]
+\centering
+\caption{Calibration accuracy by dimension, $\max\{0,1-\lvert\widehat{T}-T\rvert/\lvert T\rvert\}$
+averaged over the dimension's targets. HMRC dimensions are scored on
+VAT-registered rows, ONS dimensions on frame rows. Source:
+\texttt{results/calibration\_accuracy.txt}.}
+\label{tab:calibration}
+\begin{tabular}{lrr}
+\toprule
+Dimension (universe) & 2023--24 & 2024--25 \\
+\midrule
+HMRC turnover bands (registered) & 100.0\% & 100.0\% \\
+ONS enterprise total (frame) & 99.7\% & 99.8\% \\
+ONS employment bands (frame) & 99.8\% & 99.9\% \\
+HMRC sector counts (registered) & 93.3\% & 92.2\% \\
+HMRC net liability by band (registered) & 97.1\% & 98.0\% \\
+\midrule
+\textbf{Overall (five calibrated dimensions)} & 98.0\% & 98.0\% \\
+\midrule
+\emph{Diagnostic:} net liability by sector (registered) & 42.2\% & 45.7\% \\
+\emph{Diagnostic:} net liability below threshold & 31.2\% & 0.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 The reported calibration score is a bounded summary statistic. For each
 dimension I compute
@@ -61,8 +88,10 @@ generators at the pin date shared the mis-scaled $v_i = y_i - x_i$ convention,
 so the experimental Populace firm generator inherits the same defect, which I
 have reported upstream; the target-parity result (zero mismatches) is
 unaffected, since it concerns the input tables, not the generated population.
-Second, the paper validator's scores on the corrected build are 92.9 percent
-(2023--24) and 93.5 percent (2024--25). The comparison table and structured provenance are
+Second, the paper validator's scores on the current build are
+98.0\% (2023--24) and 98.0\% (2024--25), on the
+two-universe target layout of Section~\ref{sec:data}, which the pinned
+snapshot predates. The comparison table and structured provenance are
 reproduced by \texttt{firm-microsim-populace-ledger} and checked into
 \path{results/populace_ledger_comparison.txt} and
 \path{results/populace_ledger_provenance.json}.

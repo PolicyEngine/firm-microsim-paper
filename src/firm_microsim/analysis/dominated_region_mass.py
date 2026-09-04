@@ -214,8 +214,12 @@ def main() -> None:
           f" = TOTAL {s['total_obs']:,.0f}  (baseline {base['obs']:,.0f},"
           f" {100*(s['total_obs']/base['obs']-1):+.1f}%)")
     W("")
-    W("REDUCED-FORM BUNCHING on this population (context for the masses above):")
-    W(f"  excess mass below T*       E       = {E:,.0f} firms")
+    W("REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;")
+    W("  NOT the Section 6 headline, which runs on the full ONS-frame density):")
+    frame_res = BunchingEstimator(VINTAGE).estimate()
+    W(f"  frame-density headline (Section 6): E = {frame_res['E']:,.0f}, "
+      f"Delta_R = {frame_res['Delta_R']:,.0f}, y_R = GBP {frame_res['y_R']*1000:,.0f}")
+    W(f"  in-scope excess mass below T*  E       = {E:,.0f} firms")
     W(f"  missing mass above T*      Delta_R = {Delta_R:,.0f} firms")
     W(f"  marginal buncher           y_R     = GBP {y_R*1000:,.0f}")
     W(f"  NET displaced mass in 20% dominated band = {missing_in_band:,.0f} firms")

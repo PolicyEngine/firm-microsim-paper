@@ -365,9 +365,21 @@ def build_target_matrix(
     ]
     population_target = float(ons_total)
 
+    # HMRC sector counts include traders whose turnover band is "Unknown"
+    # (159,300 in 2024-25; none in 2023-24), who cannot enter the band rows.
+    # Allocate them proportionally so the sector rows and the band rows count
+    # the same registered universe.
+    sector_raw = [float(r.iloc[-1]) for _, r in sector_rows.iterrows()]
+    sector_scale = sum(turnover_targets) / sum(sector_raw) if sum(sector_raw) > 0 else 1.0
+    if abs(sector_scale - 1.0) > 1e-3:
+        logger.info(
+            "Sector targets rescaled by %.4f to the turnover-band total "
+            "(HMRC 'Unknown' turnover band allocated proportionally)", sector_scale,
+        )
+    sector_targets = [v * sector_scale for v in sector_raw]
+
     # Value column is the (single) year column, always the last column —
     # year-agnostic so the 2023-24 / 2024-25 vintages both work.
-    sector_targets = [float(r.iloc[-1]) for _, r in sector_rows.iterrows()]
 
     ons_emp_rows = ons_employment_df[
         ~ons_employment_df["Description"].str.contains("Total", na=False)

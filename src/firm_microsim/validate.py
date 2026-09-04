@@ -178,9 +178,15 @@ def validate(
         data.hmrc_population_sector["Trade_Sector"] != "Total"
     ]
     synth_sector = vat_registered.groupby("sic_numeric")["weight"].sum()
+    # Same universe as calibration: HMRC 'Unknown'-band traders allocated
+    # proportionally so sector totals equal the band total.
+    band_total = float(sum(data.hmrc_bands.values()))
+    sector_total = float(sum(float(r.iloc[-1]) for _, r in sector_rows.iterrows()))
+    sector_scale = band_total / sector_total if sector_total > 0 else 1.0
     sector_accs = [
         _accuracy(
-            float(synth_sector.get(int(r["Trade_Sector"]), 0.0)), float(r.iloc[-1])
+            float(synth_sector.get(int(r["Trade_Sector"]), 0.0)),
+            float(r.iloc[-1]) * sector_scale,
         )
         for _, r in sector_rows.iterrows()
     ]

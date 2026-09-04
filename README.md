@@ -173,12 +173,12 @@ firm-microsim-report
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
-| HMRC turnover bands | 97.3% | 96.6% |
-| ONS population | 88.3% | 91.1% |
-| Employment bands | 92.1% | 92.3% |
-| Sector distribution | 90.1% | 90.4% |
-| VAT liability by band (6 calibrated bands) | 96.5% | 97.1% |
-| **Overall (5 calibrated dimensions)** | **92.9%** | **93.5%** |
+| HMRC turnover bands (registered rows; hold by construction) | 100.0% | 100.0% |
+| ONS population (frame rows) | 99.7% | 99.8% |
+| Employment bands (frame rows) | 99.8% | 99.9% |
+| Sector distribution (registered rows) | 93.3% | 92.2% |
+| VAT liability by band (6 calibrated bands, registered rows) | 97.1% | 98.0% |
+| **Overall (5 calibrated dimensions)** | **98.0%** | **98.0%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
 an informational diagnostic only, and neither is the **below-threshold
@@ -248,7 +248,7 @@ targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
 replicate the paper's generated synthetic population: Populace's shared optimizer
 landed at 93.8% overall accuracy under its own validator versus the paper's
-then-90.5% (2024-25 scores 93.5% on the corrected build,
+then-90.5% (2024-25 scores 98.0% on the current two-universe build,
 `results/calibration_accuracy.txt`), but that overall pair is **not
 like-for-like**: HMRC turnover-band accuracy uses different band sets, and sector
 distribution reflects different calibration-target definitions. The directly

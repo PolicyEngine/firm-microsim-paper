@@ -59,6 +59,11 @@ value-added share of 40\%). This drop---absent from a kink, where only the
 \emph{marginal} rate changes at the threshold while average liability moves
 continuously---is the defining feature of a notch: it makes locating just
 below the cutoff strictly attractive and creates the empty band derived next.
+Throughout, the firm is assumed to bear the full statutory rate on its value
+added---no pass-through to prices---so the notch geometry is stated in terms
+of the firm's own net revenue; with partial pass-through the cash size of the
+jump, and the width derived next, would shrink in proportion to the share
+borne by the firm.
 
 \subsection{The dominated region}
 \label{ssec:dominated}
@@ -107,15 +112,15 @@ and net-repayment traders have no positive remittance to jump
 (the Scope paragraph above). Second, the region is an order of magnitude wider
 than the $\sim\pounds1$k region implied by a smoothed \emph{kink}
 approximation, and it spans a populous part of the firm distribution: about
-$157{,}000$ weighted firms in the calibrated synthetic population lie in the
-$\pounds85{,}000$--$\pounds106{,}250$ band
-(\texttt{results/dominated\_region\_mass.txt}). Because the generator has no
-location choice, this counts the firms the data \emph{place} in the
-band---indexing the size of the population exposed to the distortion---rather
-than firms that optimally locate there; the count is conditional on the
-uniform within-band fill inside the coarse ONS bands (Section~\ref{sec:data})
-and would shift under a different within-band shape. It is the width $a$, not
-the count, that is exact.
+142{,}900 weighted in-scope firms in the calibrated synthetic population lie
+in the $\pounds85{,}000$--$\pounds106{,}250$ band
+(\texttt{results/dominated\_region\_mass.txt}; out-of-scope enterprises face
+no notch and are excluded). Because the generator has no location choice, this
+counts the firms the data \emph{place} in the band---indexing the size of the
+population exposed to the distortion---rather than firms that optimally locate
+there; the count is conditional on the uniform within-band fill inside the
+coarse ONS bands (Section~\ref{sec:data}) and would shift under a different
+within-band shape. It is the width $a$, not the count, that is exact.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.96\textwidth]{figures/dynamic_notch_fit_e017.png}
@@ -159,26 +164,35 @@ narrower ones rather than shrinking the total: it lowers the largest single notc
 (to $\pounds12{,}750$ at $15\%$) at the price of adding a secondary notch of
 $(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this
 (\texttt{results/dominated\_region\_mass.txt}): the primary regions hold about
-$131{,}000$ ($15\%$) and $88{,}800$ ($10\%$) weighted firms, the secondary
-regions add about $26{,}700$ and $52{,}500$, and the totals---$157{,}700$ and
-$141{,}300$---lie $0.6\%$ above and $9.9\%$ below the $156{,}700$-firm baseline
-band, the shortfall at $10\%$ reflecting the declining density across the wider
-secondary band rather than any removal of the distortion. A
-graduated taper, by contrast, can remove the dominated region entirely---provided
-its schedule keeps net revenue monotone, and that condition is restrictive. Any
-band-confined schedule whose effective rate reaches the full $\tau$ by
-\pounds105{,}000 leaves net revenue
+117{,}900 ($15\%$) and 74{,}400 ($10\%$) weighted in-scope firms, the
+secondary regions add about 26{,}300 and 51{,}400, and the
+totals---144{,}200 and 125{,}800---lie 0.9\% above and 11.9\%
+below the 142{,}900-firm baseline band. The total dominated \emph{width} is
+larger under both reduced rates; the firm count is lower at $10\%$ only because
+the density declines across the wider secondary band, not because any part of
+the distortion is removed. A graduated taper, by contrast, can remove the
+dominated region entirely---provided its schedule keeps net revenue monotone,
+and that condition is restrictive. Any band-confined schedule whose effective
+rate reaches the full $\tau$ by \pounds105{,}000 leaves net revenue
 $(1-\tau)\times\pounds105{,}000=\pounds84{,}000$ at the band top, below the
 \pounds85{,}000 available at the threshold itself, so net revenue must fall over
 some range inside the band---a smoothly dominated interval in place of the
-cliff. The taper costed here therefore phases the \emph{marginal} remittance
-rate linearly from $0$ to $100\%$ over
-$[\pounds85{,}000,\,T^{*}/(1-2\tau)]=[\pounds85{,}000,\pounds141{,}667]$:
-liability is continuous at both band edges, net revenue is non-decreasing
-throughout---its slope $1-m(y)$ vanishes only at the band top---and the band of
-dominated turnover, with the discrete incentive to suppress turnover, is removed
-entirely. The price of removal is a wide band and a marginal remittance rate
-that reaches $100\%$ at its top. On the dominated-region metric,
+cliff. Monotonicity requires the marginal remittance rate $m(y)$ to stay below
+one, and band confinement requires liability to meet the standard-rate line
+$\tau y$ at the band top $U$. For a constant marginal rate $m>\tau$ these two
+conditions pin $U(m)=mT^{*}/(m-\tau)$: the band top is a property of the
+schedule's \emph{shape}, falling from \pounds141{,}667 at $m=50\%$ towards
+the infimum $T^{*}/(1-\tau)=\pounds106{,}250$ as $m\to100\%$, where net
+revenue is flat across the band and the region is only weakly dominated. The
+linear taper costed in Section~\ref{ssec:schedule_costs} phases $m$ from $0$ to
+$100\%$ over $[\pounds85{,}000,\,T^{*}/(1-2\tau)]=[\pounds85{,}000,\pounds141{,}667]$;
+the constant-rate taper costed alongside it holds $m=50\%$ over the same band.
+Both leave liability continuous at both band edges and net revenue
+non-decreasing throughout, so the band of dominated turnover, with the discrete
+incentive to suppress turnover, is removed entirely. The price of removal is a
+wide band and, for the linear design, a marginal remittance rate that reaches
+$100\%$ at its top; the constant-rate design caps the marginal rate at $50\%$
+and costs a third less. On the dominated-region metric,
 then, only the taper removes the distortion; the reduced rate splits it and the
 level move relocates and widens it. The metric indexes the misallocation distortion
 only---what it omits, and how the reforms compare on cost, is taken up in

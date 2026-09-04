@@ -66,6 +66,13 @@ jobs:
           cd paper
           quarto render index.qmd --to pdf
 
+      - name: Upload rendered PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: paper/out/*.pdf
+          if-no-files-found: error
+
       - name: Render paper HTML
         run: |
           cd paper

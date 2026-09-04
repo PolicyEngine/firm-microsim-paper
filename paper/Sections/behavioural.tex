@@ -139,10 +139,15 @@ three flat-rate reforms---the raised threshold and the two reduced-rate
 bands---measured as the change in revenue relative to the
 \pounds85{,}000-notch baseline, alongside the static figure of
 Table~\ref{tab:schedule_costs}, for each $e$. For context, the marginal
-buncher $n_H(e)$---the highest ability that still finds bunching at the
-threshold optimal, the extensive-margin object held fixed here---sits at
-\pounds112{,}795, \pounds127{,}382 and \pounds143{,}527 for
-$e=0.05, 0.17, 0.32$.
+buncher $n_H(e,\delta)$---the highest ability that still finds bunching at the
+threshold optimal, the extensive-margin object held fixed here---depends on the
+deductible share, because $\delta$ scales revenue but not own-factor cost in
+formulation~A: with $\delta=0$ it sits at \pounds112{,}795, \pounds127{,}382
+and \pounds143{,}527 for $e=0.05, 0.17, 0.32$; at the population-mean input
+share $\delta=0.6$ it rises to about \pounds118{,}100, \pounds148{,}900 and
+\pounds192{,}400 (\texttt{results/dynamic\_reform\_results.txt}). Firms with
+higher input shares find registration less attractive relative to bunching, as
+Figure~\ref{fig:formulation_a_optima} shows.
 
 \begin{table}[htbp]
 \centering
@@ -162,22 +167,25 @@ excluded; see the paragraph below.}
 Reform & Static & $e=0.05$ & $e=0.17$ & $e=0.32$ & Firms ($e{=}0.17$) \\
 \midrule
 Raise threshold to \pounds100{,}000
-  & $-\pounds876$m & $-\pounds876$m & $-\pounds876$m & $-\pounds876$m & $127{,}261$ \\
+  & $-\pounds742$m & $-\pounds742$m & $-\pounds742$m & $-\pounds742$m & $114{,}452$ \\
 Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$
-  & $-\pounds515$m & $-\pounds512$m & $-\pounds505$m & $-\pounds497$m & $149{,}581$ \\
+  & $-\pounds446$m & $-\pounds443$m & $-\pounds437$m & $-\pounds430$m & $136{,}112$ \\
 Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$
-  & $-\pounds258$m & $-\pounds255$m & $-\pounds250$m & $-\pounds243$m & $149{,}581$ \\
+  & $-\pounds223$m & $-\pounds221$m & $-\pounds216$m & $-\pounds210$m & $136{,}112$ \\
 \bottomrule
 \end{tabular}
 }
 
 \smallskip
-{\footnotesize \emph{Note.} The graduated taper is omitted: its rate varies
-continuously with turnover, so its intensive response is outside the
-region-confined solve, and its marginal-rate channel is not represented by the
-flat-rate first-order condition. Its $e$-free figures---the static cost of
-\(-\)\pounds1{,}525m and the exact removal of the dominated region---are in
-Sections~\ref{sec:static} and~\ref{sec:model}.}
+{\footnotesize \emph{Note.} The tapers are omitted: their rate varies
+continuously with turnover, so their intensive response is outside the
+region-confined solve, and their marginal-rate channel is not represented by
+the flat-rate first-order condition. Their $e$-free figures---the static costs
+of \(-\)\pounds1{,}406m (linear) and \(-\)\pounds968m (constant $50\%$) and the exact
+removal of the dominated region---are in Sections~\ref{sec:static}
+and~\ref{sec:model}. Firms are in-scope VAT firms with turnover in
+\pounds70{,}000--\pounds130{,}000, the range the region-confined solve
+re-optimises.}
 \end{table}
 
 \paragraph{A level rise has no intensive-margin offset.} The raise-to-
@@ -209,8 +217,8 @@ the rate on band firms from $\tau$ to $r$, so each scales up
 by~\eqref{eq:rescale} with $f_1 = r/\tau$: about $+2.0\%$ at the $10\%$ rate
 and $e=0.17$, and about $+1.0\%$ at $15\%$. Remittance scales with turnover,
 so the offset is roughly the scale gain times the band's (rate-reduced)
-remittance---about \pounds10m against a static \pounds515m at $e=0.17$ for the $10\%$
-band, reaching about \pounds18m only at $e=0.32$. The direction is
+remittance---about \pounds9m against a static \pounds446m at $e=0.17$ for
+the $10\%$ band, reaching about \pounds16m only at $e=0.32$. The direction is
 uniform---a larger $e$ makes the bands slightly cheaper---but the magnitude
 never approaches the static term. Figure~\ref{fig:reform_dist} traces the
 costs across the full range of $e$: the raise is exactly flat, the bands

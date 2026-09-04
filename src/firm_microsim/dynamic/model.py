@@ -489,15 +489,24 @@ def marginal_buncher_iso(e, T=T_STAR, tau=TAU_MAX, delta=0.0):
     from scipy.optimize import brentq
 
     va = 1.0 - delta
+    net_reg = va * (1.0 - tau)
 
     def gap(n):
-        u_bunch = iso_profit(T, n, e, net=va)
-        y1 = n * (va * (1.0 - tau)) ** e
-        u_tax = iso_profit(y1, n, e, net=va * (1.0 - tau))
+        # Best unregistered choice: the untaxed optimum, capped at the
+        # threshold (a firm cannot stay unregistered above T*).
+        y_u = min(T, n * va ** e)
+        u_bunch = iso_profit(y_u, n, e, net=va)
+        # Registered optimum; registering with y1 < T* is never chosen (it is
+        # dominated by staying unregistered at y1), so the branch starts at T*.
+        y1 = max(T, n * net_reg ** e)
+        u_tax = iso_profit(y1, n, e, net=net_reg)
         return float(u_bunch - u_tax)
 
-    lo, hi = T * (1.0 + 1e-6), T * 5.0
-    while gap(lo) * gap(hi) > 0 and hi < T * 50:
+    # At n_lo the registered optimum is exactly T*, where bunching strictly
+    # wins (same turnover, no tax), so gap(lo) > 0 and the root lies above.
+    lo = T / net_reg ** e * (1.0 + 1e-9)
+    hi = lo * 2.0
+    while gap(hi) > 0 and hi < T * 1e3:
         hi *= 1.5
     n_H = brentq(gap, lo, hi)
     return float(n_H), float(n_H - T)
@@ -643,15 +652,14 @@ def load_reform_data(path=REFORM_DATA):
         path,
         usecols=["annual_turnover_k", "vat_liability_k", "weight", "vat_scope", "vat_registered"],
     )
+    # Out-of-scope enterprises (PAYE-only / exempt-sector, issue #37) face no
+    # VAT schedule: drop them so every reform is priced, and every firm
+    # counted, on the in-scope population only.
+    df = df[df["vat_scope"].astype(bool)].reset_index(drop=True)
     out = pd.DataFrame()
     out["turnover"] = df["annual_turnover_k"].to_numpy(dtype=float) * 1000.0
-    # Out-of-scope enterprises (PAYE-only / exempt-sector, issue #37) remit
-    # nothing under any schedule: zero their liability so every reform is
-    # priced on the in-scope registered base only.
-    scope = df["vat_scope"].to_numpy(dtype=bool)
-    out["liab"] = np.where(scope, df["vat_liability_k"].to_numpy(dtype=float) * 1000.0, 0.0)
+    out["liab"] = df["vat_liability_k"].to_numpy(dtype=float) * 1000.0
     out["weight"] = df["weight"].to_numpy(dtype=float)
-    out["scope"] = scope
     return out
 
 

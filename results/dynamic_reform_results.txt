@@ -1,30 +1,30 @@
 Iso-elastic (Kleven-Waseem) dynamic VAT-notch simulator — reform results
 vintage=2023-24  T*=£85,000  tau_max=0.20  reduced-rate band top=£105,000  taper top=£141,667
-Repo-generated baseline registered VAT base = £175.355bn.
+Repo-generated baseline registered VAT base = £175.692bn.
 A SINGLE turnover elasticity e governs the response. The behavioural cost is
 now a defensible e-SENSITIVITY RANGE over e in {0.05,0.17,0.32} (headline 0.17).
 Ability n is an accounting anchor recovered under the £85k notch given e; e is
-NOT identified from the synthetic data (see the placebo) — read results as
-CONDITIONAL on the assumed e.
+NOT identified from the synthetic data — read results as CONDITIONAL on the assumed e.
+Liabilities are in-scope only: out-of-scope (PAYE-only/exempt) enterprises remit nothing (issue #37).
 ==============================================================================
 
-Marginal buncher n_H(e) [analytic; £]:
-  e=0.05  n_H=£  112.8k   dy*=£  27.8k
-  e=0.17  n_H=£  127.4k   dy*=£  42.4k
-  e=0.32  n_H=£  143.5k   dy*=£  58.5k
+Marginal buncher n_H(e, delta) [analytic; £]. delta = deductible-input
+share: it scales revenue but not own-factor cost, so n_H rises with delta;
+delta=0 is the turnover-tax solve, 0.6 the population mean input share.
+  e=0.05  n_H(delta=0)=£ 112.8k  dy*=£ 27.8k   n_H(delta=0.4)=£ 115.7k   n_H(delta=0.6)=£ 118.1k
+  e=0.17  n_H(delta=0)=£ 127.4k  dy*=£ 42.4k   n_H(delta=0.4)=£ 138.9k   n_H(delta=0.6)=£ 148.9k
+  e=0.32  n_H(delta=0)=£ 143.5k  dy*=£ 58.5k   n_H(delta=0.4)=£ 169.0k   n_H(delta=0.6)=£ 192.4k
 
 Reform costs (change vs £85k-notch baseline):
   reform                              static      e=0.05      e=0.17      e=0.32    #reopt(e=0.17)    near-thr Δ
-  Raise threshold to £100k        £    -876m  £    -876m  £    -876m  £    -876m         127,261            +0
-  Graduated taper (£85k→£141.7k, monotone)£   -1525m           —           —           —
-  Reduced rate 10% (£85k–£105k)   £    -515m  £    -512m  £    -505m  £    -497m         149,581            +0
-  Reduced rate 15% (£85k–£105k)   £    -258m  £    -255m  £    -250m  £    -243m         149,581            +0
+  Raise threshold to £100k        £    -742m  £    -742m  £    -742m  £    -742m         114,452            +0
+  Graduated taper (£85k→£141.7k, monotone)£   -1406m           —           —           —
+  Flat 50% marginal taper (£85k→£141.7k)£    -968m           —           —           —
+  Reduced rate 10% (£85k–£105k)   £    -446m  £    -443m  £    -437m  £    -430m         136,112            +0
+  Reduced rate 15% (£85k–£105k)   £    -223m  £    -221m  £    -216m  £    -210m         136,112            +0
 
-Direction: a LARGER e makes every reform CHEAPER (smaller revenue loss). Each
-reform lowers the effective rate on the band, so the iso-elastic response scales
-turnover UP toward the firm's frictionless optimum (y* = y_obs*((1-tau_reform)/(1-tau_base))^e > y_obs), widening the taxed base;
-the larger e, the larger this base-broadening offset to the static cost.
-NOTE: the taper figure captures this intensive base-broadening only; it omits the
-taper's marginal-rate distortion (the iso-elastic cost cannot credibly price the
-downward response a taper induces), so the taper's behavioural cost is a lower
-bound on its true cost. See Section 7 of the paper.
+Reading: the raise row is flat in e by construction of the region-confined solve
+(released firms leave the base; no other firm's rate changes). Reduced-rate bands
+get cheaper as e rises: band firms scale turnover up by ((1-tau f1)/(1-tau f0))^e,
+widening the taxed base. The tapers have no behavioural row: their rate varies
+continuously with turnover, outside the region-confined flat-rate solve.
