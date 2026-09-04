@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 
+import numpy as np
 import pandas as pd
 
 from firm_microsim.bunching.model import RANGE_HI, RANGE_LO, _run_estimator
@@ -35,14 +36,16 @@ VINTAGE = "2023-24"
 T_STAR = 85_000.0
 T_NEW = 100_000.0
 OUT = RESULTS_DIR / "seed_sensitivity.txt"
-COLS = ["annual_turnover_k", "vat_liability_k", "weight"]
+COLS = ["annual_turnover_k", "vat_liability_k", "weight", "vat_scope"]
 
 
 def headline_stats(df: pd.DataFrame) -> dict:
     """Compute the paper's headline 2023-24 statistics on one build."""
     tk = df["annual_turnover_k"].to_numpy()
     t = tk * 1000.0
-    liab = df["vat_liability_k"].to_numpy() * 1000.0
+    scope = df["vat_scope"].to_numpy(dtype=bool)
+    # In-scope liabilities only (issue #37); bunching runs on the frame density.
+    liab = np.where(scope, df["vat_liability_k"].to_numpy() * 1000.0, 0.0)
     w = df["weight"].to_numpy()
 
     # Same population filter as BunchingEstimator.__init__ — the headline

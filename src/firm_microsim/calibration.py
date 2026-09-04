@@ -5,9 +5,20 @@ monolithic generator:
 
     1. Map firms to HMRC turnover bands (edges driven by the single
        configurable VAT threshold).
-    2. Build a sparse target matrix ``A`` where ``A[i, j]`` is firm ``j``'s
-       contribution to target ``i`` (turnover bands, HMRC sectors, ONS
-       employment bands, VAT-liability by sector, VAT-liability by band).
+    2. Build a target matrix ``A`` where ``A[i, j]`` is firm ``j``'s
+       contribution to target ``i``. Every row is declared on ONE of two
+       universes (issue #37):
+
+       * the **ONS VAT/PAYE enterprise frame** (population row, employment
+         rows, near-threshold shape rows): contribution 1 for frame rows,
+         0 for the appended HMRC negative/zero-turnover traders;
+       * the **HMRC VAT-registered subset** (turnover-band rows, sector
+         rows, liability-by-band rows): contribution equals the firm's
+         *registration propensity* ``p_b`` -- the HMRC count in its turnover
+         band divided by the frame's base-weighted mass in that band -- so
+         expected registered totals match HMRC by construction at unit
+         weights, while the frame margins are matched by the frame rows.
+         Appended negative/zero traders carry ``p = 1``.
     3. Optimize per-firm log-weights with Adam under a *symmetric relative
        error* loss, so targets of very different scales are balanced. Turnover
        bands carry ~5x importance; VAT-liability-by-band carry 2x.
@@ -138,8 +149,10 @@ class TargetSpec:
     """
 
     def __init__(self, n_sectors: int, n_vat_sectors: int, n_near: int = 0) -> None:
-        self.n_turnover = 7
+        self.n_turnover = 8  # Negative_or_Zero + 7 positive-turnover bands
         self.n_population = 1
+        self.propensity: Tensor | None = None  # per-firm registration propensity
+        self.frame_mask: Tensor | None = None  # True for ONS-frame rows
         self.n_sectors = n_sectors
         self.n_employment = len(EMPLOYMENT_BANDS)
         self.n_vat_sectors = n_vat_sectors
@@ -156,6 +169,54 @@ class TargetSpec:
         self.n_targets = self.near_start + self.n_near
 
 
+def registration_propensity(
+    band_indices: Tensor,
+    frame_mask: Tensor,
+    base_weights: Tensor,
+    hmrc_bands: dict,
+) -> Tensor:
+    """Per-firm probability of being a VAT-registered trader, by HMRC band.
+
+    For each positive-turnover band ``b`` the propensity is the HMRC
+    registered count divided by the frame's base-weighted mass in that band,
+    clamped to one (a warning is logged if the frame cannot contain the HMRC
+    population). Appended negative/zero-turnover rows (``frame_mask`` False)
+    are HMRC traders by construction and receive propensity one.
+
+    Below the threshold the propensity is the registered share of the frame
+    (voluntary registrants plus firms registered under the rolling test);
+    above it, the share of frame enterprises that are in the VAT net at all
+    (the remainder are PAYE-only or exempt-sector businesses).
+    """
+    prop = torch.zeros_like(base_weights)
+    band_names = [
+        "Negative_or_Zero",
+        "£1_to_Threshold",
+        "£Threshold_to_£150k",
+        "£150k_to_£300k",
+        "£300k_to_£500k",
+        "£500k_to_£1m",
+        "£1m_to_£10m",
+        "Greater_than_£10m",
+    ]
+    for b in range(1, 8):
+        mask = frame_mask & (band_indices == b)
+        frame_mass = float(base_weights[mask].sum().item())
+        target = float(hmrc_bands[band_names[b]])
+        if frame_mass <= 0:
+            continue
+        p = target / frame_mass
+        if p > 1.0 + 1e-6:
+            logger.warning(
+                "Band %s: HMRC count %.0f exceeds frame mass %.0f (propensity %.3f clamped to 1)",
+                band_names[b], target, frame_mass, p,
+            )
+        prop[mask] = min(1.0, p)
+        logger.info("Registration propensity %-22s %.3f", band_names[b], min(1.0, p))
+    prop[~frame_mask] = 1.0
+    return prop
+
+
 def build_target_matrix(
     config: Config,
     turnover_values: Tensor,
@@ -170,30 +231,41 @@ def build_target_matrix(
     vat_liability_bands: dict,
     near_threshold_bins: pd.DataFrame | None = None,
     base_weights: Tensor | None = None,
+    frame_mask: Tensor | None = None,
 ) -> Tuple[Tensor, Tensor, TargetSpec]:
     """Construct the calibration target matrix and target vector.
 
     Args:
         config: Run configuration (threshold + device).
-        turnover_values: Per-firm turnover (£k).
+        turnover_values: Per-firm turnover (£k); appended HMRC negative/zero
+            traders carry exactly 0.
         sic_codes: Per-firm integer SIC sector codes.
         input_values: Per-firm input expenditure (£k).
         employment_band_indices: Per-firm ONS employment band index (0-6).
-        hmrc_bands: Latest HMRC VAT firm counts by turnover band.
-        ons_total: ONS total firms in the registered-business frame.
+        hmrc_bands: Latest HMRC VAT trader counts by turnover band (all 8).
+        ons_total: ONS enterprise count in the VAT/PAYE frame.
         hmrc_sector_df: HMRC VAT population by sector.
-        ons_employment_df: ONS employment-band table.
+        ons_employment_df: ONS enterprise counts by employment band.
         vat_liability_sector_df: HMRC VAT liability by sector (£m).
         vat_liability_bands: Latest VAT liability by turnover band (£m).
+        near_threshold_bins: OBR £1k-bin shape targets (frame rows).
+        base_weights: Per-row base weights (stratified builds); default ones.
+        frame_mask: True for ONS-frame rows, False for appended HMRC
+            negative/zero traders; default all True.
 
     Returns:
         Tuple of (target_matrix [n_targets x n_firms], target_values, spec).
+        ``spec.propensity`` holds the per-firm registration propensity and
+        ``spec.frame_mask`` the frame indicator used to build the rows.
     """
     device = config.device
     threshold = config.vat_threshold
     n_firms = len(turnover_values)
     if base_weights is None:
         base_weights = torch.ones_like(turnover_values)
+    if frame_mask is None:
+        frame_mask = torch.ones(n_firms, dtype=torch.bool, device=device)
+    frame_f = frame_mask.float()
 
     sector_rows = hmrc_sector_df[hmrc_sector_df["Trade_Sector"] != "Total"].copy()
     if config.calibrate_vat_liability_sector:
@@ -210,86 +282,62 @@ def build_target_matrix(
     target_matrix = torch.zeros(spec.n_targets, n_firms, device=device)
 
     band_indices = map_to_hmrc_bands(turnover_values, threshold)
+    propensity = registration_propensity(band_indices, frame_mask, base_weights, hmrc_bands)
+    spec.propensity = propensity
+    spec.frame_mask = frame_mask
 
-    # Expected registration status used by registered-population targets.
-    # Mandatory firms contribute one. Below-threshold firms contribute the
-    # HMRC voluntary-registration share of the base-weighted ONS frame. The
-    # final microdata use a seeded weighted selection with the same total.
-    below_mask = band_indices == 1
-    below_mass = float(base_weights[below_mask].sum().item())
-    voluntary_share = (
-        min(1.0, float(hmrc_bands["£1_to_Threshold"]) / below_mass)
-        if below_mass > 0
-        else 0.0
-    )
-    registration_propensity = torch.zeros_like(turnover_values)
-    registration_propensity[below_mask] = voluntary_share
-    registration_propensity[turnover_values > threshold] = 1.0
+    # ---- HMRC registered-subset rows -----------------------------------
+    # Rows 0-7: trader counts by turnover band (band index b -> row b).
+    for b in range(8):
+        mask = band_indices == b
+        target_matrix[spec.turnover_start + b, mask] = propensity[mask]
 
-    # Rows 0-6: turnover bands (band index 1..7 -> rows 0..6).
-    for row, band_idx in enumerate(range(1, 8)):
-        target_matrix[row, band_indices == band_idx] = 1.0
-
-    # Negative/zero-turnover firms are appended after calibration with unit
-    # weights. Target the positive-turnover base at the residual needed for
-    # the final population to equal the ONS registered-business total.
-    target_matrix[spec.population_start, :] = 1.0
-
-    # Sector targets count VAT-registered firms, not the full ONS frame. Use
-    # expected registration during differentiable calibration; generate.py
-    # realizes the same below-threshold total after weights are optimized.
+    # Sector rows count VAT-registered traders.
     for offset, (_, sector_row) in enumerate(sector_rows.iterrows()):
         sic_code = int(sector_row["Trade_Sector"])
         mask = sic_codes == sic_code
-        target_matrix[spec.sector_start + offset, mask] = registration_propensity[mask]
+        target_matrix[spec.sector_start + offset, mask] = propensity[mask]
 
-    # Employment-band targets.
-    for band_idx in range(spec.n_employment):
-        row = spec.employment_start + band_idx
-        target_matrix[row, employment_band_indices == band_idx] = 1.0
-
-    # Net VAT liability (£k) per firm = standard rate * value added
-    # = STANDARD_VAT_RATE * (turnover - input). This matches the HMRC
-    # net-VAT-liability targets, which are net of input reclaim.
+    # Net VAT liability (£k) per firm = standard rate * value added.
     vat_liability_values = STANDARD_VAT_RATE * (turnover_values - input_values)
 
-    # VAT-liability-by-sector targets (weight firms by their liability).
     for offset, (_, vat_row) in enumerate(vat_liability_sector_rows.iterrows()):
         row = spec.vat_sector_start + offset
         sic_code = int(vat_row["Trade_Sector"])
         mask = sic_codes == sic_code
-        target_matrix[row, mask] = (
-            vat_liability_values[mask] * registration_propensity[mask]
-        )
+        target_matrix[row, mask] = vat_liability_values[mask] * propensity[mask]
 
-    # VAT-liability-by-band targets.
     for offset, band_name in enumerate(VAT_LIABILITY_BANDS_CALIBRATED):
         row = spec.vat_band_start + offset
         mask = _band_membership_mask(turnover_values, band_name, threshold)
-        target_matrix[row, mask] = vat_liability_values[mask]
+        target_matrix[row, mask] = vat_liability_values[mask] * propensity[mask]
+
+    # ---- ONS frame rows --------------------------------------------------
+    target_matrix[spec.population_start, :] = frame_f
+
+    for band_idx in range(spec.n_employment):
+        row = spec.employment_start + band_idx
+        mask = (employment_band_indices == band_idx) & frame_mask
+        target_matrix[row, mask] = 1.0
 
     # Near-threshold £1k-bin membership rows (bins are (lo, lo+1], matching
-    # the coarse-band edge conventions). Target values are assembled below.
+    # the coarse-band edge conventions). SHAPE-ONLY targets on BOTH sides of
+    # the threshold: each side takes the OBR profile's within-side shape,
+    # scaled to the synthetic frame's own base-weighted mass on that side.
+    # The OBR chart counts HMRC traders (a different unit and, below the
+    # threshold, a different universe than the ONS business frame), so its
+    # LEVELS are not imported on either side; mixing direct counts on one
+    # side with frame-scaled shape on the other inverted the cross-threshold
+    # ordering. With side-consistent scaling the cross-threshold ratio is the
+    # frame's own, and the OBR data supply only the within-side profile.
     near_targets: list[float] = []
     if n_near:
-        # SHAPE-ONLY targets on BOTH sides of the threshold: each side takes
-        # the OBR profile's within-side shape, scaled to the synthetic frame's
-        # own base-weighted mass on that side. The OBR chart counts HMRC
-        # traders (a different unit and, below the threshold, a different
-        # universe than the ONS business frame), so its LEVELS are not
-        # imported on either side; mixing direct counts on one side with
-        # frame-scaled shape on the other inverted the cross-threshold
-        # ordering (more mass just above than just below - economically
-        # backwards for a liability notch). With side-consistent scaling the
-        # cross-threshold ratio is the frame's own, and the OBR data supply
-        # only the within-side profile (the rise into the threshold and the
-        # decline beyond it).
         below = near_threshold_bins[near_threshold_bins["bin_lo_k"] < threshold]
         above = near_threshold_bins[near_threshold_bins["bin_lo_k"] >= threshold]
         below_lo = float(below["bin_lo_k"].min())
         above_hi = float(above["bin_lo_k"].max()) + 1.0
-        below_mask = (turnover_values > below_lo) & (turnover_values <= threshold)
-        above_mask = (turnover_values > threshold) & (turnover_values <= above_hi)
+        below_mask = (turnover_values > below_lo) & (turnover_values <= threshold) & frame_mask
+        above_mask = (turnover_values > threshold) & (turnover_values <= above_hi) & frame_mask
         below_rows = float(base_weights[below_mask].sum().item())
         above_rows = float(base_weights[above_mask].sum().item())
         below_total = float(below["count"].sum())
@@ -297,34 +345,25 @@ def build_target_matrix(
         for offset, (_, bin_row) in enumerate(near_threshold_bins.iterrows()):
             lo = float(bin_row["bin_lo_k"])
             row = spec.near_start + offset
-            mask = (turnover_values > lo) & (turnover_values <= lo + 1.0)
+            mask = (turnover_values > lo) & (turnover_values <= lo + 1.0) & frame_mask
             target_matrix[row, mask] = 1.0
             if lo < threshold:
-                near_targets.append(
-                    float(bin_row["count"]) / below_total * below_rows
-                )
+                near_targets.append(float(bin_row["count"]) / below_total * below_rows)
             else:
-                near_targets.append(
-                    float(bin_row["count"]) / above_total * above_rows
-                )
+                near_targets.append(float(bin_row["count"]) / above_total * above_rows)
 
     # ---- Target values --------------------------------------------------
-    # £1_to_Threshold keeps the ONS structure (the base-weighted synthetic
-    # count, which equals the row count on unsampled builds); all higher
-    # bands match HMRC.
-    ons_threshold_count = float(base_weights[band_indices == 1].sum().item())
     turnover_targets = [
-        ons_threshold_count,
-        hmrc_bands["£Threshold_to_£150k"],
-        hmrc_bands["£150k_to_£300k"],
-        hmrc_bands["£300k_to_£500k"],
-        hmrc_bands["£500k_to_£1m"],
-        hmrc_bands["£1m_to_£10m"],
-        hmrc_bands["Greater_than_£10m"],
+        float(hmrc_bands["Negative_or_Zero"]),
+        float(hmrc_bands["£1_to_Threshold"]),
+        float(hmrc_bands["£Threshold_to_£150k"]),
+        float(hmrc_bands["£150k_to_£300k"]),
+        float(hmrc_bands["£300k_to_£500k"]),
+        float(hmrc_bands["£500k_to_£1m"]),
+        float(hmrc_bands["£1m_to_£10m"]),
+        float(hmrc_bands["Greater_than_£10m"]),
     ]
-    population_target = max(
-        0.0, float(ons_total) - float(hmrc_bands["Negative_or_Zero"])
-    )
+    population_target = float(ons_total)
 
     # Value column is the (single) year column, always the last column —
     # year-agnostic so the 2023-24 / 2024-25 vintages both work.
@@ -339,7 +378,6 @@ def build_target_matrix(
     ]
 
     # VAT liability targets are in £m in the source; convert to £k.
-    # Value column is the (single) year column, always last — year-agnostic.
     vat_liability_sector_targets = [
         float(r.iloc[-1]) * 1000.0 for _, r in vat_liability_sector_rows.iterrows()
     ]
@@ -360,7 +398,7 @@ def build_target_matrix(
 
     logger.info("Target matrix shape: %s", tuple(target_matrix.shape))
     logger.info(
-        "Targets: 7 turnover + 1 population + %d sector + %d employment + %d VAT-liability sector "
+        "Targets: 8 turnover + 1 population + %d sector + %d employment + %d VAT-liability sector "
         "+ %d VAT-liability band + %d near-threshold = %d",
         spec.n_sectors,
         spec.n_employment,
@@ -368,6 +406,12 @@ def build_target_matrix(
         spec.n_vat_bands,
         spec.n_near,
         spec.n_targets,
+    )
+    logger.info(
+        "Universe check: employment targets sum %.0f vs population target %.0f; "
+        "HMRC band targets sum %.0f vs sector targets sum %.0f",
+        sum(employment_targets), population_target,
+        sum(turnover_targets), sum(sector_targets),
     )
     return target_matrix, target_values, spec
 
@@ -403,7 +447,7 @@ def optimize_weights(
     """Optimize per-firm weights to match all targets simultaneously.
 
     Minimizes a mean symmetric-relative-error loss with per-target importance
-    weights, Adam, dropout regularization, a mean absolute log-weight penalty,
+    weights, Adam, inverted dropout regularization, a mean absolute log-weight penalty,
     gradient clipping, and early stopping. Weights are parameterized as
     ``exp(log_w)`` to remain strictly positive.
 
@@ -489,6 +533,7 @@ def optimize_weights(
 
     logger.info("Optimization complete. Turnover-band fit:")
     band_names = [
+        "Negative_or_Zero",
         "£1_to_Threshold",
         "£Threshold_to_£150k",
         "£150k_to_£300k",

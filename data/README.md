@@ -49,7 +49,19 @@ threshold automatically. The default is `2023-24`.
 
 The raw workbooks are the authoritative inputs. Everything in `processed/` is a
 faithful extract of tables inside those workbooks (no modelling applied), kept as
-CSV so the package can read them without an Excel engine.
+CSV so the package can read them without an Excel engine. The two ONS tables per
+vintage are produced by `scripts/etl_ons_tables.py` (run `--check` to verify the
+checked CSVs against the workbooks); the HMRC tables are manual extracts of the
+named sheets described below.
+
+### Statistical units and universes
+
+Both ONS tables count **enterprises** (Table 8: turnover sizebands; Table 3:
+employment sizebands), so their per-SIC totals agree to ONS disclosure rounding.
+An earlier 2023-24 employment CSV reproduced Table 18 — **local units**, i.e.
+individual sites (3,173,660 against 2,724,775 enterprises) — and was replaced in
+issue #37. The generator treats the ONS frame as the modelled population and the
+HMRC trader tables as its VAT-registered subset (see the top-level README).
 
 ### 2024-25 band re-aggregation note
 
@@ -98,8 +110,9 @@ liability cells are negative (net repayment positions).
 
 ### `ons_firm_turnover.csv`
 
-Count of enterprises by SIC sector and **turnover band (£ thousands)**, from the
-ONS UK Business 2024 workbook.
+Count of enterprises by SIC division and **turnover band (£ thousands)**, from
+**Table 8** (United Kingdom columns) of the ONS UK Business workbook for the
+vintage.
 
 - Columns: `SIC Code`, `Description`, then one count column per turnover band,
   then `Total`.
@@ -115,8 +128,9 @@ ONS UK Business 2024 workbook.
 
 ### `ons_firm_employment.csv`
 
-Count of enterprises by SIC sector and **employment size band (number of
-employees)**, from the ONS UK Business 2024 workbook.
+Count of enterprises by SIC division and **employment size band (number of
+employees)**, from **Table 3** (United Kingdom columns) of the ONS UK Business
+workbook for the vintage.
 
 - Columns: `SIC Code`, `Description`, then one count column per employment band,
   then `Total`.

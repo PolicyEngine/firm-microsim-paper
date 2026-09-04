@@ -31,6 +31,7 @@ from .model import (
     crosscheck,
     load_reform_data,
     marginal_buncher,
+    marginal_buncher_iso,
     reform_revenue,
 )
 
@@ -83,16 +84,23 @@ def main(argv=None):
                  "(headline 0.17).")
     lines.append("Ability n is an accounting anchor recovered under the £85k notch "
                  "given e; e is")
-    lines.append("NOT identified from the synthetic data (see the placebo) — read "
-                 "results as")
-    lines.append("CONDITIONAL on the assumed e.")
+    lines.append("NOT identified from the synthetic data — read results as "
+                 "CONDITIONAL on the assumed e.")
+    lines.append("Liabilities are in-scope only: out-of-scope (PAYE-only/exempt) "
+                 "enterprises remit nothing (issue #37).")
     lines.append("=" * 78)
 
     # --- Analytic marginal buncher n_H(e). ----------------------------------
-    lines.append("\nMarginal buncher n_H(e) [analytic; £]:")
+    lines.append("\nMarginal buncher n_H(e, delta) [analytic; £]. delta = deductible-input")
+    lines.append("share: it scales revenue but not own-factor cost, so n_H rises with delta;")
+    lines.append("delta=0 is the turnover-tax solve, 0.6 the population mean input share.")
     for e in elasticities:
         nH, dy = marginal_buncher(e)
-        row = f"  e={e:<5} n_H=£{nH/1000:7.1f}k   dy*=£{dy/1000:6.1f}k"
+        parts = [f"  e={e:<5} n_H(delta=0)=£{nH/1000:6.1f}k  dy*=£{dy/1000:5.1f}k"]
+        for d in (0.4, 0.6):
+            nH_d, _ = marginal_buncher_iso(e, delta=d)
+            parts.append(f"n_H(delta={d})=£{nH_d/1000:6.1f}k")
+        row = "   ".join(parts)
         print(row)
         lines.append(row)
 
@@ -131,24 +139,18 @@ def main(argv=None):
         if args.behavioural and E_HEADLINE in beh:
             fig_reform_distribution(df, beh[E_HEADLINE], label, E_HEADLINE)
 
-    # Direction-of-e note.
+    # Direction-of-e note, derived from the table above rather than asserted.
     lines.append("")
-    lines.append("Direction: a LARGER e makes every reform CHEAPER (smaller "
-                 "revenue loss). Each")
-    lines.append("reform lowers the effective rate on the band, so the "
-                 "iso-elastic response scales")
-    lines.append("turnover UP toward the firm's frictionless optimum "
-                 "(y* = y_obs*((1-tau_reform)/(1-tau_base))^e > y_obs), widening "
-                 "the taxed base;")
-    lines.append("the larger e, the larger this base-broadening offset to the "
-                 "static cost.")
-    lines.append("NOTE: the taper figure captures this intensive base-broadening "
-                 "only; it omits the")
-    lines.append("taper's marginal-rate distortion (the iso-elastic cost cannot "
-                 "credibly price the")
-    lines.append("downward response a taper induces), so the taper's behavioural "
-                 "cost is a lower")
-    lines.append("bound on its true cost. See Section 7 of the paper.")
+    lines.append("Reading: the raise row is flat in e by construction of the "
+                 "region-confined solve")
+    lines.append("(released firms leave the base; no other firm's rate changes). "
+                 "Reduced-rate bands")
+    lines.append("get cheaper as e rises: band firms scale turnover up by "
+                 "((1-tau f1)/(1-tau f0))^e,")
+    lines.append("widening the taxed base. The tapers have no behavioural row: "
+                 "their rate varies")
+    lines.append("continuously with turnover, outside the region-confined "
+                 "flat-rate solve.")
 
     # Notch-fit figure (observed density + dominated region + n_H) per e.
     for e in elasticities:

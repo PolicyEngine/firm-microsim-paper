@@ -1,9 +1,9 @@
 """Calibration-accuracy validation against ONS + HMRC targets.
 
-Ports the validation summary of the original generator: compares the
-weighted synthetic population against HMRC turnover bands, the ONS total,
-ONS employment bands, HMRC sector counts, and HMRC VAT-liability targets
-(by sector and by band). Reporting uses the logging framework.
+Compares the weighted synthetic population against its targets on the two
+declared universes (issue #37): HMRC turnover bands, sector counts and
+VAT-liability targets are scored on VAT-registered rows; the ONS total and
+employment bands on ONS-frame rows. Reporting uses the logging framework.
 
 Band edges are driven by the single configurable VAT threshold.
 """
@@ -134,19 +134,25 @@ def validate(
     df["vat_liability_k"] = STANDARD_VAT_RATE * (df["annual_turnover_k"] - df["annual_input_k"])
     df["sic_numeric"] = df["sic_code"].astype(int)
     df["weighted_liability_m"] = df["vat_liability_k"] * df["weight"] / 1000.0
-    all_bands = df.groupby("hmrc_band")["weight"].sum()
+    # Two universes (issue #37): HMRC margins are scored on VAT-registered
+    # rows; ONS margins on ONS-frame rows (appended negative/zero-turnover
+    # traders are outside the frame).
+    if "in_frame" in df.columns:
+        frame = df[df["in_frame"].astype(bool)]
+    else:  # legacy files: appended rows carry exactly zero turnover
+        frame = df[df["annual_turnover_k"] > 0]
+    vat_registered = df[df["vat_registered"].astype(bool)]
+    reg_bands = vat_registered.groupby("hmrc_band")["weight"].sum()
 
-    # --- HMRC turnover-band accuracy (excludes the ONS-based threshold band).
+    # --- HMRC turnover-band accuracy: registered traders, all 8 bands.
     hmrc_accs: List[float] = []
     for band_name, target in data.hmrc_bands.items():
-        synth = float(all_bands.get(band_name, 0.0))
-        if band_name == "£1_to_Threshold":
-            continue  # ONS-based, not an HMRC calibration target
+        synth = float(reg_bands.get(band_name, 0.0))
         hmrc_accs.append(_accuracy(synth, float(target)))
     hmrc_accuracy = float(np.mean(hmrc_accs)) if hmrc_accs else 0.0
 
-    # --- ONS total population accuracy.
-    total_weighted = float(df["weight"].sum())
+    # --- ONS frame population accuracy.
+    total_weighted = float(frame["weight"].sum())
     ons_accuracy = _accuracy(total_weighted, float(data.ons_total))
 
     # --- Employment-band accuracy.
@@ -159,8 +165,8 @@ def validate(
         else 0.0
         for band in EMPLOYMENT_BANDS
     }
-    df["employment_band"] = df["employment"].apply(_employment_band_name)
-    synth_emp = df.groupby("employment_band")["weight"].sum()
+    frame = frame.assign(employment_band=frame["employment"].apply(_employment_band_name))
+    synth_emp = frame.groupby("employment_band")["weight"].sum()
     emp_accs = [
         _accuracy(float(synth_emp.get(band, 0.0)), emp_targets[band])
         for band in EMPLOYMENT_BANDS
@@ -171,7 +177,6 @@ def validate(
     sector_rows = data.hmrc_population_sector[
         data.hmrc_population_sector["Trade_Sector"] != "Total"
     ]
-    vat_registered = df[df["vat_registered"]]
     synth_sector = vat_registered.groupby("sic_numeric")["weight"].sum()
     sector_accs = [
         _accuracy(
@@ -185,7 +190,7 @@ def validate(
     liab_sector_rows = data.hmrc_liability_sector[
         data.hmrc_liability_sector["Trade_Sector"] != "Total"
     ]
-    synth_liab_sector = df.groupby("sic_numeric")["weighted_liability_m"].sum()
+    synth_liab_sector = vat_registered.groupby("sic_numeric")["weighted_liability_m"].sum()
     liab_sector_accs = [
         _accuracy(
             float(synth_liab_sector.get(int(r["Trade_Sector"]), 0.0)),
@@ -243,6 +248,7 @@ def validate(
         "VAT Liability by Sector: %.1f%%  [informational, NOT calibrated]",
         report.vat_liability_sector * 100,
     )
-    logger.info("Total Population:        %s firms", f"{total_weighted:,.0f}")
+    logger.info("ONS-frame population:    %s firms (all rows %s)",
+                f"{total_weighted:,.0f}", f"{float(df['weight'].sum()):,.0f}")
 
     return report

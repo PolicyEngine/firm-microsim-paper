@@ -307,12 +307,15 @@ class BunchingEstimator:
     :meth:`estimate`, :meth:`bootstrap`, :meth:`summary`, or :meth:`sensitivity`.
     """
 
-    def __init__(self, vintage: str = "2023-24") -> None:
+    def __init__(self, vintage: str = "2023-24", *, scope_only: bool = False) -> None:
         """Load the synthetic population for ``vintage``.
 
         The threshold ``t_star`` is taken from
         ``firm_microsim.config.VINTAGES[vintage]["threshold"]`` -- never
         hardcoded. The population is filtered to ``[RANGE_LO, RANGE_HI]``.
+        With ``scope_only`` the density is that of in-scope VAT firms
+        (``vat_scope``); by default it is the whole ONS-frame density, the
+        universe on which the near-threshold shape targets are applied.
         """
         self.vintage = vintage
         if vintage not in VINTAGES:
@@ -327,7 +330,11 @@ class BunchingEstimator:
                 f"  python -m firm_microsim --vintage {vintage} "
                 f"--output synthetic_firms_{vintage}.csv"
             )
-        firms = pd.read_csv(path, usecols=["annual_turnover_k", "weight"])
+        cols = ["annual_turnover_k", "weight"] + (["vat_scope"] if scope_only else [])
+        firms = pd.read_csv(path, usecols=cols)
+        if scope_only:
+            firms = firms[firms["vat_scope"].astype(bool)]
+        self.scope_only = scope_only
         firms = firms[
             (firms["annual_turnover_k"] >= RANGE_LO)
             & (firms["annual_turnover_k"] <= RANGE_HI)

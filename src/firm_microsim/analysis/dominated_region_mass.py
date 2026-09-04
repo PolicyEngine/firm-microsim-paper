@@ -83,8 +83,10 @@ def main() -> None:
     t_star = float(NotchModel(VINTAGE).t_star)  # 85.0 (£k), from VINTAGES config
 
     # --- Build observed + mass-conserving counterfactual densities ----------
-    est = BunchingEstimator(VINTAGE)
-    res = est.estimate()  # full reduced-form bunching solve (E, y_R, ...)
+    # Exposure counts are for firms that face the notch: in-scope VAT firms
+    # (issue #37). Out-of-scope enterprises are not liable at any turnover.
+    est = BunchingEstimator(VINTAGE, scope_only=True)
+    res = est.estimate()  # reduced-form solve on the in-scope density
     centres = res["centres"]
     f_obs = res["f_obs"]
     f_cf = res["f_cf"]
@@ -163,15 +165,16 @@ def main() -> None:
     W("=" * 74)
     W("")
     W("Dominated region (Kleven-Waseem):  a = T* * tau/(1-tau)")
-    W("Bands measured on the WEIGHTED synthetic firm population.")
+    W("Bands measured on the WEIGHTED in-scope (VAT-liable) synthetic firms;")
+    W("  out-of-scope PAYE-only/exempt enterprises face no notch and are excluded.")
     W("  OBS uses exact band masks on the microdata; CF integrates the binned")
     W("  counterfactual with fractional edge-bin overlap.")
     W("  OBS = observed weighted firms in band")
     W("  CF  = weighted firms the mass-conserving no-bunching counterfactual")
     W("        density places in band  (total smooth density across the band)")
-    W("  NET = CF - OBS = net MISSING (notch-displaced) mass in the band; this")
-    W("        is the firms the notch removed from the dominated region -- the")
-    W("        quantity with empirical bite, consistent with excess mass E.")
+    W("  NET = CF - OBS: positive = mass the counterfactual places in the band")
+    W("        beyond what is observed (missing/displaced); NEGATIVE = observed")
+    W("        surplus over the smooth counterfactual (no displacement read).")
     W("")
     hdr = (f"{'rate / band':<22}{'width a (GBP)':>14}{'band (GBP k)':>18}"
            f"{'OBS':>12}{'CF':>12}{'NET disp.':>12}")

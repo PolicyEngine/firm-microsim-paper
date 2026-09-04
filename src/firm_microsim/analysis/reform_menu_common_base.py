@@ -60,12 +60,14 @@ BAND_TOP = 105000.0       # taper / reduced-rate band top
 TABLE_LABELS = {
     "raise100k": "Raise threshold to GBP100,000",
     "taper": "Graduated taper [85k,141.7k]",
+    "taper_flat50": "Flat 50% marginal taper [85k,141.7k]",
     "rate10": "Reduced rate 10% [85k,105k]",
     "rate15": "Reduced rate 15% [85k,105k]",
 }
 LEVERS = {
     "raise100k": "Location",
     "taper": "Shape (phase-in)",
+    "taper_flat50": "Shape (constant marginal)",
     "rate10": "Rate (step)",
     "rate15": "Rate (step)",
 }
@@ -107,7 +109,11 @@ def main():
             "  firm-microsim --vintage 2023-24 --output synthetic_firms_2023-24.csv"
         )
 
-    df = pd.read_csv(data, usecols=["annual_turnover_k", "vat_liability_k", "weight"])
+    df = pd.read_csv(
+        data, usecols=["annual_turnover_k", "vat_liability_k", "weight", "vat_scope"]
+    )
+    # In-scope firms only (issue #37): out-of-scope enterprises never remit.
+    df = df[df["vat_scope"].astype(bool)].reset_index(drop=True)
     tk = df["annual_turnover_k"].to_numpy()          # GBP thousand
     t = tk * 1000.0                                   # GBP
     liab = df["vat_liability_k"].to_numpy() * 1000.0  # GBP
@@ -151,7 +157,7 @@ def main():
     p("REFORM MENU ON A SINGLE COMMON BASE  (tab:schedule_costs)")
     p("Base: GBP85k notch, 2023-24 microdata, UNAGED")
     p("=" * 72)
-    p(f"Dataset            : {display_path(data)}")
+    p(f"Dataset            : {display_path(data)}  (in-scope VAT firms only)")
     p(f"VAT base (>=85k)   : GBP {base_bn:.3f} bn")
     p(f"Firms in [85k,105k): {firms_band_85_105:,.0f}")
     p("")
@@ -165,7 +171,7 @@ def main():
       f"{rev_direct_m:+.0f} m   firms {firms_direct_k:+.1f} (000s)")
     p("")
     p("--- Schedule reforms (computed on the SAME repo-generated base) -----")
-    for key in ["taper", "rate10", "rate15"]:
+    for key in ["taper", "taper_flat50", "rate10", "rate15"]:
         row = static_rows[key]
         p(f"  {TABLE_LABELS[key]:<33}:  {row['cost_m']:+.1f} m   "
           f"affected firms {row['firms_k']:+.1f} (000s)")
@@ -173,10 +179,10 @@ def main():
     p("=" * 72)
     p("CORRECTED tab:schedule_costs  (repo-generated GBP85k, 2023-24 unaged)")
     p("=" * 72)
-    p(f"{'Reform':<42}{'Lever':<18}{'Static (GBPm)':>14}")
-    p("-" * 74)
-    for key in ["raise100k", "taper", "rate10", "rate15"]:
-        p(f"{TABLE_LABELS[key]:<42}{LEVERS[key]:<18}"
+    p(f"{'Reform':<42}{'Lever':<26}{'Static (GBPm)':>14}")
+    p("-" * 82)
+    for key in ["raise100k", "taper", "taper_flat50", "rate10", "rate15"]:
+        p(f"{TABLE_LABELS[key]:<42}{LEVERS[key]:<26}"
           f"{round(static_rows[key]['cost_m']):>14d}")
     p("=" * 72)
     p("")

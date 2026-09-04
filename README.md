@@ -41,15 +41,25 @@ threshold:
    and intermediate inputs. These within-band values are explicit modelling
    assumptions, not recovered administrative microdata.
 2. **Calibrate firm weights** by multi-objective optimisation (Adam, symmetric
-   relative-error loss) so weighted totals reproduce the official targets — HMRC
-   VAT-registered counts by turnover band and by sector, ONS employment-band
-   totals, and HMRC VAT-liability totals — with turnover bands weighted most
-   heavily. VAT registration is then assigned: mandatory above the threshold,
-   voluntary below at the HMRC-calibrated rate.
+   relative-error loss) on **two declared universes** (issue #37):
+   - the **ONS VAT/PAYE enterprise frame** (~2.72M enterprises): the population
+     total, the employment-band totals and the OBR near-threshold shape;
+   - the **HMRC VAT-registered subset** (~2.18M traders): trader counts by
+     turnover band and by trade sector, and net VAT liability by band. Each
+     frame firm enters these rows with a *registration propensity* — the HMRC
+     count in its turnover band divided by the frame's mass in that band
+     (0.89 below the threshold; 0.51–1.00 above it, the remainder being
+     PAYE-only or exempt-sector enterprises outside the VAT net). HMRC
+     negative/zero-turnover traders are appended before calibration as an
+     out-of-frame stratum.
 
-The result is ~2.94M firm rows weighted to ~2.5M UK firms. Because the population
-is calibrated **to** the HMRC aggregates, agreement with them is an internal
-consistency check, not external validation.
+   VAT **scope** and **registration** flags are then assigned by seeded weighted
+   selection per band so registered totals match HMRC to within one weight.
+
+The result is ~3.16M firm rows (2.94M frame draws plus 0.22M appended traders)
+weighted to ~2.72M frame enterprises, of which ~2.18M are VAT-registered.
+Because the population is calibrated **to** the HMRC aggregates, agreement
+with them is an internal consistency check, not external validation.
 
 The official target surface is also being mirrored into PolicyEngine Ledger and
 Populace. This repository keeps the paper's archived CSV inputs and generator for
@@ -102,7 +112,15 @@ df, report = firm_microsim.generate(return_report=True)
 
 Output is written to `data/synthetic/synthetic_firms.csv`
 (`sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
-weight, vat_registered`).
+weight, vat_scope, vat_registered, in_frame`). `in_frame` marks ONS-frame
+enterprises; `vat_scope` marks firms in the VAT net (registered above the
+threshold, registrable below it); `vat_registered` marks HMRC-count-matched
+traders. Static and behavioural costings use in-scope firms only.
+
+The processed ONS tables are rebuilt from the raw workbooks by
+`scripts/etl_ons_tables.py` (Table 8 for turnover sizebands, Table 3 for
+employment sizebands, both counting enterprises); `--check` fails if a checked
+CSV differs from the extract, and `tests/test_data_universes.py` runs it.
 
 ## Paper
 
@@ -143,7 +161,8 @@ the manuscript without changing the computational results.
 
 The population is calibrated to **five** official ONS + HMRC target groups; the
 validator scores each dimension as
-`accuracy = max(0, 1 − |synthetic − target| / |target|)`. The displayed error is
+`accuracy = max(0, 1 − |synthetic − target| / |target|)`, HMRC dimensions on
+VAT-registered rows and ONS dimensions on frame rows. The displayed error is
 the clipped complement of that score, not a signed relative error. **Overall**
 is the simple mean over the five calibrated dimensions below.
 Reproduce with:
@@ -291,14 +310,14 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
   sweep of registration thresholds (£70k–£120k) vs the current £90k baseline,
   **on the £90k / 2024-25 vintage**.
 
-**Two vintages, two exercises.** The anchor reform uses the £85k vintage, where
-the affected `[85,90)k` band sits *above* the £85k registration threshold and is
-cleanly populated with registered firms — so a **simple band-sum** suffices (no
-de-bunching). The forward sweep uses the current £90k vintage; there the
-`[85,90)k` firms are *below* threshold and the calibration concentrates weight
-on them, so the sweep instead fits the clean above-threshold firm/liability
-profile and extrapolates it across the threshold
-(`StaticVATModel._counterfactual_bins`, unaged turnover scaled to the fiscal
-year by a nominal-growth factor). Revenue and the anchor reform match the paper
-and HMRC closely; the forward-sweep firm-count magnitudes run low because the
-regenerated population has a lower near-threshold VAT-paying-firm density.
+**Two vintages, two exercises, one convention.** The anchor reform uses the
+£85k vintage, where the affected `[85,90)k` band sits *above* the £85k
+registration threshold and is cleanly populated with in-scope registered firms,
+so a direct band-sum suffices. The forward sweep uses the current £90k vintage
+and is likewise a direct mechanical reclassification of in-scope firms
+(`StaticVATModel.threshold_sweep`); baseline voluntary registrants stay
+registered under every counterfactual threshold, and out-of-scope enterprises
+never remit. In both exercises turnover **and** liability are aged to the
+fiscal year by the same nominal-growth factor (relative to each vintage's own
+data year), so band membership is evaluated on aged turnover — the fiscal-drag
+convention. `results/static_sweep.txt` holds the machine-readable table.

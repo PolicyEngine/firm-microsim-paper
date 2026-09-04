@@ -9,25 +9,29 @@ population, calibrated to official statistics:
     source bands. Draw input expenditure (Beta-distributed input/output ratios
     with sector-specific shifts) and sector-conditional employment.
 
-    Stage 2 — Calibrate per-firm weights via multi-objective optimization so
-    the *weighted* population simultaneously matches **HMRC VAT Annual
-    Statistics** (firm counts by turnover band and by sector, net VAT liability
-    by band and by sector) and ONS employment-band counts. Turnover bands are
-    weighted ~5x; VAT-liability-by-band 2x. A symmetric-relative-error loss
-    balances targets across scales. Below-threshold zero/negative-turnover
-    firms are added manually from the HMRC Negative_or_Zero target. VAT
-    liability by sector is reported as an informational diagnostic rather than
-    optimized by default because the input/output tax structure is not yet a
-    calibrated target.
+    Stage 2 — Calibrate per-firm weights via multi-objective optimization on
+    TWO declared universes (issue #37): the ONS VAT/PAYE enterprise frame
+    (population, employment bands, near-threshold shape) and the HMRC
+    VAT-registered subset (trader counts by turnover band and by sector, net
+    VAT liability by band), the latter entering through a per-band
+    registration propensity. HMRC negative/zero-turnover traders are appended
+    before calibration as an out-of-frame stratum. Turnover bands are weighted
+    ~5x; VAT-liability-by-band 2x. A symmetric-relative-error loss balances
+    targets across scales. VAT liability by sector is reported as an
+    informational diagnostic rather than optimized by default because the
+    input/output tax structure is not yet a calibrated target.
 
-VAT registration is then assigned: mandatory above the (single, configurable)
-VAT threshold, plus a seeded weighted selection below it that matches HMRC's
-£1_to_Threshold registered count to within one calibration weight.
+VAT scope and registration are then assigned by seeded weighted selection per
+HMRC band so registered totals match HMRC to within one calibration weight
+(see :func:`assign_vat_flags`).
 
 Output: ~2.94M rows with calibration weights, written to
 ``data/synthetic/synthetic_firms.csv`` with columns
 ``sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
-weight, vat_registered``. (A ``productivity`` column is added downstream.)
+weight, vat_scope, vat_registered, in_frame``. ``in_frame`` marks ONS-frame
+enterprises (False for the appended HMRC negative/zero-turnover traders);
+``vat_scope`` marks firms in the VAT net (registered above the threshold, or
+registrable below it); ``vat_registered`` marks HMRC-count-matched traders.
 
 Sources:
     * ONS Business Structure Database (firm counts by turnover & employment).
@@ -339,63 +343,110 @@ def stratified_thin(
     return keep_idx, base_kept
 
 
+def _select_to_weighted_target(
+    candidate_idx: Tensor, weights: Tensor, target: float, device: str
+) -> Tensor:
+    """Seeded random order of ``candidate_idx`` until cumulative weight >= target."""
+    if len(candidate_idx) == 0 or target <= 0:
+        return candidate_idx[:0]
+    order = candidate_idx[torch.randperm(len(candidate_idx), device=device)]
+    cumulative = torch.cumsum(weights[order], dim=0)
+    cutoff = int(torch.searchsorted(cumulative, torch.tensor(float(target))).item())
+    cutoff = min(cutoff, len(order) - 1)
+    return order[: cutoff + 1]
+
+
 def assign_vat_flags(
     turnover_values: Tensor,
     hmrc_bands: Dict[str, float],
     config: Config,
     calibration_weights: Tensor | None = None,
-) -> Tensor:
-    """Assign VAT registration flags.
+    frame_mask: Tensor | None = None,
+) -> tuple[Tensor, Tensor]:
+    """Assign VAT scope and registration flags to match HMRC trader counts.
 
-    Mandatory above the configurable threshold; voluntary below it. When final
-    calibration weights are supplied, below-threshold firms are selected in a
-    seeded random order until their cumulative weight reaches the HMRC target.
+    Two universes (issue #37). Every ONS-frame row is an enterprise; only a
+    subset are VAT traders. ``vat_scope`` marks firms in the VAT net:
 
-    Args:
-        turnover_values: Per-firm turnover (£k).
-        hmrc_bands: HMRC band targets (provides the £1_to_Threshold count).
-        config: Run configuration (threshold + device).
+    * above the threshold, a seeded weighted selection per HMRC turnover band
+      whose cumulative calibration weight reaches that band's HMRC count (the
+      remainder are PAYE-only or exempt-sector enterprises, out of scope);
+    * below the threshold, every frame enterprise is treated as registrable
+      (scope = True) — a maintained assumption, since HMRC publishes only the
+      registered count there — and a seeded weighted selection reaching the
+      HMRC ``£1_to_Threshold`` count is flagged registered (voluntary, or
+      registered under the rolling test);
+    * appended negative/zero-turnover rows (``frame_mask`` False) are HMRC
+      traders by construction: in scope and registered.
 
-    Returns:
-        Boolean tensor of VAT-registration status.
+    ``vat_registered`` = (scope and turnover > threshold) or selected below or
+    appended. Weighted totals match HMRC to within one calibration weight per
+    band.
+
+    Returns ``(vat_scope, vat_registered)`` as boolean tensors.
     """
-    logger.info("Assigning VAT registration flags...")
+    logger.info("Assigning VAT scope and registration flags...")
     threshold = config.vat_threshold
     device = config.device
-
-    below = (turnover_values > 0) & (turnover_values <= threshold)
+    n = len(turnover_values)
     weights = (
         calibration_weights
         if calibration_weights is not None
         else torch.ones_like(turnover_values)
     )
+    if frame_mask is None:
+        frame_mask = torch.ones(n, dtype=torch.bool, device=device)
+
+    from .calibration import map_to_hmrc_bands
+
+    band_indices = map_to_hmrc_bands(turnover_values, threshold)
+    band_names = [
+        "Negative_or_Zero", "£1_to_Threshold", "£Threshold_to_£150k",
+        "£150k_to_£300k", "£300k_to_£500k", "£500k_to_£1m", "£1m_to_£10m",
+        "Greater_than_£10m",
+    ]
+
+    scope = torch.zeros(n, dtype=torch.bool, device=device)
+    registered = torch.zeros(n, dtype=torch.bool, device=device)
+
+    # Appended HMRC traders: in scope, registered.
+    scope[~frame_mask] = True
+    registered[~frame_mask] = True
+
+    # Below the threshold: all frame rows registrable; HMRC count registered.
+    below = frame_mask & (band_indices == 1)
+    scope[below] = True
+    target_below = float(hmrc_bands.get("£1_to_Threshold", 0.0))
+    chosen = _select_to_weighted_target(torch.where(below)[0], weights, target_below, device)
+    registered[chosen] = True
     n_below = float(weights[below].sum().item())
-    target_below = float(hmrc_bands["£1_to_Threshold"])
-    voluntary_rate = target_below / n_below if n_below > 0 else 0.15
     logger.info(
-        "Voluntary VAT weighted rate: %.3f (target %s / weighted rows %s)",
-        voluntary_rate,
-        f"{target_below:,.0f}",
-        f"{n_below:,.0f}",
+        "Below-threshold registered share: %.3f (HMRC %s / weighted frame %s)",
+        target_below / n_below if n_below > 0 else float("nan"),
+        f"{target_below:,.0f}", f"{n_below:,.0f}",
     )
 
-    mandatory = turnover_values > threshold
-    voluntary = torch.zeros_like(below)
-    candidate_idx = torch.where(below)[0]
-    if len(candidate_idx) > 0:
-        order = candidate_idx[torch.randperm(len(candidate_idx), device=device)]
-        cumulative = torch.cumsum(weights[order], dim=0)
-        cutoff = int(torch.searchsorted(cumulative, target_below).item())
-        cutoff = min(cutoff, len(order) - 1)
-        voluntary[order[: cutoff + 1]] = True
-    vat_registered = mandatory | voluntary
+    # Above the threshold: in-scope selection per band to the HMRC count.
+    for b in range(2, 8):
+        cand = frame_mask & (band_indices == b)
+        target = float(hmrc_bands.get(band_names[b], 0.0))
+        chosen = _select_to_weighted_target(torch.where(cand)[0], weights, target, device)
+        scope[chosen] = True
+        registered[chosen] = True
+        mass = float(weights[cand].sum().item())
+        logger.info(
+            "  %-22s in-scope %s of %s weighted frame firms (%.3f)",
+            band_names[b], f"{target:,.0f}", f"{mass:,.0f}",
+            target / mass if mass > 0 else float("nan"),
+        )
+
     logger.info(
-        "VAT: %d mandatory + %d voluntary = %d registered",
-        int(mandatory.sum().item()),
-        int(voluntary.sum().item()),
-        int(vat_registered.sum().item()),
+        "VAT: %s in scope, %s registered (weighted %s)",
+        f"{int(scope.sum().item()):,}",
+        f"{int(registered.sum().item()):,}",
+        f"{float(weights[registered].sum().item()):,.0f}",
     )
-    return vat_registered
+    return scope, registered
 
 
 def _add_zero_turnover_firms(
@@ -406,7 +457,13 @@ def _add_zero_turnover_firms(
     hmrc_bands: Dict[str, float],
     device: str,
 ) -> tuple[Tensor, Tensor, Tensor, Tensor]:
-    """Append HMRC Negative_or_Zero firms, allocated by sector share."""
+    """Append HMRC Negative_or_Zero traders, allocated by sector share.
+
+    Appended BEFORE calibration (issue #37): the rows enter the optimiser with
+    unit base weights, contribute to the HMRC registered-subset rows with
+    propensity one, and are excluded from the ONS-frame rows (population,
+    employment, near-threshold shape) through ``frame_mask``.
+    """
     target = int(hmrc_bands["Negative_or_Zero"])
     if target <= 0:
         return sic_codes, turnover, input_values, weights
@@ -523,19 +580,31 @@ def generate(
     else:
         base_weights = torch.ones_like(base_turnover)
 
-    # Temporary per-firm employment-band assignment for the target matrix.
-    tmp_emp = assign_employment(base_sic, data.ons_employment, cfg.device)
+    # Append the HMRC negative/zero-turnover traders BEFORE calibration so
+    # every target row sees the same rows (issue #37). They are outside the
+    # ONS frame (frame_mask False) and inside the HMRC registered subset.
+    n_frame = len(base_turnover)
+    final_sic, final_turnover, final_input, final_base_weights = _add_zero_turnover_firms(
+        base_sic, base_turnover, base_input, base_weights, data.hmrc_bands, cfg.device
+    )
+    frame_mask = torch.zeros(len(final_turnover), dtype=torch.bool, device=cfg.device)
+    frame_mask[:n_frame] = True
+
+    # Per-firm employment assignment used by the target matrix AND retained in
+    # the output. Earlier versions redrew it after optimisation, invalidating
+    # the employment target rows.
+    employment = assign_employment(final_sic, data.ons_employment, cfg.device)
     emp_band_idx = torch.tensor(
-        [_employment_band_index(e.item()) for e in tmp_emp],
+        [_employment_band_index(e.item()) for e in employment],
         dtype=torch.long,
         device=cfg.device,
     )
 
     target_matrix, target_values, spec = build_target_matrix(
         cfg,
-        base_turnover,
-        base_sic,
-        base_input,
+        final_turnover,
+        final_sic,
+        final_input,
         emp_band_idx,
         data.hmrc_bands,
         data.ons_total,
@@ -544,24 +613,17 @@ def generate(
         data.hmrc_liability_sector,
         data.vat_liability_bands,
         near_threshold_bins=getattr(data, "near_threshold_bins", None),
-        base_weights=base_weights,
+        base_weights=final_base_weights,
+        frame_mask=frame_mask,
     )
 
-    weights = optimize_weights(
-        cfg, target_matrix, target_values, spec, base_weights=base_weights
+    final_weights = optimize_weights(
+        cfg, target_matrix, target_values, spec, base_weights=final_base_weights
     )
 
-    final_sic, final_turnover, final_input, final_weights = _add_zero_turnover_firms(
-        base_sic, base_turnover, base_input, weights, data.hmrc_bands, cfg.device
-    )
-
-    # Preserve the exact employment assignments used by calibration. Earlier
-    # versions redrew them here, invalidating the employment target matrix.
-    n_extra = len(final_turnover) - len(base_turnover)
-    extra_emp = assign_employment(final_sic[-n_extra:], data.ons_employment, cfg.device)
-    employment = torch.cat([tmp_emp, extra_emp]) if n_extra else tmp_emp
-    vat_flags = assign_vat_flags(
-        final_turnover, data.hmrc_bands, cfg, calibration_weights=final_weights
+    vat_scope, vat_flags = assign_vat_flags(
+        final_turnover, data.hmrc_bands, cfg,
+        calibration_weights=final_weights, frame_mask=frame_mask,
     )
 
     logger.info("Assembling final DataFrame...")
@@ -577,7 +639,9 @@ def generate(
             "vat_liability_k": STANDARD_VAT_RATE * (turnover_np - input_np),
             "employment": employment.cpu().numpy().astype(int),
             "weight": final_weights.cpu().numpy(),
+            "vat_scope": vat_scope.cpu().numpy().astype(bool),
             "vat_registered": vat_flags.cpu().numpy().astype(bool),
+            "in_frame": frame_mask.cpu().numpy().astype(bool),
         }
     )
     logger.info(
