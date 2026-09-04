@@ -209,8 +209,9 @@ remains a true total. A vintage builds in ~15 seconds instead of ~13 minutes;
 headline aggregates reproduce the full build within ~0.3% and local bunching
 statistics within ~5%. Use for development only — release artifacts are
 full-size. Generator-seed sensitivity of the full build is recorded in
-`results/seed_sensitivity.txt` (E ±111, raise ±£1.4m / taper ±£0.3m across
-seeds; reproduce with `scripts/seed_sensitivity.py`).
+`results/seed_sensitivity.txt` (E ±166, raise ±£1.1m / taper ±£1.1m, base
+±£0.45bn across seeds — the scope flag is a seeded draw; reproduce with
+`scripts/seed_sensitivity.py`).
 
 ## Populace/Ledger migration check
 
@@ -300,12 +301,14 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
 
 - `vat_threshold_revenue_impact.png` — the £85k→£90k anchor reform vs HMRC's
   published costing, by fiscal year. **Built on the £85k / 2023-24 vintage** —
-  the pre-reform basis HMRC actually had at the 6 March 2024 costing (the
-  threshold was still £85k until 1 April 2024). Full-deregistration model
-  −357/−364/−224/−78/+119 vs HMRC −150/−185/−125/−50/+65 £m (43% voluntary
-  retention: −203/−207/−128/−44/+68); both turn positive by 2028-29. The gap
-  shows that registration dynamics and population scope matter. See
-  `results/static_sweep.txt`.
+  the pre-reform basis HMRC actually had at the 6 March 2024 costing. Each year
+  differences revenue under the £90k policy and under the counterfactual
+  threshold path (85/85/87/89/92k), releasing in-scope firms only below the
+  £88k deregistration threshold: −250/−234/−200/−65/+123 vs HMRC
+  −150/−185/−125/−50/+65 £m; with 43% voluntary retention −142/−134/−114/−37/+123.
+  HMRC's figures lie between the two conventions in every release year. See
+  `results/static_sweep.txt` for the whole-band and fixed-preference
+  sensitivities.
 - `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the forward static
   sweep of registration thresholds (£70k–£120k) vs the current £90k baseline,
   **on the £90k / 2024-25 vintage**.

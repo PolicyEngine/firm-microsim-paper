@@ -5,21 +5,24 @@ A static costing measures the first-order revenue effect of a reform by re-apply
 the tax rule to a fixed firm population, with no behavioural response. Let firm $i$
 have turnover $y_i$, calibrated net VAT liability $v_i = \tau(y_i - x_i)$
 (Section~\ref{sec:data}), weight $w_i$, scope flag $s_i$ (one for firms in
-the VAT net), and baseline voluntary-registration flag $r_i$ (one for firms
-registered below the data-year threshold). A firm remits VAT only once
-registered. Under a counterfactual threshold $T$ an in-scope firm is
-registered when its turnover is at or above $T$; a firm registered at the
-data-year threshold stays registered until its turnover falls below the
-deregistration threshold $T-g$, where $g=\pounds2{,}000$ is the statutory
-gap; voluntary registrants stay registered; out-of-scope firms never remit.
-Total VAT revenue at threshold $T$ is therefore
+the VAT net), data-year registration flag $q_i$, and baseline
+voluntary-registration flag $r_i$ (one for firms registered with data-year
+turnover at or below the data-year threshold $T_0$). A firm remits VAT only
+once registered. Under a counterfactual threshold $T$, evaluated on turnover
+$y_i$ aged to the fiscal year, an in-scope firm is registered when its turnover
+is at or above $T$; a firm registered at the data year stays registered until
+its turnover falls below the deregistration threshold $T-g$, where
+$g=\pounds2{,}000$ is the statutory gap; a voluntary registrant is unchanged
+where it was never required to register ($y_i<T_0$), while one that ageing
+carries into a band the move releases is released unless gap-protected;
+out-of-scope firms never remit. Total VAT revenue at threshold $T$ is therefore
 \[
-  R(T) \;=\; \sum_i w_i\, v_i \,
-  \mathbf{1}\bigl\{\, s_i\,[\,y_i \ge T \;\lor\; (m_i \land y_i \ge T-g)\,]
-  \;\lor\; r_i \,\bigr\},
+  R(T) \;=\; \sum_i w_i\, v_i\, s_i \,
+  \mathbf{1}\bigl\{\, y_i \ge T \;\lor\; (q_i \land y_i \ge T-g)
+  \;\lor\; (r_i \land y_i < T_0) \,\bigr\},
 \]
-with $m_i$ the data-year mandatory-registration flag. Three conventions follow
-and are worth stating. First, because voluntary registrants already remit, a
+which reproduces the baseline registered set at $T=T_0$. Three conventions
+follow and are worth stating. First, because voluntary registrants already remit, a
 threshold cut credits only the liability of in-scope firms that are newly drawn
 into the net; with about 89\% of below-threshold frame enterprises already
 registered (Section~\ref{sec:data}), that is a small population, and the cut
@@ -73,13 +76,11 @@ $-$250, $-$234, $-$200, $-$65, $+$123: it reproduces the sign of the first two y
 turning point and lands within \pounds49m of the official 2025--26
 figure without any retention assumption, because only in-scope firms
 between the old threshold and the new \pounds88{,}000 deregistration threshold
-can leave the net. The profile's middle years differ in shape: once the
-counterfactual threshold reaches \pounds87{,}000 and \pounds89{,}000, almost
-no firm registered at \pounds85{,}000 sits between it and the
-\pounds88{,}000 deregistration point, so the static model's impact falls
-towards zero in 2027--28 where HMRC's $-$50m reflects a flow of new
-businesses that would have registered under the lower threshold---an
-entry margin a fixed cross-section cannot represent. Three sensitivities
+can leave the net. The model still overshoots every release year, and by
+proportionally more in the middle of the profile ($-$200m against $-$125m in
+2026--27): the official costing embeds a phased registration response that
+narrows its profile faster than the mechanical reclassification here, which
+has none. Three sensitivities
 bracket the headline. Releasing the whole $[T_{\text{base}},\pounds90{,}000)$
 band regardless of the deregistration threshold gives $-$346, $-$382, $-$218, $-$65, $+$130, the
 overshoot of earlier drafts. Retaining the \citet{liuetal2021}
@@ -109,8 +110,9 @@ HMRC's published costing, 2024--25 to 2028--29. Both series narrow over the
 forecast and turn positive by 2028--29 because the costing baseline is a
 counterfactual threshold path that resumes uprating after March~2026 and
 overtakes \pounds90{,}000. The model releases in-scope firms only below the
-\pounds88{,}000 deregistration threshold; its 2027--28 impact is near zero
-because a fixed cross-section has no entry margin. Because the microdata are calibrated
+\pounds88{,}000 deregistration threshold and embeds no registration response,
+so it overshoots the official profile in every release year; the 43\%
+retention convention (text) undershoots it. Because the microdata are calibrated
 to HMRC and OBR aggregates, this is a consistency check, not an out-of-sample
 validation.}
 \label{fig:hmrc_validation}
