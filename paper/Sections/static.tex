@@ -176,12 +176,11 @@ Threshold & Revenue change (\pounds m) & Change (\%) & VAT-paying firms (000s) \
 
 \begin{figure}[htbp]
 \centering
-\subfigure[Revenue impact (\pounds m)]{
-    \includegraphics[width=0.48\textwidth]{figures/revenue_impact_2025_26.png}
-}
-\hfill
-\subfigure[Change in VAT-paying firms (000s)]{
-    \includegraphics[width=0.48\textwidth]{figures/firms_impact_2025_26.png}
+\subfigure[Revenue impact (\pounds m)]{%
+    \includegraphics[width=0.48\textwidth]{figures/revenue_impact_2025_26.png}%
+}\hfill%
+\subfigure[Change in VAT-paying firms (000s)]{%
+    \includegraphics[width=0.48\textwidth]{figures/firms_impact_2025_26.png}%
 }
 \caption{Static effect of moving the VAT registration threshold, 2025--26, relative
 to the \pounds90{,}000 baseline (dashed line). Panel (a): revenue impact---cuts
@@ -264,17 +263,18 @@ common \pounds85{,}000-notch / \pounds175.7bn 2023--24 baseline of in-scope
 firms. Each reform is costed mechanically by re-applying its schedule to the
 fixed turnover distribution, with no behavioural response.}
 \label{tab:schedule_costs}
-\begin{tabular}{llr}
+\small
+\begin{tabularx}{\textwidth}{@{}Xlr@{}}
 \toprule
-Reform & Lever & Static revenue (\pounds m) \\
+Reform & Lever & Static (\pounds m) \\
 \midrule
 Raise threshold to \pounds100{,}000 & Location & $-742$ \\
-Linear taper $[\pounds85\text{k},\pounds141.7\text{k}]$ & Shape (marginal rate $0\to100\%$) & $-1{,}406$ \\
-Constant $50\%$ marginal taper $[\pounds85\text{k},\pounds141.7\text{k}]$ & Shape (marginal rate $50\%$) & $-968$ \\
-Reduced rate $10\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-446$ \\
-Reduced rate $15\%$ $[\pounds85\text{k},\pounds105\text{k}]$ & Rate (step) & $-223$ \\
+Linear taper, \pounds85k--\pounds141.7k & Shape (marginal rate $0\to100\%$) & $-1{,}406$ \\
+Constant $50\%$ marginal taper, \pounds85k--\pounds141.7k & Shape (marginal rate $50\%$) & $-968$ \\
+Reduced rate $10\%$, \pounds85k--\pounds105k & Rate (step) & $-446$ \\
+Reduced rate $15\%$, \pounds85k--\pounds105k & Rate (step) & $-223$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 These static figures bound the first-order fiscal effect of each reform but
