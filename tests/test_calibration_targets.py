@@ -174,9 +174,13 @@ def test_registration_propensity_below_one_on_real_frames(frames):
     bands = map_to_hmrc_bands(turnover, cfg.vat_threshold)
     frame = torch.ones(len(turnover), dtype=torch.bool)
     prop = registration_propensity(bands, frame, torch.ones(len(turnover)), data.hmrc_bands)
-    for b in range(1, 8):
+    # Documented expectation per band (HMRC 2023-24 / uniform-draw frame mass):
+    # below-threshold ~0.89; above, 0.5-1.0; the >£10m band ~0.64 is a draw
+    # artefact of the open 5000+ band (issue #40), not a PAYE/exempt share.
+    expected = {1: 0.89, 2: 0.67, 3: 0.51, 4: 0.60, 5: 0.77, 6: 1.00, 7: 0.64}
+    for b, e_p in expected.items():
         p = float(prop[bands == b].max())
-        assert 0.4 < p <= 1.0 + 1e-6, f"band {b}: propensity {p}"
+        assert abs(p - e_p) < 0.03, f"band {b}: propensity {p:.3f} != ~{e_p}"
     # Expected registered count reproduces HMRC at unit weights (band 7 is
     # tight because the open 5000+ band is drawn uniformly to £50m).
     expected = float(prop.sum())

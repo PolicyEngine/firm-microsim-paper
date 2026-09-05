@@ -351,7 +351,7 @@ def _select_to_weighted_target(
         return candidate_idx[:0]
     order = candidate_idx[torch.randperm(len(candidate_idx), device=device)]
     cumulative = torch.cumsum(weights[order], dim=0)
-    cutoff = int(torch.searchsorted(cumulative, torch.tensor(float(target))).item())
+    cutoff = int(torch.searchsorted(cumulative, torch.tensor(float(target), device=device)).item())
     cutoff = min(cutoff, len(order) - 1)
     return order[: cutoff + 1]
 

@@ -74,3 +74,16 @@ def test_deregistration_gap_retains_top_of_released_band() -> None:
     assert not bool(m._registered(df, 103_000.0).iloc[1])
     # With no gap the naive whole-band release applies.
     assert not bool(m._registered(df, 101_000.0, gap=0.0).iloc[1])
+
+
+def test_voluntary_registrant_aged_across_threshold_is_released_by_a_rise() -> None:
+    """The documented convention: a data-year voluntary registrant that ageing
+    carries above T0 is released by a rise (unless gap-protected); with
+    retain_voluntary it keeps its registration."""
+    m = _model_with(_firms())
+    m.firms.loc[3, "annual_turnover_k"] = 84.0  # voluntary at £84k
+    df = m._aged(1.05)  # -> £88.2k, above T0 = £85k
+    assert bool(m._registered(df, 85_000.0).iloc[3])          # baseline: registered
+    assert not bool(m._registered(df, 95_000.0).iloc[3])      # rise to £95k: released
+    assert bool(m._registered(df, 95_000.0, retain_voluntary=True).iloc[3])
+    assert bool(m._registered(df, 90_000.0).iloc[3])          # £88.2k >= 90k-2k: gap-protected

@@ -56,7 +56,14 @@ in both directions. Above the threshold only about two-thirds of frame
 enterprises are VAT traders (from 51\% in the \pounds150{,}000--\pounds300{,}000
 band to 100\% in the \pounds1m--\pounds10m band): the remainder are PAYE-only
 employers and businesses in exempt sectors (finance, health, education, and
-similar) outside the VAT net. Below the threshold about 89\% of frame
+similar) outside the VAT net. The share is 64\% in the open
+\pounds10m-plus band, but there the shortfall is largely a construction
+artefact: the ONS ``\pounds5m and over'' band has no published top, and the
+uniform draw to \pounds50m places more enterprises above \pounds10m than HMRC
+counts; the band's liability total is calibrated regardless, so reform
+costings near the threshold are unaffected, but the top band's in-scope draw
+is a seeded selection and contributes most of the seed dispersion of the base
+(Appendix~\ref{app:inference}). Below the threshold about 89\% of frame
 enterprises are registered, largely because small businesses enter the
 register \emph{through} VAT registration. HMRC also reports about 216{,}500
 traders with negative or zero turnover who are not identifiable in the ONS
@@ -210,7 +217,8 @@ records. I report rounded scenario estimates and expose the full weight
 diagnostics in the generated calibration report.
 
 \paragraph{The registration threshold in the data.} My primary data year is
-2023--24, when the statutory threshold was \pounds85{,}000. The HMRC band
+2023--24, when the statutory threshold was \pounds85{,}000
+(Figure~\ref{fig:turnover_dist} shows the calibrated distribution). The HMRC band
 targets step down across the threshold---678{,}350 firms in the
 \pounds1--\pounds85{,}000 band against 305{,}320 in
 \pounds85{,}000--\pounds150{,}000, or roughly $8{,}000$ against $4{,}700$ firms

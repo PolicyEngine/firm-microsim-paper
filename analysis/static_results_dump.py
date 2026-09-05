@@ -11,7 +11,7 @@ the Liu et al. (2021) voluntary-registration share of released-firm liability.
 from __future__ import annotations
 
 from firm_microsim.config import RESULTS_DIR
-from firm_microsim.static.model import StaticVATModel, SWEEP_THRESHOLDS
+from firm_microsim.static.model import FISCAL_YEARS, StaticVATModel, SWEEP_THRESHOLDS
 
 LLAT_VOLUNTARY_SHARE = 0.43  # Liu-Lockwood-Almunia-Tam (2021): ~43% below-threshold
 
@@ -32,6 +32,20 @@ def main() -> None:
     W("-" * 74)
     anchor = anchor_model.anchor_reform()
     W(anchor.to_string(index=False))
+    W("")
+    W("Release decomposition (headline; liability GBPm of firms registered under the")
+    W("baseline threshold but not under GBP90k, by data-year status):")
+    for fy in FISCAL_YEARS:
+        df = anchor_model._aged(anchor_model._growth(fy["year"]))
+        base_t, pol_t = float(fy["baseline"]), float(fy["policy"])
+        rel = anchor_model._registered(df, base_t) & ~anchor_model._registered(df, pol_t)
+        lw = df["liab"] * df["weight"]
+        vol = float(lw[rel & df["voluntary"]].sum()) / 1e6
+        man = float(lw[rel & df["mandatory"]].sum()) / 1e6
+        nev = float(lw[rel & ~df["voluntary"] & ~df["mandatory"]].sum()) / 1e6
+        W(f"  {fy['year']}: released {float(df['weight'][rel].sum()):,.0f} firms; "
+          f"voluntary-at-data-year {vol:.1f}m, mandatory-at-data-year {man:.1f}m, "
+          f"not-registered-at-data-year {nev:.1f}m")
     W("")
     W("Deregistration-threshold sensitivity: the headline releases registered")
     W("firms only below the GBP88k deregistration threshold ([85k, 88k) in the")
@@ -57,8 +71,9 @@ def main() -> None:
         W(f"  {row['year']}: fixed-preference {float(row['policyengine_impact_m']):+,.1f}m")
     W("")
     W("Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)")
-    W("method: direct mechanical reclassification of in-scope VAT firms; baseline")
-    W("voluntary registrants stay registered; turnover and liability aged together")
+    W("method: direct mechanical reclassification of in-scope VAT firms; voluntary")
+    W("registrants below the data-year threshold held registered, firms aged across")
+    W("it released unless gap-protected; turnover and liability aged together")
     W("-" * 74)
     sweep = sweep_model.threshold_sweep(year="2025-26")
     W(sweep.to_string(index=False))

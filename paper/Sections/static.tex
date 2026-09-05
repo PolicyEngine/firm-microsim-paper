@@ -76,12 +76,20 @@ $-$250, $-$234, $-$200, $-$65, $+$123: it reproduces the sign of the first two y
 turning point and lands within \pounds49m of the official 2025--26
 figure without any retention assumption, because only in-scope firms
 between the old threshold and the new \pounds88{,}000 deregistration threshold
-can leave the net. The model still overshoots every release year, and by
-proportionally more in the middle of the profile ($-$200m against $-$125m in
-2026--27): the official costing embeds a phased registration response that
-narrows its profile faster than the mechanical reclassification here, which
-has none. Three sensitivities
-bracket the headline. Releasing the whole $[T_{\text{base}},\pounds90{,}000)$
+can leave the net. Who those firms are matters for reading the number. Because
+the cross-section is aged forward, the released band is populated mainly by
+firms whose data-year turnover was \emph{below} \pounds85{,}000 and whom
+nominal growth carries into $[\pounds85{,}000,\pounds88{,}000)$; from 2025--26
+on, every firm registered above \pounds85{,}000 at the data year has aged past
+the deregistration point, so none of them is released. Of the 2025--26 released
+liability, 84\% belongs to firms flagged as voluntary registrants
+at the data year, and the rest to firms not registered at the data year that
+the counterfactual threshold would have caught. The headline treats all of
+them as deregistering once released, which is the mechanical convention; the
+official costing embeds a phased registration response instead, and the model
+still overshoots every release year, by proportionally more in the middle of
+the profile ($-$200m against $-$125m in 2026--27). Three sensitivities bracket
+the headline. Releasing the whole $[T_{\text{base}},\pounds90{,}000)$
 band regardless of the deregistration threshold gives $-$346, $-$382, $-$218, $-$65, $+$130, the
 overshoot of earlier drafts. Retaining the \citet{liuetal2021}
 voluntary-registration share (43\%) of released-firm liability gives
@@ -93,13 +101,19 @@ and in some years negative (Section~\ref{sec:data}), so it is a generous
 retention assumption. Finally, treating the frame's 89\% below-threshold
 registered share as revealed preference---every firm that was voluntarily
 registered at the data year keeps registering wherever the threshold
-moves---gives $-$43, $-$38, $-$24, $-$7, $+$14; because small businesses enter the ONS frame
-\emph{through} VAT registration, that share overstates voluntary preference,
-and the convention is a lower bound on the loss rather than a central case. Because my microdata are
+moves---removes the ageing-crossers from the release and gives $-$43, $-$38,
+$-$24, $-$7, $+$14, the liability of data-year mandatory and never-registered
+firms alone; because small businesses enter the ONS frame \emph{through} VAT
+registration, that share overstates voluntary preference, so this convention
+is a lower bound on the loss rather than a central case. The two conventions
+bracket the official profile in every release year; where within the bracket
+the truth lies is the registration decision of small firms crossing the
+threshold, which the data do not identify. Because my microdata are
 calibrated to HMRC VAT aggregates, even a close match confirms internal
 consistency rather than out-of-sample accuracy; HMRC's own note expects about
 28{,}000 fewer registrants in 2024--25, against about 36{,}000 releasable
-firms here (Figure~\ref{fig:hmrc_validation}).
+firms here, of which about 30{,}000 were data-year voluntary registrants aged
+across the threshold (Figure~\ref{fig:hmrc_validation}).
 
 \begin{figure}[htbp]
 \centering
@@ -149,8 +163,9 @@ behavioural response of Section~\ref{sec:behavioural}.
 threshold, 2025--26, relative to the post-reform \pounds90{,}000 baseline
 (in-scope above-threshold VAT base \pounds183.7bn; 2024--25 vintage population).
 Figures are mechanical, holding firm turnover fixed (no behavioural response);
-in-scope firms only, with baseline voluntary registrants held registered and
-releases limited by the deregistration threshold. Cut rows are frame-confined
+in-scope firms only. Voluntary registrants below the data-year threshold are
+held registered; firms aged across it are released by a rise unless protected
+by the deregistration threshold. Cut rows are frame-confined
 lower bounds (see text). This sweep is distinct from the anchor reform of
 Figure~\ref{fig:hmrc_validation}. The machine-readable table is
 \texttt{results/static\_sweep.txt} in the replication repository.}

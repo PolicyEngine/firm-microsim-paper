@@ -48,15 +48,17 @@ threshold:
      turnover band and by trade sector, and net VAT liability by band. Each
      frame firm enters these rows with a *registration propensity* — the HMRC
      count in its turnover band divided by the frame's mass in that band
-     (0.89 below the threshold; 0.51–1.00 above it, the remainder being
-     PAYE-only or exempt-sector enterprises outside the VAT net). HMRC
+     (0.89 below the threshold; 0.51–1.00 above it up to £10m, the remainder
+     being PAYE-only or exempt-sector enterprises outside the VAT net; 0.64 in
+     the >£10m band, where the shortfall is mostly the uniform £5m–£50m draw for
+     the open ONS "5000+" band placing too many rows above £10m — issue #40). HMRC
      negative/zero-turnover traders are appended before calibration as an
      out-of-frame stratum.
 
    VAT **scope** and **registration** flags are then assigned by seeded weighted
    selection per band so registered totals match HMRC to within one weight.
 
-The result is ~3.16M firm rows (2.94M frame draws plus 0.22M appended traders)
+The result is ~2.94M firm rows (2.72M frame draws plus 0.22M appended traders)
 weighted to ~2.72M frame enterprises, of which ~2.18M are VAT-registered.
 Because the population is calibrated **to** the HMRC aggregates, agreement
 with them is an internal consistency check, not external validation.
@@ -318,9 +320,10 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
 registration threshold and is cleanly populated with in-scope registered firms,
 so a direct band-sum suffices. The forward sweep uses the current £90k vintage
 and is likewise a direct mechanical reclassification of in-scope firms
-(`StaticVATModel.threshold_sweep`); baseline voluntary registrants stay
-registered under every counterfactual threshold, and out-of-scope enterprises
-never remit. In both exercises turnover **and** liability are aged to the
+(`StaticVATModel.threshold_sweep`); voluntary registrants below the data-year
+threshold stay registered, firms aged across it are released by a rise unless
+protected by the £2k deregistration gap, and out-of-scope enterprises never
+remit. `results/static_sweep.txt` decomposes each anchor year's release. In both exercises turnover **and** liability are aged to the
 fiscal year by the same nominal-growth factor (relative to each vintage's own
 data year), so band membership is evaluated on aged turnover — the fiscal-drag
 convention. `results/static_sweep.txt` holds the machine-readable table.
