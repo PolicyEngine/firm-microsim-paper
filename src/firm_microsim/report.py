@@ -91,13 +91,17 @@ def _vintage_lines(vintage: str) -> list[str]:
             f"  {'BPE unregistered (frozen)':<26}{bpe:>11.1f}%{100.0 - bpe:>11.1f}%"
         )
     out.append("=" * 64)
-    weights = df["weight"].to_numpy(dtype=float)
+    # Weight diagnostics cover the CALIBRATED rows only: the DBT unregistered
+    # stratum is frozen at unit weight and would otherwise dominate the
+    # effective sample size.
+    calibrated = df[~df["unregistered"].astype(bool)] if "unregistered" in df.columns else df
+    weights = calibrated["weight"].to_numpy(dtype=float)
     weight_sum = float(weights.sum())
     effective_n = weight_sum**2 / float(np.square(weights).sum())
     quantiles = np.quantile(weights, [0, 0.5, 0.9, 0.99, 1.0])
     out += [
-        "  Calibration-weight diagnostics:",
-        f"  effective sample size: {effective_n:,.0f} ({effective_n / len(df):.1%} of rows)",
+        "  Calibration-weight diagnostics (calibrated rows; unregistered stratum frozen):",
+        f"  effective sample size: {effective_n:,.0f} ({effective_n / len(calibrated):.1%} of calibrated rows)",
         "  min / p50 / p90 / p99 / max: "
         + " / ".join(f"{value:.3f}" for value in quantiles),
         f"  coefficient of variation: {float(weights.std() / weights.mean()):.3f}",

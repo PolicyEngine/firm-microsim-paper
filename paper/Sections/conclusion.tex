@@ -24,28 +24,28 @@ data-year baseline.}
 \toprule
 Object & Definition & Value & Source \\
 \midrule
-Anchor, \pounds85k to \pounds90k, 2025--26 & dereg.\ / 43\% retention & $-\pounds234$m / $-\pounds134$m (HMRC $-\pounds185$m) & \S\ref{sec:static} \\
-Sweep, \pounds90k baseline & \pounds70k to \pounds120k & $+\pounds0.19$bn to $-\pounds1.19$bn & Table~\ref{tab:static_revenue} \\
+Anchor, \pounds85k to \pounds90k, 2025--26 & mechanical / 43\% retention & $-\pounds197$m / $-\pounds112$m (HMRC $-\pounds185$m) & \S\ref{sec:static} \\
+Sweep, \pounds90k baseline & \pounds70k to \pounds120k & $+\pounds1.59$bn to $-\pounds1.28$bn & Table~\ref{tab:static_revenue} \\
 Dominated region & $a=T^{*}\tau/(1-\tau)$ & \pounds21{,}250 & \S\ref{ssec:dominated} \\
-In-scope firms in dominated band & weighted & $\approx$143{,}000 & \S\ref{ssec:dominated} \\
-Raise to \pounds100k & static $=$ behavioural & $-\pounds742$m & \S\ref{sec:static}, \S\ref{sec:behavioural} \\
-Taper, \pounds85k--\pounds141.7k & linear / constant $50\%$ & $-\pounds1{,}406$m / $-\pounds968$m & \S\ref{ssec:schedule_costs} \\
-Reduced rate, \pounds85k--\pounds105k & $10\%$ / $15\%$ & $-\pounds446$m / $-\pounds223$m & \S\ref{ssec:schedule_costs} \\
+In-scope firms in dominated band & weighted & $\approx$124{,}000 & \S\ref{ssec:dominated} \\
+Raise to \pounds100k & static $=$ behavioural & $-\pounds583$m & \S\ref{sec:static}, \S\ref{sec:behavioural} \\
+Taper, \pounds85k--\pounds141.7k & linear / constant $50\%$ & $-\pounds1{,}408$m / $-\pounds932$m & \S\ref{ssec:schedule_costs} \\
+Reduced rate, \pounds85k--\pounds105k & $10\%$ / $15\%$ & $-\pounds398$m / $-\pounds199$m & \S\ref{ssec:schedule_costs} \\
 Bunching readback, 2023--24 & $E$; $b_{\mathrm{LLAT}}$ & $5{,}496$; $5.350$ (target-inherited) & \S\ref{sec:bunching} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \paragraph{Findings.} On the common \pounds85{,}000 baseline, raising the
-threshold to \pounds100{,}000 costs \pounds742m, a taper across the
-\pounds85{,}000--\pounds141{,}667 band costs \pounds1{,}406m (linear phase-in) or
-\pounds968m (constant 50\% marginal rate), and the 10\% and 15\%
-reduced-rate bands cost \pounds446m and \pounds223m. The anchor reform
-brackets HMRC's published costing between the full-deregistration and 43\%
-retention conventions once releases are limited by the deregistration
-threshold; it is an internal consistency check rather than external
-validation, and the registration behaviour of released firms remains the
-decisive convention.
+threshold to \pounds100{,}000 costs \pounds583m, a taper across the
+\pounds85{,}000--\pounds141{,}667 band costs \pounds1{,}408m (linear phase-in) or
+\pounds932m (constant 50\% marginal rate), and the 10\% and 15\%
+reduced-rate bands cost \pounds398m and \pounds199m. The mechanical anchor
+reproduces HMRC's published costing profile to within 30\% in every release
+year, and within 10\% in 2025--26 and 2026--27, once band membership is
+evaluated on data-year turnover; it is an internal consistency check rather
+than external validation, and the registration behaviour of released firms
+remains the decisive convention.
 
 The notch creates an exact \pounds21{,}250 dominated region. Raising the
 threshold relocates and widens it, and a reduced-rate band divides it between two notches;
@@ -61,15 +61,13 @@ evidence on firm behaviour.
 
 \paragraph{Limitations and future work.} The model omits location choice,
 voluntary-registration choice, compliance costs, sectoral incidence,
-pass-through, and general-equilibrium effects. Its population is the ONS
-VAT/PAYE frame with an HMRC-calibrated registered subset: threshold cuts are
-therefore costed only on frame enterprises, most of which are already
-registered, and omit the unregistered sole traders outside the frame that a
-lower threshold would mainly reach; extending the frame to the DBT business
-population is the natural next build. A fixed cross-section also has no
-registration response or entry margin, so the anchor brackets HMRC's profile
-only through explicit deregistration conventions. The nominal-growth factors
-used for ageing are assumptions recorded in the replication repository. It also cannot capture persistent
+pass-through, and general-equilibrium effects. Its unregistered stratum has
+a maintained exponential shape, since the DBT estimates publish only counts
+and turnover totals by division; threshold cuts, which reach that stratum,
+inherit the assumption. A fixed cross-section has no registration response or
+entry margin, which is why the anchor's first year, where HMRC's costing
+carries a registration lag, is the year it fits least well. The nominal-growth
+factors used for ageing are assumptions recorded in the replication repository. It also cannot capture persistent
 growth effects extending beyond the cutoff, as documented for a different
 payroll-tax notch by \citet{jysmabenzartiharju2026}. Those estimates do not
 transfer directly to UK VAT. Administrative firm-level validation, an explicit

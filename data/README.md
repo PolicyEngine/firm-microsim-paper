@@ -10,7 +10,8 @@ derived tables (`processed/`) and from generated model output (`synthetic/`).
 data/
 ├── raw/                <- pristine official source files, copied verbatim, never edited
 │   ├── ons/            <- ONS UK Business workbooks (.xlsx): 2024 + 2025 editions
-│   └── hmrc/           <- HMRC Annual UK VAT Statistics: 2023-24 (.xls) + 2024-25 (.ods)
+│   ├── hmrc/           <- HMRC Annual UK VAT Statistics: 2023-24 (.xls) + 2024-25 (.ods)
+│   └── dbt/            <- DBT Business Population Estimates detailed tables: 2024 + 2025
 ├── processed/          <- small derived CSV band tables, organised by data vintage
 │   ├── 2023-24/        <- ONS 2024 + HMRC 2023-24  (VAT threshold £85k) — paper baseline
 │   └── 2024-25/        <- ONS 2025 + HMRC 2024-25  (VAT threshold £90k) — latest gov data
@@ -46,6 +47,8 @@ threshold automatically. The default is `2023-24`.
 | ONS | UK Business: Activity, Size and Location, 2025 | 2024-25 | https://www.ons.gov.uk/businessindustryandtrade/business/activitysizeandlocation/datasets/ukbusinessactivitysizeandlocation |
 | HMRC | Annual UK VAT Statistics 2023 to 2024 | 2023-24 | https://www.gov.uk/government/statistics/value-added-tax-vat-annual-statistics |
 | HMRC | Annual UK VAT Statistics 2024 to 2025 | 2024-25 | https://www.gov.uk/government/statistics/value-added-tax-vat-annual-statistics |
+| DBT | Business Population Estimates 2024 (detailed tables, Table 6) | 2023-24 | https://www.gov.uk/government/statistics/business-population-estimates-2024 |
+| DBT | Business Population Estimates 2025 (detailed tables, Table 6) | 2024-25 | https://www.gov.uk/government/statistics/business-population-estimates-2025 |
 
 The raw workbooks are the authoritative inputs. Everything in `processed/` is a
 faithful extract of tables inside those workbooks (no modelling applied), kept as
@@ -143,6 +146,20 @@ workbook for the vintage.
   - `100-249`
   - `250+`
 - Rows: one per SIC division (SIC codes 01–99), with a final `Total` row.
+
+### `bpe_unregistered_by_division.csv`
+
+DBT Business Population Estimates, Table 6 (UK divisions): for each SIC
+division, the number of businesses "with no employees (unregistered)" — i.e.
+registered for neither VAT nor PAYE — and their turnover (£ millions), plus the
+division's all-business count and turnover. Produced by
+`scripts/etl_bpe_tables.py`; suppressed cells (`[c]`) are left empty and the
+generator uses the national mean turnover for those divisions. Raw workbooks
+live in `raw/dbt/`. BPE 2024 (start of 2024) feeds the 2023-24 vintage and
+BPE 2025 the 2024-25 vintage.
+
+- Columns: `SIC Code`, `Description`, `unregistered_count`,
+  `unregistered_turnover_m`, `all_count`, `all_turnover_m`.
 
 ### `hmrc_vat_population_by_turnover_band.csv`
 

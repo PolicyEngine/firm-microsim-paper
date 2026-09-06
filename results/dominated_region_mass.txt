@@ -17,16 +17,16 @@ Bands measured on the WEIGHTED in-scope (VAT-liable) synthetic firms;
 
 rate / band            width a (GBP)      band (GBP k)         OBS          CF   NET disp.
 ------------------------------------------------------------------------------------------
-20% (baseline notch)          21,250     [85, 106.250)     142,834     131,752     -11,081
-15% band                      15,000     [85, 100.000)     117,846     101,377     -16,468
-10% band                       9,444      [85, 94.444)      74,398      69,588      -4,811
+20% (baseline notch)          21,250     [85, 106.250)     124,256     159,651      35,395
+15% band                      15,000     [85, 100.000)      87,763     127,573      39,810
+10% band                       9,444      [85, 94.444)      54,517      92,131      37,615
 ------------------------------------------------------------------------------------------
 
 INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
-  Observed firms in dominated region ........      142,834
-  Counterfactual total density in band (CF)..      131,752
-  NET displaced mass in band (CF - OBS) .....      -11,081
-  CF mass as share of firms near threshold ..        0.435
+  Observed firms in dominated region ........      124,256
+  Counterfactual total density in band (CF)..      159,651
+  NET displaced mass in band (CF - OBS) .....       35,395
+  CF mass as share of firms near threshold ..        0.376
 
   Note: the headline displaced-mass number is NET (CF - OBS), not the
   total CF density. The band is wide, so most CF firms in it would
@@ -34,25 +34,25 @@ INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
   NET deficit is the mass the notch evacuates from the dominated region.
 
 REFORM-SHRUNK BANDS (net displaced mass):
-  15% -> band width GBP 15,000: net displaced = -16,468 firms  (CF total 101,377)
-  10% -> band width GBP 9,444: net displaced = -4,811 firms  (CF total 69,588)
+  15% -> band width GBP 15,000: net displaced = 39,810 firms  (CF total 127,573)
+  10% -> band width GBP 9,444: net displaced = 37,615 firms  (CF total 92,131)
 
 SECONDARY NOTCH at the reduced-rate band top (T1 = GBP 105,000):
   A banded reduced rate reverts to tau=20% at T1, adding a SECOND
   dominated region a' = T1*(tau-r)/(1-tau). Total dominated turnover and
   mass = primary [T*, T*+a] + secondary [T1, T1+a'].
-  15% band  secondary [105, 111.562) width GBP 6,563  OBS = 26,316
-            primary OBS 117,846 + secondary OBS 26,316 = TOTAL 144,161  (baseline 142,834, +0.9%)
-  10% band  secondary [105, 118.125) width GBP 13,125  OBS = 51,435
-            primary OBS 74,398 + secondary OBS 51,435 = TOTAL 125,833  (baseline 142,834, -11.9%)
+  15% band  secondary [105, 111.562) width GBP 6,563  OBS = 35,323
+            primary OBS 87,763 + secondary OBS 35,323 = TOTAL 123,087  (baseline 124,256, -0.9%)
+  10% band  secondary [105, 118.125) width GBP 13,125  OBS = 67,230
+            primary OBS 54,517 + secondary OBS 67,230 = TOTAL 121,746  (baseline 124,256, -2.0%)
 
 REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;
   NOT the Section 6 headline, which runs on the full ONS-frame density):
-  frame-density headline (Section 6): E = 5,496 (gross), E_net = -5,553, Delta_R = 0, y_R = GBP 100,000 [censored]
-  in-scope excess mass below T*  E       = 11,359 firms
-  missing mass above T*      Delta_R = 2,668 firms
+  frame-density headline (Section 6): E = 8,268 (gross), E_net = -28,580, Delta_R = 896, y_R = GBP 100,000 [censored]
+  in-scope excess mass below T*  E       = 38,873 firms
+  missing mass above T*      Delta_R = 36,875 firms
   marginal buncher           y_R     = GBP 100,000 [censored at search cap]
-  NET displaced mass in 20% dominated band = -11,081 firms
+  NET displaced mass in 20% dominated band = 35,395 firms
 
   By mass conservation the excess mass E that bunches just below T*
   is the mass that, absent the notch, would have spread into the
@@ -61,6 +61,6 @@ REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;
   (The TOTAL CF density in the band is NOT the displaced mass and
   should not be compared to E -- that would be a category error.)
 
-  total observed weighted mass on [20,140] est. range = 872,036
+  total observed weighted mass on [20,140] est. range = 2,228,966
 
 script: firm-microsim-dominated-region

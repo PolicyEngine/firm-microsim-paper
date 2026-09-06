@@ -75,10 +75,8 @@ def build_claims() -> list[dict]:
     add("anchor_series", "static_sweep.txt", "anchor table", anchor, _series(anchor), "Sections/static.tex")
     ret = [float(x) for x in re.findall(r"retention-adjusted ([+-][\d.]+)m", sw)]
     add("anchor_retention_series", "static_sweep.txt", "retention-adjusted", ret, _series(ret), "Sections/static.tex")
-    nogap = [float(x) for x in re.findall(r"whole-band release ([+-][\d.]+)m", sw)]
-    add("anchor_nogap_series", "static_sweep.txt", "whole-band release", nogap, _series(nogap), "Sections/static.tex")
-    fixed = [float(x) for x in re.findall(r"fixed-preference ([+-][\d.]+)m", sw)]
-    add("anchor_fixed_series", "static_sweep.txt", "fixed-preference", fixed, _series(fixed), "Sections/static.tex")
+    gapd = [float(x) for x in re.findall(r"gap-protected release ([+-][\d.]+)m", sw)]
+    add("anchor_gap_series", "static_sweep.txt", "gap-protected release", gapd, _series(gapd), "Sections/static.tex")
     add("anchor_2526_abs", "static_sweep.txt", "anchor 2025-26", anchor[1],
         f"$-\\pounds{abs(anchor[1]):.0f}$m", "Sections/conclusion.tex")
     add("anchor_ret_2526_abs", "static_sweep.txt", "retention 2025-26", ret[1],

@@ -41,9 +41,9 @@ threshold:
    and intermediate inputs. These within-band values are explicit modelling
    assumptions, not recovered administrative microdata.
 2. **Calibrate firm weights** by multi-objective optimisation (Adam, symmetric
-   relative-error loss) on **two declared universes** (issue #37):
+   relative-error loss) on **three declared universes** (issues #37, #25):
    - the **ONS VAT/PAYE enterprise frame** (~2.72M enterprises): the population
-     total, the employment-band totals and the OBR near-threshold shape;
+     total and the employment-band totals;
    - the **HMRC VAT-registered subset** (~2.18M traders): trader counts by
      turnover band and by trade sector, and net VAT liability by band. Each
      frame firm enters these rows with a *registration propensity* — the HMRC
@@ -52,13 +52,27 @@ threshold:
      PAYE-only or exempt-sector enterprises outside the VAT net; the open ONS
      "5000+" band is drawn log-uniform on [£5m, £50m), issue #40). HMRC
      negative/zero-turnover traders are appended before calibration as an
-     out-of-frame stratum.
+     out-of-frame stratum;
+   - the **DBT unregistered stratum** (~2.86M businesses registered for
+     neither VAT nor PAYE, from the Business Population Estimates by SIC
+     division, `scripts/etl_bpe_tables.py`): drawn exponential with each
+     division's BPE mean turnover, weights frozen in calibration, registrable
+     below the threshold and out of scope (exempt) above it. With the stratum
+     present the OBR £1k-bin counts enter as **levels** — on frame + stratum
+     below the threshold, frame alone above — so the frame's near-threshold
+     density is the residual between the OBR chart and the stratum.
+
+   Within closed ONS bands above the first, turnover is drawn from a truncated
+   power law whose exponent is the log-log slope of neighbouring band
+   densities (monotone within bands, approximately continuous across edges);
+   the bottom band is uniform.
 
    VAT **scope** and **registration** flags are then assigned by seeded weighted
    selection per band so registered totals match HMRC to within one weight.
 
-The result is ~2.94M firm rows (2.72M frame draws plus 0.22M appended traders)
-weighted to ~2.72M frame enterprises, of which ~2.18M are VAT-registered.
+The result is ~5.8M firm rows (2.72M frame draws, 2.86M unregistered-stratum
+businesses, 0.22M appended traders) weighted to ~2.72M frame enterprises, of
+which ~2.18M are VAT-registered, plus the stratum at fixed weight.
 Because the population is calibrated **to** the HMRC aggregates, agreement
 with them is an internal consistency check, not external validation.
 
@@ -113,10 +127,11 @@ df, report = firm_microsim.generate(return_report=True)
 
 Output is written to `data/synthetic/synthetic_firms.csv`
 (`sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
-weight, vat_scope, vat_registered, in_frame`). `in_frame` marks ONS-frame
-enterprises; `vat_scope` marks firms in the VAT net (registered above the
-threshold, registrable below it); `vat_registered` marks HMRC-count-matched
-traders. Static and behavioural costings use in-scope firms only.
+weight, vat_scope, vat_registered, in_frame, unregistered`). `in_frame` marks
+ONS-frame enterprises; `unregistered` marks the DBT stratum; `vat_scope` marks
+firms in the VAT net (registered above the threshold, registrable below it);
+`vat_registered` marks HMRC-count-matched traders. Static and behavioural
+costings use in-scope firms only.
 
 The processed ONS tables are rebuilt from the raw workbooks by
 `scripts/etl_ons_tables.py` (Table 8 for turnover sizebands, Table 3 for
@@ -304,25 +319,24 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
   published costing, by fiscal year. **Built on the £85k / 2023-24 vintage** —
   the pre-reform basis HMRC actually had at the 6 March 2024 costing. Each year
   differences revenue under the £90k policy and under the counterfactual
-  threshold path (85/85/87/89/92k), releasing in-scope firms only below the
-  £88k deregistration threshold: −250/−234/−200/−65/+123 vs HMRC
-  −150/−185/−125/−50/+65 £m; with 43% voluntary retention −142/−134/−114/−37/+123.
-  HMRC's figures lie between the two conventions in every release year. See
-  `results/static_sweep.txt` for the whole-band and fixed-preference
-  sensitivities.
+  threshold path (85/85/87/89/92k) on data-year turnover: mechanical
+  −193/−197/−120/−41/+88 vs HMRC −150/−185/−125/−50/+65 £m; with 43% voluntary
+  retention −110/−112/−68/−24/+88. HMRC's figures lie between the two
+  conventions in every release year. See `results/static_sweep.txt` for the
+  deregistration-gap sensitivity.
 - `revenue_impact_2025_26.png` / `firms_impact_2025_26.png` — the forward static
   sweep of registration thresholds (£70k–£120k) vs the current £90k baseline,
   **on the £90k / 2024-25 vintage**.
 
 **Two vintages, two exercises, one convention.** The anchor reform uses the
 £85k vintage, where the affected `[85,90)k` band sits *above* the £85k
-registration threshold and is cleanly populated with in-scope registered firms,
-so a direct band-sum suffices. The forward sweep uses the current £90k vintage
-and is likewise a direct mechanical reclassification of in-scope firms
-(`StaticVATModel.threshold_sweep`); voluntary registrants below the data-year
-threshold stay registered, firms aged across it are released by a rise unless
-protected by the £2k deregistration gap, and out-of-scope enterprises never
-remit. `results/static_sweep.txt` decomposes each anchor year's release. In both exercises turnover **and** liability are aged to the
-fiscal year by the same nominal-growth factor (relative to each vintage's own
-data year), so band membership is evaluated on aged turnover — the fiscal-drag
-convention. `results/static_sweep.txt` holds the machine-readable table.
+registration threshold and is cleanly populated with in-scope registered firms.
+The forward sweep uses the current £90k vintage. Both are direct mechanical
+reclassifications of in-scope firms on **data-year turnover** (a fixed
+cross-section has no growth process; ageing the near-threshold stock across
+the threshold would treat bunched firms as crossers); liabilities are aged by
+the fiscal-year factor. A rise releases every in-scope registrant in the
+vacated band (they no longer need to register); the statutory £2k
+deregistration gap and the LLAT 43% retention share are reported as
+sensitivities. Voluntary registrants stay registered. Cuts draw in the
+unregistered stratum. `results/static_sweep.txt` holds the machine-readable table.
