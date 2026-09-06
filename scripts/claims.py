@@ -64,7 +64,9 @@ def build_claims() -> list[dict]:
         m = re.search(r"max: [\d.]+ / [\d.]+ / [\d.]+ / [\d.]+ / ([\d.]+)", block)
         add(f"maxw_{tag}", "calibration_accuracy.txt", m.re.pattern, m.group(1),
             _tex_int(_num(m.group(1))), "Sections/data.tex")
-        for lab, key in (("Sector Distribution", "sector"), ("VAT Liability by Band", "liab")):
+        for lab, key in (("Sector Distribution", "sector"), ("VAT Liability by Band", "liab"),
+                         ("ONS Population", "pop"), ("Employment Bands", "emp"),
+                         ("VAT Liability below Thresh.", "liab_below")):
             m = re.search(re.escape(lab) + r"\s+([\d.]+)%", block)
             add(f"{key}_{tag}", "calibration_accuracy.txt", m.re.pattern, m.group(1),
                 m.group(1) + r"\%", "Appendix/a_data.tex")

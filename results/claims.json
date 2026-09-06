@@ -45,6 +45,33 @@
     "note": ""
   },
   {
+    "key": "pop_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "ONS\\ Population\\s+([\\d.]+)%",
+    "value": "99.8",
+    "tex": "99.8\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "emp_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Employment\\ Bands\\s+([\\d.]+)%",
+    "value": "99.9",
+    "tex": "99.9\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "liab_below_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT\\ Liability\\ below\\ Thresh\\.\\s+([\\d.]+)%",
+    "value": "36.6",
+    "tex": "36.6\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
     "key": "overall_2425",
     "artifact": "calibration_accuracy.txt",
     "pattern": "Overall \\(5 calibrated dims\\)\\s+([\\d.]+)%",
@@ -86,6 +113,33 @@
     "pattern": "VAT\\ Liability\\ by\\ Band\\s+([\\d.]+)%",
     "value": "98.9",
     "tex": "98.9\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "pop_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "ONS\\ Population\\s+([\\d.]+)%",
+    "value": "99.9",
+    "tex": "99.9\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "emp_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Employment\\ Bands\\s+([\\d.]+)%",
+    "value": "99.9",
+    "tex": "99.9\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "liab_below_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT\\ Liability\\ below\\ Thresh\\.\\s+([\\d.]+)%",
+    "value": "0.0",
+    "tex": "0.0\\%",
     "tex_file": "Appendix/a_data.tex",
     "note": ""
   },
