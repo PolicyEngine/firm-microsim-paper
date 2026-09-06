@@ -46,6 +46,15 @@ SECONDARY NOTCH at the reduced-rate band top (T1 = GBP 105,000):
   10% band  secondary [105, 118.125) width GBP 13,125  OBS = 67,230
             primary OBS 54,517 + secondary OBS 67,230 = TOTAL 121,746  (baseline 124,256, -2.0%)
 
+DOMINATED REGION UNDER UNRECLAIMED INPUT VAT (firm-specific width):
+  a(delta) = T* tau (1 - 2 delta) / ((1 - tau)(1 - delta)); zero for delta >= 0.5
+  in-scope firms within [T*-15k, T*+45k]: median input share delta = 0.61
+  share with a positive dominated width (delta < 0.5) .. 0.275
+  mean width across all near-threshold firms ......... GBP 2,070
+  mean width among firms with a positive width ....... GBP 7,538
+  in-scope firms inside their OWN dominated region ... 11,321  (vs 124,256 in the fixed GBP 21,250 band)
+  The GBP 21,250 width is the B2C / no-input upper bound.
+
 REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;
   NOT the Section 6 headline, which runs on the full ONS-frame density):
   frame-density headline (Section 6): E = 8,268 (gross), E_net = -28,580, Delta_R = 896, y_R = GBP 100,000 [censored]

@@ -16,19 +16,6 @@ feature of such data should be traced to its calibration targets before it is
 read as economics. The behavioural evidence on UK VAT bunching remains the
 administrative estimate of \citet{liuetal2021}.
 
-The section also records a correction, because it is the sharpest available
-demonstration of the thesis. An earlier draft reported an excess mass of
-$8{,}712$ firms at \pounds85{,}000 that appeared to reproduce the
-administrative density step. It was an artifact of a liability mis-scaling in
-the generator (net liability set to value added rather than the standard rate
-on value added), which distorted how the weight optimiser distributed mass
-near the threshold; a later intermediate build produced a still larger,
-specification-robust artifact at the \pounds90{,}000 band edge from a
-mis-specified below-threshold liability target. Aggregate calibration scores
-barely moved under either defect, which is the point: aggregate fit does not
-discipline sub-band shape. The replication repository's changelog records
-each correction and its diagnosis.
-
 \subsection{Methodology}
 
 Following \citet{liuetal2021}, I group firms into fine turnover bins of
@@ -73,8 +60,12 @@ no behavioural mass to convert.
 \subsection{Results: diagnostics, not behavioural estimates}
 
 At the \pounds85{,}000 threshold (Figure~\ref{fig:bunch85}) the baseline specification returns
-$E=8{,}268$ weighted firms and $b_{\mathrm{LLAT}}=1.411$ on the
-all-business density (frame plus unregistered stratum, the universe of the
+$E=8{,}268$ weighted firms (gross positive part) and $b_{\mathrm{LLAT}}=1.411$ on the
+all-business density; the signed net excess over the same window is
+$-28{,}580$ and the net ratio $b=-0.088$, because the observed density lies
+below the fitted counterfactual over most of the window and above it only in
+the single \pounds84{,}000 bin that the OBR profile spikes in, so the gross
+statistic reads a one-bin feature while the net statistic reads a deficit (frame plus unregistered stratum, the universe of the
 OBR chart). This reads back a profile calibrated to the OBR fine-band levels;
 the generator contains no firm location choice, so it is not a behavioural
 estimate. Across the degree--window grid, $E$ ranges from about 560
@@ -89,17 +80,9 @@ weight optimiser resolves as a density step. Neither figure is evidence about
 firm responses; both are audits of what the estimator reads from the synthetic
 construction, and the second is the reason the $\pm\pounds5{,}000$ rows of
 Table~\ref{tab:static_revenue} are flagged as conditional on the within-band
-allocation. Two constructed-data exercises in the replication repository
-characterise the estimator itself. On a placebo population whose density is
-reweighted to a smooth profile across \pounds85{,}000, the estimator returns
-$E=0$: it produces no false positive on a step-free world. When a
-Kleven--Waseem-consistent relocation of known size is injected into that
-placebo, the estimator recovers 0\%, 11\% and 30\% of injected excess masses
-of $2{,}000$, $5{,}000$ and $8{,}000$ firms, with mass conservation then
-binding at an interior $y_R$: the counterfactual is fitted on bins that
-include the depressed region beyond the exclusion window, so the estimator
-attenuates a genuine response rather than inflating it
-(\texttt{results/placebo\_bunching.txt}, \texttt{results/recovery\_bunching.txt}).
+allocation. Appendix~\ref{app:inference} reports two constructed-data exercises that
+characterise the estimator itself.
+
 
 \begin{figure}[htbp]
 \centering
@@ -115,38 +98,13 @@ inherited from the targets and the weight optimiser.}
 \label{fig:bunch85}
 \end{figure}
 
-\subsection{Comparison with the literature}
-\label{ssec:bunch-lit}
-
-The behavioural fact in the literature is administrative. \citet{liuetal2021}
-(hereafter LLAT) document genuine bunching at the UK VAT registration notch in
-HMRC micro-data over 2004--05 to 2014--15, during which the threshold rose
-from \pounds58{,}000 to \pounds81{,}000, with an excess-bunching ratio of
-$b = 1.361$ (SE $0.202$) around the year-specific threshold and a manipulation
-window of $-\pounds14{,}000$ to $+\pounds24{,}000$. The synthetic baseline's
-$b_{\mathrm{LLAT}}=1.411$ is not a second estimate of their parameter: it is
-an unstable readback of the OBR target profile. What does
-carry across is institutional context: LLAT report that almost half (roughly
-$43\%$) of eligible below-threshold firms register voluntarily, which dampens
-observed bunching relative to a pure notch and which motivates the
-voluntary-retention sensitivity of Section~\ref{sec:static}. For wider
-order-of-magnitude context, \citet{obr2023vat} count firms holding turnover
-below the frozen threshold over a \emph{wide} band (rising from $23{,}000$ in
-2017--18 to about $44{,}000$ in 2025--26, with foregone turnover of
-\pounds110m rising to \pounds350m); this is a different object from a
-near-threshold spike and is cited only as context.
-
-\subsection{Reduced-form evidence and the dominated region}
-
-These results sharpen, rather than weaken, the case for grounding the policy
-analysis in structure. The reduced-form density around the threshold cannot
-price reforms---it has no single point of excess mass to forward-map onto a
-change in the \emph{shape} of the schedule---and on band-calibrated synthetic
-data it cannot be read behaviourally at all, in either direction. What the
-structure of Section~\ref{sec:model} \emph{does} deliver exactly, for every
-reform considered, is the notch's dominated region and how each schedule
-change alters it. It is precisely because the reduced-form bunching is
-non-identifying here that the exact dominated region carries the distortion
-characterisation. The behavioural layer that re-prices each firm's turnover
-under counterfactual schedules---conditional on an assumed turnover
-elasticity---is developed in Section~\ref{sec:behavioural}.
+\paragraph{Comparison with the literature.} \citet{liuetal2021} (hereafter
+LLAT) document genuine bunching at the UK VAT notch in HMRC micro-data over
+2004--05 to 2014--15, with an excess-bunching ratio of $b = 1.361$ (SE
+$0.202$) and a manipulation window of $-\pounds14{,}000$ to
+$+\pounds24{,}000$. The synthetic $b_{\mathrm{LLAT}}=1.411$ is not a second
+estimate of their parameter: it is a readback of the OBR target profile whose
+net counterpart is negative. What does carry across is institutional context:
+LLAT report that about $43\%$ of eligible below-threshold firms register
+voluntarily, which motivates the voluntary-retention sensitivity of
+Section~\ref{sec:static}.

@@ -118,13 +118,41 @@ in the $\pounds85{,}000$--$\pounds106{,}250$ band
 no notch and are excluded). Because the generator has no location choice, this
 counts the firms the data \emph{place} in the band---indexing the size of the
 population exposed to the distortion---rather than firms that optimally locate
-there; the count is conditional on the uniform within-band fill inside the
-coarse ONS bands (Section~\ref{sec:data}) and would shift under a different
-within-band shape. It is the width $a$, not the count, that is exact.
+there; the count is conditional on the log--log within-band fill inside the
+coarse ONS bands and on the scope flag (Section~\ref{sec:data}) and would
+shift under a different within-band shape. It is the width $a$, not the
+count, that is exact.
+
+\paragraph{The region under unreclaimed input VAT.} The invariance above
+holds because the value-added formulation lets an unregistered firm deduct
+its inputs. In the UK system an unregistered firm cannot reclaim input VAT:
+it bears $\tau$ on its standard-rated purchases, which is the mechanism
+behind voluntary registration (Section~\ref{sec:background}). With input
+share $\delta$ and inputs fully standard-rated, unregistered net revenue is
+$y(1-\delta-\tau\delta)$ against $(1-\tau)(1-\delta)y$ registered, and
+the indifference condition gives
+\begin{equation}
+  a(\delta) \;=\; T^{*}\,\frac{\tau\,(1-2\delta)}{(1-\tau)(1-\delta)},
+  \qquad a(\delta)=0 \text{ for } \delta\ge\tfrac12 .
+  \label{eq:dominated-input}
+\end{equation}
+The width is firm-specific, falls in the input share, and vanishes once inputs
+exceed half of turnover, where registration pays for itself through reclaim.
+On the synthetic population the median input share of in-scope firms within
+\pounds15{,}000 below to \pounds45{,}000 above the threshold is $0.61$:
+only 27.5\% of them face a positive dominated width, the mean width across
+all of them is \pounds2{,}070 (\pounds7{,}538 among those with a positive
+width), and about $11{,}300$ weighted firms sit inside their own dominated
+region, against the $124{,}300$ in the fixed \pounds21{,}250 band
+(\texttt{results/dominated\_region\_mass.txt}). The \pounds21{,}250 figure
+is therefore the business-to-consumer upper bound---the width facing a firm
+with no reclaimable inputs---and the reform comparisons below, which are
+statements about how each schedule changes $a$ at given $\tau$ and $T^{*}$,
+carry over to $a(\delta)$ firm by firm with the same ordering.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.96\textwidth]{figures/dynamic_notch_fit_e017.png}
-\caption{The VAT notch and the firm distribution. Panel (a) shows net revenue before production costs: immediately above \pounds85{,}000, VAT reduces it from $y$ to $0.8y$, making turnover in $(\pounds85{,}000,\,\pounds106{,}250)$ strictly dominated. Panel (b) shows the three-bin moving mean of weighted 2023--24 in-scope synthetic firm counts, with the same interval shaded. The distribution is descriptive and target-inherited, not the outcome of behavioural optimisation; its step at \pounds100{,}000 reflects the boundary between coarse ONS source bands, not an empty turnover interval. The vertical lines mark the marginal-buncher \emph{ability} $n_H$ at $e=0.17$ for deductible shares $\delta=0$ and $\delta=0.6$ (Section~\ref{sec:behavioural}); a firm of that ability registers at $n_H[(1-\delta)(1-\tau)]^{e}$, so the lines are not observed-turnover locations. The exact dominated width is $a=\pounds21{,}250$.}
+\caption{The VAT notch and the firm distribution. Panel (a) shows net revenue before production costs: immediately above \pounds85{,}000, VAT reduces it from $y$ to $0.8y$, making turnover in $(\pounds85{,}000,\,\pounds106{,}250)$ strictly dominated. Panel (b) shows the three-bin moving mean of weighted 2023--24 in-scope synthetic firm counts, with the same interval shaded. The distribution is descriptive and target-inherited, not the outcome of behavioural optimisation; its drop at \pounds85{,}000 reflects the scope flag---every frame business below the threshold is registrable, while about half of frame enterprises above it are VAT traders---not an empty turnover interval. The vertical lines mark the marginal-buncher \emph{ability} $n_H$ at $e=0.17$ for deductible shares $\delta=0$ and $\delta=0.6$ (Section~\ref{sec:behavioural}); a firm of that ability registers at $n_H[(1-\delta)(1-\tau)]^{e}$, so the lines are not observed-turnover locations. The exact dominated width is $a=\pounds21{,}250$.}
 \label{fig:notch_fit}
 \end{figure}
 

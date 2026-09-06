@@ -98,7 +98,7 @@ class StaticVATModel:
         """Nominal-growth factor from this vintage's data year to ``year``."""
         return _fiscal_year(year)["firm_growth"] / VINTAGE_BASE_GROWTH[self.vintage]
 
-    def _aged(self, growth: float) -> pd.DataFrame:
+    def _aged(self, growth: float, age_turnover: bool = False) -> pd.DataFrame:
         """Return data-year turnover (£) and net VAT liability (£) aged by ``growth``.
 
         Band membership is evaluated on DATA-YEAR turnover: a static
@@ -111,7 +111,7 @@ class StaticVATModel:
         df = self.firms
         return pd.DataFrame(
             {
-                "turnover": df["annual_turnover_k"] * 1000.0,
+                "turnover": df["annual_turnover_k"] * 1000.0 * (growth if age_turnover else 1.0),
                 "liab": df["vat_liability_k"] * 1000.0 * growth,
                 "weight": df["weight"],
                 "scope": df["vat_scope"].astype(bool),
@@ -260,6 +260,7 @@ class StaticVATModel:
         gap: float = DEREGISTRATION_GAP,
         retention: float = 0.0,
         retain_voluntary: bool = False,
+        age_turnover: bool = False,
     ) -> pd.DataFrame:
         """£85k→£90k anchor-reform impact (£m) per year: model vs HMRC.
 
@@ -271,7 +272,9 @@ class StaticVATModel:
         ``retention`` scales the released liability by ``1 - retention`` (a
         share of released firms assumed to stay registered voluntarily, e.g.
         the Liu et al. 43%). ``retain_voluntary`` applies the fixed-preference
-        convention of :meth:`_registered`.
+        convention of :meth:`_registered`. ``age_turnover`` ages turnover as
+        well as liability (membership on aged turnover), reported as a
+        sensitivity: it carries the near-threshold stock across the threshold.
 
         Simple band-sum on the loaded vintage. Use the £85k (2023-24) vintage —
         the basis HMRC actually had at the 6 March 2024 costing (the threshold
@@ -286,7 +289,7 @@ class StaticVATModel:
         """
         rows = []
         for fy in FISCAL_YEARS:
-            df = self._aged(self._growth(fy["year"]))
+            df = self._aged(self._growth(fy["year"]), age_turnover=age_turnover)
             base_t, pol_t = float(fy["baseline"]), float(fy["policy"])
             # Revenue under each regime from the same registration rule:
             # in-scope firms at/above the regime's threshold, data-year

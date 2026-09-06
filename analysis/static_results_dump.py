@@ -19,6 +19,8 @@ from firm_microsim.static.model import (
 )
 
 LLAT_VOLUNTARY_SHARE = 0.43  # Liu-Lockwood-Almunia-Tam (2021): ~43% below-threshold
+# HMRC 2023-24: £1.46bn net liability in the £1-threshold band / 678,350 traders.
+HMRC_BELOW_THRESHOLD_PER_FIRM = 1_460e6 / 678_350
 
 
 def main() -> None:
@@ -54,6 +56,12 @@ def main() -> None:
           f"retention-adjusted {float(r2['policyengine_impact_m']):+,.1f}m "
           f"(HMRC {float(row['hmrc_impact_m']):+,.0f}m)")
     W("")
+    W("Aged-membership sensitivity: turnover aged by the same factor as liability,")
+    W("so band membership is evaluated on aged turnover (bunched firms treated as")
+    W("crossers):")
+    for _, row in anchor_model.anchor_reform(age_turnover=True).iterrows():
+        W(f"  {row['year']}: aged-membership {float(row['policyengine_impact_m']):+,.1f}m")
+    W("")
     W("Released registrants in the headline (in-scope, data-year turnover in")
     W("[baseline, 90k)), weighted firms per year:")
     for fy in FISCAL_YEARS:
@@ -69,6 +77,18 @@ def main() -> None:
     W("-" * 74)
     sweep = sweep_model.threshold_sweep(year="2025-26")
     W(sweep.to_string(index=False))
+    W("")
+    W("")
+    W("Cut-row liability sensitivity: newly registered businesses credited at HMRC's")
+    W(f"average below-threshold remittance (GBP {HMRC_BELOW_THRESHOLD_PER_FIRM:,.0f} per registered firm)")
+    W("instead of the standard rate on their modelled value added:")
+    df_sw = sweep_model._aged(sweep_model._growth("2025-26"))
+    for t in (70_000, 75_000, 80_000, 85_000):
+        newly = sweep_model._registered(df_sw, float(t)) & ~sweep_model._registered(df_sw, 90_000.0)
+        n = float(df_sw["weight"][newly].sum())
+        std = float((df_sw["liab"] * df_sw["weight"])[newly].sum()) / 1e6
+        W(f"  {t/1000:.0f}k: newly registered {n:,.0f}; standard-rate {std:+,.1f}m; "
+          f"at GBP {HMRC_BELOW_THRESHOLD_PER_FIRM:,.0f}/firm {n * HMRC_BELOW_THRESHOLD_PER_FIRM / 1e6:+,.1f}m")
     W("")
     for year in ("2025-26", "2026-27"):
         W(f"Total VAT revenue at GBP 90k, {year}: "

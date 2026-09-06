@@ -150,6 +150,22 @@ def build_claims() -> list[dict]:
     add("dominated_base_obs", "dominated_region_mass.txt", m.re.pattern, base,
         _tex_int(round(base, -2)), "Sections/model.tex")
 
+    # --- dominated region under input VAT --------------------------------------
+    m = re.search(r"share with a positive dominated width \(delta < 0\.5\) \.\. ([\d.]+)", dom)
+    add("a_delta_share_pos", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        f"{float(m.group(1))*100:.1f}\\%", "Sections/model.tex")
+    m = re.search(r"mean width among firms with a positive width \.+ GBP ([\d,]+)", dom)
+    add("a_delta_mean_pos", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        "\\pounds" + m.group(1).replace(",", "{,}"), "Sections/model.tex")
+    m = re.search(r"inside their OWN dominated region \.+ ([\d,]+)", dom)
+    add("a_delta_own_count", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        _tex_int(round(_num(m.group(1)), -2)), "Sections/model.tex")
+    aged = [float(x) for x in re.findall(r"aged-membership ([+-][\d.]+)m", sw)]
+    add("anchor_aged_series", "static_sweep.txt", "aged-membership", aged, _series(aged), "Sections/static.tex")
+    m = re.search(r"70k: newly registered ([\d,]+); standard-rate \+([\d,.]+)m; at GBP [\d,]+/firm \+([\d,.]+)m", sw)
+    add("cut70_per_firm_variant", "static_sweep.txt", m.re.pattern, m.group(3),
+        f"\\pounds{_num(m.group(3)):.0f}m", "Sections/static.tex")
+
     # --- seeds ---------------------------------------------------------------
     seeds = _read("seed_sensitivity.txt")
     m = re.search(r"half-range across seeds: E ±(\d+) \| b_llat ±([\d.]+) \| raise ±£([\d.]+)m \| taper ±£([\d.]+)m \| base ±£([\d.]+)bn", seeds)

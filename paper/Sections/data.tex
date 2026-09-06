@@ -15,12 +15,6 @@ documented in Appendix~\ref{app:data}; I build one population for 2023--24
 2024--25 (threshold \pounds90{,}000), used for the forward sweep of
 Section~\ref{sec:static}.
 
-The archived CSV inputs in this repository remain the reproduction source for
-the paper's reported numbers; a pinned migration snapshot also represents the
-same numeric target surface through PolicyEngine Ledger and the
-experimental Populace firm generator, and Appendix~\ref{app:data} reports the
-parity check between that shared source-of-truth path and the paper inputs.
-
 \paragraph{Construction.} Index firms by $i$. For each sector $s$ and ONS
 turnover band $b=[\underline{b},\overline{b})$, the \emph{UK Business: Activity,
 Size and Location} table gives a business count $N_{s,b}$, and I draw $N_{s,b}$
@@ -43,12 +37,7 @@ represented as $[50,100)$ thousand pounds.
 The counts come from Table~8 of the ONS workbook (enterprises by SIC division
 and turnover sizeband, United Kingdom); the employment-band targets below come
 from Table~3 of the same workbook (enterprises by employment sizeband), so both
-ONS margins count the same statistical unit.\footnote{An earlier build of the
-2023--24 population used the local-unit table (Table~18, individual sites:
-3.17 million against 2.72 million enterprises) for the employment margin, so
-its employment and population targets could not be met by the same weights.
-The processed tables are now produced by an executable extract from the raw
-workbooks and tested for agreement to disclosure rounding.}
+ONS margins count the same statistical unit.
 
 \paragraph{Three universes.} The model distinguishes three populations and
 declares which one each calibration target describes. The \emph{frame} is the
@@ -151,25 +140,19 @@ March 2023 \emph{Economic and Fiscal Outlook} reports HMRC business counts in
 2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. The final
 \pounds90{,}000 row lies beyond the fine window and is not used.
 
-All 25 retained bins enter as \emph{shape} targets. I apply them separately on
-each side of the threshold: the below-threshold profile is normalised over
-\pounds65{,}000--\pounds85{,}000 and the above-threshold profile over
-\pounds85{,}000--\pounds90{,}000. Each is then scaled to the synthetic
-population's mass in its respective window. Chart~C counts HMRC traders, a
-different unit and, below the threshold, a substantially narrower population
-than the ONS business frame, so its levels
-are not imported on either side. An earlier build that mixed conventions
-(direct counts above the threshold, frame-scaled shape below) placed more
-mass just above the threshold than just below it, inverting the
-administrative profile's cross-threshold ordering; under side-consistent
-scaling the cross-threshold step comes from the frame's own band structure
-and the OBR data supply only the within-side geometry---the rise into the
-threshold and the decline beyond it. These fine targets pin the
-near-threshold density to the OBR profile's within-side geometry at
-frame-implied levels---the region that coarse bands alone leave to the weight
-optimiser (Section~\ref{sec:bunching}); the resulting cross-threshold step
-(about $-21\%$ between the two bins adjoining the threshold) is about a third of the OBR chart's own ($-60\%$), because the chart's
-below-threshold universe is narrower than the frame. No fine bands are published for the
+All 25 retained bins enter as \emph{level} targets, on the universe the
+chart counts: every business in HMRC records, which below the threshold is the
+frame plus the unregistered stratum and above it the frame alone, unregistered
+businesses above the threshold being exempt traders outside the chart's
+registration analysis. The stratum's weights are frozen, so the levels
+identify the frame's near-threshold density as the residual between the
+chart and the stratum. The resulting all-business density steps from about
+$27{,}300$ firms per \pounds1{,}000 in the \pounds84{,}000--\pounds85{,}000
+bin ($18{,}600$ frame, $8{,}700$ stratum) to $19{,}600$ just above it
+($-28\%$), against the chart's own $-60\%$; the difference is the frame
+density above the threshold, which the chart's levels pin at about
+$11{,}000$ per \pounds1{,}000 while the coarse HMRC band implies about
+$8{,}700$. No fine bands are published for the
 \pounds90{,}000 threshold era, so the 2024--25 vintage keeps coarse bands
 only. Turnover-band and near-threshold targets carry the largest $\lambda_k$,
 followed by VAT liability by band. Two liability dimensions are reported as
@@ -259,11 +242,8 @@ and $8{,}700$ unregistered businesses), steps down across it (about $19{,}600$
 just above), and declines through the pinned window---the
 administratively observed bunching geometry \citep{obr2023vat,liuetal2021},
 present in the file because it is targeted, not because any synthetic firm
-chooses it. In an earlier build without these targets the local shape was an
-unpinned optimiser equilibrium (and, under the pre-correction liability scale,
-a spurious bunching look-alike); the central data caveat of the paper stands
-in all three configurations: no sub-band feature of band-calibrated synthetic
-data carries behavioural information beyond what its targets put there
+chooses it; no sub-band feature of band-calibrated synthetic data carries
+behavioural information beyond what its targets put there
 (Section~\ref{sec:bunching} quantifies the resulting specification sensitivity).
 Counterfactual policies---including the \pounds85{,}000 to \pounds90{,}000
 reform and the forward threshold sweep of Section~\ref{sec:static}---are

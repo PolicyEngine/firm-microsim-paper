@@ -6,9 +6,10 @@ parameterised by the registration threshold, and its calibration to HMRC and ONS
 aggregates. This appendix records the implementation detail deferred from that
 account.
 
-Each of the approximately $2.94$ million firm rows carries a turnover, an input
+Each of the approximately $5.80$ million firm rows carries a turnover, an input
 expenditure, a net VAT liability ($v_i = 0.20\,(y_i - x_i)$), a calibration
-weight, a frame indicator, a VAT-scope flag, and a registration flag. The
+weight, a frame indicator, an unregistered-stratum indicator, a VAT-scope
+flag, and a registration flag. The
 weights are chosen so the weighted frame rows reproduce the ONS enterprise
 total and employment bands while the weighted registered rows reproduce the
 HMRC trader counts and liability totals (Table~\ref{tab:calibration}). Because
@@ -63,38 +64,6 @@ coexist with a small number of influential synthetic records. The report is
 generated rather than transcribed, and the test suite verifies source-band
 support, sector-conditional employment assignment, and weighted voluntary
 registration.
-
-\paragraph{Ledger and Populace migration check.} The official target tables are
-being moved into PolicyEngine Ledger, with Populace providing the shared
-synthetic-population generator. I therefore keep the paper's archived processed
-CSVs as the reproduction source for the reported results, and treat the pinned
-Populace/Ledger path as an auditable migration check rather than a silent
-replacement. The snapshot used here is PolicyEngine/ledger pull request 67
-at commit \texttt{cd98b5c} and PolicyEngine/populace pull request 223 at commit
-\texttt{fa20daf}; both upstream pull requests merged on June 30, 2026. For the
-2024--25 vintage, the Ledger-backed targets match the paper's
-processed numeric inputs exactly after dropping presentation-only labels,
-totals, and the HMRC ``Unknown'' column that the generator does not calibrate:
-six normalized source tables checked, zero mismatches, and maximum numeric
-difference zero. (The ``2024--25 vintage'' here denotes the HMRC/ONS
-statistical release labelled 2024--25, the same target tables the paper's
-2024--25 population calibrates to.) A 1,000-iteration Populace run from those
-targets generated 2,946,015 firm rows; its validator reported a 93.8 percent
-overall score against the paper validator's then-90.5 percent, a comparison
-that is not like-for-like (different band sets and sector-target definitions).
-Two caveats now attach to that pinned snapshot. First, it predates this
-paper's net-liability correction (Section~\ref{sec:data}, footnote): both
-generators at the pin date shared the mis-scaled $v_i = y_i - x_i$ convention,
-so the experimental Populace firm generator inherits the same defect, which I
-have reported upstream; the target-parity result (zero mismatches) is
-unaffected, since it concerns the input tables, not the generated population.
-Second, the paper validator's scores on the current build are
-98.3\% (2023--24) and 98.2\% (2024--25), on the
-two-universe target layout of Section~\ref{sec:data}, which the pinned
-snapshot predates. The comparison table and structured provenance are
-reproduced by \texttt{firm-microsim-populace-ledger} and checked into
-\path{results/populace_ledger_comparison.txt} and
-\path{results/populace_ledger_provenance.json}.
 
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
 counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial

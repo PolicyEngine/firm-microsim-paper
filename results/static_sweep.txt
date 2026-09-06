@@ -31,6 +31,15 @@ retained, the impact scales accordingly:
   2027-28: headline -41.2m -> retention-adjusted -23.5m (HMRC -50m)
   2028-29: headline +88.1m -> retention-adjusted +88.1m (HMRC +65m)
 
+Aged-membership sensitivity: turnover aged by the same factor as liability,
+so band membership is evaluated on aged turnover (bunched firms treated as
+crossers):
+  2024-25: aged-membership -522.7m
+  2025-26: aged-membership -683.5m
+  2026-27: aged-membership -405.8m
+  2027-28: aged-membership -123.8m
+  2028-29: aged-membership +244.2m
+
 Released registrants in the headline (in-scope, data-year turnover in
 [baseline, 90k)), weighted firms per year:
   2024-25: 27,674 firms
@@ -56,6 +65,15 @@ aged to the fiscal year, membership not aged
        110.0       -845.626981     -113.705188
        115.0      -1066.006043     -139.554427
        120.0      -1278.722998     -163.177877
+
+
+Cut-row liability sensitivity: newly registered businesses credited at HMRC's
+average below-threshold remittance (GBP 2,152 per registered firm)
+instead of the standard rate on their modelled value added:
+  70k: newly registered 246,263; standard-rate +1,587.0m; at GBP 2,152/firm +530.0m
+  75k: newly registered 175,335; standard-rate +1,171.0m; at GBP 2,152/firm +377.4m
+  80k: newly registered 110,893; standard-rate +764.9m; at GBP 2,152/firm +238.7m
+  85k: newly registered 52,735; standard-rate +376.5m; at GBP 2,152/firm +113.5m
 
 Total VAT revenue at GBP 90k, 2025-26: 184.1bn
 Total VAT revenue at GBP 90k, 2026-27: 188.7bn
