@@ -156,6 +156,27 @@ def main() -> None:
     # this is the directly displaced mass the dominated region concerns.
     missing_in_band = base["cf"] - base["obs"]
 
+    # --- Dominated region under unreclaimed input VAT ----------------------
+    # If an unregistered firm bears VAT on its inputs, the width is
+    # a(delta) = T* tau (1 - 2 delta) / ((1 - tau)(1 - delta)), zero for
+    # delta >= 1/2. Report its distribution across in-scope firms.
+    import pandas as _pd
+    from firm_microsim.config import SYNTHETIC_DATA_DIR as _SD
+    full = _pd.read_csv(_SD / f"synthetic_firms_{VINTAGE}.csv",
+                        usecols=["annual_turnover_k", "annual_input_k", "weight", "vat_scope"])
+    full = full[full["vat_scope"].astype(bool) & (full["annual_turnover_k"] > 0)]
+    delta = (full["annual_input_k"] / full["annual_turnover_k"]).to_numpy()
+    wt_all = full["weight"].to_numpy()
+    tk_all = full["annual_turnover_k"].to_numpy()
+    a_delta = np.where(delta < 0.5, t_star * TAU * (1 - 2 * delta) / ((1 - TAU) * (1 - delta)), 0.0)
+    near_all = (tk_all >= t_star - 15.0) & (tk_all <= t_star + 45.0)
+    share_pos = float(wt_all[near_all & (a_delta > 0)].sum() / wt_all[near_all].sum())
+    mean_a = float(np.average(a_delta[near_all], weights=wt_all[near_all]))
+    mean_a_pos = float(np.average(a_delta[near_all & (a_delta > 0)], weights=wt_all[near_all & (a_delta > 0)]))
+    in_own = (tk_all >= t_star) & (tk_all < t_star + a_delta)
+    own_count = float(wt_all[in_own].sum())
+    median_delta = float(np.median(delta[near_all]))
+
     # --- Write report -------------------------------------------------------
     lines = []
     W = lines.append
@@ -213,6 +234,16 @@ def main() -> None:
         W(f"            primary OBS {s['prim_obs']:,.0f} + secondary OBS {s['obs']:,.0f}"
           f" = TOTAL {s['total_obs']:,.0f}  (baseline {base['obs']:,.0f},"
           f" {100*(s['total_obs']/base['obs']-1):+.1f}%)")
+    W("")
+    W("DOMINATED REGION UNDER UNRECLAIMED INPUT VAT (firm-specific width):")
+    W("  a(delta) = T* tau (1 - 2 delta) / ((1 - tau)(1 - delta)); zero for delta >= 0.5")
+    W(f"  in-scope firms within [T*-15k, T*+45k]: median input share delta = {median_delta:.2f}")
+    W(f"  share with a positive dominated width (delta < 0.5) .. {share_pos:.3f}")
+    W(f"  mean width across all near-threshold firms ......... GBP {mean_a*1000:,.0f}")
+    W(f"  mean width among firms with a positive width ....... GBP {mean_a_pos*1000:,.0f}")
+    W(f"  in-scope firms inside their OWN dominated region ... {own_count:,.0f}"
+      f"  (vs {base['obs']:,.0f} in the fixed GBP 21,250 band)")
+    W("  The GBP 21,250 width is the B2C / no-input upper bound.")
     W("")
     W("REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;")
     W("  NOT the Section 6 headline, which runs on the full ONS-frame density):")
