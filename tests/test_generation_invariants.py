@@ -101,3 +101,36 @@ def test_open_band_log_uniform_draw_stays_in_band_and_is_top_light() -> None:
     assert float(draws.min()) >= 5_000.0 and float(draws.max()) < 50_000.0
     share_above_10m = float((draws >= 10_000.0).float().mean())
     assert abs(share_above_10m - 0.699) < 0.01  # ln(5)/ln(10)
+
+
+def test_unregistered_stratum_is_below_threshold_with_matching_mean() -> None:
+    import pandas as pd
+    from firm_microsim.generate import generate_unregistered_firms
+    torch.manual_seed(6)
+    bpe = pd.DataFrame({
+        "SIC Code": ["47", "62", "69"],
+        "unregistered_count": [50_000, 30_000, 20_000],
+        "unregistered_turnover_m": [1_500.0, 1_800.0, float("nan")],  # means 30k, 60k, national
+    })
+    sic, t = generate_unregistered_firms(bpe, 85.0, "cpu")
+    assert len(sic) == 100_000
+    assert float(t.min()) >= 0.1 and float(t.max()) <= 500.0
+    assert abs(float(t[sic == 47].mean()) - 30.0) < 1.0
+    assert abs(float(t[sic == 62].mean()) - 60.0) < 1.5
+    nat = (1_500.0 + 1_800.0) / 80_000 * 1000  # national mean over reported rows
+    assert abs(float(t[sic == 69].mean()) - nat) < 1.5
+    # Exponential tail: a minority sits above the threshold (exempt traders).
+    share_above = float((t > 85.0).float().mean())
+    assert 0.05 < share_above < 0.35
+
+
+def test_power_law_fill_keeps_band_support_and_is_monotone() -> None:
+    from firm_microsim.generate import _band_alphas, _draw_power_law
+    torch.manual_seed(7)
+    draws = _draw_power_law(200_000, 100.0, 250.0, 1.2, "cpu")
+    assert float(draws.min()) >= 100.0 and float(draws.max()) < 250.0
+    hist = torch.histc(draws, bins=15, min=100.0, max=250.0)
+    assert bool((hist[1:] <= hist[:-1] * 1.02).all())  # non-increasing within band
+    alphas = _band_alphas({"0-49": 388665, "50-99": 537540, "100-249": 874665,
+                           "250-499": 384570, "500-999": 234660, "1000-4999": 226445})
+    assert alphas["100-249"] > 0.5  # density falls steeply through the band

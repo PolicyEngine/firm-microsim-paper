@@ -148,7 +148,7 @@ class TargetSpec:
     original script.
     """
 
-    def __init__(self, n_sectors: int, n_vat_sectors: int, n_near: int = 0) -> None:
+    def __init__(self, n_sectors: int, n_vat_sectors: int, n_near: int = 0, n_bpe: int = 0) -> None:
         self.n_turnover = 8  # Negative_or_Zero + 7 positive-turnover bands
         self.n_population = 1
         self.propensity: Tensor | None = None  # per-firm registration propensity
@@ -158,6 +158,7 @@ class TargetSpec:
         self.n_vat_sectors = n_vat_sectors
         self.n_vat_bands = len(VAT_LIABILITY_BANDS_CALIBRATED)
         self.n_near = n_near
+        self.n_bpe = n_bpe
 
         self.turnover_start = 0
         self.population_start = self.n_turnover
@@ -166,7 +167,8 @@ class TargetSpec:
         self.vat_sector_start = self.employment_start + self.n_employment
         self.vat_band_start = self.vat_sector_start + self.n_vat_sectors
         self.near_start = self.vat_band_start + self.n_vat_bands
-        self.n_targets = self.near_start + self.n_near
+        self.bpe_start = self.near_start + self.n_near
+        self.n_targets = self.bpe_start + self.n_bpe
 
 
 def registration_propensity(
@@ -232,6 +234,8 @@ def build_target_matrix(
     near_threshold_bins: pd.DataFrame | None = None,
     base_weights: Tensor | None = None,
     frame_mask: Tensor | None = None,
+    unregistered_mask: Tensor | None = None,
+    bpe_df: pd.DataFrame | None = None,
 ) -> Tuple[Tensor, Tensor, TargetSpec]:
     """Construct the calibration target matrix and target vector.
 
@@ -266,6 +270,11 @@ def build_target_matrix(
     if frame_mask is None:
         frame_mask = torch.ones(n_firms, dtype=torch.bool, device=device)
     frame_f = frame_mask.float()
+    if unregistered_mask is None:
+        unregistered_mask = torch.zeros(n_firms, dtype=torch.bool, device=device)
+    # Rows that are HMRC traders by construction (appended negative/zero
+    # turnover): outside the frame and not in the unregistered stratum.
+    all_business = frame_mask | unregistered_mask
 
     sector_rows = hmrc_sector_df[hmrc_sector_df["Trade_Sector"] != "Total"].copy()
     if config.calibrate_vat_liability_sector:
@@ -278,11 +287,20 @@ def build_target_matrix(
         vat_liability_sector_rows = vat_liability_sector_df.iloc[0:0].copy()
 
     n_near = 0 if near_threshold_bins is None else len(near_threshold_bins)
-    spec = TargetSpec(len(sector_rows), len(vat_liability_sector_rows), n_near)
+    bpe_rows = (
+        bpe_df[bpe_df["unregistered_count"].fillna(0) > 0].reset_index(drop=True)
+        if (bpe_df is not None and bool(unregistered_mask.any()))
+        else None
+    )
+    n_bpe = 0 if bpe_rows is None else len(bpe_rows)
+    spec = TargetSpec(len(sector_rows), len(vat_liability_sector_rows), n_near, n_bpe)
     target_matrix = torch.zeros(spec.n_targets, n_firms, device=device)
 
     band_indices = map_to_hmrc_bands(turnover_values, threshold)
     propensity = registration_propensity(band_indices, frame_mask, base_weights, hmrc_bands)
+    # The unregistered stratum is, by definition, not in the HMRC trader
+    # tables: zero contribution to every registered-subset row.
+    propensity[unregistered_mask] = 0.0
     spec.propensity = propensity
     spec.frame_mask = frame_mask
 
@@ -331,13 +349,20 @@ def build_target_matrix(
     # ordering. With side-consistent scaling the cross-threshold ratio is the
     # frame's own, and the OBR data supply only the within-side profile.
     near_targets: list[float] = []
+    use_levels = bool(unregistered_mask.any())
     if n_near:
         below = near_threshold_bins[near_threshold_bins["bin_lo_k"] < threshold]
         above = near_threshold_bins[near_threshold_bins["bin_lo_k"] >= threshold]
         below_lo = float(below["bin_lo_k"].min())
         above_hi = float(above["bin_lo_k"].max()) + 1.0
-        below_mask = (turnover_values > below_lo) & (turnover_values <= threshold) & frame_mask
-        above_mask = (turnover_values > threshold) & (turnover_values <= above_hi) & frame_mask
+        # Below the threshold the OBR chart counts every business in HMRC
+        # records (frame + unregistered); above it, unregistered businesses
+        # can only be exempt traders outside the chart's registration
+        # analysis, so the levels there apply to the frame alone.
+        below_universe = all_business if use_levels else frame_mask
+        above_universe = frame_mask
+        below_mask = (turnover_values > below_lo) & (turnover_values <= threshold) & below_universe
+        above_mask = (turnover_values > threshold) & (turnover_values <= above_hi) & above_universe
         below_rows = float(base_weights[below_mask].sum().item())
         above_rows = float(base_weights[above_mask].sum().item())
         below_total = float(below["count"].sum())
@@ -345,12 +370,33 @@ def build_target_matrix(
         for offset, (_, bin_row) in enumerate(near_threshold_bins.iterrows()):
             lo = float(bin_row["bin_lo_k"])
             row = spec.near_start + offset
-            mask = (turnover_values > lo) & (turnover_values <= lo + 1.0) & frame_mask
+            universe = below_universe if lo < threshold else above_universe
+            mask = (turnover_values > lo) & (turnover_values <= lo + 1.0) & universe
             target_matrix[row, mask] = 1.0
-            if lo < threshold:
+            if use_levels:
+                # With the unregistered stratum present the modelled universe
+                # matches the OBR chart's (all businesses in HMRC records), so
+                # the chart's LEVELS are the target (issue #25).
+                near_targets.append(float(bin_row["count"]))
+            elif lo < threshold:
                 near_targets.append(float(bin_row["count"]) / below_total * below_rows)
             else:
                 near_targets.append(float(bin_row["count"]) / above_total * above_rows)
+        logger.info(
+            "Near-threshold targets applied as %s on %s rows",
+            "LEVELS" if use_levels else "frame-scaled shapes",
+            "frame + unregistered below / frame above" if use_levels else "frame",
+        )
+
+    # DBT unregistered stratum: count by SIC division (frame-external
+    # universe), calibrated on the unregistered rows only.
+    bpe_targets: list[float] = []
+    if n_bpe:
+        for offset, (_, r) in enumerate(bpe_rows.iterrows()):
+            row = spec.bpe_start + offset
+            mask = unregistered_mask & (sic_codes == int(r["SIC Code"]))
+            target_matrix[row, mask] = 1.0
+            bpe_targets.append(float(r["unregistered_count"]))
 
     # ---- Target values --------------------------------------------------
     turnover_targets = [
@@ -405,18 +451,20 @@ def build_target_matrix(
         + vat_liability_sector_targets
         + vat_liability_band_targets
         + near_targets
+        + bpe_targets
     )
     target_values = torch.tensor(target_values_list, dtype=torch.float32, device=device)
 
     logger.info("Target matrix shape: %s", tuple(target_matrix.shape))
     logger.info(
         "Targets: 8 turnover + 1 population + %d sector + %d employment + %d VAT-liability sector "
-        "+ %d VAT-liability band + %d near-threshold = %d",
+        "+ %d VAT-liability band + %d near-threshold + %d BPE unregistered = %d",
         spec.n_sectors,
         spec.n_employment,
         spec.n_vat_sectors,
         spec.n_vat_bands,
         spec.n_near,
+        spec.n_bpe,
         spec.n_targets,
     )
     logger.info(
@@ -446,6 +494,7 @@ def _importance_weights(spec: TargetSpec, config: Config, device: str) -> Tensor
     w[spec.near_start : spec.near_start + spec.n_near] = (
         config.near_threshold_importance
     )
+    w[spec.bpe_start : spec.bpe_start + spec.n_bpe] = config.bpe_importance
     return w
 
 
@@ -455,6 +504,7 @@ def optimize_weights(
     target_values: Tensor,
     spec: TargetSpec,
     base_weights: Tensor | None = None,
+    frozen_mask: Tensor | None = None,
 ) -> Tensor:
     """Optimize per-firm weights to match all targets simultaneously.
 
@@ -485,6 +535,15 @@ def optimize_weights(
         base_log = torch.log(base_weights.to(device))
     log_weights = base_log.clone().requires_grad_(True)
     optimizer = torch.optim.Adam([log_weights], lr=config.learning_rate)
+    # Rows whose weights are held at their base value (the DBT unregistered
+    # stratum, whose shape is a maintained assumption rather than a fitted
+    # object): their gradient is zeroed every step.
+    free = (
+        torch.ones(n_firms, dtype=torch.bool, device=device)
+        if frozen_mask is None else ~frozen_mask.to(device)
+    )
+    if frozen_mask is not None:
+        logger.info("Frozen rows (not optimised): %s", f"{int(frozen_mask.sum().item()):,}")
     importance = _importance_weights(spec, config, device)
 
     best_loss = float("inf")
@@ -529,8 +588,13 @@ def optimize_weights(
             patience_counter += 1
 
         total_loss.backward()
+        if log_weights.grad is not None:
+            log_weights.grad[~free] = 0.0
         torch.nn.utils.clip_grad_norm_([log_weights], max_norm=config.grad_clip_norm)
         optimizer.step()
+        if frozen_mask is not None:
+            with torch.no_grad():
+                log_weights[~free] = base_log[~free]
 
         if iteration % 100 == 0:
             logger.info("Iteration %d: loss = %.6f", iteration, loss_val)

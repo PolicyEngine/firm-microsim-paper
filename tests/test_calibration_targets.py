@@ -175,9 +175,9 @@ def test_registration_propensity_below_one_on_real_frames(frames):
     frame = torch.ones(len(turnover), dtype=torch.bool)
     prop = registration_propensity(bands, frame, torch.ones(len(turnover)), data.hmrc_bands)
     # Documented expectation per band (HMRC 2023-24 / frame mass with the
-    # open 5000+ band drawn log-uniform on [£5m, £50m), issue #40):
-    # below-threshold ~0.89; above, 0.5-0.94.
-    expected = {1: 0.89, 2: 0.67, 3: 0.51, 4: 0.60, 5: 0.77, 6: 0.94, 7: 0.82}
+    # log-log within-band fill and the open 5000+ band log-uniform on
+    # [£5m, £50m), issues #40 and #50): below-threshold ~0.88; above, 0.5-0.94.
+    expected = {1: 0.88, 2: 0.54, 3: 0.57, 4: 0.69, 5: 0.77, 6: 0.94, 7: 0.82}
     for b, e_p in expected.items():
         p = float(prop[bands == b].max())
         assert abs(p - e_p) < 0.03, f"band {b}: propensity {p:.3f} != ~{e_p}"

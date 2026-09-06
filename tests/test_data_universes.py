@@ -42,3 +42,25 @@ def test_processed_ons_tables_match_etl() -> None:
         capture_output=True, text=True,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("vintage", sorted(VINTAGES))
+def test_bpe_unregistered_stratum_table(vintage: str) -> None:
+    df = pd.read_csv(PROCESSED_DATA_DIR / vintage / "bpe_unregistered_by_division.csv", dtype={"SIC Code": str})
+    assert len(df) >= 80
+    total = df["unregistered_count"].sum()
+    assert 2.5e6 < total < 3.5e6  # BPE: ~2.9m unregistered businesses
+    mean_k = df["unregistered_turnover_m"].sum() / df["unregistered_count"].sum() * 1000
+    assert 30 < mean_k < 60
+
+
+@pytest.mark.skipif(
+    not (REPO / "data" / "raw" / "dbt" / "BPE_2024_detailed_tables.xlsx").exists(),
+    reason="raw BPE workbooks not present in this checkout",
+)
+def test_processed_bpe_tables_match_etl() -> None:
+    result = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "etl_bpe_tables.py"), "--check"],
+        capture_output=True, text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
