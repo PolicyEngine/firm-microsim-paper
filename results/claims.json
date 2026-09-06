@@ -306,6 +306,24 @@
     "note": ""
   },
   {
+    "key": "rel100_text",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "direct band-sum",
+    "value": "-582.6",
+    "tex": "\\(-\\)\\pounds583m",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "rel100_firms_text",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "direct band-sum firms",
+    "value": "-87.8",
+    "tex": "87{,}800",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
     "key": "dyn_rate10_e017",
     "artifact": "dynamic_reform_results.txt",
     "pattern": "Reduced rate 10%",
@@ -375,6 +393,24 @@
     "value": "8,268",
     "tex": "8{,}268",
     "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "E_2324_summary",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline E",
+    "value": "8,268",
+    "tex": "8{,}268",
+    "tex_file": "Sections/conclusion.tex",
+    "note": ""
+  },
+  {
+    "key": "bllat_2324_summary",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline b_llat",
+    "value": "1.411",
+    "tex": "1.411",
+    "tex_file": "Sections/conclusion.tex",
     "note": ""
   },
   {

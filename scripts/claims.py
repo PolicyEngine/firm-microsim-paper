@@ -103,6 +103,12 @@ def build_claims() -> list[dict]:
         add(f"menu_{key}", "reform_menu_common_base.txt", label, val,
             f"$-{_tex_int(abs(val))}$", "Sections/static.tex")
 
+    m = re.search(r"\(A\) DIRECT band-sum \[85k,100k\) :\s+(-?[\d.]+) m\s+firms (-?[\d.]+)", menu)
+    add("rel100_text", "reform_menu_common_base.txt", "direct band-sum", m.group(1),
+        f"\\(-\\)\\pounds{abs(float(m.group(1))):.0f}m", "Sections/static.tex")
+    add("rel100_firms_text", "reform_menu_common_base.txt", "direct band-sum firms", m.group(2),
+        _tex_int(round(abs(float(m.group(2))) * 1000, -2)), "Sections/static.tex")
+
     # --- dynamic -----------------------------------------------------------
     dyn = _read("dynamic_reform_results.txt")
     for key, label in (("rate10", "Reduced rate 10%"), ("rate15", "Reduced rate 15%")):
@@ -129,6 +135,11 @@ def build_claims() -> list[dict]:
         m = re.search(rf"Vintage {v}.*?E = ([\d,]+) \(gross\).*?b_llat = ([\d.]+)", bun, re.S)
         add(f"E_{tag}", "bunching_inference.txt", "headline E", m.group(1),
             m.group(1).replace(",", "{,}"), "Sections/bunching.tex")
+        if tag == "2324":
+            add("E_2324_summary", "bunching_inference.txt", "headline E", m.group(1),
+                m.group(1).replace(",", "{,}"), "Sections/conclusion.tex")
+            add("bllat_2324_summary", "bunching_inference.txt", "headline b_llat", m.group(2),
+                f"{float(m.group(2)):.3f}", "Sections/conclusion.tex")
         add(f"bllat_{tag}", "bunching_inference.txt", "headline b_llat", m.group(2),
             f"{float(m.group(2)):.3f}", "Sections/bunching.tex")
 
