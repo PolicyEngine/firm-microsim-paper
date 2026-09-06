@@ -112,6 +112,15 @@ def build_claims() -> list[dict]:
         vals = [int(x) for x in re.findall(r"£\s*([+-]?\d+)m", ln)]
         add(f"dyn_{key}_e017", "dynamic_reform_results.txt", label, vals[2],
             f"$-\\pounds{abs(vals[2])}$m", "Sections/behavioural.tex")
+    for key, label in (("raise100k", "Raise threshold to £100k"), ("rate10", "Reduced rate 10%")):
+        ln = [line for line in dyn.splitlines() if line.strip().startswith(label)][0]
+        firms = re.findall(r"m\s+([\d,]+)\s+[+-]", ln)[0]
+        add(f"dyn_{key}_firms", "dynamic_reform_results.txt", label, firms,
+            "$" + firms.replace(",", "{,}") + "$", "Sections/behavioural.tex")
+    for key, label in (("sector_diag_2324", "2023-24"), ("sector_diag_2425", "2024-25")):
+        block = cal.split(f"Vintage {label}")[1].split("Vintage")[0]
+        m = re.search(r"VAT Liability by Sector\s+([\d.]+)%", block)
+        add(key, "calibration_accuracy.txt", m.re.pattern, m.group(1), m.group(1) + r"\%", "Appendix/a_data.tex")
     m = re.search(r"e=0\.17\s+n_H\(delta=0\)=£\s*([\d.]+)k.*?n_H\(delta=0\.6\)=£\s*([\d.]+)k", dyn)
     add("nH_e017_d06", "dynamic_reform_results.txt", m.re.pattern, m.group(2),
         f"\\pounds{_num(m.group(2))*1000:,.0f}".replace(",", "{,}"), "Sections/behavioural.tex")

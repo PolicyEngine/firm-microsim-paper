@@ -339,6 +339,42 @@
     "note": ""
   },
   {
+    "key": "dyn_raise100k_firms",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "Raise threshold to \u00a3100k",
+    "value": "114,418",
+    "tex": "$114{,}418$",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "dyn_rate10_firms",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "Reduced rate 10%",
+    "value": "136,084",
+    "tex": "$136{,}084$",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "sector_diag_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT Liability by Sector\\s+([\\d.]+)%",
+    "value": "40.4",
+    "tex": "40.4\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "sector_diag_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT Liability by Sector\\s+([\\d.]+)%",
+    "value": "44.2",
+    "tex": "44.2\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
     "key": "nH_e017_d06",
     "artifact": "dynamic_reform_results.txt",
     "pattern": "e=0\\.17\\s+n_H\\(delta=0\\)=\u00a3\\s*([\\d.]+)k.*?n_H\\(delta=0\\.6\\)=\u00a3\\s*([\\d.]+)k",
