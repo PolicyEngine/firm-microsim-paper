@@ -3,19 +3,19 @@ REFORM MENU ON A SINGLE COMMON BASE  (tab:schedule_costs)
 Base: GBP85k notch, 2023-24 microdata, UNAGED
 ========================================================================
 Dataset            : data/synthetic/synthetic_firms_2023-24.csv  (in-scope VAT firms only)
-VAT base (>=85k)   : GBP 175.692 bn
-Firms in [85k,105k): 138,031
+VAT base (>=85k)   : GBP 175.105 bn
+Firms in [85k,105k): 138,004
 
 --- Threshold relocation GBP85k -> GBP100k (recomputed) -------------
-  (A) DIRECT band-sum [85k,100k) :  -742.2 m   firms -117.9 (000s)
-      as % of VAT base           :  -0.422%
-  (B) SMOOTH counterfactual      :  -615.8 m   firms -96.5 (000s)
-  HEADLINE (adopt A)             :  -742 m   firms -117.9 (000s)
+  (A) DIRECT band-sum [85k,100k) :  -742.4 m   firms -117.8 (000s)
+      as % of VAT base           :  -0.424%
+  (B) SMOOTH counterfactual      :  -615.9 m   firms -96.5 (000s)
+  HEADLINE (adopt A)             :  -742 m   firms -117.8 (000s)
 
 --- Schedule reforms (computed on the SAME repo-generated base) -----
-  Graduated taper [85k,141.7k]     :  -1406.1 m   affected firms -275.8 (000s)
-  Flat 50% marginal taper [85k,141.7k]:  -968.0 m   affected firms -275.8 (000s)
-  Reduced rate 10% [85k,105k]      :  -446.1 m   affected firms -138.0 (000s)
+  Graduated taper [85k,141.7k]     :  -1406.3 m   affected firms -275.8 (000s)
+  Flat 50% marginal taper [85k,141.7k]:  -968.1 m   affected firms -275.8 (000s)
+  Reduced rate 10% [85k,105k]      :  -446.2 m   affected firms -138.0 (000s)
   Reduced rate 15% [85k,105k]      :  -223.1 m   affected firms -138.0 (000s)
 
 ========================================================================
@@ -31,6 +31,6 @@ Reduced rate 15% [85k,105k]               Rate (step)                         -2
 ========================================================================
 
 Firm-in-band counts:
-  Raise-to-100k band [85k,100k): 117,879 firms released
-  Reduced-rate band [85k,105k): 138,031 firms
-  Taper band [85k,141.7k): 275,805 firms
+  Raise-to-100k band [85k,100k): 117,846 firms released
+  Reduced-rate band [85k,105k): 138,004 firms
+  Taper band [85k,141.7k): 275,803 firms

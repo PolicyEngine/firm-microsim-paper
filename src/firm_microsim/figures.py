@@ -134,8 +134,9 @@ def plot_vat_firms_by_turnover_band(vintage: str) -> None:
 def plot_turnover_distribution(vintage: str) -> None:
     """Full-range weighted synthetic turnover distribution (£1k bins).
 
-    Shows the density step at the VAT registration threshold and the £150k
-    Flat Rate Scheme ceiling.
+    Marks the VAT registration threshold and the £150k HMRC turnover-band
+    edge (a calibration-target boundary, not a feature of the firm
+    distribution).
     """
     regime = VINTAGE_REGIME[vintage]
     threshold = float(VINTAGES[vintage]["threshold"])
@@ -159,7 +160,7 @@ def plot_turnover_distribution(vintage: str) -> None:
 
     ymax = ax.get_ylim()[1]
     for x, label in ((threshold, f"VAT threshold\n(£{int(threshold)}k)"),
-                     (frs_ceiling, "Flat Rate Scheme\n(£150k)")):
+                     (frs_ceiling, "HMRC band edge\n(£150k)")):
         ax.axvline(x, color=ACCENT, linestyle="--", linewidth=1.5, zorder=4)
         # Horizontal label at the top, just right of the line, wrapped to two
         # lines so the two annotations never overlap.

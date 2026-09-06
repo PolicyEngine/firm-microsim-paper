@@ -77,3 +77,16 @@ jobs:
         run: |
           cd paper
           python3 build_site.py
+
+      # Issue #27: deploy the rendered site on pushes to main. Requires the
+      # VERCEL_TOKEN repository secret (Vercel account token scoped to the
+      # policy-engine team); the step is skipped when the secret is absent.
+      - name: Deploy paper site to Vercel
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && env.VERCEL_TOKEN != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_policy-engine
+          VERCEL_PROJECT_ID: prj_mS32QkNiwP6zaMRTQKfLwZ2aKMLo
+        run: |
+          printf '{"framework": null}\n' > paper/site/vercel.json
+          npx --yes vercel@latest deploy paper/site --prod --yes --token "$VERCEL_TOKEN"

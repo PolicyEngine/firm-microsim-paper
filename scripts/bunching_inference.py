@@ -17,7 +17,12 @@ from firm_microsim.config import RESULTS_DIR, VINTAGES
 OUT = RESULTS_DIR / "bunching_inference.txt"
 
 HEADER = """BUNCHING INFERENCE — definitive build (OBR shape targets, side-consistent
-frame scaling; no below-threshold liability calibration). Points + grids
+frame scaling; no below-threshold liability calibration). Definitions:
+E = gross positive-part excess below T* over the window; E_net = signed
+excess over the same window; Delta_R = missing mass above T* up to y_R;
+y_R is searched only up to the window top and is CENSORED there when
+Delta_R < E. b_llat = positive-part gap over [T*-W, y_R] / mean f_cf.
+Points + grids
 only; see 'Why no standard errors are reported' in the paper appendix and
 results/seed_sensitivity.txt for generator-seed dispersion.
 =========================================================================="""
@@ -32,9 +37,11 @@ def main() -> None:
         lines += [
             "",
             f"--- Vintage {vintage} (threshold GBP {threshold:.0f}k) ---",
-            f"E = {res['E']:,.0f} | Delta_R = {res['Delta_R']:,.0f} | "
-            f"b_llat = {res['b_llat']:.3f} | b = {res['b']:.4f} | "
-            f"y_R = {res['y_R']:.2f}",
+            f"E = {res['E']:,.0f} (gross) | E_net = {res['E_net']:,.0f} | "
+            f"Delta_R = {res['Delta_R']:,.0f} | b_llat = {res['b_llat']:.3f} | "
+            f"b = {res['b']:.4f} | y_R = {res['y_R']:.2f}"
+            + (" [CENSORED at search cap: mass conservation does not bind]"
+               if res['y_R_censored'] else ""),
             "",
             "Degree x window sensitivity (point estimates):",
             est.sensitivity()["degree_window"].to_string(index=False),

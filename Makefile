@@ -39,10 +39,12 @@ reproduce: etl
 	uv run firm-microsim-formulation-a-optima
 	uv run python analysis/recovery_bunching.py
 	$(MAKE) figures-sync
+	uv run python scripts/claims.py --check
 
 reproduce-heavy: reproduce
 	uv run python scripts/seed_sensitivity.py --seeds 42 7 99
 	uv run firm-microsim-placebo
+	uv run python scripts/claims.py --check
 
 figures-sync:
 	@for f in paper/figures/*.png; do \

@@ -93,3 +93,11 @@ def test_zero_turnover_allocation_hits_hmrc_target_exactly() -> None:
     )
     assert len(out[0]) - len(sic) == 11
     assert int((out[1] == 0).sum()) == 11
+
+
+def test_open_band_log_uniform_draw_stays_in_band_and_is_top_light() -> None:
+    torch.manual_seed(5)
+    draws = _draw_band_turnover(200_000, 5_000.0, 50_000.0, "cpu", log_uniform=True)
+    assert float(draws.min()) >= 5_000.0 and float(draws.max()) < 50_000.0
+    share_above_10m = float((draws >= 10_000.0).float().mean())
+    assert abs(share_above_10m - 0.699) < 0.01  # ln(5)/ln(10)

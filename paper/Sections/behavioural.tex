@@ -109,25 +109,24 @@ scope: the synthetic data contain no information about it
 (Section~\ref{sec:bunching}), and pricing it would require assumptions about
 re-bunching dynamics the paper has declined to make. Confining the response to
 the firm's own region also makes the $e\to0$ limit collapse onto the static
-costing \emph{exactly}, with no solver tolerance.\footnote{An earlier version
-of this simulator computed the registered optimum by damped fixed-point
-iteration on the discontinuous schedule. For any firm whose ability straddles
-a reform notch that iteration has no fixed point---the iterate oscillates
-across the notch and the reported turnover is an artifact of the iteration
-count. The reported behavioural offsets in the earlier draft (for example
-$-\pounds292$m against a static $-\pounds508$m for the raise at $e=0.17$) were
-dominated by this artifact. The corrected, region-confined solve is closed
-form; the replication repository documents the change.}
+costing \emph{exactly}, with no solver tolerance.\footnote{An earlier
+version solved the registered optimum by damped fixed-point iteration, which
+has no fixed point for abilities that straddle a reform notch; the
+replication repository's changelog records the change to the closed-form
+region-confined solve.}
 
 \paragraph{Conditional on $e$.} The elasticity $e$ is not identified from
 these data, so every behavioural magnitude below is conditional on the assumed
 $e$, and the sweep is a sensitivity analysis rather than a set of forecasts.
-The sweep values $e\in\{0.05,\,0.17,\,0.32\}$ are assumptions: $0.05$ is the
-external anchor---\citet{klevenwaseem2013} report lower-bound structural
-elasticities mostly in $[0.05, 0.15]$---and $0.17$ and $0.32$ are chosen to
-span the range used in the threshold literature; the published UK VAT-base
-elasticities of \citet{liuetal2021} (roughly $0.09$--$0.14$) fall between the
-anchor and the midpoint. A reader may substitute any preferred value directly.
+The sweep values $e\in\{0.05,\,0.17,\,0.32\}$ are assumptions: $0.05$ is
+the external anchor---\citet{klevenwaseem2013} find that structural
+elasticities recovered from notches, once optimisation frictions are
+accounted for, are small---and $0.17$ and $0.32$ are chosen to span the range
+used in the threshold literature. \citet{liuetal2021} deliberately do not
+convert their bunching estimate into a turnover elasticity, because the
+Kleven--Waseem formula presumes business-to-consumer sales, price-taking, and
+a fixed-coefficient technology, so no published UK VAT-base elasticity anchors
+the sweep. A reader may substitute any preferred value directly.
 The robust, $e$-free headline objects remain the static costs of
 Section~\ref{sec:static} and the dominated region of Section~\ref{sec:model}.
 

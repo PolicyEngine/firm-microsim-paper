@@ -166,16 +166,48 @@ def locate_marginal_buncher(
     turnover at which cumulative missing mass above first equals ``E``
     (with linear interpolation inside the closing bin).
 
+    ``E`` is the GROSS positive-part excess below the threshold. The search
+    for ``y_R`` stops at ``t_star + window_hi``: if cumulative missing mass
+    never reaches ``E`` inside the window, ``y_R`` is CENSORED at the window
+    edge and ``Delta_R < E``. Use :func:`locate_marginal_buncher_full` for the
+    censoring flag and the signed net excess.
+
     Returns ``(E, Delta_R, y_R, dyR)`` where ``dyR = y_R - t_star`` is the
     excess turnover span of the marginal buncher (Method B input).
     """
+    r = locate_marginal_buncher_full(
+        centres, f_obs, f_cf, t_star, window_lo, window_hi, bin_width
+    )
+    return r["E"], r["Delta_R"], r["y_R"], r["dyR"]
+
+
+def locate_marginal_buncher_full(
+    centres: np.ndarray,
+    f_obs: np.ndarray,
+    f_cf: np.ndarray,
+    t_star: float,
+    window_lo: float = DEFAULT_WINDOW,
+    window_hi: float = DEFAULT_WINDOW,
+    bin_width: float = BIN_WIDTH,
+) -> dict:
+    """Marginal-buncher search returning every diagnostic (issue #38).
+
+    Keys: ``E`` (gross positive-part excess below ``t_star`` over the window),
+    ``E_net`` (signed excess over the same window), ``Delta_R`` (cumulative
+    missing mass above ``t_star`` up to ``y_R``), ``y_R``, ``dyR``, and
+    ``y_R_censored`` (True when the missing mass inside the search window is
+    insufficient to balance ``E``, so ``y_R`` sits at the window edge and mass
+    conservation does NOT bind).
+    """
     below = (centres >= t_star - window_lo) & (centres < t_star)
-    excess_below = np.maximum(f_obs[below] - f_cf[below], 0.0)
-    E = float(np.sum(excess_below) * bin_width)
+    gap_below = f_obs[below] - f_cf[below]
+    E = float(np.sum(np.maximum(gap_below, 0.0)) * bin_width)
+    E_net = float(np.sum(gap_below) * bin_width)
 
     above_idx = np.where(centres >= t_star)[0]
     cum_missing = 0.0
     y_R = t_star
+    censored = True
     for j in above_idx:
         if centres[j] > t_star + window_hi:
             break
@@ -186,10 +218,18 @@ def locate_marginal_buncher(
             over = cum_missing - E
             if deficit > 0:
                 y_R = centres[j] - over / deficit * bin_width
+            censored = False
             break
-    Delta_R = float(cum_missing)
-    dyR = max(y_R - t_star, 0.0)
-    return E, Delta_R, float(y_R), float(dyR)
+    if E <= 0.0:
+        censored = False  # nothing to balance
+    return {
+        "E": E,
+        "E_net": E_net,
+        "Delta_R": float(cum_missing),
+        "y_R": float(y_R),
+        "dyR": float(max(y_R - t_star, 0.0)),
+        "y_R_censored": bool(censored),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -275,9 +315,10 @@ def _run_estimator(
     """
     centres, f_obs = bin_density(turnover, weight)
     f_cf = fit_counterfactual(centres, f_obs, t_star, degree, window_lo, window_hi)
-    E, Delta_R, y_R, dyR = locate_marginal_buncher(
+    mb = locate_marginal_buncher_full(
         centres, f_obs, f_cf, t_star, window_lo, window_hi
     )
+    E, Delta_R, y_R, dyR = mb["E"], mb["Delta_R"], mb["y_R"], mb["dyR"]
     b, q_N_obs, q_R_obs, q_N_cf, q_R_cf = bunching_stats(
         centres, f_obs, f_cf, t_star, window_lo, y_R
     )
@@ -286,8 +327,10 @@ def _run_estimator(
         "b": b,
         "b_llat": b_llat,
         "E": E,
+        "E_net": mb["E_net"],
         "Delta_R": Delta_R,
         "y_R": y_R,
+        "y_R_censored": mb["y_R_censored"],
         "dyR": dyR,
         "centres": centres,
         "f_obs": f_obs,
@@ -442,6 +485,9 @@ class BunchingEstimator:
                         "b": r["b"],
                         "b_llat": r["b_llat"],
                         "E": r["E"],
+                        "E_net": r["E_net"],
+                        "y_R": r["y_R"],
+                        "censored": r["y_R_censored"],
                     }
                 )
 

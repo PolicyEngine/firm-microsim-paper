@@ -22,7 +22,13 @@ from firm_microsim.config import SYNTHETIC_DATA_DIR, VINTAGES
 # year) plus the April-2024 anchor reform: a frozen £85k baseline, RPI-uprated
 # with a two-year lag, against the £90k policy, alongside HMRC's published
 # costing (£m). Both turnover and liability are aged by the same factor against
-# fixed nominal thresholds (the fiscal-drag convention); see ``_growth``.
+# fixed nominal thresholds (the fiscal-drag convention); see ``_growth``. The
+# factors are an ASSUMED nominal-turnover path (about 3.1%, 2.0%, 2.5%, 3.0%,
+# 2.9% a year), of the order of the OBR's March 2024 nominal GDP forecast; they
+# are not taken from a published series and are reported as assumptions in the
+# paper (issue #47). The HMRC costing profile is from the TIIN "Increasing the
+# VAT registration threshold" (2024): 28,000 fewer registrants in 2024-25 and
+# 14,000 fewer on average over 2024-25 to 2028-29.
 FISCAL_YEARS = [
     {"year": "2024-25", "baseline": 85000, "policy": 90000, "hmrc_impact": -150, "firm_growth": 1.0310},
     {"year": "2025-26", "baseline": 85000, "policy": 90000, "hmrc_impact": -185, "firm_growth": 1.0516},
