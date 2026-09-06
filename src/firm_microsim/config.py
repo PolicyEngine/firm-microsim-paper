@@ -83,6 +83,9 @@ INPUT_FILES: Dict[str, str] = {
     "hmrc_population_sector": "hmrc_vat_population_by_sector.csv",
     "hmrc_liability_band": "hmrc_vat_liability_by_turnover_band.csv",
     "hmrc_liability_sector": "hmrc_vat_liability_by_sector.csv",
+    # DBT Business Population Estimates: unregistered businesses (neither VAT
+    # nor PAYE) by SIC division — the stratum outside the ONS frame (#25).
+    "bpe_unregistered": "bpe_unregistered_by_division.csv",
 }
 
 # Generic, threshold-agnostic output file name. NOT hardcoded to 85/90.
@@ -157,6 +160,11 @@ class Config:
     # Calibrate the near-threshold £1k-band shape to the OBR Chart C data
     # (2023-24 / £85k vintage only; the chart covers the £85k era).
     calibrate_near_threshold: bool = True
+    # Include the DBT unregistered stratum (#25). With it, the OBR £1k-bin
+    # counts are applied as LEVEL targets on the all-business universe
+    # (ONS frame + unregistered) rather than as frame-scaled shapes.
+    include_unregistered_stratum: bool = True
+    bpe_importance: float = 1.0
 
     # --- Fast-iteration stratified sampling -------------------------------
     # 1.0 / 1.0 = full synthetic census (release builds). Lower fractions

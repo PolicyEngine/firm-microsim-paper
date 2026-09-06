@@ -75,10 +75,8 @@ def build_claims() -> list[dict]:
     add("anchor_series", "static_sweep.txt", "anchor table", anchor, _series(anchor), "Sections/static.tex")
     ret = [float(x) for x in re.findall(r"retention-adjusted ([+-][\d.]+)m", sw)]
     add("anchor_retention_series", "static_sweep.txt", "retention-adjusted", ret, _series(ret), "Sections/static.tex")
-    nogap = [float(x) for x in re.findall(r"whole-band release ([+-][\d.]+)m", sw)]
-    add("anchor_nogap_series", "static_sweep.txt", "whole-band release", nogap, _series(nogap), "Sections/static.tex")
-    fixed = [float(x) for x in re.findall(r"fixed-preference ([+-][\d.]+)m", sw)]
-    add("anchor_fixed_series", "static_sweep.txt", "fixed-preference", fixed, _series(fixed), "Sections/static.tex")
+    gapd = [float(x) for x in re.findall(r"gap-protected release ([+-][\d.]+)m", sw)]
+    add("anchor_gap_series", "static_sweep.txt", "gap-protected release", gapd, _series(gapd), "Sections/static.tex")
     add("anchor_2526_abs", "static_sweep.txt", "anchor 2025-26", anchor[1],
         f"$-\\pounds{abs(anchor[1]):.0f}$m", "Sections/conclusion.tex")
     add("anchor_ret_2526_abs", "static_sweep.txt", "retention 2025-26", ret[1],
@@ -104,6 +102,12 @@ def build_claims() -> list[dict]:
         val = int(m.group(1))
         add(f"menu_{key}", "reform_menu_common_base.txt", label, val,
             f"$-{_tex_int(abs(val))}$", "Sections/static.tex")
+
+    m = re.search(r"\(A\) DIRECT band-sum \[85k,100k\) :\s+(-?[\d.]+) m\s+firms (-?[\d.]+)", menu)
+    add("rel100_text", "reform_menu_common_base.txt", "direct band-sum", m.group(1),
+        f"\\(-\\)\\pounds{abs(float(m.group(1))):.0f}m", "Sections/static.tex")
+    add("rel100_firms_text", "reform_menu_common_base.txt", "direct band-sum firms", m.group(2),
+        _tex_int(round(abs(float(m.group(2))) * 1000, -2)), "Sections/static.tex")
 
     # --- dynamic -----------------------------------------------------------
     dyn = _read("dynamic_reform_results.txt")
@@ -131,6 +135,11 @@ def build_claims() -> list[dict]:
         m = re.search(rf"Vintage {v}.*?E = ([\d,]+) \(gross\).*?b_llat = ([\d.]+)", bun, re.S)
         add(f"E_{tag}", "bunching_inference.txt", "headline E", m.group(1),
             m.group(1).replace(",", "{,}"), "Sections/bunching.tex")
+        if tag == "2324":
+            add("E_2324_summary", "bunching_inference.txt", "headline E", m.group(1),
+                m.group(1).replace(",", "{,}"), "Sections/conclusion.tex")
+            add("bllat_2324_summary", "bunching_inference.txt", "headline b_llat", m.group(2),
+                f"{float(m.group(2)):.3f}", "Sections/conclusion.tex")
         add(f"bllat_{tag}", "bunching_inference.txt", "headline b_llat", m.group(2),
             f"{float(m.group(2)):.3f}", "Sections/bunching.tex")
 

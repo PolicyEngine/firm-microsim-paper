@@ -60,6 +60,7 @@ class LoadedData:
     hmrc_bands: Dict[str, float]
     vat_liability_bands: Dict[str, float]
     near_threshold_bins: Optional[pd.DataFrame] = None
+    bpe_unregistered: Optional[pd.DataFrame] = None
 
 
 def _extract_ons_total(ons_turnover: pd.DataFrame) -> int:
@@ -153,8 +154,11 @@ def load_data(config: Config) -> LoadedData:
     logger.info("Loading processed input tables from %s", config.processed_dir)
 
     frames = {
-        key: pd.read_csv(config.input_path(key))
+        key: pd.read_csv(config.input_path(key), dtype={"SIC Code": str})
+        if key == "bpe_unregistered" and config.input_path(key).exists()
+        else pd.read_csv(config.input_path(key))
         for key in config.input_files
+        if key != "bpe_unregistered" or config.input_path(key).exists()
     }
 
     ons_turnover = frames["ons_turnover"]
@@ -189,4 +193,5 @@ def load_data(config: Config) -> LoadedData:
         hmrc_bands=hmrc_bands,
         vat_liability_bands=vat_liability_bands,
         near_threshold_bins=near_threshold_bins,
+        bpe_unregistered=frames.get("bpe_unregistered"),
     )

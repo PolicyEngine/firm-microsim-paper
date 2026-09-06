@@ -54,18 +54,25 @@ def _vintage_lines(vintage: str) -> list[str]:
     out += [
         f"  rows (firm types):   {len(df):,}",
         f"  weighted ONS-frame population: {rep.total_population:,.0f} firms"
-        f"  (registered traders {float(df.loc[df['vat_registered'].astype(bool), 'weight'].sum()):,.0f})",
+        f"  (registered traders {float(df.loc[df['vat_registered'].astype(bool), 'weight'].sum()):,.0f}"
+        + (f"; unregistered stratum {float(df.loc[df['unregistered'].astype(bool), 'weight'].sum()):,.0f}"
+           if 'unregistered' in df.columns else "") + ")",
         "-" * 64,
         f"  {'Dimension':<26}{'accuracy':>12}{'error':>12}",
         "-" * 64,
     ]
+    n_dims = 0
     for attr, label in _CALIBRATED_DIMENSIONS:
-        acc = getattr(rep, attr) * 100.0
+        val = getattr(rep, attr)
+        if val is None:
+            continue
+        n_dims += 1
+        acc = val * 100.0
         out.append(f"  {label:<26}{acc:>11.1f}%{100.0 - acc:>11.1f}%")
     out.append("-" * 64)
     overall = rep.overall * 100.0
     out.append(
-        f"  {'Overall (5 calibrated dims)':<26}{overall:>11.1f}%"
+        f"  {f'Overall ({n_dims} calibrated dims)':<26}{overall:>11.1f}%"
         f"{100.0 - overall:>11.1f}%"
     )
     out.append("-" * 64)
@@ -78,14 +85,23 @@ def _vintage_lines(vintage: str) -> list[str]:
     out.append(
         f"  {'VAT Liability below Thresh.':<26}{below:>10.1f}%{100.0 - below:>11.1f}%"
     )
+    if rep.bpe_unregistered is not None:
+        bpe = rep.bpe_unregistered * 100.0
+        out.append(
+            f"  {'BPE unregistered (frozen)':<26}{bpe:>11.1f}%{100.0 - bpe:>11.1f}%"
+        )
     out.append("=" * 64)
-    weights = df["weight"].to_numpy(dtype=float)
+    # Weight diagnostics cover the CALIBRATED rows only: the DBT unregistered
+    # stratum is frozen at unit weight and would otherwise dominate the
+    # effective sample size.
+    calibrated = df[~df["unregistered"].astype(bool)] if "unregistered" in df.columns else df
+    weights = calibrated["weight"].to_numpy(dtype=float)
     weight_sum = float(weights.sum())
     effective_n = weight_sum**2 / float(np.square(weights).sum())
     quantiles = np.quantile(weights, [0, 0.5, 0.9, 0.99, 1.0])
     out += [
-        "  Calibration-weight diagnostics:",
-        f"  effective sample size: {effective_n:,.0f} ({effective_n / len(df):.1%} of rows)",
+        "  Calibration-weight diagnostics (calibrated rows; unregistered stratum frozen):",
+        f"  effective sample size: {effective_n:,.0f} ({effective_n / len(calibrated):.1%} of calibrated rows)",
         "  min / p50 / p90 / p99 / max: "
         + " / ".join(f"{value:.3f}" for value in quantiles),
         f"  coefficient of variation: {float(weights.std() / weights.mean()):.3f}",

@@ -8,42 +8,38 @@ have turnover $y_i$, calibrated net VAT liability $v_i = \tau(y_i - x_i)$
 the VAT net), data-year registration flag $q_i$, and baseline
 voluntary-registration flag $r_i$ (one for firms registered with data-year
 turnover at or below the data-year threshold $T_0$). A firm remits VAT only
-once registered. Under a counterfactual threshold $T$, evaluated on turnover
-$y_i$ aged to the fiscal year, an in-scope firm is registered when its turnover
-is at or above $T$; a firm registered at the data year stays registered until
-its turnover falls below the deregistration threshold $T-g$, where
-$g=\pounds2{,}000$ is the statutory gap; a voluntary registrant is unchanged
-where it was never required to register ($y_i<T_0$), while one that ageing
-carries into a band the move releases is released unless gap-protected;
-out-of-scope firms never remit. Total VAT revenue at threshold $T$ is therefore
+once registered. Under a counterfactual threshold $T$ an in-scope firm is
+registered when its data-year turnover is at or above $T$; a voluntary
+registrant ($y_i<T_0$) is unchanged, since no threshold move changes its
+obligation; out-of-scope firms never remit. Total VAT revenue at threshold $T$
+is therefore
 \[
   R(T) \;=\; \sum_i w_i\, v_i\, s_i \,
-  \mathbf{1}\bigl\{\, y_i \ge T \;\lor\; (q_i \land y_i \ge T-g)
-  \;\lor\; (r_i \land y_i < T_0) \,\bigr\},
+  \mathbf{1}\bigl\{\, y_i \ge T \;\lor\; r_i \,\bigr\},
 \]
 which reproduces the baseline registered set at $T=T_0$. Three conventions
-follow and are worth stating. First, because voluntary registrants already remit, a
-threshold cut credits only the liability of in-scope firms that are newly drawn
-into the net; with about 89\% of below-threshold frame enterprises already
-registered (Section~\ref{sec:data}), that is a small population, and the cut
-rows below are frame-confined lower bounds: the businesses a lower threshold
-would mainly reach are the unregistered sole traders outside the ONS frame
-(Section~\ref{sec:conclusion}). Second, a threshold rise releases in-scope
-registered firms only below the new deregistration threshold; the top
-\pounds2{,}000 of the raised band stays registered. Third, the headline treats
-every releasable firm as deregistering; the anchor comparison reports the
-whole-band and voluntary-retention sensitivities. Because turnover is held
-fixed, moving the threshold from $T_0$ to $T$ changes revenue only through the
-firms whose registration status flips. The estimate is the mechanical
+follow and are worth stating. First, because voluntary registrants already
+remit, a threshold cut credits only the liability of in-scope firms newly drawn
+into the net: about 89\% of below-threshold frame enterprises are already
+registered (Section~\ref{sec:data}), so the firms a cut mainly reaches are the
+unregistered stratum. Second, a threshold rise releases every in-scope
+registrant with data-year turnover in $[T_0,T)$: they no longer need to
+register, which is the reading HMRC's costing uses; the statutory
+deregistration threshold (\pounds2{,}000 below the registration threshold)
+would keep an existing registrant in the top of the band in the net, and I
+report that as a sensitivity. Third, the headline treats every released firm as
+deregistering; the anchor comparison reports the voluntary-retention
+sensitivity. Band membership is evaluated on \emph{data-year} turnover in every
+fiscal year: a static cross-section has no growth process, and ageing the
+near-threshold stock across the threshold by a uniform factor would treat
+bunched firms as crossers, which they are not by construction
+(Section~\ref{sec:bunching}). Liabilities are aged by a cumulative
+nominal-growth factor---1.031, 1.052, 1.078, 1.110, and 1.142 for 2024--25 to
+2028--29 relative to 2023--24, applied to the 2024--25 vintage relative to its
+own data year; the factors are assumptions. The estimate is the mechanical
 reclassification effect and excludes the behavioural response of
-Section~\ref{sec:behavioural}. I age both turnover and liability to a given
-fiscal year by a cumulative nominal-growth factor against fixed nominal
-thresholds---the fiscal-drag convention of Section~\ref{sec:background}---so
-band membership in a later year is evaluated on aged turnover. The factors are
-assumptions: 1.031, 1.052, 1.078, 1.110, and 1.142 for 2024--25 to 2028--29
-relative to 2023--24, applied to the 2024--25 vintage relative to its own data
-year. At the \pounds90{,}000 threshold this puts the in-scope above-threshold
-VAT base at \pounds185.2bn in 2025--26 and \pounds190.0bn in
+Section~\ref{sec:behavioural}. At the \pounds90{,}000 threshold this puts the in-scope above-threshold
+VAT base at \pounds184.1bn in 2025--26 and \pounds188.7bn in
 2026--27.\footnote{These aggregates are weighted sums of the in-scope
 registered population's net VAT liabilities above the threshold, aged
 forward---a theoretical-liability (VTTL-style) base, not the published
@@ -52,7 +48,7 @@ cash-receipts line (around \pounds169bn in 2023--24; OBR forecast near
 collection timing. Below-threshold voluntary remittances are excluded from the
 reported base because the model's standard-rate-on-value-added liability is not
 calibrated for them (about \pounds2.5bn model-implied against a \pounds1.46bn
-HMRC total). The unaged bases are \pounds175.1bn in 2023--24 and \pounds181.5bn
+HMRC total). The unaged bases are \pounds174.7bn in 2023--24 and \pounds180.5bn
 in 2024--25; the liability-by-band calibration scores (96.9\% and
 98.1\%) summarise the remaining discrepancy against HMRC's band totals.
 Band-to-band \emph{differences}, which drive every costing in the paper, are
@@ -71,49 +67,33 @@ when the counterfactual threshold overtakes \pounds90{,}000. The official
 profile is $-$150, $-$185, $-$125, $-$50, $+$65 \pounds m. Each year I
 difference revenue under the \pounds90{,}000 policy and under that year's
 counterfactual threshold, both evaluated with the registration rule above on
-turnover and liability aged to the year. The headline gives
-$-$250, $-$234, $-$200, $-$65, $+$123: it reproduces the sign of the first two years and the 2028--29
-turning point and lands within \pounds49m of the official 2025--26
-figure without any retention assumption, because only in-scope firms
-between the old threshold and the new \pounds88{,}000 deregistration threshold
-can leave the net. Who those firms are matters for reading the number. Because
-the cross-section is aged forward, the released band is populated mainly by
-firms whose data-year turnover was \emph{below} \pounds85{,}000 and whom
-nominal growth carries into $[\pounds85{,}000,\pounds88{,}000)$; from 2025--26
-on, every firm registered above \pounds85{,}000 at the data year has aged past
-the deregistration point, so none of them is released. Of the 2025--26 released
-liability, 84\% belongs to firms flagged as voluntary registrants
-at the data year, and the rest to firms not registered at the data year that
-the counterfactual threshold would have caught. The headline treats all of
-them as deregistering once released, which is the mechanical convention; the
-official costing embeds a phased registration response instead, and the model
-still overshoots every release year, by proportionally more in the middle of
-the profile ($-$200m against $-$125m in 2026--27). Three sensitivities bracket
-the headline. Releasing the whole $[T_{\text{base}},\pounds90{,}000)$
-band regardless of the deregistration threshold gives $-$346, $-$382, $-$218, $-$65, $+$130, the
-overshoot of earlier drafts. Retaining the \citet{liuetal2021}
-voluntary-registration share (43\%) of released-firm liability gives
-$-$142, $-$134, $-$114, $-$37, $+$123, so the official figures lie between the headline and this
-convention in every release year; the share is a \emph{firm} share among all
-below-threshold eligibles applied here as a liability share among
-just-released firms, and HMRC's own below-threshold liability total is small
-and in some years negative (Section~\ref{sec:data}), so it is a generous
-retention assumption. Finally, treating the frame's 89\% below-threshold
-registered share as revealed preference---every firm that was voluntarily
-registered at the data year keeps registering wherever the threshold
-moves---removes the ageing-crossers from the release and gives $-$43, $-$38,
-$-$24, $-$7, $+$14, the liability of data-year mandatory and never-registered
-firms alone; because small businesses enter the ONS frame \emph{through} VAT
-registration, that share overstates voluntary preference, so this convention
-is a lower bound on the loss rather than a central case. The two conventions
-bracket the official profile in every release year; where within the bracket
-the truth lies is the registration decision of small firms crossing the
-threshold, which the data do not identify. Because my microdata are
-calibrated to HMRC VAT aggregates, even a close match confirms internal
-consistency rather than out-of-sample accuracy; HMRC's own note expects about
-28{,}000 fewer registrants in 2024--25, against about 36{,}000 releasable
-firms here, of which about 30{,}000 were data-year voluntary registrants aged
-across the threshold (Figure~\ref{fig:hmrc_validation}).
+data-year turnover and liabilities aged to the year. The mechanical headline,
+in which every released firm deregisters, gives $-$193, $-$197, $-$120,
+$-$41, $+$88: it reproduces the sign, the narrowing profile and the 2028--29
+turning point, and lands within 7\% of the official figure in 2025--26 and
+4\% in 2026--27, overshooting by 29\% in 2024--25 (HMRC's first year carries
+a registration lag the static rule has no counterpart for), undershooting by
+18\% in 2027--28, and overshooting the sign-flip year by 36\% (where the
+result depends on the assumed \pounds92{,}000 counterfactual threshold). No
+retention or behavioural parameter is tuned to produce this: the released
+population is the in-scope registrants with data-year turnover in the vacated
+band, about 28{,}000 firms in the first two years against HMRC's expected
+28{,}000 fewer registrants, and its liability is the calibrated standard rate
+on value added. Retaining the \citet{liuetal2021} voluntary-registration
+share (43\%) of released-firm liability gives $-$110, $-$112, $-$68, $-$24,
+$+$88, undershooting the official profile by 27--53\%: LLAT's share is a
+\emph{firm} share among all below-threshold eligibles, and applying it as a
+liability share among just-released firms double-counts the voluntary
+registrants the rule already holds in the net, so it is a generous retention
+assumption rather than a central case.
+Keeping existing registrants above the \pounds88{,}000 deregistration
+threshold in the net gives $-$116, $-$119, $-$122, $-$41, $+$85, a stock reading that does not follow
+the counterfactual path. Because my microdata are calibrated to HMRC VAT
+aggregates, even a close match confirms internal consistency rather than
+out-of-sample accuracy; HMRC's own note expects about 28{,}000 fewer registrants
+in 2024--25 and 14{,}000 fewer on average over the forecast, against about
+28{,}000 in-scope registrants in the released band here
+(Figure~\ref{fig:hmrc_validation}).
 
 \begin{figure}[htbp]
 \centering
@@ -124,10 +104,10 @@ under the full-deregistration and 43\% retention conventions versus HMRC's
 published costing, 2024--25 to 2028--29. Both series narrow over the
 forecast and turn positive by 2028--29 because the costing baseline is a
 counterfactual threshold path that resumes uprating after March~2026 and
-overtakes \pounds90{,}000. The model releases in-scope firms only below the
-\pounds88{,}000 deregistration threshold and embeds no registration response,
-so it overshoots the official profile in every release year; the 43\%
-retention convention (text) undershoots it. Because the microdata are calibrated
+overtakes \pounds90{,}000. The mechanical estimate, with no retention or
+behavioural parameter, lies within 30\% of the official profile in every
+release year and within 10\% in 2025--26 and 2026--27; the 43\% retention
+convention undershoots it. Because the microdata are calibrated
 to HMRC and OBR aggregates, this is a consistency check, not an out-of-sample
 validation.}
 \label{fig:hmrc_validation}
@@ -137,7 +117,7 @@ validation.}
 locations, taking the post-reform \pounds90{,}000 threshold as the baseline. This
 sweep runs on the 2024--25 vintage population (Section~\ref{sec:data}). Each
 row of Table~\ref{tab:static_revenue} costs a move of the threshold to a new
-location for 2025--26 by the registration rule above, holding the (aged)
+location for 2025--26 by the registration rule above, holding the data-year
 turnover distribution fixed, so the revenue change reflects only the
 reclassification of in-scope firms into or out of the VAT net. Because the
 optimiser determines the within-band shape near the threshold
@@ -145,14 +125,15 @@ optimiser determines the within-band shape near the threshold
 targets, so that its density steps at the \pounds90{,}000 HMRC band edge
 (Section~\ref{sec:bunching}), the $\pm\pounds5{,}000$ rows are conditional on
 that synthetic within-band allocation. Lowering the threshold draws in
-in-scope firms not already registered voluntarily; raising it releases
-registered firms down to the new deregistration threshold. The sweep is
-strongly asymmetric: a \pounds20{,}000 cut to \pounds70{,}000 raises only
-about \pounds187m, because most frame firms just below the threshold are already
-registered, while a \pounds30{,}000 rise to \pounds120{,}000 costs about
-\pounds1.19bn, 0.64\% of the \pounds185.2bn base. The cut rows are
-frame-confined: the businesses a lower threshold would mainly reach are the
-unregistered sole traders outside the ONS frame, whom the data do not contain.
+in-scope firms not already registered---mainly the unregistered stratum, whose
+liability under registration is the standard rate on its value added---while
+raising it releases registered firms in the vacated band. A \pounds20{,}000
+cut to \pounds70{,}000 raises about \pounds1.59bn and brings about 246{,}000
+businesses into the net; a \pounds30{,}000 rise to \pounds120{,}000 costs
+about \pounds1.28bn, 0.69\% of the \pounds184.1bn base. The cut rows
+credit the full standard-rate liability of newly covered businesses, with no
+allowance for the compliance cost or the registration lag a lower threshold
+would impose on them, so they are upper bounds on the first-year yield.
 Figure~\ref{fig:static_sweep}
 shows the sweep graphically. These are \emph{static} results: they bound the
 first-order fiscal effect of a threshold change but abstract from the
@@ -162,12 +143,11 @@ behavioural response of Section~\ref{sec:behavioural}.
 \centering
 \caption{Static revenue and VAT-paying-firm effects of moving the VAT registration
 threshold, 2025--26, relative to the post-reform \pounds90{,}000 baseline
-(in-scope above-threshold VAT base \pounds185.2bn; 2024--25 vintage population).
-Figures are mechanical, holding firm turnover fixed (no behavioural response);
-in-scope firms only. Voluntary registrants below the data-year threshold are
-held registered; firms aged across it are released by a rise unless protected
-by the deregistration threshold. Cut rows are frame-confined
-lower bounds (see text). This sweep is distinct from the anchor reform of
+(in-scope above-threshold VAT base \pounds184.1bn; 2024--25 vintage population).
+Figures are mechanical, holding data-year turnover fixed (no behavioural
+response); in-scope firms only, including the unregistered stratum below the
+threshold. Voluntary registrants are held registered. Cut rows credit the full
+liability of newly covered businesses (see text). This sweep is distinct from the anchor reform of
 Figure~\ref{fig:hmrc_validation}. The machine-readable table is
 \texttt{results/static\_sweep.txt} in the replication repository.}
 \label{tab:static_revenue}
@@ -175,17 +155,17 @@ Figure~\ref{fig:hmrc_validation}. The machine-readable table is
 \toprule
 Threshold & Revenue change (\pounds m) & Change (\%) & VAT-paying firms (000s) \\
 \midrule
-\pounds70{,}000 & $+186.8$ & $+0.10$ & $+29.4$ \\
-\pounds75{,}000 & $+143.6$ & $+0.08$ & $+21.9$ \\
-\pounds80{,}000 & $+97.7$ & $+0.05$ & $+14.4$ \\
-\pounds85{,}000 & $+50.4$ & $+0.03$ & $+7.3$ \\
+\pounds70{,}000 & $+1{,}587.0$ & $+0.86$ & $+246.3$ \\
+\pounds75{,}000 & $+1{,}171.0$ & $+0.64$ & $+175.3$ \\
+\pounds80{,}000 & $+764.9$ & $+0.42$ & $+110.9$ \\
+\pounds85{,}000 & $+376.5$ & $+0.20$ & $+52.7$ \\
 \pounds90{,}000 (baseline) & $0$ & $0$ & $0$ \\
-\pounds95{,}000 & $-190.9$ & $-0.10$ & $-27.4$ \\
-\pounds100{,}000 & $-445.1$ & $-0.24$ & $-65.9$ \\
-\pounds105{,}000 & $-687.7$ & $-0.37$ & $-99.8$ \\
-\pounds110{,}000 & $-847.9$ & $-0.46$ & $-120.8$ \\
-\pounds115{,}000 & $-1{,}014.2$ & $-0.55$ & $-141.0$ \\
-\pounds120{,}000 & $-1{,}190.1$ & $-0.64$ & $-161.7$ \\
+\pounds95{,}000 & $-198.0$ & $-0.11$ & $-28.8$ \\
+\pounds100{,}000 & $-404.4$ & $-0.22$ & $-57.4$ \\
+\pounds105{,}000 & $-625.9$ & $-0.34$ & $-86.3$ \\
+\pounds110{,}000 & $-845.6$ & $-0.46$ & $-113.7$ \\
+\pounds115{,}000 & $-1{,}066.0$ & $-0.58$ & $-139.6$ \\
+\pounds120{,}000 & $-1{,}278.7$ & $-0.69$ & $-163.2$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -200,8 +180,8 @@ Threshold & Revenue change (\pounds m) & Change (\%) & VAT-paying firms (000s) \
 }
 \caption{Static effect of moving the VAT registration threshold, 2025--26, relative
 to the \pounds90{,}000 baseline (dashed line). Panel (a): revenue impact---cuts
-raise little revenue within the frame because most below-threshold enterprises
-are already registered; rises lose revenue roughly linearly. Panel (b): the change in the
+draw the unregistered stratum into the net; rises release registered firms.
+Panel (b): the change in the
 number of VAT-paying firms, tracking the local density of firms on each side of
 the threshold.}
 \label{fig:static_sweep}
@@ -215,8 +195,8 @@ static principle---re-applying a tax rule to the fixed turnover distribution, wi
 no behavioural response---also costs reforms that change the \emph{shape} of the
 schedule rather than merely its position. I consider four reforms and report
 their first-order revenue effects against a common baseline: the
-\pounds85{,}000-notch / \pounds175.1bn 2023--24 base of in-scope firms. (This
-2023--24 data-year base differs from the \pounds185.2bn figure in the sweep above, which runs on the
+\pounds85{,}000-notch / \pounds174.7bn 2023--24 base of in-scope firms. (This
+2023--24 data-year base differs from the \pounds184.1bn figure in the sweep above, which runs on the
 2024--25 vintage aged to 2025--26 at the post-reform \pounds90{,}000 threshold;
 the schedule reforms are costed in the data year to match the bunching and
 dominated-region analysis. Both bases are theoretical-liability (VTTL-style)
@@ -227,21 +207,21 @@ the baseline.
 
 \paragraph{Threshold relocation.} Raising the threshold from \pounds85{,}000 to
 \pounds100{,}000 releases the firms with turnover in
-$[\pounds85{,}000, \pounds100{,}000)$---about 117{,}900 in-scope
-firms---from the VAT net, for a static revenue change of \(-\)\pounds742m on the
+$[\pounds85{,}000, \pounds100{,}000)$---about 87{,}800 in-scope
+firms---from the VAT net, for a static revenue change of \(-\)\pounds583m on the
 common base (the menu applies each schedule to in-scope firms at their data-year
 turnover, without the deregistration-gap convention of the anchor). Because the
 released band lies \emph{above} the data-year threshold, its liabilities are
 directly calibrated (and its lower reach pinned by the OBR fine-band targets),
 so the band is summed directly; a smooth-counterfactual alternative that fits
 the above-threshold per-\pounds1{,}000 profile and integrates it across the
-band gives \(-\)\pounds616m and 96{,}500 firms---the gap measures
-the target-pinned concentration of firms just above the threshold. On this
+band gives \(-\)\pounds615m and 90{,}500 firms---within 6\% of the direct
+sum now that the within-band fill is monotone. On this
 common base the level move relocates the dominated region to the new cutoff and
 widens it to \pounds25{,}000 (Section~\ref{sec:model}) at a static cost of
-\(-\)\pounds742m; the linear taper removes the dominated region entirely at the
-menu's largest static cost of \(-\)\pounds1{,}406m, and a constant-marginal-rate taper of
-the same width does so at \(-\)\pounds968m (Section~\ref{sec:model}). Which matters more depends on what the
+\(-\)\pounds583m; the linear taper removes the dominated region entirely at the
+menu's largest static cost of \(-\)\pounds1{,}408m, and a constant-marginal-rate taper of
+the same width does so at \(-\)\pounds932m (Section~\ref{sec:model}). Which matters more depends on what the
 reader wants from the reform---the dominated-region metric indexes
 misallocation only, and Section~\ref{sec:conclusion} discusses what it omits.
 
@@ -259,8 +239,8 @@ cost two designs on the same \pounds85{,}000--\pounds141{,}667 band: the
 \emph{linear} taper, whose marginal rate rises from $0\%$ to $100\%$ across the
 band, and a \emph{constant} $50\%$ marginal-rate taper. Firms in the band remit
 the tapered schedule on their (fixed) turnover; mechanically the linear design
-reduces revenue by \(-\)\pounds1{,}406m and the constant-rate design by \(-\)\pounds968m, with
-about 275{,}800 in-scope firms in the band facing a lower effective rate.
+reduces revenue by \(-\)\pounds1{,}408m and the constant-rate design by \(-\)\pounds932m, with
+about 278{,}100 in-scope firms in the band facing a lower effective rate.
 The linear design gives more relief low in the band at the price of a marginal
 remittance rate that reaches $100\%$ at the top; the constant-rate design caps
 the marginal rate at $50\%$ and costs a third less.
@@ -268,14 +248,14 @@ the marginal rate at $50\%$ and costs a third less.
 \paragraph{Banded reduced rate.} A banded reduced rate charges firms in the
 \pounds85{,}000--\pounds105{,}000 band a reduced rate
 $\tau_{\text{low}}\in\{10\%,15\%\}$ in place of the standard $20\%$, with $20\%$
-retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds446m
-at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds223m at $\tau_{\text{low}}=15\%$,
-with about 138{,}000 in-scope firms in the band facing the lower rate.
+retained above \pounds105{,}000. Statically this reduces revenue by \(-\)\pounds398m
+at $\tau_{\text{low}}=10\%$ and by \(-\)\pounds199m at $\tau_{\text{low}}=15\%$,
+with about 117{,}300 in-scope firms in the band facing the lower rate.
 
 \begin{table}[htbp]
 \centering
 \caption{Static, behaviour-free revenue effect of the reforms relative to the
-common \pounds85{,}000-notch / \pounds175.1bn 2023--24 baseline of in-scope
+common \pounds85{,}000-notch / \pounds174.7bn 2023--24 baseline of in-scope
 firms. Each reform is costed mechanically by re-applying its schedule to the
 fixed turnover distribution, with no behavioural response.}
 \label{tab:schedule_costs}
@@ -284,11 +264,11 @@ fixed turnover distribution, with no behavioural response.}
 \toprule
 Reform & Lever & Static (\pounds m) \\
 \midrule
-Raise threshold to \pounds100{,}000 & Location & $-742$ \\
-Linear taper, \pounds85k--\pounds141.7k & Shape (marginal rate $0\to100\%$) & $-1{,}406$ \\
-Constant $50\%$ marginal taper, \pounds85k--\pounds141.7k & Shape (marginal rate $50\%$) & $-968$ \\
-Reduced rate $10\%$, \pounds85k--\pounds105k & Rate (step) & $-446$ \\
-Reduced rate $15\%$, \pounds85k--\pounds105k & Rate (step) & $-223$ \\
+Raise threshold to \pounds100{,}000 & Location & $-583$ \\
+Linear taper, \pounds85k--\pounds141.7k & Shape (marginal rate $0\to100\%$) & $-1{,}408$ \\
+Constant $50\%$ marginal taper, \pounds85k--\pounds141.7k & Shape (marginal rate $50\%$) & $-932$ \\
+Reduced rate $10\%$, \pounds85k--\pounds105k & Rate (step) & $-398$ \\
+Reduced rate $15\%$, \pounds85k--\pounds105k & Rate (step) & $-199$ \\
 \bottomrule
 \end{tabularx}
 \end{table}

@@ -98,6 +98,42 @@ _HIGH_LIABILITY_SECTORS = {11, 12, 69, 70, 78}
 # VAT traders there (issue #40).
 OPEN_BAND_LOG_UNIFORM: bool = True
 
+# Within-band shape for the closed ONS bands above the first. "loglog": the
+# density inside each band is a truncated power law t^-alpha whose exponent is
+# the log-log slope of the band-average densities of the two neighbouring
+# bands (central difference; one-sided at the ends), so the density is
+# monotone inside every band and approximately continuous across band edges
+# (issue #50, item 3). "uniform": the maximum-entropy flat fill. Band counts
+# are preserved exactly under either.
+WITHIN_BAND_SHAPE: str = "loglog"
+
+
+def _band_alphas(counts: Dict[str, float]) -> Dict[str, float]:
+    """Power-law exponents per closed band from national band densities."""
+    names = [b for b in ONS_TURNOVER_BANDS if b != "5000+"]
+    dens, centres = [], []
+    for b in names:
+        lo, hi, _ = ONS_TURNOVER_BANDS[b]
+        lo = max(float(lo), 0.1)
+        dens.append(max(float(counts.get(b, 0.0)), 1.0) / (hi - lo))
+        centres.append(math.sqrt(lo * hi))
+    alphas: Dict[str, float] = {}
+    for i, b in enumerate(names):
+        j0, j1 = max(i - 1, 0), min(i + 1, len(names) - 1)
+        slope = (math.log(dens[j1]) - math.log(dens[j0])) / (math.log(centres[j1]) - math.log(centres[j0]))
+        alphas[b] = -slope
+    return alphas
+
+
+def _draw_power_law(count: int, lo: float, hi: float, alpha: float, device: str) -> Tensor:
+    """Draw ``count`` values on [lo, hi) with density proportional to t^-alpha."""
+    u = torch.rand(count, device=device, dtype=torch.float64)
+    if abs(alpha - 1.0) < 1e-6:
+        return torch.exp(math.log(lo) + u * (math.log(hi) - math.log(lo))).float()
+    p = 1.0 - alpha
+    a, b = lo ** p, hi ** p
+    return ((a + u * (b - a)) ** (1.0 / p)).float()
+
 
 def _draw_band_turnover(
     count: int, min_t: float, max_t: float, device: str, *, log_uniform: bool = False
@@ -135,6 +171,12 @@ def generate_base_firms(
     logger.info("Generating base firms from ONS structure...")
     all_sic: list[int] = []
     all_turnover: list[float] = []
+    sector_rows = ons_turnover[~ons_turnover["Description"].str.contains("Total", na=False)]
+    national = {b: float(sector_rows[b].fillna(0).sum()) for b in ONS_TURNOVER_BANDS if b in sector_rows}
+    alphas = _band_alphas(national) if WITHIN_BAND_SHAPE == "loglog" else {}
+    if alphas:
+        logger.info("Within-band power-law exponents: %s",
+                    {b: round(a, 2) for b, a in alphas.items()})
 
     for _, row in ons_turnover.iterrows():
         sic_code = row["SIC Code"]
@@ -146,10 +188,18 @@ def generate_base_firms(
                 count = int(row[band])
                 if count <= 0:
                     continue
-                turnovers = _draw_band_turnover(
-                    count, min_t, max_t, device,
-                    log_uniform=OPEN_BAND_LOG_UNIFORM and band == "5000+",
-                )
+                if band == "5000+":
+                    turnovers = _draw_band_turnover(
+                        count, min_t, max_t, device, log_uniform=OPEN_BAND_LOG_UNIFORM
+                    )
+                elif band in alphas and band != "0-49":
+                    turnovers = _draw_power_law(
+                        count, max(float(min_t), 0.1), float(max_t), alphas[band], device
+                    )
+                else:
+                    # The bottom band stays uniform: a power law from £100
+                    # would pile mass at the origin.
+                    turnovers = _draw_band_turnover(count, min_t, max_t, device)
                 all_sic.extend([sic_int] * count)
                 all_turnover.extend(turnovers.cpu().numpy())
 
@@ -286,6 +336,54 @@ def assign_employment(
     return result
 
 
+def generate_unregistered_firms(
+    bpe_df: pd.DataFrame, threshold: float, device: str
+) -> tuple[Tensor, Tensor]:
+    """Draw the DBT unregistered stratum: businesses registered for neither
+    VAT nor PAYE, by SIC division (issue #25).
+
+    BPE publishes, per division, the count of unregistered businesses and
+    their total turnover but no size distribution. Each division's turnover
+    is drawn from an exponential distribution with the division's mean
+    (BPE turnover / count; the national mean where the cell is suppressed),
+    the maximum-entropy density for a positive variable with a known mean,
+    truncated at ``cap`` (£500k). Businesses drawn above the registration
+    threshold represent unregistered exempt-sector traders and are placed
+    out of VAT scope by :func:`assign_vat_flags`; those below it are
+    registrable. The stratum's weights are FROZEN in calibration: its shape
+    is a maintained assumption, and the OBR near-threshold levels then pin
+    the ONS frame's density as the residual (issue #25).
+
+    Returns ``(sic_codes, turnover_k)``.
+    """
+    logger.info("Generating DBT unregistered stratum...")
+    rows = bpe_df[bpe_df["unregistered_count"].fillna(0) > 0].copy()
+    reported = rows[rows["unregistered_turnover_m"].notna()]
+    nat_mean = float(reported["unregistered_turnover_m"].sum()) / float(reported["unregistered_count"].sum()) * 1000.0
+    lo, cap = 0.1, 500.0
+
+    all_sic: list[int] = []
+    all_t: list[Tensor] = []
+    for _, r in rows.iterrows():
+        n = int(r["unregistered_count"])
+        tm = r["unregistered_turnover_m"]
+        mean_k = float(tm) / n * 1000.0 if pd.notna(tm) else nat_mean
+        mean_k = max(mean_k, lo + 1.0)
+        u = torch.rand(n, device=device, dtype=torch.float64)
+        # Exp(mean) truncated to [lo, cap] by inverse CDF.
+        a, b = math.exp(-lo / mean_k), math.exp(-cap / mean_k)
+        t = -mean_k * torch.log(a - u * (a - b))
+        all_sic.extend([int(r["SIC Code"])] * n)
+        all_t.append(t.float())
+    sic = torch.tensor(all_sic, dtype=torch.int64, device=device)
+    turnover = torch.cat(all_t) if all_t else torch.empty(0, device=device)
+    logger.info(
+        "Unregistered stratum: %s businesses, mean turnover £%.1fk (BPE national £%.1fk)",
+        f"{len(sic):,}", float(turnover.mean()) if len(sic) else float("nan"), nat_mean,
+    )
+    return sic, turnover
+
+
 def stratified_thin(
     turnover_values: Tensor, sic_codes: Tensor, config: Config
 ) -> tuple[Tensor, Tensor]:
@@ -378,6 +476,7 @@ def assign_vat_flags(
     config: Config,
     calibration_weights: Tensor | None = None,
     frame_mask: Tensor | None = None,
+    unregistered_mask: Tensor | None = None,
 ) -> tuple[Tensor, Tensor]:
     """Assign VAT scope and registration flags to match HMRC trader counts.
 
@@ -412,6 +511,8 @@ def assign_vat_flags(
     )
     if frame_mask is None:
         frame_mask = torch.ones(n, dtype=torch.bool, device=device)
+    if unregistered_mask is None:
+        unregistered_mask = torch.zeros(n, dtype=torch.bool, device=device)
 
     from .calibration import map_to_hmrc_bands
 
@@ -425,9 +526,14 @@ def assign_vat_flags(
     scope = torch.zeros(n, dtype=torch.bool, device=device)
     registered = torch.zeros(n, dtype=torch.bool, device=device)
 
-    # Appended HMRC traders: in scope, registered.
-    scope[~frame_mask] = True
-    registered[~frame_mask] = True
+    # Appended HMRC traders: in scope, registered. DBT unregistered stratum:
+    # registrable (in scope), not registered.
+    appended = (~frame_mask) & (~unregistered_mask)
+    scope[appended] = True
+    registered[appended] = True
+    # Unregistered businesses below the threshold are registrable; those
+    # above it can only be exempt-sector traders, outside VAT scope.
+    scope[unregistered_mask & (turnover_values <= threshold)] = True
 
     # Below the threshold: all frame rows registrable; HMRC count registered.
     below = frame_mask & (band_indices == 1)
@@ -600,16 +706,36 @@ def generate(
     # every target row sees the same rows (issue #37). They are outside the
     # ONS frame (frame_mask False) and inside the HMRC registered subset.
     n_frame = len(base_turnover)
+
+    # DBT unregistered stratum (#25): outside the ONS frame, below the
+    # threshold, not HMRC traders. Appended before calibration.
+    bpe_df = getattr(data, "bpe_unregistered", None)
+    if cfg.include_unregistered_stratum and bpe_df is not None:
+        unreg_sic, unreg_turnover = generate_unregistered_firms(
+            bpe_df, cfg.vat_threshold, cfg.device
+        )
+        unreg_input = generate_input_values(unreg_turnover, unreg_sic, cfg.device)
+        base_sic = torch.cat([base_sic, unreg_sic])
+        base_turnover = torch.cat([base_turnover, unreg_turnover])
+        base_input = torch.cat([base_input, unreg_input])
+        base_weights = torch.cat([base_weights, torch.ones(len(unreg_sic), device=cfg.device)])
+    n_unreg = len(base_turnover) - n_frame
+
     final_sic, final_turnover, final_input, final_base_weights = _add_zero_turnover_firms(
         base_sic, base_turnover, base_input, base_weights, data.hmrc_bands, cfg.device
     )
     frame_mask = torch.zeros(len(final_turnover), dtype=torch.bool, device=cfg.device)
     frame_mask[:n_frame] = True
+    unregistered_mask = torch.zeros(len(final_turnover), dtype=torch.bool, device=cfg.device)
+    unregistered_mask[n_frame:n_frame + n_unreg] = True
 
     # Per-firm employment assignment used by the target matrix AND retained in
     # the output. Earlier versions redrew it after optimisation, invalidating
     # the employment target rows.
     employment = assign_employment(final_sic, data.ons_employment, cfg.device)
+    # Unregistered businesses have no employees (BPE: "with no employees,
+    # unregistered"); record zero so no frame employment row counts them.
+    employment[unregistered_mask] = 0.0
     emp_band_idx = torch.tensor(
         [_employment_band_index(e.item()) for e in employment],
         dtype=torch.long,
@@ -631,15 +757,18 @@ def generate(
         near_threshold_bins=getattr(data, "near_threshold_bins", None),
         base_weights=final_base_weights,
         frame_mask=frame_mask,
+        unregistered_mask=unregistered_mask,
     )
 
     final_weights = optimize_weights(
-        cfg, target_matrix, target_values, spec, base_weights=final_base_weights
+        cfg, target_matrix, target_values, spec, base_weights=final_base_weights,
+        frozen_mask=unregistered_mask,
     )
 
     vat_scope, vat_flags = assign_vat_flags(
         final_turnover, data.hmrc_bands, cfg,
         calibration_weights=final_weights, frame_mask=frame_mask,
+        unregistered_mask=unregistered_mask,
     )
 
     logger.info("Assembling final DataFrame...")
@@ -658,6 +787,7 @@ def generate(
             "vat_scope": vat_scope.cpu().numpy().astype(bool),
             "vat_registered": vat_flags.cpu().numpy().astype(bool),
             "in_frame": frame_mask.cpu().numpy().astype(bool),
+            "unregistered": unregistered_mask.cpu().numpy().astype(bool),
         }
     )
     logger.info(

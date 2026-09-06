@@ -46,6 +46,7 @@ class ValidationReport:
     vat_liability_below_threshold: float  # informational diagnostic, NOT calibrated
     vat_liability_band: float
     total_population: float
+    bpe_unregistered: float | None = None  # diagnostic: stratum weights are frozen
 
     @property
     def overall(self) -> float:
@@ -232,6 +233,19 @@ def validate(
         float(np.mean(liab_band_accs)) if liab_band_accs else 0.0
     )
 
+    # --- DBT unregistered stratum by division (calibrated when present).
+    bpe_acc = None
+    bpe = getattr(data, "bpe_unregistered", None)
+    if bpe is not None and "unregistered" in df.columns and bool(df["unregistered"].any()):
+        unreg = df[df["unregistered"].astype(bool)]
+        synth_unreg = unreg.groupby("sic_numeric")["weight"].sum()
+        rows = bpe[bpe["unregistered_count"].fillna(0) > 0]
+        bpe_accs = [
+            _accuracy(float(synth_unreg.get(int(r["SIC Code"]), 0.0)), float(r["unregistered_count"]))
+            for _, r in rows.iterrows()
+        ]
+        bpe_acc = float(np.mean(bpe_accs)) if bpe_accs else 0.0
+
     report = ValidationReport(
         hmrc_bands=hmrc_accuracy,
         ons_population=ons_accuracy,
@@ -241,6 +255,7 @@ def validate(
         vat_liability_below_threshold=below_acc,
         vat_liability_band=vat_liability_band_accuracy,
         total_population=total_weighted,
+        bpe_unregistered=bpe_acc,
     )
 
     logger.info("=== CALIBRATION SUMMARY (threshold £%.0fk) ===", threshold)
@@ -249,6 +264,8 @@ def validate(
     logger.info("Employment Bands:        %.1f%%", report.employment * 100)
     logger.info("Sector Distribution:     %.1f%%", report.sector * 100)
     logger.info("VAT Liability by Band:   %.1f%%", report.vat_liability_band * 100)
+    if report.bpe_unregistered is not None:
+        logger.info("BPE Unregistered by Div: %.1f%%", report.bpe_unregistered * 100)
     logger.info("Overall Accuracy (5 calibrated dims): %.1f%%", report.overall * 100)
     logger.info(
         "VAT Liability by Sector: %.1f%%  [informational, NOT calibrated]",

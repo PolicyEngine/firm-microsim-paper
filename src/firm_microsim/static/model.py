@@ -21,8 +21,8 @@ from firm_microsim.config import SYNTHETIC_DATA_DIR, VINTAGES
 # Fiscal-year ageing factors (cumulative nominal growth from the 2023-24 data
 # year) plus the April-2024 anchor reform: a frozen £85k baseline, RPI-uprated
 # with a two-year lag, against the £90k policy, alongside HMRC's published
-# costing (£m). Both turnover and liability are aged by the same factor against
-# fixed nominal thresholds (the fiscal-drag convention); see ``_growth``. The
+# costing (£m). Liabilities are aged by the factor; band membership stays on
+# data-year turnover (see ``_aged``). The
 # factors are an ASSUMED nominal-turnover path (about 3.1%, 2.0%, 2.5%, 3.0%,
 # 2.9% a year), of the order of the OBR's March 2024 nominal GDP forecast; they
 # are not taken from a published series and are reported as assumptions in the
@@ -46,7 +46,8 @@ VINTAGE_BASE_GROWTH = {"2023-24": 1.0, "2024-25": 1.0310}
 # when the threshold rises the mechanically "released" band is
 # [old threshold, new threshold - gap): firms in the top £2,000 of the raised
 # band stay registered.
-DEREGISTRATION_GAP = 2_000.0
+DEREGISTRATION_GAP = 0.0
+STATUTORY_DEREGISTRATION_GAP = 2_000.0
 
 # Current statutory threshold (£) — the baseline for the threshold sweep.
 POLICY_THRESHOLD = 90000
@@ -98,17 +99,19 @@ class StaticVATModel:
         return _fiscal_year(year)["firm_growth"] / VINTAGE_BASE_GROWTH[self.vintage]
 
     def _aged(self, growth: float) -> pd.DataFrame:
-        """Return turnover (£) and net VAT liability (£), both aged by ``growth``.
+        """Return data-year turnover (£) and net VAT liability (£) aged by ``growth``.
 
-        Turnover and liability grow together against fixed nominal thresholds
-        (the fiscal-drag convention the paper's institutional section relies
-        on), so band membership in a later fiscal year is evaluated on aged
-        turnover.
+        Band membership is evaluated on DATA-YEAR turnover: a static
+        cross-section has no growth process, and carrying the near-threshold
+        stock across the threshold by a uniform nominal factor treats
+        bunched firms as crossers, which they are not by construction
+        (Section 5 of the paper). Only liabilities are aged, by the
+        nominal-growth factor of the fiscal year.
         """
         df = self.firms
         return pd.DataFrame(
             {
-                "turnover": df["annual_turnover_k"] * 1000.0 * growth,
+                "turnover": df["annual_turnover_k"] * 1000.0,
                 "liab": df["vat_liability_k"] * 1000.0 * growth,
                 "weight": df["weight"],
                 "scope": df["vat_scope"].astype(bool),
@@ -126,28 +129,22 @@ class StaticVATModel:
     ) -> pd.Series:
         """Registration under a counterfactual ``threshold`` (£).
 
-        With aged turnover ``y`` and the data-year threshold ``T0``, an
+        With data-year turnover ``y`` and the data-year threshold ``T0``, an
         in-scope firm is registered if
 
         * ``y >= threshold`` (required under the counterfactual); or
         * it was registered at the data year and ``y >= threshold - gap``
-          (cannot deregister: turnover is above the deregistration
-          threshold); or
+          (``gap`` > 0 models the deregistration threshold: an existing
+          registrant between the two cannot deregister; the default gap is 0,
+          the "need to register" reading HMRC's costing uses); or
         * it is a baseline voluntary registrant with ``y < T0`` (never
           required under either regime, so its status is unchanged); or
-        * ``retain_voluntary`` and it is a baseline voluntary registrant
-          (fixed-preference convention: a firm that chose registration below
-          ``T0`` keeps it wherever the threshold moves).
+        * ``retain_voluntary`` and it is a baseline voluntary registrant.
 
         Out-of-scope (PAYE-only / exempt-sector) enterprises never remit. At
         ``threshold == T0`` the rule reproduces the baseline registered set.
-        Voluntary registrants that ageing carries into a band whose
-        requirement the move removes are therefore RELEASED by default; the
-        ONS frame's high below-threshold registration share (about 89%)
-        partly reflects that small firms enter the frame through VAT
-        registration, so treating it as revealed preference
-        (``retain_voluntary=True``) is reported as a sensitivity, not the
-        headline.
+        With data-year membership the voluntary flag can only matter for
+        ``retain_voluntary``; the two branches coincide otherwise.
         """
         y = df["turnover"]
         registered0 = df["mandatory"] | df["voluntary"]
@@ -266,8 +263,11 @@ class StaticVATModel:
     ) -> pd.DataFrame:
         """£85k→£90k anchor-reform impact (£m) per year: model vs HMRC.
 
-        ``gap`` is the registration-minus-deregistration threshold distance
-        (£2,000 by statute; pass 0 for the naive whole-band release).
+        ``gap`` is the registration-minus-deregistration threshold distance:
+        0 (default) releases every in-scope registrant in the band, the
+        "no longer needs to register" reading of HMRC's costing; pass
+        ``STATUTORY_DEREGISTRATION_GAP`` (£2,000) to keep existing registrants
+        above the deregistration threshold in the net.
         ``retention`` scales the released liability by ``1 - retention`` (a
         share of released firms assumed to stay registered voluntarily, e.g.
         the Liu et al. 43%). ``retain_voluntary`` applies the fixed-preference

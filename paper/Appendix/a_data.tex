@@ -16,7 +16,7 @@ the population is calibrated \emph{to} the HMRC aggregates, agreement between
 my weighted outputs and those aggregates is a check of \emph{internal
 consistency}, not external validation; the turnover-band rows in particular
 hold by construction through the registration propensity. The headline
-calibration accuracies (98.0\% and 98.1\% for the two
+calibration accuracies (98.3\% and 98.2\% for the two
 vintages) and the anchor comparison of Section~\ref{sec:static} are therefore
 consistency checks on the pipeline, not out-of-sample tests of firm behaviour.
 
@@ -34,12 +34,12 @@ Dimension (universe) & 2023--24 & 2024--25 \\
 HMRC turnover bands (registered) & 100.0\% & 100.0\% \\
 ONS enterprise total (frame) & 99.7\% & 99.8\% \\
 ONS employment bands (frame) & 99.8\% & 99.9\% \\
-HMRC sector counts (registered) & 93.3\% & 92.5\% \\
-HMRC net liability by band (registered) & 96.9\% & 98.1\% \\
+HMRC sector counts (registered) & 93.3\% & 92.6\% \\
+HMRC net liability by band (registered) & 98.4\% & 98.9\% \\
 \midrule
-\textbf{Overall (five calibrated dimensions)} & 98.0\% & 98.1\% \\
+\textbf{Overall (five calibrated dimensions)} & 98.3\% & 98.2\% \\
 \midrule
-\emph{Diagnostic:} net liability by sector (registered) & 40.4\% & 44.2\% \\
+\emph{Diagnostic:} net liability by sector (registered) & 43.1\% & 44.0\% \\
 \emph{Diagnostic:} net liability below threshold & 31.2\% & 0.0\% \\
 \bottomrule
 \end{tabular}
@@ -89,7 +89,7 @@ so the experimental Populace firm generator inherits the same defect, which I
 have reported upstream; the target-parity result (zero mismatches) is
 unaffected, since it concerns the input tables, not the generated population.
 Second, the paper validator's scores on the current build are
-98.0\% (2023--24) and 98.1\% (2024--25), on the
+98.3\% (2023--24) and 98.2\% (2024--25), on the
 two-universe target layout of Section~\ref{sec:data}, which the pinned
 snapshot predates. The comparison table and structured provenance are
 reproduced by \texttt{firm-microsim-populace-ledger} and checked into
