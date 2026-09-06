@@ -32,7 +32,7 @@ issue \#23. A second correction followed: the below-threshold HMRC liability
 total, which belongs to voluntary registrants the liability model does not
 represent, was initially calibrated against the whole below-threshold
 population, draining weights around the fine-target window; on an
-intermediate build it also manufactured a spectacular ($E\approx196{,}000$),
+intermediate build it also produced a large ($E\approx196{,}000$),
 specification-robust artifact at the \pounds90{,}000 band edge. It is now an
 informational diagnostic (Section~\ref{sec:data}). Aggregate calibration
 scores barely moved under any of these changes---the optimiser hit the band
@@ -56,37 +56,52 @@ excluding a manipulation window around the threshold $y^{*}$:
 where $c_j$ is the number of firms in bin $j$, $y_j$ is the distance of bin $j$
 from the threshold, $q$ is the polynomial order, and $[y^{*}_{-},\,y^{*}_{+}]$
 is the excluded window. The fitted polynomial is then projected into the
-excluded region to recover the counterfactual density $g(y)$, with a
-mass-conservation restriction that locates the upper edge of the manipulation
-window endogenously (excess mass below the threshold must equal missing mass
-above it; Appendix~\ref{app:inference}). Excess bunching is the integrated
-difference between the observed and counterfactual densities just below the
-threshold,
+excluded region to recover the counterfactual density $g(y)$. The upper edge
+of the manipulation window, $y_R$, is then searched for by walking upward from
+the threshold until cumulative missing mass equals the excess mass below; when
+the missing mass inside the search window is insufficient---as in the headline
+specification, where the fitted missing mass is zero---$y_R$ is censored at the
+window edge and reported as such (Appendix~\ref{app:inference}). Excess mass is
+the integrated positive part of the gap between the observed density $f$ and
+the counterfactual $g$ in the excluded window below the threshold,
 \[
-  B(y^{*}) \;=\; \int_{y^{*}-\Delta y^{*}}^{y^{*}} g(y)\,\mathrm{d}y
-  \;\approx\; g(y^{*})\,\Delta y^{*},
+  E \;=\; \int_{y^{*}-W}^{y^{*}} \bigl[f(y)-g(y)\bigr]_{+}\,\mathrm{d}y ,
 \]
-the approximation holding when $g$ is locally smooth. The bunching ratio
-$b(y^{*}) = B(y^{*})/g(y^{*}) \approx \Delta y^{*}/y^{*}$ is the width of the
-bunching region expressed as a fraction of the threshold---a normalised
-\emph{ratio}, not an elasticity. The estimator delivers the raw geometry of any
+a gross rather than net statistic. The normalised excess $b_{\mathrm{LLAT}}$
+divides the integrated positive-part gap over the whole manipulation region
+$[y^{*}-W,\,y_R]$ by the average counterfactual height over that region---a
+literature-style normalisation in the spirit of \citet{liuetal2021}, who report
+excess mass relative to the counterfactual density, though it does not
+reproduce their estimator exactly. Because it also counts positive gaps above
+the threshold, $b_{\mathrm{LLAT}}$ is not $E$ divided by a density, and the two
+statistics need not move together. Neither is an elasticity. The estimator
+delivers the raw geometry of any
 density step at the threshold; whether that step reflects firm behaviour is a
-separate question. The estimator reports geometry only ($b$, excess mass $E$,
-and the mass-conservation objects): no elasticity is computed from it, both
+separate question. The estimator reports geometry only ($b_{\mathrm{LLAT}}$,
+excess mass $E$, and the mass-conservation objects): no elasticity is computed from it, both
 because the identification critique of bunching designs applies
 \citep{blomquistetal2021,bertanhaetal2023} and because on these data there is
 no behavioural mass to convert.
 
 \subsection{Results: diagnostics, not behavioural estimates}
 
-At the \pounds85{,}000 threshold the baseline specification returns
-$E=10{,}418$ weighted firms and $b_{\mathrm{LLAT}}=5.127$. This reads back a
-profile calibrated to OBR fine-band targets; the generator contains no firm
-location choice, so it is not a behavioural estimate. Across the degree--window
-grid, $E$ ranges from zero to about 25{,}100 firms and the headline fitted
-missing mass above the threshold is zero. The figure is retained as an
-audit of what the estimator reads from the synthetic construction, not as
-evidence about firm responses.
+At the \pounds85{,}000 threshold (Figure~\ref{fig:bunch85}) the baseline specification returns
+$E=5{,}498$ weighted firms and $b_{\mathrm{LLAT}}=5.357$ on the
+frame density. This reads back a profile calibrated to OBR fine-band targets;
+the generator contains no firm location choice, so it is not a behavioural
+estimate. Across the degree--window grid, $E$ ranges from about 560
+to about 20{,}800 firms and the headline fitted missing mass above the
+threshold is zero, with $y_R$ censored at the search cap
+(Appendix~\ref{app:inference}). The 2024--25 population, which has no
+fine-band targets, makes the complementary point: at its \pounds90{,}000
+threshold the same estimator returns $E=10{,}273$ and
+$b_{\mathrm{LLAT}}=4.971$, an excess mass produced entirely by the
+step between the two HMRC coarse bands that meet at \pounds90{,}000, which the
+weight optimiser resolves as a density step. Neither figure is evidence about
+firm responses; both are audits of what the estimator reads from the synthetic
+construction, and the second is the reason the $\pm\pounds5{,}000$ rows of
+Table~\ref{tab:static_revenue} are flagged as conditional on the within-band
+allocation.
 
 \begin{figure}[htbp]
 \centering
@@ -95,8 +110,8 @@ evidence about firm responses.
 counterfactual at the 2023--24 registration threshold. The
 2023--24 population reproduces the administratively observed bunching profile
 because it is calibrated to the OBR \pounds1{,}000-band targets; the
-estimator reads the target-inherited excess back as $E = 10{,}418$
-($b_{\mathrm{LLAT}} = 5.127$). This is not behavioural:
+estimator reads the target-inherited excess back as $E = 5{,}498$
+($b_{\mathrm{LLAT}} = 5.357$). This is not behavioural:
 the generator has no firm location-choice, so all sub-band structure is
 inherited from the targets and the weight optimiser.}
 \label{fig:bunch85}
@@ -111,7 +126,7 @@ HMRC micro-data over 2004--05 to 2014--15, during which the threshold rose
 from \pounds58{,}000 to \pounds81{,}000, with an excess-bunching ratio of
 $b = 1.361$ (SE $0.202$) around the year-specific threshold and a manipulation
 window of $-\pounds14{,}000$ to $+\pounds24{,}000$. The synthetic baseline's
-$b_{\mathrm{LLAT}}=5.127$ is not a second estimate of their parameter: it is
+$b_{\mathrm{LLAT}}=5.357$ is not a second estimate of their parameter: it is
 an unstable readback of the OBR target profile. What does
 carry across is institutional context: LLAT report that almost half (roughly
 $43\%$) of eligible below-threshold firms register voluntarily, which dampens

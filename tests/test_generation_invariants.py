@@ -53,7 +53,7 @@ def test_voluntary_registration_matches_weighted_target_within_one_weight() -> N
     turnover = torch.full((100,), 50.0)
     weights = torch.linspace(0.5, 2.0, 100)
     target = 42.0
-    flags = assign_vat_flags(
+    scope, flags = assign_vat_flags(
         turnover,
         {"£1_to_Threshold": target},
         Config(),
@@ -62,6 +62,25 @@ def test_voluntary_registration_matches_weighted_target_within_one_weight() -> N
     achieved = float(weights[flags].sum())
     assert achieved >= target
     assert achieved - target <= float(weights.max())
+    assert bool(scope.all())  # every below-threshold frame firm is registrable
+
+
+def test_above_threshold_scope_matches_hmrc_band_count_within_one_weight() -> None:
+    torch.manual_seed(4)
+    turnover = torch.full((200,), 120.0)  # £Threshold_to_£150k band at £85k
+    weights = torch.linspace(0.5, 2.0, 200)
+    target = 100.0
+    scope, flags = assign_vat_flags(
+        turnover,
+        {"£1_to_Threshold": 0.0, "£Threshold_to_£150k": target},
+        Config(),
+        calibration_weights=weights,
+    )
+    assert torch.equal(scope, flags)  # above the threshold, in scope == registered
+    achieved = float(weights[scope].sum())
+    assert achieved >= target
+    assert achieved - target <= float(weights.max())
+    assert int(scope.sum()) < 200  # out-of-scope enterprises remain
 
 
 def test_zero_turnover_allocation_hits_hmrc_target_exactly() -> None:

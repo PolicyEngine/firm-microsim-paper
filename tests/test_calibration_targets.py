@@ -128,28 +128,64 @@ def test_near_target_rows_select_their_bins(frames):
         assert torch.equal(matrix[spec.near_start + offset], expected)
 
 
-def test_population_target_accounts_for_appended_zero_turnover_firms(frames):
+def test_population_and_employment_rows_are_frame_universe(frames):
+    """Frame rows (population, employment) exclude appended HMRC traders and
+    target the full ONS total; the employment targets partition that total
+    (issue #37)."""
     cfg, data = frames
     turnover, sic, inputs, emp, base_weights = _tiny_firms()
+    # Append two zero-turnover HMRC traders outside the frame.
+    turnover = torch.cat([turnover, torch.zeros(2)])
+    sic = torch.cat([sic, torch.tensor([47, 62])])
+    inputs = torch.cat([inputs, torch.zeros(2)])
+    emp = torch.cat([emp, torch.zeros(2, dtype=torch.int64)])
+    base_weights = torch.cat([base_weights, torch.ones(2)])
+    frame_mask = torch.tensor([True] * 6 + [False] * 2)
     matrix, values, spec = build_target_matrix(
-        cfg,
-        turnover,
-        sic,
-        inputs,
-        emp,
-        data.hmrc_bands,
-        data.ons_total,
-        data.hmrc_population_sector,
-        data.ons_employment,
-        data.hmrc_liability_sector,
-        data.vat_liability_bands,
+        cfg, turnover, sic, inputs, emp, data.hmrc_bands, data.ons_total,
+        data.hmrc_population_sector, data.ons_employment,
+        data.hmrc_liability_sector, data.vat_liability_bands,
         near_threshold_bins=data.near_threshold_bins,
-        base_weights=base_weights,
+        base_weights=base_weights, frame_mask=frame_mask,
     )
-    assert torch.equal(matrix[spec.population_start], torch.ones(len(turnover)))
-    assert float(values[spec.population_start]) == pytest.approx(
-        data.ons_total - data.hmrc_bands["Negative_or_Zero"]
+    assert torch.equal(matrix[spec.population_start], frame_mask.float())
+    assert float(values[spec.population_start]) == pytest.approx(data.ons_total)
+    emp_rows = matrix[spec.employment_start: spec.employment_start + spec.n_employment]
+    assert torch.equal(emp_rows.sum(0), frame_mask.float())
+    emp_targets = values[spec.employment_start: spec.employment_start + spec.n_employment]
+    assert float(emp_targets.sum()) == pytest.approx(data.ons_total, rel=2e-5)
+    # Appended traders enter the HMRC rows with propensity one, and the
+    # Negative_or_Zero band row targets the HMRC count.
+    assert torch.equal(matrix[spec.turnover_start][6:], torch.ones(2))
+    assert float(values[spec.turnover_start]) == pytest.approx(
+        data.hmrc_bands["Negative_or_Zero"]
     )
+    assert spec.propensity is not None
+    assert float(spec.propensity.max()) <= 1.0 + 1e-6
+
+
+def test_registration_propensity_below_one_on_real_frames(frames):
+    """The ONS frame must contain the HMRC registered population in every band."""
+    from firm_microsim.calibration import map_to_hmrc_bands, registration_propensity
+    from firm_microsim.generate import generate_base_firms
+    cfg, data = frames
+    torch.manual_seed(0)
+    sic, turnover = generate_base_firms(data.ons_turnover, "cpu")
+    bands = map_to_hmrc_bands(turnover, cfg.vat_threshold)
+    frame = torch.ones(len(turnover), dtype=torch.bool)
+    prop = registration_propensity(bands, frame, torch.ones(len(turnover)), data.hmrc_bands)
+    # Documented expectation per band (HMRC 2023-24 / uniform-draw frame mass):
+    # below-threshold ~0.89; above, 0.5-1.0; the >£10m band ~0.64 is a draw
+    # artefact of the open 5000+ band (issue #40), not a PAYE/exempt share.
+    expected = {1: 0.89, 2: 0.67, 3: 0.51, 4: 0.60, 5: 0.77, 6: 1.00, 7: 0.64}
+    for b, e_p in expected.items():
+        p = float(prop[bands == b].max())
+        assert abs(p - e_p) < 0.03, f"band {b}: propensity {p:.3f} != ~{e_p}"
+    # Expected registered count reproduces HMRC at unit weights (band 7 is
+    # tight because the open 5000+ band is drawn uniformly to £50m).
+    expected = float(prop.sum())
+    hmrc = sum(v for k, v in data.hmrc_bands.items() if k not in ("Negative_or_Zero", "Unknown"))
+    assert expected == pytest.approx(hmrc, rel=1e-3)
 
 
 def test_inverse_dropout_scaling_is_unbiased() -> None:

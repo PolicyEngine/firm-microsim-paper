@@ -309,6 +309,51 @@ def schedule_taper(y, T=T_STAR, top=TAPER_WIDE_TOP, tau_max=TAU_MAX):
 schedule_taper.regions = None
 
 
+def taper_band_top(m: float, T=T_STAR, tau_max=TAU_MAX) -> float:
+    """Band top ``U(m) = m T / (m - tau_max)`` of a band-confined taper with a
+    CONSTANT marginal remittance rate ``m`` on ``[T, U]``.
+
+    Continuity with the standard-rate line requires ``m (U - T) = tau_max U``.
+    ``m`` must exceed ``tau_max``; ``m -> 1`` gives the infimum ``T/(1-tau_max)``
+    (= £106,250: net revenue flat across the band, weakly dominated), and
+    ``m = 0.5`` gives £141,667 -- the same band top the linear 0->100% design
+    reaches, at half its peak marginal rate. The band top is therefore a
+    property of the chosen shape, not a requirement of removing the notch.
+    """
+    if m <= tau_max:
+        raise ValueError("constant marginal rate must exceed the standard rate")
+    return m * T / (m - tau_max)
+
+
+def make_schedule_taper_flat(m: float = 0.5, T=T_STAR, tau_max=TAU_MAX):
+    """Band-confined taper with a CONSTANT marginal remittance rate ``m``.
+
+    Liability ``L(y) = m (y - T)`` on ``[T, U(m)]`` and ``tau_max y`` above;
+    the average-rate fraction is ``f = m (y - T) / (tau_max y)`` in the band.
+    Net revenue has slope ``1 - m > 0`` throughout, so no dominated interval
+    exists and the peak marginal rate is ``m`` rather than the 100% the linear
+    design reaches at its top. Default ``m = 0.5`` shares the shipped linear
+    taper's band top (£141,667) for a like-for-like cost comparison.
+    """
+    top = taper_band_top(m, T, tau_max)
+
+    def sched(y):
+        y = np.asarray(y, dtype=float)
+        T_ = float(T)
+        band = (y >= T_) & (y <= top)
+        above = y > top
+        f = np.zeros_like(y, dtype=float)
+        safe_y = np.where(y > 0, y, 1.0)
+        f = np.where(band, m * (y - T_) / (tau_max * safe_y), f)
+        f = np.where(above, 1.0, f)
+        return f
+
+    sched.regions = None
+    sched.band_top = top
+    sched.marginal_rate = m
+    return sched
+
+
 def make_schedule_reduced_rate(tau_low, T=T_STAR, top=TAPER_TOP, tau_std=TAU_MAX):
     """Banded reduced rate: fraction ``tau_low/tau_std`` in [T, top], 1 above."""
     frac_low = tau_low / tau_std
@@ -430,23 +475,38 @@ def marginal_buncher(e, vintage="2023-24"):
     return nH_k * 1000.0, dy_k * 1000.0
 
 
-def marginal_buncher_iso(e, T=T_STAR, tau=TAU_MAX):
-    """Independent iso-elastic indifference solve for the marginal buncher (£).
+def marginal_buncher_iso(e, T=T_STAR, tau=TAU_MAX, delta=0.0):
+    """Iso-elastic indifference solve for the marginal buncher (£).
 
-    Solves ``pi_bunch(T*; n) = pi_register(y1; n)`` for ``n``, where the firm
-    bunches at ``T*`` (unregistered) or registers at ``y1 = n*(1-tau)**e``.
-    Used only to cross-check :func:`marginal_buncher`.
+    Solves ``pi_bunch(T*; n) = pi_register(y1; n)`` for ``n`` under
+    formulation A with deductible-input share ``delta``: bunching yields
+    ``(1-delta) T* - C(T*)`` and registering yields
+    ``(1-delta)(1-tau) y1 - C(y1)`` at ``y1 = n[(1-delta)(1-tau)]**e``. The
+    deductible share does NOT cancel here (it scales revenue but not the
+    own-factor cost), so ``n_H`` rises with ``delta``; ``delta = 0`` reproduces
+    the turnover-tax solve in :mod:`firm_microsim.notch.model`.
     """
     from scipy.optimize import brentq
 
+    va = 1.0 - delta
+    net_reg = va * (1.0 - tau)
+
     def gap(n):
-        u_bunch = iso_profit(T, n, e, net=1.0)
-        y1 = n * (1.0 - tau) ** e
-        u_tax = iso_profit(y1, n, e, net=1.0 - tau)
+        # Best unregistered choice: the untaxed optimum, capped at the
+        # threshold (a firm cannot stay unregistered above T*).
+        y_u = min(T, n * va ** e)
+        u_bunch = iso_profit(y_u, n, e, net=va)
+        # Registered optimum; registering with y1 < T* is never chosen (it is
+        # dominated by staying unregistered at y1), so the branch starts at T*.
+        y1 = max(T, n * net_reg ** e)
+        u_tax = iso_profit(y1, n, e, net=net_reg)
         return float(u_bunch - u_tax)
 
-    lo, hi = T * (1.0 + 1e-6), T * 5.0
-    while gap(lo) * gap(hi) > 0 and hi < T * 50:
+    # At n_lo the registered optimum is exactly T*, where bunching strictly
+    # wins (same turnover, no tax), so gap(lo) > 0 and the root lies above.
+    lo = T / net_reg ** e * (1.0 + 1e-9)
+    hi = lo * 2.0
+    while gap(hi) > 0 and hi < T * 1e3:
         hi *= 1.5
     n_H = brentq(gap, lo, hi)
     return float(n_H), float(n_H - T)
@@ -581,7 +641,7 @@ REFORM_DATA = SYNTHETIC_DATA_DIR / "synthetic_firms_2023-24.csv"
 
 
 def load_reform_data(path=REFORM_DATA):
-    """Load the reform-costing dataset (£ units). Ability is recovered per-e."""
+    """Load the reform-costing dataset (£ units), in-scope liabilities only."""
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(
@@ -590,8 +650,12 @@ def load_reform_data(path=REFORM_DATA):
         )
     df = pd.read_csv(
         path,
-        usecols=["annual_turnover_k", "vat_liability_k", "weight", "vat_registered"],
+        usecols=["annual_turnover_k", "vat_liability_k", "weight", "vat_scope", "vat_registered"],
     )
+    # Out-of-scope enterprises (PAYE-only / exempt-sector, issue #37) face no
+    # VAT schedule: drop them so every reform is priced, and every firm
+    # counted, on the in-scope population only.
+    df = df[df["vat_scope"].astype(bool)].reset_index(drop=True)
     out = pd.DataFrame()
     out["turnover"] = df["annual_turnover_k"].to_numpy(dtype=float) * 1000.0
     out["liab"] = df["vat_liability_k"].to_numpy(dtype=float) * 1000.0
@@ -608,6 +672,8 @@ def build_reforms():
         "raise100k": (make_schedule_raise(100_000.0),
                       "Raise threshold to £100k"),
         "taper": (schedule_taper, "Graduated taper (£85k→£141.7k, monotone)"),
+        "taper_flat50": (make_schedule_taper_flat(0.5),
+                         "Flat 50% marginal taper (£85k→£141.7k)"),
         "rate10": (make_schedule_reduced_rate(0.10),
                    "Reduced rate 10% (£85k–£105k)"),
         "rate15": (make_schedule_reduced_rate(0.15),

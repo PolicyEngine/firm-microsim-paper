@@ -85,3 +85,28 @@ def test_marginal_relief_variant_is_monotone_but_leaks_above_band():
     y_big = np.array([1_000_000.0])
     relief = TAU_MAX * (1.0 - schedule_taper_marginal_relief(y_big)) * y_big
     assert abs(relief[0] - TAU_MAX * (TAPER_TOP + T_STAR) / 2.0) < 1e-6
+
+
+def test_flat_marginal_taper_shares_band_top_and_is_monotone():
+    import numpy as np
+    import pytest
+
+    from firm_microsim.dynamic.model import (
+        TAPER_WIDE_TOP,
+        TAU_MAX,
+        T_STAR,
+        make_schedule_taper_flat,
+        taper_band_top,
+    )
+    assert taper_band_top(0.5) == pytest.approx(TAPER_WIDE_TOP)
+    assert taper_band_top(0.999) == pytest.approx(T_STAR / (1 - TAU_MAX), rel=1e-2)
+    sched = make_schedule_taper_flat(0.5)
+    y = np.linspace(T_STAR, sched.band_top * 1.2, 20001)
+    net = y * (1 - TAU_MAX * sched(y))
+    assert np.all(np.diff(net) > 0)                       # strictly monotone
+    assert sched(np.array([T_STAR]))[0] == pytest.approx(0.0)
+    assert sched(np.array([sched.band_top]))[0] == pytest.approx(1.0, abs=1e-9)
+    # Peak marginal rate is 50%, against 100% for the linear design.
+    liab = TAU_MAX * sched(y) * y
+    band = y <= sched.band_top
+    assert np.max(np.diff(liab[band]) / np.diff(y[band])) == pytest.approx(0.5, abs=1e-6)

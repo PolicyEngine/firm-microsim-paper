@@ -53,7 +53,8 @@ def _vintage_lines(vintage: str) -> list[str]:
 
     out += [
         f"  rows (firm types):   {len(df):,}",
-        f"  weighted population: {float(df['weight'].sum()):,.0f} firms",
+        f"  weighted ONS-frame population: {rep.total_population:,.0f} firms"
+        f"  (registered traders {float(df.loc[df['vat_registered'].astype(bool), 'weight'].sum()):,.0f})",
         "-" * 64,
         f"  {'Dimension':<26}{'accuracy':>12}{'error':>12}",
         "-" * 64,

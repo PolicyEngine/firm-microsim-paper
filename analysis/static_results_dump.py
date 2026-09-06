@@ -11,7 +11,7 @@ the Liu et al. (2021) voluntary-registration share of released-firm liability.
 from __future__ import annotations
 
 from firm_microsim.config import RESULTS_DIR
-from firm_microsim.static.model import StaticVATModel, SWEEP_THRESHOLDS
+from firm_microsim.static.model import FISCAL_YEARS, StaticVATModel, SWEEP_THRESHOLDS
 
 LLAT_VOLUNTARY_SHARE = 0.43  # Liu-Lockwood-Almunia-Tam (2021): ~43% below-threshold
 
@@ -33,18 +33,47 @@ def main() -> None:
     anchor = anchor_model.anchor_reform()
     W(anchor.to_string(index=False))
     W("")
+    W("Release decomposition (headline; liability GBPm of firms registered under the")
+    W("baseline threshold but not under GBP90k, by data-year status):")
+    for fy in FISCAL_YEARS:
+        df = anchor_model._aged(anchor_model._growth(fy["year"]))
+        base_t, pol_t = float(fy["baseline"]), float(fy["policy"])
+        rel = anchor_model._registered(df, base_t) & ~anchor_model._registered(df, pol_t)
+        lw = df["liab"] * df["weight"]
+        vol = float(lw[rel & df["voluntary"]].sum()) / 1e6
+        man = float(lw[rel & df["mandatory"]].sum()) / 1e6
+        nev = float(lw[rel & ~df["voluntary"] & ~df["mandatory"]].sum()) / 1e6
+        W(f"  {fy['year']}: released {float(df['weight'][rel].sum()):,.0f} firms; "
+          f"voluntary-at-data-year {vol:.1f}m, mandatory-at-data-year {man:.1f}m, "
+          f"not-registered-at-data-year {nev:.1f}m")
+    W("")
+    W("Deregistration-threshold sensitivity: the headline releases registered")
+    W("firms only below the GBP88k deregistration threshold ([85k, 88k) in the")
+    W("raise years). Releasing the whole [baseline, 90k) band instead (gap = 0):")
+    for _, row in anchor_model.anchor_reform(gap=0.0).iterrows():
+        W(f"  {row['year']}: whole-band release {float(row['policyengine_impact_m']):+,.1f}m")
+    W("")
     W("Voluntary-retention sensitivity (anchor, per year): headline assumes")
     W("every released firm deregisters (full liability lost). If the Liu et")
     W(f"al. (2021) voluntary share ({LLAT_VOLUNTARY_SHARE:.0%}) of released-firm liability is")
     W("retained, the impact scales accordingly:")
-    for _, row in anchor.iterrows():
-        impact = float(row["policyengine_impact_m"])
-        W(f"  {row['year']}: headline {impact:+,.1f}m -> retention-adjusted "
-          f"{impact * (1 - LLAT_VOLUNTARY_SHARE):+,.1f}m "
+    ret = anchor_model.anchor_reform(retention=LLAT_VOLUNTARY_SHARE)
+    for (_, row), (_, r2) in zip(anchor.iterrows(), ret.iterrows()):
+        W(f"  {row['year']}: headline {float(row['policyengine_impact_m']):+,.1f}m -> "
+          f"retention-adjusted {float(r2['policyengine_impact_m']):+,.1f}m "
           f"(HMRC {float(row['hmrc_impact_m']):+,.0f}m)")
     W("")
+    W("Fixed-preference sensitivity: baseline voluntary registrants keep their")
+    W("registration wherever the threshold moves (treats the frame's ~89% below-")
+    W("threshold registered share as revealed preference; frame-selection bias")
+    W("makes this a lower bound on the revenue loss):")
+    for _, row in anchor_model.anchor_reform(retain_voluntary=True).iterrows():
+        W(f"  {row['year']}: fixed-preference {float(row['policyengine_impact_m']):+,.1f}m")
+    W("")
     W("Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)")
-    W("method: direct mechanical reclassification on the calibrated population")
+    W("method: direct mechanical reclassification of in-scope VAT firms; voluntary")
+    W("registrants below the data-year threshold held registered, firms aged across")
+    W("it released unless gap-protected; turnover and liability aged together")
     W("-" * 74)
     sweep = sweep_model.threshold_sweep(year="2025-26")
     W(sweep.to_string(index=False))
@@ -57,10 +86,10 @@ def main() -> None:
     W("-" * 74)
     for vintage, model in (("2023-24", anchor_model), ("2024-25", sweep_model)):
         df = model._aged(1.0)
-        thr = 85_000.0 if vintage == "2023-24" else 90_000.0
-        reg = df["turnover"] >= thr
-        base = float((df.loc[reg, "liab"] * df.loc[reg, "weight"]).sum()) / 1e9
-        W(f"  {vintage}: registered base (>= threshold, unaged) = {base:.1f}bn")
+        base = model._mandatory_base(df, model.data_threshold) / 1e9
+        vol = (model._revenue(df, model.data_threshold) - base * 1e9) / 1e9
+        W(f"  {vintage}: in-scope base (>= threshold, unaged) = {base:.1f}bn; "
+          f"model-implied voluntary below-threshold remittance = {vol:.1f}bn (not calibrated)")
     W("")
     W(f"Sweep thresholds: {SWEEP_THRESHOLDS}")
 

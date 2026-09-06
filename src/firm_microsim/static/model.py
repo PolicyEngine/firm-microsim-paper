@@ -16,11 +16,13 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from firm_microsim.config import SYNTHETIC_DATA_DIR
+from firm_microsim.config import SYNTHETIC_DATA_DIR, VINTAGES
 
-# Fiscal-year aging factors (cumulative from the base-year microdata) plus the
-# April-2024 anchor reform: a frozen £85k baseline, RPI-uprated with a two-year
-# lag, against the £90k policy, alongside HMRC's published costing (£m).
+# Fiscal-year ageing factors (cumulative nominal growth from the 2023-24 data
+# year) plus the April-2024 anchor reform: a frozen £85k baseline, RPI-uprated
+# with a two-year lag, against the £90k policy, alongside HMRC's published
+# costing (£m). Both turnover and liability are aged by the same factor against
+# fixed nominal thresholds (the fiscal-drag convention); see ``_growth``.
 FISCAL_YEARS = [
     {"year": "2024-25", "baseline": 85000, "policy": 90000, "hmrc_impact": -150, "firm_growth": 1.0310},
     {"year": "2025-26", "baseline": 85000, "policy": 90000, "hmrc_impact": -185, "firm_growth": 1.0516},
@@ -28,6 +30,17 @@ FISCAL_YEARS = [
     {"year": "2027-28", "baseline": 89000, "policy": 90000, "hmrc_impact": -50, "firm_growth": 1.1102},
     {"year": "2028-29", "baseline": 92000, "policy": 90000, "hmrc_impact": 65, "firm_growth": 1.1424},
 ]
+# Cumulative factor already embodied in each vintage's data year, so a
+# 2024-25 build is not aged by the 2023-24 -> 2024-25 step a second time.
+VINTAGE_BASE_GROWTH = {"2023-24": 1.0, "2024-25": 1.0310}
+
+# The deregistration threshold sits £2,000 below the registration threshold
+# (£83k/£85k to March 2024; £88k/£90k from April 2024). A registered firm may
+# deregister only if its turnover falls below the deregistration threshold, so
+# when the threshold rises the mechanically "released" band is
+# [old threshold, new threshold - gap): firms in the top £2,000 of the raised
+# band stay registered.
+DEREGISTRATION_GAP = 2_000.0
 
 # Current statutory threshold (£) — the baseline for the threshold sweep.
 POLICY_THRESHOLD = 90000
@@ -51,6 +64,9 @@ class StaticVATModel:
     def __init__(self, vintage: str = "2024-25") -> None:
         """Load the synthetic population for ``vintage`` (default the £90k year)."""
         self.vintage = vintage
+        if vintage not in VINTAGES:
+            raise ValueError(f"Unknown vintage {vintage!r}; choose from {sorted(VINTAGES)}")
+        self.data_threshold = float(VINTAGES[vintage]["threshold"]) * 1000.0
         path = SYNTHETIC_DATA_DIR / f"synthetic_firms_{vintage}.csv"
         if not path.exists():
             raise FileNotFoundError(
@@ -58,32 +74,102 @@ class StaticVATModel:
                 f"  python -m firm_microsim --vintage {vintage} "
                 f"--output synthetic_firms_{vintage}.csv"
             )
-        self.firms = pd.read_csv(
-            path, usecols=["annual_turnover_k", "vat_liability_k", "weight"]
-        )
+        cols = ["annual_turnover_k", "vat_liability_k", "weight", "vat_scope", "vat_registered"]
+        self.firms = pd.read_csv(path, usecols=cols)
+        # Baseline voluntary registrants: registered with data-year turnover at
+        # or below the data-year threshold. Their status is held fixed under
+        # every counterfactual threshold (registration is not modelled).
+        t_k = self.firms["annual_turnover_k"]
+        registered = self.firms["vat_registered"].astype(bool)
+        self.firms["voluntary"] = registered & (t_k * 1000.0 <= self.data_threshold)
+        # Mandatory registrants at the data-year threshold: the population that
+        # a threshold rise can release, subject to the deregistration threshold.
+        self.firms["mandatory"] = registered & (t_k * 1000.0 > self.data_threshold)
 
     # -- core mechanics ----------------------------------------------------
+    def _growth(self, year: str) -> float:
+        """Nominal-growth factor from this vintage's data year to ``year``."""
+        return _fiscal_year(year)["firm_growth"] / VINTAGE_BASE_GROWTH[self.vintage]
+
     def _aged(self, growth: float) -> pd.DataFrame:
-        """Return turnover (£) and net VAT liability (£), aged by ``growth``."""
+        """Return turnover (£) and net VAT liability (£), both aged by ``growth``.
+
+        Turnover and liability grow together against fixed nominal thresholds
+        (the fiscal-drag convention the paper's institutional section relies
+        on), so band membership in a later fiscal year is evaluated on aged
+        turnover.
+        """
         df = self.firms
         return pd.DataFrame(
             {
                 "turnover": df["annual_turnover_k"] * 1000.0 * growth,
                 "liab": df["vat_liability_k"] * 1000.0 * growth,
                 "weight": df["weight"],
+                "scope": df["vat_scope"].astype(bool),
+                "voluntary": df["voluntary"].astype(bool),
+                "mandatory": df["mandatory"].astype(bool),
             }
         )
 
-    @staticmethod
-    def _revenue(df: pd.DataFrame, threshold: float) -> float:
+    def _registered(
+        self,
+        df: pd.DataFrame,
+        threshold: float,
+        gap: float = DEREGISTRATION_GAP,
+        retain_voluntary: bool = False,
+    ) -> pd.Series:
+        """Registration under a counterfactual ``threshold`` (£).
+
+        With aged turnover ``y`` and the data-year threshold ``T0``, an
+        in-scope firm is registered if
+
+        * ``y >= threshold`` (required under the counterfactual); or
+        * it was registered at the data year and ``y >= threshold - gap``
+          (cannot deregister: turnover is above the deregistration
+          threshold); or
+        * it is a baseline voluntary registrant with ``y < T0`` (never
+          required under either regime, so its status is unchanged); or
+        * ``retain_voluntary`` and it is a baseline voluntary registrant
+          (fixed-preference convention: a firm that chose registration below
+          ``T0`` keeps it wherever the threshold moves).
+
+        Out-of-scope (PAYE-only / exempt-sector) enterprises never remit. At
+        ``threshold == T0`` the rule reproduces the baseline registered set.
+        Voluntary registrants that ageing carries into a band whose
+        requirement the move removes are therefore RELEASED by default; the
+        ONS frame's high below-threshold registration share (about 89%)
+        partly reflects that small firms enter the frame through VAT
+        registration, so treating it as revealed preference
+        (``retain_voluntary=True``) is reported as a sensitivity, not the
+        headline.
+        """
+        y = df["turnover"]
+        registered0 = df["mandatory"] | df["voluntary"]
+        reg = (y >= threshold) | (registered0 & (y >= threshold - gap))
+        reg = reg | (df["voluntary"] & (y < self.data_threshold))
+        if retain_voluntary:
+            reg = reg | df["voluntary"]
+        return df["scope"] & reg
+
+    def _revenue(self, df: pd.DataFrame, threshold: float, **kw) -> float:
         """Total weighted net VAT (£) from firms registered at ``threshold``."""
-        registered = df["turnover"] >= threshold
+        registered = self._registered(df, threshold, **kw)
         return float((df["liab"].where(registered, 0.0) * df["weight"]).sum())
 
     @staticmethod
-    def _vat_paying_firms(df: pd.DataFrame, threshold: float) -> float:
+    def _mandatory_base(df: pd.DataFrame, threshold: float) -> float:
+        """Weighted net VAT (£) of in-scope firms at or above ``threshold``.
+
+        Excludes below-threshold voluntary remittances, whose model liability
+        is not calibrated, so the figure is comparable to HMRC's
+        above-threshold liability bands.
+        """
+        mask = df["scope"] & (df["turnover"] >= threshold)
+        return float((df["liab"].where(mask, 0.0) * df["weight"]).sum())
+
+    def _vat_paying_firms(self, df: pd.DataFrame, threshold: float, **kw) -> float:
         """Weighted count of VAT-paying firms (registered & net-positive)."""
-        mask = (df["turnover"] >= threshold) & (df["liab"] > 0)
+        mask = self._registered(df, threshold, **kw) & (df["liab"] > 0)
         return float(df.loc[mask, "weight"].sum())
 
     # -- smooth counterfactual density ------------------------------------
@@ -144,14 +230,14 @@ class StaticVATModel:
     ) -> pd.DataFrame:
         """Revenue (£m) and VAT-paying-firm (000s) changes vs ``baseline``.
 
-        Each row costs moving the threshold to a new location, holding turnover
-        fixed. Lowering the threshold draws firms in (positive); raising it
-        loses them (negative). Liability is scaled to the fiscal year by the
-        nominal-growth factor; firm counts are year-invariant.
+        Each row costs moving the threshold to a new location. Lowering the
+        threshold draws in-scope, not-yet-registered firms in (positive);
+        raising it releases in-scope registered firms (negative). Turnover and
+        liability are aged to the fiscal year by the same nominal-growth
+        factor, so membership is evaluated on aged turnover.
         """
         thresholds = thresholds or SWEEP_THRESHOLDS
-        growth = _fiscal_year(year)["firm_growth"]
-        df = self._aged(growth)
+        df = self._aged(self._growth(year))
         base_revenue = self._revenue(df, baseline)
         base_firms = self._vat_paying_firms(df, baseline)
 
@@ -166,28 +252,48 @@ class StaticVATModel:
             )
         return pd.DataFrame(rows)
 
-    def anchor_reform(self) -> pd.DataFrame:
+    def anchor_reform(
+        self,
+        gap: float = DEREGISTRATION_GAP,
+        retention: float = 0.0,
+        retain_voluntary: bool = False,
+    ) -> pd.DataFrame:
         """£85k→£90k anchor-reform impact (£m) per year: model vs HMRC.
+
+        ``gap`` is the registration-minus-deregistration threshold distance
+        (£2,000 by statute; pass 0 for the naive whole-band release).
+        ``retention`` scales the released liability by ``1 - retention`` (a
+        share of released firms assumed to stay registered voluntarily, e.g.
+        the Liu et al. 43%). ``retain_voluntary`` applies the fixed-preference
+        convention of :meth:`_registered`.
 
         Simple band-sum on the loaded vintage. Use the £85k (2023-24) vintage —
         the basis HMRC actually had at the 6 March 2024 costing (the threshold
         was still £85k until 1 April 2024). There the affected [baseline, £90k)
         firms sit ABOVE the £85k registration threshold, so the band is cleanly
-        populated with registered firms (no de-bunching needed). For each year
-        the affected firms lie between the (uprated, frozen) £85k baseline and
-        the £90k policy; liability is scaled to the year by the growth factor.
+        populated with in-scope registered firms. Each year's impact is the
+        revenue under the £90k policy minus revenue under that year's
+        counterfactual baseline threshold, both evaluated on turnover and
+        liability aged to the year with the same registration rule.
         When fiscal drag lifts the baseline above £90k (2028-29) the band flips
         and the reform adds firms (a revenue gain).
         """
-        tk = self.firms["annual_turnover_k"].to_numpy()
-        liab = self.firms["vat_liability_k"].to_numpy() * 1000.0
-        w = self.firms["weight"].to_numpy()
         rows = []
         for fy in FISCAL_YEARS:
-            lo_k, hi_k = sorted((fy["baseline"] / 1000.0, fy["policy"] / 1000.0))
-            band = (tk >= lo_k) & (tk < hi_k)
-            mass_m = float((liab[band] * w[band]).sum()) * fy["firm_growth"] / 1e6
-            pe_impact = mass_m if fy["baseline"] > fy["policy"] else -mass_m
+            df = self._aged(self._growth(fy["year"]))
+            base_t, pol_t = float(fy["baseline"]), float(fy["policy"])
+            # Revenue under each regime from the same registration rule:
+            # in-scope firms at/above the regime's threshold, data-year
+            # registrants retained down to its deregistration threshold,
+            # voluntary registrants throughout. Differencing the two regimes
+            # handles both the release years and the 2028-29 sign flip.
+            liab_w = df["liab"] * df["weight"]
+            kw = dict(gap=gap, retain_voluntary=retain_voluntary)
+            r_policy = float(liab_w[self._registered(df, pol_t, **kw)].sum())
+            r_base = float(liab_w[self._registered(df, base_t, **kw)].sum())
+            pe_impact = (r_policy - r_base) / 1e6
+            if pe_impact < 0:
+                pe_impact *= 1.0 - retention
             rows.append(
                 {
                     "year": fy["year"],
@@ -198,6 +304,10 @@ class StaticVATModel:
         return pd.DataFrame(rows)
 
     def total_revenue_bn(self, year: str = "2025-26", threshold: int = POLICY_THRESHOLD) -> float:
-        """Total VAT revenue (£bn) at ``threshold`` in ``year`` (sanity check)."""
-        df = self._aged(_fiscal_year(year)["firm_growth"])
-        return self._revenue(df, threshold) / 1e9
+        """In-scope above-threshold VAT base (£bn) at ``threshold`` in ``year``.
+
+        Comparable to HMRC's above-threshold liability bands; excludes the
+        uncalibrated below-threshold voluntary remittances.
+        """
+        df = self._aged(self._growth(year))
+        return self._mandatory_base(df, threshold) / 1e9
