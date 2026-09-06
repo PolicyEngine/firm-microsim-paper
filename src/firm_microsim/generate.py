@@ -41,6 +41,7 @@ Sources:
 from __future__ import annotations
 
 import logging
+import math
 from typing import Dict, Optional
 
 import numpy as np
@@ -90,20 +91,32 @@ _NEG_LIABILITY_SECTORS = {1, 3, 6, 7, 9, 10, 24, 30, 36, 37, 49, 50, 51, 60, 64,
 _HIGH_LIABILITY_SECTORS = {11, 12, 69, 70, 78}
 
 
+# The published ONS "5000+" band has no upper edge. It is drawn log-uniform on
+# [£5m, £50m): uniform in log turnover is the maximum-entropy allocation for an
+# open-ended size band and places 70% of its rows above £10m, against 90% for
+# a uniform draw, which had put more enterprises above £10m than HMRC counts
+# VAT traders there (issue #40).
+OPEN_BAND_LOG_UNIFORM: bool = True
+
+
 def _draw_band_turnover(
-    count: int, min_t: float, max_t: float, device: str
+    count: int, min_t: float, max_t: float, device: str, *, log_uniform: bool = False
 ) -> Tensor:
     """Draw smooth turnover values inside a half-open source ONS band.
 
     A uniform draw is the maximum-entropy allocation given only band
     membership. Unlike a Beta(2,2) draw applied separately to every band, it
-    does not force density to zero at each published band boundary.
+    does not force density to zero at each published band boundary. With
+    ``log_uniform`` the draw is uniform in log turnover (used for the open
+    top band only).
     """
     if count == 0:
         return torch.empty(0, device=device)
     lower = max(float(min_t), 0.1)
     upper = float(max_t)
     unit = torch.rand(count, device=device)
+    if log_uniform:
+        return torch.exp(math.log(lower) + unit * (math.log(upper) - math.log(lower)))
     return lower + unit * (upper - lower)
 
 
@@ -133,7 +146,10 @@ def generate_base_firms(
                 count = int(row[band])
                 if count <= 0:
                     continue
-                turnovers = _draw_band_turnover(count, min_t, max_t, device)
+                turnovers = _draw_band_turnover(
+                    count, min_t, max_t, device,
+                    log_uniform=OPEN_BAND_LOG_UNIFORM and band == "5000+",
+                )
                 all_sic.extend([sic_int] * count)
                 all_turnover.extend(turnovers.cpu().numpy())
 

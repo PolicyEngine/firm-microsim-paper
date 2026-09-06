@@ -46,8 +46,10 @@ def main() -> None:
             print(est.summary(n_boot=args.n_boot).to_string())
         else:
             res = est.estimate()
-            print(f"  b = {res['b']:.4f}   excess mass E = {res['E']:,.0f}   "
-                  f"Delta_R = {res['Delta_R']:,.0f}   y_R = {res['y_R']:.2f}")
+            print(f"  b = {res['b']:.4f}   excess mass E = {res['E']:,.0f} (gross; "
+                  f"net {res['E_net']:,.0f})   Delta_R = {res['Delta_R']:,.0f}   "
+                  f"y_R = {res['y_R']:.2f}"
+                  + ("  [censored]" if res['y_R_censored'] else ""))
             print(f"  b (LLAT normalisation) = {res['b_llat']:.3f}  "
                   f"(cf. LLAT 2021: 1.361)")
 

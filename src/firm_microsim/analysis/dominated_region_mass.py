@@ -217,11 +217,14 @@ def main() -> None:
     W("REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;")
     W("  NOT the Section 6 headline, which runs on the full ONS-frame density):")
     frame_res = BunchingEstimator(VINTAGE).estimate()
-    W(f"  frame-density headline (Section 6): E = {frame_res['E']:,.0f}, "
-      f"Delta_R = {frame_res['Delta_R']:,.0f}, y_R = GBP {frame_res['y_R']*1000:,.0f}")
+    W(f"  frame-density headline (Section 6): E = {frame_res['E']:,.0f} (gross), "
+      f"E_net = {frame_res['E_net']:,.0f}, Delta_R = {frame_res['Delta_R']:,.0f}, "
+      f"y_R = GBP {frame_res['y_R']*1000:,.0f}"
+      + (" [censored]" if frame_res['y_R_censored'] else ""))
     W(f"  in-scope excess mass below T*  E       = {E:,.0f} firms")
     W(f"  missing mass above T*      Delta_R = {Delta_R:,.0f} firms")
-    W(f"  marginal buncher           y_R     = GBP {y_R*1000:,.0f}")
+    W(f"  marginal buncher           y_R     = GBP {y_R*1000:,.0f}"
+      + (" [censored at search cap]" if res['y_R_censored'] else ""))
     W(f"  NET displaced mass in 20% dominated band = {missing_in_band:,.0f} firms")
     W("")
     if E < 100:

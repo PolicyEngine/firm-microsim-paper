@@ -23,6 +23,7 @@ from .model import (
     T_STAR,
     TAPER_TOP,
     dominated_region_width,
+    marginal_buncher_iso,
 )
 
 # House style.
@@ -109,6 +110,14 @@ def fig_notch_fit(df, e, *, lo=50_000.0, hi=160_000.0, name=None) -> Path:
     ax_dist.axvspan(T_STAR / 1000.0, (T_STAR + a) / 1000.0,
                     color=PALETTE[5], alpha=0.55, zorder=2)
     ax_dist.axvline(T_STAR / 1000.0, color=ACCENT, ls="--", lw=1.5, zorder=4)
+    # Marginal buncher: an ABILITY, not an observed turnover. Shown for the
+    # turnover-tax case (delta = 0) and the population-mean input share
+    # (delta = 0.6) under formulation A; a firm of ability n_H registers at
+    # n_H[(1-delta)(1-tau)]^e, well below n_H itself.
+    for d, ls in ((0.0, ":"), (0.6, "-.")):
+        n_h, _ = marginal_buncher_iso(e, delta=d)
+        ax_dist.axvline(n_h / 1000.0, color=PALETTE[1], ls=ls, lw=1.2, zorder=3,
+                        label=f"marginal-buncher ability n_H (e={e}, δ={d}): £{n_h/1000:.0f}k")
     ax_dist.set_ylabel("Weighted firms per £1k", fontsize=LABEL_SIZE)
     ax_dist.set_xlabel("Annual turnover (£k)", fontsize=LABEL_SIZE)
     ax_dist.legend(frameon=False, fontsize=TICK_SIZE - 1, loc="upper right")
