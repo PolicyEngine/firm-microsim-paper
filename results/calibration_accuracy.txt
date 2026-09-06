@@ -8,7 +8,7 @@ dimensions and excludes the VAT-liability-by-sector diagnostic.
   Vintage 2023-24  |  threshold £85k
 ================================================================
   rows (firm types):   2,941,275
-  weighted ONS-frame population: 2,717,625 firms  (registered traders 2,178,286)
+  weighted ONS-frame population: 2,717,539 firms  (registered traders 2,178,281)
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
@@ -16,44 +16,44 @@ dimensions and excludes the VAT-liability-by-sector diagnostic.
   ONS Population                   99.7%        0.3%
   Employment Bands                 99.8%        0.2%
   Sector Distribution              93.3%        6.7%
-  VAT Liability by Band            97.1%        2.9%
+  VAT Liability by Band            96.9%        3.1%
 ----------------------------------------------------------------
   Overall (5 calibrated dims)       98.0%        2.0%
 ----------------------------------------------------------------
   Informational diagnostics (not calibration targets):
-  VAT Liability by Sector          42.2%       57.8%
+  VAT Liability by Sector          40.4%       59.6%
   VAT Liability below Thresh.      31.2%       68.8%
 ================================================================
   Calibration-weight diagnostics:
-  effective sample size: 137,054 (4.7% of rows)
-  min / p50 / p90 / p99 / max: 0.082 / 0.999 / 1.002 / 2.588 / 2446.253
-  coefficient of variation: 4.523
+  effective sample size: 132,165 (4.5% of rows)
+  min / p50 / p90 / p99 / max: 0.083 / 0.999 / 1.002 / 2.687 / 2417.013
+  coefficient of variation: 4.610
 ================================================================
 
 ================================================================
   Vintage 2024-25  |  threshold £90k
 ================================================================
   rows (firm types):   2,946,015
-  weighted ONS-frame population: 2,729,522 firms  (registered traders 2,170,779)
+  weighted ONS-frame population: 2,731,034 firms  (registered traders 2,170,760)
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
   HMRC Turnover Bands             100.0%        0.0%
-  ONS Population                   99.8%        0.2%
+  ONS Population                   99.9%        0.1%
   Employment Bands                 99.9%        0.1%
-  Sector Distribution              92.2%        7.8%
-  VAT Liability by Band            98.0%        2.0%
+  Sector Distribution              92.5%        7.5%
+  VAT Liability by Band            98.1%        1.9%
 ----------------------------------------------------------------
-  Overall (5 calibrated dims)       98.0%        2.0%
+  Overall (5 calibrated dims)       98.1%        1.9%
 ----------------------------------------------------------------
   Informational diagnostics (not calibration targets):
-  VAT Liability by Sector          45.7%       54.3%
+  VAT Liability by Sector          44.2%       55.8%
   VAT Liability below Thresh.       0.0%      100.0%
 ================================================================
   Calibration-weight diagnostics:
-  effective sample size: 192,917 (6.5% of rows)
-  min / p50 / p90 / p99 / max: 0.085 / 1.000 / 1.001 / 2.924 / 1830.364
-  coefficient of variation: 3.778
+  effective sample size: 180,070 (6.1% of rows)
+  min / p50 / p90 / p99 / max: 0.087 / 0.999 / 1.001 / 3.030 / 1857.241
+  coefficient of variation: 3.919
 ================================================================
 
 Done: 2/2 vintage(s) reported.

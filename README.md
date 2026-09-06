@@ -48,10 +48,9 @@ threshold:
      turnover band and by trade sector, and net VAT liability by band. Each
      frame firm enters these rows with a *registration propensity* — the HMRC
      count in its turnover band divided by the frame's mass in that band
-     (0.89 below the threshold; 0.51–1.00 above it up to £10m, the remainder
-     being PAYE-only or exempt-sector enterprises outside the VAT net; 0.64 in
-     the >£10m band, where the shortfall is mostly the uniform £5m–£50m draw for
-     the open ONS "5000+" band placing too many rows above £10m — issue #40). HMRC
+     (0.89 below the threshold; 0.51–0.94 above it, the remainder being
+     PAYE-only or exempt-sector enterprises outside the VAT net; the open ONS
+     "5000+" band is drawn log-uniform on [£5m, £50m), issue #40). HMRC
      negative/zero-turnover traders are appended before calibration as an
      out-of-frame stratum.
 
@@ -211,8 +210,8 @@ remains a true total. A vintage builds in ~15 seconds instead of ~13 minutes;
 headline aggregates reproduce the full build within ~0.3% and local bunching
 statistics within ~5%. Use for development only — release artifacts are
 full-size. Generator-seed sensitivity of the full build is recorded in
-`results/seed_sensitivity.txt` (E ±166, raise ±£1.1m / taper ±£1.1m, base
-±£0.45bn across seeds — the scope flag is a seeded draw; reproduce with
+`results/seed_sensitivity.txt` (E ±165, raise ±£1.1m / taper ±£1.1m, base
+±£0.63bn across seeds — the scope flag is a seeded draw; reproduce with
 `scripts/seed_sensitivity.py`).
 
 ## Populace/Ledger migration check

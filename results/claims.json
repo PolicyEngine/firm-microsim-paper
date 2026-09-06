@@ -1,0 +1,413 @@
+[
+  {
+    "key": "overall_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Overall \\(5 calibrated dims\\)\\s+([\\d.]+)%",
+    "value": "98.0",
+    "tex": "98.0\\%",
+    "tex_file": "Sections/data.tex",
+    "note": ""
+  },
+  {
+    "key": "ess_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "effective sample size: ([\\d,]+)",
+    "value": "132,165",
+    "tex": "132{,}165",
+    "tex_file": "Sections/data.tex",
+    "note": ""
+  },
+  {
+    "key": "maxw_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "max: [\\d.]+ / [\\d.]+ / [\\d.]+ / [\\d.]+ / ([\\d.]+)",
+    "value": "2417.013",
+    "tex": "2{,}417",
+    "tex_file": "Sections/data.tex",
+    "note": ""
+  },
+  {
+    "key": "sector_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Sector\\ Distribution\\s+([\\d.]+)%",
+    "value": "93.3",
+    "tex": "93.3\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "liab_2324",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT\\ Liability\\ by\\ Band\\s+([\\d.]+)%",
+    "value": "96.9",
+    "tex": "96.9\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "overall_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Overall \\(5 calibrated dims\\)\\s+([\\d.]+)%",
+    "value": "98.1",
+    "tex": "98.1\\%",
+    "tex_file": "Sections/data.tex",
+    "note": ""
+  },
+  {
+    "key": "ess_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "effective sample size: ([\\d,]+)",
+    "value": "180,070",
+    "tex": "180{,}070",
+    "tex_file": "Sections/data.tex",
+    "note": ""
+  },
+  {
+    "key": "maxw_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "max: [\\d.]+ / [\\d.]+ / [\\d.]+ / [\\d.]+ / ([\\d.]+)",
+    "value": "1857.241",
+    "tex": "1{,}857",
+    "tex_file": "Sections/data.tex",
+    "note": ""
+  },
+  {
+    "key": "sector_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Sector\\ Distribution\\s+([\\d.]+)%",
+    "value": "92.5",
+    "tex": "92.5\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "liab_2425",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT\\ Liability\\ by\\ Band\\s+([\\d.]+)%",
+    "value": "98.1",
+    "tex": "98.1\\%",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "anchor_series",
+    "artifact": "static_sweep.txt",
+    "pattern": "anchor table",
+    "value": [
+      -249.9,
+      -234.4,
+      -200.1,
+      -65.2,
+      122.9
+    ],
+    "tex": "$-$250, $-$234, $-$200, $-$65, $+$123",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "anchor_retention_series",
+    "artifact": "static_sweep.txt",
+    "pattern": "retention-adjusted",
+    "value": [
+      -142.4,
+      -133.6,
+      -114.1,
+      -37.1,
+      122.9
+    ],
+    "tex": "$-$142, $-$134, $-$114, $-$37, $+$123",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "anchor_nogap_series",
+    "artifact": "static_sweep.txt",
+    "pattern": "whole-band release",
+    "value": [
+      -346.3,
+      -382.4,
+      -217.7,
+      -65.1,
+      130.1
+    ],
+    "tex": "$-$346, $-$382, $-$218, $-$65, $+$130",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "anchor_fixed_series",
+    "artifact": "static_sweep.txt",
+    "pattern": "fixed-preference",
+    "value": [
+      -42.6,
+      -37.5,
+      -23.6,
+      -6.9,
+      13.5
+    ],
+    "tex": "$-$43, $-$38, $-$24, $-$7, $+$14",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "anchor_2526_abs",
+    "artifact": "static_sweep.txt",
+    "pattern": "anchor 2025-26",
+    "value": -234.4,
+    "tex": "$-\\pounds234$m",
+    "tex_file": "Sections/conclusion.tex",
+    "note": ""
+  },
+  {
+    "key": "anchor_ret_2526_abs",
+    "artifact": "static_sweep.txt",
+    "pattern": "retention 2025-26",
+    "value": -133.6,
+    "tex": "$-\\pounds134$m",
+    "tex_file": "Sections/conclusion.tex",
+    "note": ""
+  },
+  {
+    "key": "base_2526",
+    "artifact": "static_sweep.txt",
+    "pattern": "Total VAT revenue at GBP 90k, 2025-26: ([\\d.]+)bn",
+    "value": "185.2",
+    "tex": "\\pounds185.2bn",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "ubase_2324",
+    "artifact": "static_sweep.txt",
+    "pattern": "2023-24: in-scope base .*?= ([\\d.]+)bn",
+    "value": "175.1",
+    "tex": "\\pounds175.1bn",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_70k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": 186.774792,
+    "tex": "$+186.8$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_75k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": 143.598059,
+    "tex": "$+143.6$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_80k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": 97.738237,
+    "tex": "$+97.7$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_85k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": 50.356711,
+    "tex": "$+50.4$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_95k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": -190.89162,
+    "tex": "$-190.9$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_100k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": -445.123111,
+    "tex": "$-445.1$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_105k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": -687.688868,
+    "tex": "$-687.7$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_110k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": -847.887547,
+    "tex": "$-847.9$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_115k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": -1014.211759,
+    "tex": "$-1{,}014.2$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "sweep_120k",
+    "artifact": "static_sweep.txt",
+    "pattern": "sweep table",
+    "value": -1190.137379,
+    "tex": "$-1{,}190.1$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "menu_raise100k",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Raise threshold to GBP100,000",
+    "value": -742,
+    "tex": "$-742$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "menu_taper",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Graduated taper [85k,141.7k]",
+    "value": -1406,
+    "tex": "$-1{,}406$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "menu_taper_flat50",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Flat 50% marginal taper [85k,141.7k]",
+    "value": -968,
+    "tex": "$-968$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "menu_rate10",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Reduced rate 10% [85k,105k]",
+    "value": -446,
+    "tex": "$-446$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "menu_rate15",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Reduced rate 15% [85k,105k]",
+    "value": -223,
+    "tex": "$-223$",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "dyn_rate10_e017",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "Reduced rate 10%",
+    "value": -437,
+    "tex": "$-\\pounds437$m",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "dyn_rate15_e017",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "Reduced rate 15%",
+    "value": -216,
+    "tex": "$-\\pounds216$m",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "nH_e017_d06",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "e=0\\.17\\s+n_H\\(delta=0\\)=\u00a3\\s*([\\d.]+)k.*?n_H\\(delta=0\\.6\\)=\u00a3\\s*([\\d.]+)k",
+    "value": "148.9",
+    "tex": "\\pounds148{,}900",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "E_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline E",
+    "value": "5,496",
+    "tex": "5{,}496",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "bllat_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline b_llat",
+    "value": "5.350",
+    "tex": "5.350",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "E_2425",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline E",
+    "value": "10,269",
+    "tex": "10{,}269",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "bllat_2425",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline b_llat",
+    "value": "4.978",
+    "tex": "4.978",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_base_obs",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "20% \\(baseline notch\\)\\s+[\\d,]+\\s+\\[[^\\]]+\\)\\s+([\\d,]+)",
+    "value": 10.0,
+    "tex": "0",
+    "tex_file": "Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "seed_E",
+    "artifact": "seed_sensitivity.txt",
+    "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
+    "value": "165",
+    "tex": "\\pm165",
+    "tex_file": "Appendix/a_inference.tex",
+    "note": ""
+  },
+  {
+    "key": "seed_base",
+    "artifact": "seed_sensitivity.txt",
+    "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
+    "value": "0.63",
+    "tex": "\\pm\\pounds0.63",
+    "tex_file": "Appendix/a_inference.tex",
+    "note": ""
+  }
+]

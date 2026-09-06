@@ -54,16 +54,14 @@ traders---about 2.18 million in 2023--24---which the HMRC counts by turnover
 band and by trade sector and the net-liability totals describe. The two differ
 in both directions. Above the threshold only about two-thirds of frame
 enterprises are VAT traders (from 51\% in the \pounds150{,}000--\pounds300{,}000
-band to 100\% in the \pounds1m--\pounds10m band): the remainder are PAYE-only
-employers and businesses in exempt sectors (finance, health, education, and
-similar) outside the VAT net. The share is 64\% in the open
-\pounds10m-plus band, but there the shortfall is largely a construction
-artefact: the ONS ``\pounds5m and over'' band has no published top, and the
-uniform draw to \pounds50m places more enterprises above \pounds10m than HMRC
-counts; the band's liability total is calibrated regardless, so reform
-costings near the threshold are unaffected, but the top band's in-scope draw
-is a seeded selection and contributes most of the seed dispersion of the base
-(Appendix~\ref{app:inference}). Below the threshold about 89\% of frame
+band to 94\% in the \pounds1m--\pounds10m band and 82\% above \pounds10m):
+the remainder are PAYE-only employers and businesses in exempt sectors
+(finance, health, education, and similar) outside the VAT net. The two top
+bands depend on how the open ONS ``\pounds5m and over'' band is filled, since
+it has no published top; I draw it uniform in log turnover on
+$[\pounds5\text{m},\pounds50\text{m})$, the maximum-entropy choice for an
+open band, and the band's liability total is calibrated regardless, so reform
+costings near the threshold are unaffected. Below the threshold about 89\% of frame
 enterprises are registered, largely because small businesses enter the
 register \emph{through} VAT registration. HMRC also reports about 216{,}500
 traders with negative or zero turnover who are not identifiable in the ONS
@@ -196,20 +194,20 @@ draws plus 0.22 million appended traders), weighted to represent
 about 2.72 million frame enterprises in 2023--24, of which about 2.18 million are
 VAT-registered traders. Checked against the official sources along every
 calibrated dimension, the vintages attain overall calibration accuracies of
-98.0\% (2023--24) and 98.0\% (2024--25);
+98.0\% (2023--24) and 98.1\% (2024--25);
 Appendix~\ref{app:data} reports the full table. The headline is the mean of
 five calibrated-dimension scores, each clipped at zero as
 $\max\{0,1-\lvert \widehat{T}-T\rvert/\lvert T\rvert\}$, HMRC dimensions
 scored on registered rows and ONS dimensions on frame rows; it excludes the
 VAT-liability-by-sector diagnostic described above. Because the turnover-band
 rows hold by construction, the informative residuals are the sector
-composition (93.3\% and 92.2\%) and the liability totals by band
-(97.1\% and 98.0\%).
+composition (93.3\% and 92.5\%) and the liability totals by band
+(96.9\% and 98.1\%).
 
 Aggregate fit does not imply record-level representativeness. Kish effective
-sample sizes are 137{,}054 (4.7\% of rows) and 192{,}917
-(6.5\%), while maximum weights are about 2{,}446 and
-1{,}830; the median weight is one, and the concentration sits in the
+sample sizes are 132{,}165 (4.5\% of rows) and 180{,}070
+(6.1\%), while maximum weights are about 2{,}417 and
+1{,}857; the median weight is one, and the concentration sits in the
 large-turnover bands that carry the liability totals. Synthetic rows should therefore be read
 as weighted accounting support points, not independent firm observations;
 local and sub-band results can be sensitive to a small number of high-weight
