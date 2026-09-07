@@ -43,9 +43,9 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-On the 2023--24 population the baseline gives $E=22{,}081$,
-$\Delta_R=22{,}371$, and
-$y_R=\pounds93{,}200$, interior to the search window, so mass conservation binds on the chart universe (it does not on all rows, where the exempt stratum above the threshold pushes the counterfactual above the observed density). These
+On the 2023--24 population the baseline gives $E=1{,}335$,
+$\Delta_R=2{,}476$, and
+$y_R=\pounds86{,}260$, interior to the search window, so mass conservation binds. These
 mass-conservation outputs are estimator diagnostics, not evidence of a
 marginal behavioural buncher.
 
@@ -62,9 +62,9 @@ that does not exist. The specification grids below instead show how point
 estimates move with the estimator's own choices. Generator Monte Carlo error is
 quantified separately, by rebuilding the full 2023--24 population under
 alternative generator seeds (\texttt{results/seed\_sensitivity.txt}): across
-seeds the half-ranges are $\pm155$ on $E$, $\pm0.06$ on
-$b_{\mathrm{LLAT}}$, $\pm\pounds1.7$m on the raise costing,
-$\pm\pounds4.1$m on the taper costing, and $\pm\pounds0.17$bn
+seeds the half-ranges are $\pm156$ on $E$, $\pm0.01$ on
+$b_{\mathrm{LLAT}}$, $\pm\pounds4.2$m on the raise costing,
+$\pm\pounds5.8$m on the taper costing, and $\pm\pounds0.07$bn
 on the in-scope base---the last larger than in earlier builds because the
 scope flag is itself a seeded draw within each turnover band. Table~\ref{tab:boot}
 reports the point estimates. Two conventions matter for
@@ -86,10 +86,8 @@ standard errors are not reported---see the text.}
 \toprule
 Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 \midrule
-2023--24 (\pounds85k, OBR fine targets; chart universe) & $22{,}081$ & $22{,}371$ & $1.505$ & $93.2$ \\
-2023--24, all rows & $8{,}091$ & $798$ & $1.412$ & $100.0$ (censored) \\
-2023--24, in-scope firms & $38{,}626$ & $36{,}827$ & $3.360$ & $100.0$ (censored) \\
-2024--25 (\pounds90k, coarse bands only; chart universe) & $30{,}807$ & $15{,}023$ & $2.262$ & $105.0$ (censored) \\
+2023--24 (\pounds85k, OBR fine targets) & $1{,}335$ & $2{,}476$ & $0.178$ & $86.3$ \\
+2024--25 (\pounds90k, coarse bands only) & $0$ & $216$ & $0.000$ & $105.0$ (censored) \\
 \bottomrule
 \end{tabular}
 \end{table}

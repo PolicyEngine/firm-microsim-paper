@@ -5,7 +5,7 @@ Design
 ------
 1. Baseline: the £85k synthetic firms under the Placebo-A reweighting
    (smooth log-quadratic density across £85k), a step-free null world:
-   b=-0.0564, E=0, y_R=84.00.
+   b=-0.0641, E=0, y_R=84.00.
 2. Injection (Kleven–Waseem-consistent): firms in the donor region
    (85, 112] relocate to [80, 85) with probability
    declining linearly from the threshold to zero at the true marginal
@@ -19,12 +19,12 @@ Results
 -------
     E_true      E_hat  recovery  y_R_hat    b_hat   b_llat
 ----------------------------------------------------------
-     2,000          0     0.0%    84.00  -0.0510    0.000
-     5,000        601    12.0%    85.53  -0.0428    0.026
-     8,000      2,457    30.7%    87.12  -0.0347    0.129
+     2,000         27     1.3%    84.14  -0.0534    0.002
+     5,000      1,733    34.7%    87.48  -0.0371    0.174
+     8,000      4,163    52.0%    90.57  -0.0208    0.429
 
-Baseline (null, no injection): b=-0.0564  E=0  y_R=84.00
-True marginal buncher: y_R = 112. Mean recovery: 14.2% (monotone in E_true: True).
+Baseline (null, no injection): b=-0.0641  E=0  y_R=84.00
+True marginal buncher: y_R = 112. Mean recovery: 29.3% (monotone in E_true: True).
 
 Reading
 -------

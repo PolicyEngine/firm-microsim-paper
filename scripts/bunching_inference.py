@@ -33,8 +33,8 @@ def main() -> None:
     for vintage in sorted(VINTAGES):
         threshold = VINTAGES[vintage]["threshold"]
         lines += ["", f"--- Vintage {vintage} (threshold GBP {threshold:.0f}k) ---"]
-        for universe, label in (("chart", "OBR-chart universe (frame + stratum below, frame above) [HEADLINE]"),
-                                ("all", "all rows (incl. exempt stratum above threshold)"),
+        for universe, label in (("chart", "OBR-chart universe (frame rows; plus the DBT stratum below the threshold only when it is generated) [HEADLINE]"),
+                                ("all", "all rows (incl. any stratum rows above the threshold)"),
                                 ("scope", "in-scope VAT firms")):
             r = BunchingEstimator(vintage, universe=universe).estimate()
             lines.append(

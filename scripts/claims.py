@@ -180,25 +180,8 @@ def build_claims() -> list[dict]:
     add("taper_match_m", "reform_menu_common_base.txt", m.re.pattern, m.group(1), f"{float(m.group(1))*100:.1f}\\%", "Sections/static.tex")
     add("taper_match_top", "reform_menu_common_base.txt", m.re.pattern, m.group(3), "\\pounds" + f"{round(_num(m.group(3)), -2):,.0f}".replace(",", "{,}"), "Sections/static.tex")
     add("taper_match_firms", "reform_menu_common_base.txt", m.re.pattern, m.group(4), _tex_int(_num(m.group(4)) * 1000), "Sections/static.tex")
-    m = re.search(r"\[OBR-chart universe[^\]]*\]\] E = ([\d,]+) \(gross\) \| E_net = ([-\d,]+) \| Delta_R = ([\d,]+) \| b_llat = ([\d.]+) \| b = [-\d.]+ \| y_R = ([\d.]+)", bun)
-    add("chart_E_net_2324", "bunching_inference.txt", m.re.pattern, m.group(2), m.group(2).replace(",", "{,}"), "Sections/bunching.tex")
-    add("chart_DR_2324", "bunching_inference.txt", m.re.pattern, m.group(3), m.group(3).replace(",", "{,}"), "Sections/bunching.tex")
-    add("chart_yR_2324", "bunching_inference.txt", m.re.pattern, m.group(5), f"\\pounds{round(float(m.group(5))*1000, -2):,.0f}".replace(",", "{,}"), "Sections/bunching.tex")
     m = re.search(r"\[in-scope VAT firms\] E = ([\d,]+)", bun)
     add("scope_E_2324", "bunching_inference.txt", m.re.pattern, m.group(1), m.group(1).replace(",", "{,}"), "Sections/bunching.tex")
-    sens = _read("stratum_shape_sensitivity.txt")
-    for lab, key in (("exponential (headline)", "exp"), ("lognormal (sigma=1.0)", "logn")):
-        blk = sens.split(f"[{lab}]")[1]
-        m = re.search(r"above GBP85k \(exempt, out of scope\): ([\d,]+)", blk)
-        add(f"stratum_above_{key}", "stratum_shape_sensitivity.txt", m.re.pattern, m.group(1), _tex_int(round(_num(m.group(1)), -3)), "Appendix/a_data.tex")
-        m = re.search(r"cut to 70k from 85k \(2025-26\): \+([\d,.]+) m, \+([\d.]+)k firms", blk)
-        add(f"cut70_{key}", "stratum_shape_sensitivity.txt", m.re.pattern, m.group(1), f"\\pounds{_num(m.group(1)):,.0f}m".replace(",", "{,}"), "Appendix/a_data.tex")
-    aged = [float(x) for x in re.findall(r"aged-membership ([+-][\d.]+)m", sw)]
-    add("anchor_aged_series", "static_sweep.txt", "aged-membership", aged, _series(aged), "Sections/static.tex")
-    m = re.search(r"70k: newly registered ([\d,]+); standard-rate \+([\d,.]+)m; at GBP [\d,]+/firm \+([\d,.]+)m", sw)
-    add("cut70_per_firm_variant", "static_sweep.txt", m.re.pattern, m.group(3),
-        f"\\pounds{_num(m.group(3)):.0f}m", "Sections/static.tex")
-
     # --- seeds ---------------------------------------------------------------
     seeds = _read("seed_sensitivity.txt")
     m = re.search(r"half-range across seeds: E ±(\d+) \| b_llat ±([\d.]+) \| raise ±£([\d.]+)m \| taper ±£([\d.]+)m \| base ±£([\d.]+)bn", seeds)

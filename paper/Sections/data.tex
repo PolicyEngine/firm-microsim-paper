@@ -39,7 +39,7 @@ and turnover sizeband, United Kingdom); the employment-band targets below come
 from Table~3 of the same workbook (enterprises by employment sizeband), so both
 ONS margins count the same statistical unit.
 
-\paragraph{Three universes.} The model distinguishes three populations and
+\paragraph{Two universes.} The model distinguishes two populations and
 declares which one each calibration target describes. The \emph{frame} is the
 ONS register of enterprises operating VAT and/or PAYE---about 2.72 million in
 2024---which the population and employment targets describe. The \emph{registered subset} is the population of HMRC VAT
@@ -59,34 +59,11 @@ enterprises are registered, largely because small businesses enter the
 register \emph{through} VAT registration. HMRC also reports about 216{,}500
 traders with negative or zero turnover who are not identifiable in the ONS
 turnover bands; I append them as an out-of-frame stratum before calibration.
-The third universe is the \emph{unregistered stratum}: businesses registered
-for neither VAT nor PAYE, which the DBT Business Population Estimates count
-at about 2.86 million at the start of 2024, with total turnover of
-\pounds123bn (a mean of \pounds43{,}000) and, by SIC division, both the count
-and the turnover total \citep{dbt_bpe_2024}. Together the three universes make
-up the DBT private-sector business population of about 5.5 million. BPE
-publishes no size distribution for the stratum, so each division's turnover is
-drawn from an exponential distribution with the division's mean---the
-maximum-entropy density for a positive variable with a known mean---and the
-stratum's weights are held fixed in calibration: its shape is a maintained
-assumption, not a fitted object, and it is bounded by a mean-preserving
-log-normal alternative in Appendix~\ref{app:data}. Businesses in the stratum below the
-threshold are registrable (they would have to register on crossing it);
-those the draw places above it can only be exempt-sector traders and are
-placed outside VAT scope. The stratum changes what the OBR near-threshold
-data can pin down. Chart~C counts every business in HMRC records by
-\pounds1{,}000 band, a universe that below the threshold is the frame plus
-the unregistered stratum. The frame's within-band shape is a maintained draw
-pinned by the coarse ONS and HMRC bands, so I apply the chart's
-\emph{levels} to the stratum as the residual---the chart count in each
-\pounds1{,}000 bin less the frame's own mass in it---and to the frame alone
-above the threshold, where unregistered businesses are exempt traders outside
-the chart's registration analysis. The stratum's weights are frozen outside
-the chart's window and pinned by the residual inside it; the near-threshold
-geometry the chart reports, the rise into the threshold and the cliff, is
-therefore carried by the unregistered stratum, as in the administrative
-decomposition in which sole traders supply most of the cliff, and the frame is
-left undistorted.
+Neither universe is the full business population of about 5.5 million in
+the DBT business population estimates \citep{dbt_bpe_2024}: the 2.9 million
+businesses registered for neither VAT nor PAYE are outside the frame. The
+difference is concentrated below the threshold and matters for threshold
+\emph{cuts}, which I flag where relevant.
 Each firm is given input expenditure $x_i = \delta_i\,y_i$,
 with the input share $\delta_i$ drawn from a rescaled Beta distribution
 with sector-specific shifts, clamped to $\delta_i \in [0.1, 0.95]$ (mean about
@@ -146,13 +123,20 @@ March 2023 \emph{Economic and Fiscal Outlook} reports HMRC business counts in
 2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. The final
 \pounds90{,}000 row lies beyond the fine window and is not used.
 
-All 25 retained bins enter as \emph{level} targets on the universe the chart
-counts, in the residual form described above. The resulting all-business
-density steps from about 27{,}200 firms per \pounds1{,}000 in the
-\pounds84{,}000--\pounds85{,}000 bin (10{,}500 frame, 16{,}700
-stratum) to 11{,}000 just above it ($-59\%$), against the chart's own
-$-60\%$; the frame itself is flat at about 10{,}500 per \pounds1{,}000
-through the window. No fine bands are published for the
+All 25 retained bins enter as \emph{shape} targets, applied separately on
+each side of the threshold: the below-threshold profile is normalised over
+\pounds65{,}000--\pounds85{,}000 and the above-threshold profile over
+\pounds85{,}000--\pounds90{,}000, and each is scaled to the frame's own mass
+in its window. Chart~C counts every business in HMRC records, a universe that
+below the threshold is wider than the ONS frame, so its levels are not
+imported on either side; the OBR data supply only the within-side
+geometry---the rise into the threshold and the decline beyond it---and the
+cross-threshold step comes from the frame's own band structure. The
+resulting frame density steps from about 14{,}600 firms per \pounds1{,}000 in
+the \pounds84{,}000--\pounds85{,}000 bin to 11{,}500 just above it
+($-21\%$), against the chart's own $-60\%$, because the chart's
+below-threshold universe includes the unregistered businesses the frame does
+not. No fine bands are published for the
 \pounds90{,}000 threshold era, so the 2024--25 vintage keeps coarse bands
 only. Turnover-band and near-threshold targets carry the largest $\lambda_k$,
 followed by VAT liability by band. Two liability dimensions are reported as
@@ -180,9 +164,8 @@ considered here); below the threshold, every frame enterprise is treated as
 registrable, a maintained assumption since HMRC publishes only the registered
 count there. \emph{Registration} marks in-scope firms above the threshold and,
 below it, a seeded weighted selection reaching the HMRC \pounds1--threshold
-count; appended negative-or-zero traders are in scope and registered;
-unregistered-stratum businesses are in scope below the threshold and never
-registered at the data year. Registration above the threshold is thus certain
+count; appended negative-or-zero traders are in scope and registered.
+Registration above the threshold is thus certain
 for in-scope firms. This is an
 approximation to the statutory test, which is a
 rolling 12-month test on \emph{taxable} turnover with a roughly two-month
@@ -197,13 +180,12 @@ the running variable throughout is total rather than taxable turnover. The
 seeded selections match each weighted total to within one firm's weight but do
 not identify \emph{which} firms are in scope or register voluntarily; their
 composition remains a modelling assumption. The resulting dataset comprises
-approximately $5.8$--$6.0$~million firm records per vintage (2.72 million
-frame draws, 2.86--3.03 million unregistered-stratum businesses, and 0.22
-million appended traders), weighted to represent about 2.72 million frame enterprises in
-2023--24, of which about 2.18 million are VAT-registered traders, plus the
-2.86 million unregistered businesses at fixed weight. Checked against the official sources along every
+approximately $2.94$~million firm records per vintage (2.72 million frame
+draws plus 0.22 million appended traders), weighted to represent about 2.72
+million frame enterprises in 2023--24, of which about 2.18 million are
+VAT-registered traders. Checked against the official sources along every
 calibrated dimension, the vintages attain overall calibration accuracies of
-98.3\% (2023--24) and 98.2\% (2024--25);
+98.0\% (2023--24) and 98.1\% (2024--25);
 Appendix~\ref{app:data} reports the full table. The headline is the mean of
 five calibrated-dimension scores, each clipped at zero as
 $\max\{0,1-\lvert \widehat{T}-T\rvert/\lvert T\rvert\}$, HMRC dimensions
@@ -214,9 +196,9 @@ composition (93.3\% and 92.6\%) and the liability totals by band
 (98.4\% and 98.9\%).
 
 Aggregate fit does not imply record-level representativeness. Kish effective
-sample sizes over the calibrated rows (the frozen stratum excluded) are
-1{,}061{,}764 (36.1\%) and 1{,}214{,}074 (41.2\%), while maximum weights are
-about 325 and 568; the median weight is one. The log--log within-band fill
+sample sizes are 97{,}977 (3.3\% of rows) and 225{,}945
+(7.7\%), while maximum weights are about 5{,}649 and
+1{,}985; the median weight is one. The log--log within-band fill
 removed the extreme weights (above 2{,}000) that the uniform fill had needed
 in the large-turnover bands. Synthetic rows should therefore be read
 as weighted accounting support points, not independent firm observations;
@@ -235,10 +217,9 @@ population inherits that band-average step through the registration
 propensity; the frame density itself steps only from about $9{,}000$ to
 $8{,}700$ enterprises per \pounds1{,}000 across the same bands. The
 \emph{local} shape within a few thousand pounds of the threshold is pinned by
-the OBR near-threshold targets described above: the calibrated all-business density
-rises into the threshold (about 27{,}200 firms per \pounds1{,}000 in the
-\pounds84{,}000--\pounds85{,}000 bin, of which 10{,}500 are frame enterprises
-and 16{,}700 unregistered businesses), steps down across it (about 11{,}000
+the OBR near-threshold targets described above: the calibrated frame density
+rises into the threshold (about 14{,}600 firms per \pounds1{,}000 in the
+\pounds84{,}000--\pounds85{,}000 bin), steps down across it (about 11{,}500
 just above), and declines through the pinned window---the
 administratively observed bunching geometry \citep{obr2023vat,liuetal2021},
 present in the file because it is targeted, not because any synthetic firm
@@ -260,16 +241,12 @@ Section~\ref{sec:behavioural}.
 \pounds1{,}000 bins), 2023--24. The near-threshold profile---rising into the
 \pounds85{,}000 threshold and stepping down across it---is calibrated to the
 OBR's published \pounds1{,}000-band counts and is therefore target-inherited,
-not behavioural (Section~\ref{sec:bunching}). The figure shows the universe
-of the OBR chart, stacked: the ONS VAT/PAYE frame everywhere and the DBT
-unregistered stratum below the threshold (above it the stratum is exempt
-traders outside VAT scope and is not shown), so the cross-threshold step is
-comparable to the administrative one. The frame is smooth through the window;
-the stratum carries the rise into the threshold and the cliff. The steps at
-\pounds65{,}000 (the lower edge of the OBR-pinned window, below which the
-stratum keeps its assumed exponential shape), at \pounds90{,}000 (the upper
-edge of the window) and at \pounds150{,}000 (an HMRC band edge) are
-calibration-target boundaries, not features of the underlying firm distribution. The
+not behavioural (Section~\ref{sec:bunching}). Levels are the ONS VAT/PAYE
+frame: the unregistered businesses that supply most of the cross-threshold
+cliff in all-business administrative charts are outside it, so level
+comparisons to such charts are not like-for-like. The steps at
+\pounds65{,}000 and \pounds90{,}000 (the edges of the OBR-pinned window)
+and at \pounds150{,}000 (an HMRC band edge) are calibration-target boundaries, not features of the underlying firm distribution. The
 \pounds90{,}000 boundary lies inside the bunching estimator's fit range;
 Appendix~\ref{app:inference} measures its effect on the headline statistics.}
 \label{fig:turnover_dist}

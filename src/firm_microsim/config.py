@@ -163,7 +163,7 @@ class Config:
     # Include the DBT unregistered stratum (#25). With it, the OBR £1k-bin
     # counts are applied as LEVEL targets on the all-business universe
     # (ONS frame + unregistered) rather than as frame-scaled shapes.
-    include_unregistered_stratum: bool = True
+    include_unregistered_stratum: bool = False
     bpe_importance: float = 1.0
     # Within-stratum turnover shape: "exponential" (maximum entropy given the
     # BPE mean; headline) or "lognormal" (same mean, sigma below; the

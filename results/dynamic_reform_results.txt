@@ -1,6 +1,6 @@
 Iso-elastic (Kleven-Waseem) dynamic VAT-notch simulator — reform results
 vintage=2023-24  T*=£85,000  tau_max=0.20  reduced-rate band top=£105,000  taper top=£141,667
-Repo-generated baseline registered VAT base = £174.730bn.
+Repo-generated baseline registered VAT base = £174.971bn.
 A SINGLE turnover elasticity e governs the response. The behavioural cost is
 now a defensible e-SENSITIVITY RANGE over e in {0.05,0.17,0.32} (headline 0.17).
 Ability n is an accounting anchor recovered under the £85k notch given e; e is
@@ -22,11 +22,11 @@ n_H falls with delta and no buncher exists for delta >= 0.5:
 
 Reform costs (change vs £85k-notch baseline):
   reform                              static      e=0.05      e=0.17      e=0.32    #reopt(e=0.17)    near-thr Δ
-  Raise threshold to £100k        £    -583m  £    -583m  £    -583m  £    -583m          85,061            +0
-  Graduated taper (£85k→£141.7k, monotone)£   -1407m           —           —           —
-  Flat 50% marginal taper (£85k→£141.7k)£    -932m           —           —           —
-  Reduced rate 10% (£85k–£105k)   £    -398m  £    -395m  £    -390m  £    -384m         114,519            +0
-  Reduced rate 15% (£85k–£105k)   £    -199m  £    -197m  £    -193m  £    -188m         114,519            +0
+  Raise threshold to £100k        £    -590m  £    -590m  £    -590m  £    -590m          91,796            +0
+  Graduated taper (£85k→£141.7k, monotone)£   -1415m           —           —           —
+  Flat 50% marginal taper (£85k→£141.7k)£    -938m           —           —           —
+  Reduced rate 10% (£85k–£105k)   £    -401m  £    -399m  £    -393m  £    -387m         120,282            +0
+  Reduced rate 15% (£85k–£105k)   £    -201m  £    -199m  £    -194m  £    -189m         120,282            +0
 
 Reading: the raise row is flat in e by construction of the region-confined solve
 (released firms leave the base; no other firm's rate changes). Reduced-rate bands

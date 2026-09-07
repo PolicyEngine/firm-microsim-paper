@@ -3,8 +3,8 @@ two-universe build (#37): ONS-frame rows + HMRC registered-subset rows via
 per-band registration propensity; in-scope liabilities only; scope is a seeded draw
 ======================================================================
 run                      E  b_llat  raise £m  taper £m  base £bn
-seed 42 (paper)      8,091    1.41     582.9    1407.2     174.7
-seed 7               8,246    1.43     579.4    1400.3     174.6
-seed 99              8,401    1.53     582.8    1399.0     174.4
+seed 42 (paper)      1,335    0.18     590.3    1414.6     175.0
+seed 7               1,203    0.18     586.1    1406.0     174.8
+seed 99              1,516    0.19     594.5    1417.6     174.8
 
-half-range across seeds: E ±155 | b_llat ±0.06 | raise ±£1.7m | taper ±£4.1m | base ±£0.17bn
+half-range across seeds: E ±156 | b_llat ±0.01 | raise ±£4.2m | taper ±£5.8m | base ±£0.07bn

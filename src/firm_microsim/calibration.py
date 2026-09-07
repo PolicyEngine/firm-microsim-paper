@@ -272,10 +272,6 @@ def build_target_matrix(
     frame_f = frame_mask.float()
     if unregistered_mask is None:
         unregistered_mask = torch.zeros(n_firms, dtype=torch.bool, device=device)
-    # Rows that are HMRC traders by construction (appended negative/zero
-    # turnover): outside the frame and not in the unregistered stratum.
-    all_business = frame_mask | unregistered_mask
-
     sector_rows = hmrc_sector_df[hmrc_sector_df["Trade_Sector"] != "Total"].copy()
     if config.calibrate_vat_liability_sector:
         vat_liability_sector_rows = vat_liability_sector_df[

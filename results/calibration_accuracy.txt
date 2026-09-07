@@ -7,55 +7,53 @@ dimensions and excludes the VAT-liability-by-sector diagnostic.
 ================================================================
   Vintage 2023-24  |  threshold £85k
 ================================================================
-  rows (firm types):   5,799,545
-  weighted ONS-frame population: 2,719,854 firms  (registered traders 2,178,643; unregistered stratum 2,823,577)
+  rows (firm types):   2,941,275
+  weighted ONS-frame population: 2,719,413 firms  (registered traders 2,178,338; unregistered stratum 0)
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
   HMRC Turnover Bands             100.0%        0.0%
   ONS Population                   99.8%        0.2%
   Employment Bands                 99.9%        0.1%
-  Sector Distribution              93.3%        6.7%
-  VAT Liability by Band            98.4%        1.6%
+  Sector Distribution              93.4%        6.6%
+  VAT Liability by Band            97.1%        2.9%
 ----------------------------------------------------------------
-  Overall (5 calibrated dims)       98.3%        1.7%
+  Overall (5 calibrated dims)       98.0%        2.0%
 ----------------------------------------------------------------
   Informational diagnostics (not calibration targets):
-  VAT Liability by Sector          43.0%       57.0%
-  VAT Liability below Thresh.      32.2%       67.8%
-  BPE unregistered (frozen)        98.8%        1.2%
+  VAT Liability by Sector          42.2%       57.8%
+  VAT Liability below Thresh.      31.0%       69.0%
 ================================================================
   Calibration-weight diagnostics (calibrated rows; unregistered stratum frozen):
-  effective sample size: 1,061,764 (36.1% of calibrated rows)
-  min / p50 / p90 / p99 / max: 0.082 / 1.000 / 1.030 / 4.250 / 325.239
-  coefficient of variation: 1.330
+  effective sample size: 97,977 (3.3% of calibrated rows)
+  min / p50 / p90 / p99 / max: 0.084 / 0.999 / 1.003 / 2.764 / 5649.144
+  coefficient of variation: 5.387
 ================================================================
 
 ================================================================
   Vintage 2024-25  |  threshold £90k
 ================================================================
-  rows (firm types):   5,980,630
-  weighted ONS-frame population: 2,730,898 firms  (registered traders 2,171,035; unregistered stratum 3,034,615)
+  rows (firm types):   2,946,015
+  weighted ONS-frame population: 2,731,035 firms  (registered traders 2,170,744; unregistered stratum 0)
 ----------------------------------------------------------------
   Dimension                     accuracy       error
 ----------------------------------------------------------------
   HMRC Turnover Bands             100.0%        0.0%
   ONS Population                   99.9%        0.1%
   Employment Bands                 99.9%        0.1%
-  Sector Distribution              92.6%        7.4%
-  VAT Liability by Band            98.9%        1.1%
+  Sector Distribution              92.4%        7.6%
+  VAT Liability by Band            98.2%        1.8%
 ----------------------------------------------------------------
-  Overall (5 calibrated dims)       98.2%        1.8%
+  Overall (5 calibrated dims)       98.1%        1.9%
 ----------------------------------------------------------------
   Informational diagnostics (not calibration targets):
   VAT Liability by Sector          44.0%       56.0%
   VAT Liability below Thresh.       0.0%      100.0%
-  BPE unregistered (frozen)       100.0%        0.0%
 ================================================================
   Calibration-weight diagnostics (calibrated rows; unregistered stratum frozen):
-  effective sample size: 1,214,074 (41.2% of calibrated rows)
-  min / p50 / p90 / p99 / max: 0.083 / 1.000 / 1.053 / 4.123 / 567.745
-  coefficient of variation: 1.194
+  effective sample size: 225,945 (7.7% of calibrated rows)
+  min / p50 / p90 / p99 / max: 0.087 / 0.999 / 1.001 / 2.961 / 1985.395
+  coefficient of variation: 3.470
 ================================================================
 
 Done: 2/2 vintage(s) reported.

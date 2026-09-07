@@ -41,7 +41,7 @@ threshold:
    and intermediate inputs. These within-band values are explicit modelling
    assumptions, not recovered administrative microdata.
 2. **Calibrate firm weights** by multi-objective optimisation (Adam, symmetric
-   relative-error loss) on **three declared universes** (issues #37, #25):
+   relative-error loss) on **two declared universes** (issue #37):
    - the **ONS VAT/PAYE enterprise frame** (~2.72M enterprises): the population
      total and the employment-band totals;
    - the **HMRC VAT-registered subset** (~2.18M traders): trader counts by
@@ -53,14 +53,7 @@ threshold:
      "5000+" band is drawn log-uniform on [£5m, £50m), issue #40). HMRC
      negative/zero-turnover traders are appended before calibration as an
      out-of-frame stratum;
-   - the **DBT unregistered stratum** (~2.86M businesses registered for
-     neither VAT nor PAYE, from the Business Population Estimates by SIC
-     division, `scripts/etl_bpe_tables.py`): drawn exponential with each
-     division's BPE mean turnover, weights frozen in calibration, registrable
-     below the threshold and out of scope (exempt) above it. With the stratum
-     present the OBR £1k-bin counts enter as **levels** — on frame + stratum
-     below the threshold, frame alone above — so the frame's near-threshold
-     density is the residual between the OBR chart and the stratum.
+   (The DBT unregistered stratum of #52 is available behind `include_unregistered_stratum` / `--unregistered-shape` but is off by default: its assumed size distribution dominated the near-threshold density and it is not used for the paper's results.)
 
    Within closed ONS bands above the first, turnover is drawn from a truncated
    power law whose exponent is the log-log slope of neighbouring band
@@ -70,9 +63,8 @@ threshold:
    VAT **scope** and **registration** flags are then assigned by seeded weighted
    selection per band so registered totals match HMRC to within one weight.
 
-The result is ~5.8M firm rows (2.72M frame draws, 2.86M unregistered-stratum
-businesses, 0.22M appended traders) weighted to ~2.72M frame enterprises, of
-which ~2.18M are VAT-registered, plus the stratum at fixed weight.
+The result is ~2.94M firm rows (2.72M frame draws plus 0.22M appended traders)
+weighted to ~2.72M frame enterprises, of which ~2.18M are VAT-registered.
 Because the population is calibrated **to** the HMRC aggregates, agreement
 with them is an internal consistency check, not external validation.
 
@@ -338,5 +330,4 @@ the threshold would treat bunched firms as crossers); liabilities are aged by
 the fiscal-year factor. A rise releases every in-scope registrant in the
 vacated band (they no longer need to register); the statutory £2k
 deregistration gap and the LLAT 43% retention share are reported as
-sensitivities. Voluntary registrants stay registered. Cuts draw in the
-unregistered stratum. `results/static_sweep.txt` holds the machine-readable table.
+sensitivities. Voluntary registrants stay registered. Cut rows are frame-confined lower bounds. `results/static_sweep.txt` holds the machine-readable table.

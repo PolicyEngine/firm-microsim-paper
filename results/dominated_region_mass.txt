@@ -17,16 +17,16 @@ Bands measured on the WEIGHTED in-scope (VAT-liable) synthetic firms;
 
 rate / band            width a (GBP)      band (GBP k)         OBS          CF   NET disp.
 ------------------------------------------------------------------------------------------
-20% (baseline notch)          21,250     [85, 106.250)     124,445     159,994      35,550
-15% band                      15,000     [85, 100.000)      87,931     127,651      39,721
-10% band                       9,444      [85, 94.444)      54,583      91,974      37,391
+20% (baseline notch)          21,250     [85, 106.250)     129,853     142,929      13,076
+15% band                      15,000     [85, 100.000)      94,608     109,718      15,110
+10% band                       9,444      [85, 94.444)      60,261      74,815      14,553
 ------------------------------------------------------------------------------------------
 
 INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
-  Observed firms in dominated region ........      124,445
-  Counterfactual total density in band (CF)..      159,994
-  NET displaced mass in band (CF - OBS) .....       35,550
-  CF mass as share of firms near threshold ..        0.380
+  Observed firms in dominated region ........      129,853
+  Counterfactual total density in band (CF)..      142,929
+  NET displaced mass in band (CF - OBS) .....       13,076
+  CF mass as share of firms near threshold ..        0.494
 
   Note: the headline displaced-mass number is NET (CF - OBS), not the
   total CF density. The band is wide, so most CF firms in it would
@@ -34,25 +34,25 @@ INTERPRETATION (baseline 20% notch, band [85,000, 106,250)):
   NET deficit is the mass the notch evacuates from the dominated region.
 
 REFORM-SHRUNK BANDS (net displaced mass):
-  15% -> band width GBP 15,000: net displaced = 39,721 firms  (CF total 127,651)
-  10% -> band width GBP 9,444: net displaced = 37,391 firms  (CF total 91,974)
+  15% -> band width GBP 15,000: net displaced = 15,110 firms  (CF total 109,718)
+  10% -> band width GBP 9,444: net displaced = 14,553 firms  (CF total 74,815)
 
 SECONDARY NOTCH at the reduced-rate band top (T1 = GBP 105,000):
   A banded reduced rate reverts to tau=20% at T1, adding a SECOND
   dominated region a' = T1*(tau-r)/(1-tau). Total dominated turnover and
   mass = primary [T*, T*+a] + secondary [T1, T1+a'].
-  15% band  secondary [105, 111.562) width GBP 6,563  OBS = 35,301
-            primary OBS 87,931 + secondary OBS 35,301 = TOTAL 123,232  (baseline 124,445, -1.0%)
-  10% band  secondary [105, 118.125) width GBP 13,125  OBS = 67,180
-            primary OBS 54,583 + secondary OBS 67,180 = TOTAL 121,763  (baseline 124,445, -2.2%)
+  15% band  secondary [105, 111.562) width GBP 6,563  OBS = 34,037
+            primary OBS 94,608 + secondary OBS 34,037 = TOTAL 128,644  (baseline 129,853, -0.9%)
+  10% band  secondary [105, 118.125) width GBP 13,125  OBS = 65,034
+            primary OBS 60,261 + secondary OBS 65,034 = TOTAL 125,296  (baseline 129,853, -3.5%)
 
 DOMINATED REGION UNDER UNRECLAIMED INPUT VAT (firm-specific width):
   a(delta) = T* tau (1 - 2 delta) / ((1 - tau)(1 - delta)); zero for delta >= 0.5
-  in-scope firms within [T*-15k, T*+45k]: median input share delta = 0.61
-  share with a positive dominated width (delta < 0.5) .. 0.274
-  mean width across all near-threshold firms ......... GBP 2,067
-  mean width among firms with a positive width ....... GBP 7,541
-  in-scope firms inside their OWN dominated region ... 11,316  (vs 124,445 in the fixed GBP 21,250 band)
+  in-scope firms within [T*-15k, T*+45k]: median input share delta = 0.60
+  share with a positive dominated width (delta < 0.5) .. 0.271
+  mean width across all near-threshold firms ......... GBP 2,056
+  mean width among firms with a positive width ....... GBP 7,596
+  in-scope firms inside their OWN dominated region ... 11,642  (vs 129,853 in the fixed GBP 21,250 band)
   The GBP 21,250 width is the zero-input / zero-pass-through upper bound.
 
 STANDARD-RATED INPUT SHARE and voluntary registration:
@@ -60,21 +60,21 @@ STANDARD-RATED INPUT SHARE and voluntary registration:
   the model's voluntary-registration mechanism. Implied share of below-threshold
   in-scope firms preferring registration with delta_s = delta (all inputs standard-rated): 0.713
   LLAT (2021) observed voluntary share: 0.43
-  Standard-rated share of inputs s* reconciling the two: 0.778
-  At delta_s = s* delta: share of near-threshold firms with a > 0 .. 0.545
-    mean width across near-threshold firms ............ GBP 4,396
-    mean width among firms with a positive width ...... GBP 8,070
-    in-scope firms inside their own region ............ 24,046
+  Standard-rated share of inputs s* reconciling the two: 0.774
+  At delta_s = s* delta: share of near-threshold firms with a > 0 .. 0.541
+    mean width across near-threshold firms ............ GBP 4,395
+    mean width among firms with a positive width ...... GBP 8,129
+    in-scope firms inside their own region ............ 24,856
   Reduced-rate secondary notch (delta-invariant) CREATES a dominated interval for
-  the share of near-threshold firms with a(delta_s) = 0: 0.455
+  the share of near-threshold firms with a(delta_s) = 0: 0.459
 
 REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;
   NOT the Section 6 headline, which runs on the full ONS-frame density):
-  frame-density headline (Section 6): E = 8,091 (gross), E_net = -28,302, Delta_R = 798, y_R = GBP 100,000 [censored]
-  in-scope excess mass below T*  E       = 38,626 firms
-  missing mass above T*      Delta_R = 36,827 firms
-  marginal buncher           y_R     = GBP 100,000 [censored at search cap]
-  NET displaced mass in 20% dominated band = 35,550 firms
+  frame-density headline (Section 6): E = 1,335 (gross), E_net = -26,574, Delta_R = 2,476, y_R = GBP 86,256
+  in-scope excess mass below T*  E       = 8,668 firms
+  missing mass above T*      Delta_R = 10,865 firms
+  marginal buncher           y_R     = GBP 88,173
+  NET displaced mass in 20% dominated band = 13,076 firms
 
   By mass conservation the excess mass E that bunches just below T*
   is the mass that, absent the notch, would have spread into the
@@ -83,6 +83,6 @@ REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;
   (The TOTAL CF density in the band is NOT the displaced mass and
   should not be compared to E -- that would be a category error.)
 
-  total observed weighted mass on [20,140] est. range = 2,203,464
+  total observed weighted mass on [20,140] est. range = 878,495
 
 script: firm-microsim-dominated-region

@@ -6,10 +6,9 @@ parameterised by the registration threshold, and its calibration to HMRC and ONS
 aggregates. This appendix records the implementation detail deferred from that
 account.
 
-Each of the approximately $5.80$ million firm rows carries a turnover, an input
+Each of the approximately $2.94$ million firm rows carries a turnover, an input
 expenditure, a net VAT liability ($v_i = 0.20\,(y_i - x_i)$), a calibration
-weight, a frame indicator, an unregistered-stratum indicator, a VAT-scope
-flag, and a registration flag. The
+weight, a frame indicator, a VAT-scope flag, and a registration flag. The
 weights are chosen so the weighted frame rows reproduce the ONS enterprise
 total and employment bands while the weighted registered rows reproduce the
 HMRC trader counts and liability totals (Table~\ref{tab:calibration}). Because
@@ -35,13 +34,13 @@ Dimension (universe) & 2023--24 & 2024--25 \\
 HMRC turnover bands (registered) & 100.0\% & 100.0\% \\
 ONS enterprise total (frame) & 99.8\% & 99.9\% \\
 ONS employment bands (frame) & 99.9\% & 99.9\% \\
-HMRC sector counts (registered) & 93.3\% & 92.6\% \\
-HMRC net liability by band (registered) & 98.4\% & 98.9\% \\
+HMRC sector counts (registered) & 93.4\% & 92.4\% \\
+HMRC net liability by band (registered) & 97.1\% & 98.2\% \\
 \midrule
 \textbf{Overall (five calibrated dimensions)} & 98.3\% & 98.2\% \\
 \midrule
-\emph{Diagnostic:} net liability by sector (registered) & 43.0\% & 44.0\% \\
-\emph{Diagnostic:} net liability below threshold & 32.2\% & 0.0\% \\
+\emph{Diagnostic:} net liability by sector (registered) & 42.2\% & 44.0\% \\
+\emph{Diagnostic:} net liability below threshold & 31.0\% & 0.0\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -64,21 +63,6 @@ coexist with a small number of influential synthetic records. The report is
 generated rather than transcribed, and the test suite verifies source-band
 support, sector-conditional employment assignment, and weighted voluntary
 registration.
-
-\paragraph{Stratum-shape sensitivity.} The exponential draw for the
-unregistered stratum places about 410{,}000 businesses above the
-\pounds85{,}000 threshold (treated as exempt traders outside VAT scope). A
-mean-preserving log-normal draw with log-scale one, rebuilt end to end for
-2023--24, places 353{,}000 above the threshold. Inside the OBR window the
-stratum is pinned to the chart's residual whichever shape it starts from, so
-the two builds hold the same 139{,}000 businesses within
-\pounds70{,}000--\pounds85{,}000 and a cut from \pounds85{,}000 to
-\pounds70{,}000 in 2025--26 yields \pounds1{,}024m under the exponential and
-\pounds1{,}026m under the log-normal; the anchor is unchanged to \pounds1m
-(\texttt{results/stratum\_shape\_sensitivity.txt}). DBT itself imputes the
-stratum's turnover from zero-employee registered businesses at sector level,
-so a sector-level size distribution from that source would replace the
-assumption; it is not published.
 
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
 counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial

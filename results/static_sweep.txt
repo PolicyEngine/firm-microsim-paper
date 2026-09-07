@@ -6,46 +6,46 @@ model vs HMRC published costing (Spring Budget 2024), by fiscal year;
 baseline column = counterfactual threshold path (85/85/87/89/92k).
 --------------------------------------------------------------------------
    year  hmrc_impact_m  policyengine_impact_m
-2024-25         -150.0                 -193.4
-2025-26         -185.0                 -197.2
-2026-27         -125.0                 -120.2
-2027-28          -50.0                  -41.2
+2024-25         -150.0                 -198.2
+2025-26         -185.0                 -202.1
+2026-27         -125.0                 -123.4
+2027-28          -50.0                  -42.3
 2028-29           65.0                   88.2
 
 Deregistration-threshold sensitivity: the headline releases every in-scope
 registrant in [baseline, 90k) (they no longer need to register). Keeping
 existing registrants above the GBP88k deregistration threshold (gap = 2k):
-  2024-25: gap-protected release -116.4m
-  2025-26: gap-protected release -118.7m
-  2026-27: gap-protected release -121.7m
-  2027-28: gap-protected release -40.9m
-  2028-29: gap-protected release +85.2m
+  2024-25: gap-protected release -119.9m
+  2025-26: gap-protected release -122.3m
+  2026-27: gap-protected release -125.3m
+  2027-28: gap-protected release -42.7m
+  2028-29: gap-protected release +86.8m
 
 Voluntary-retention sensitivity (anchor, per year): headline assumes
 every released firm deregisters (full liability lost). If the Liu et
 al. (2021) voluntary share (43%) of released-firm liability is
 retained, the impact scales accordingly:
-  2024-25: headline -193.4m -> retention-adjusted -110.2m (HMRC -150m)
-  2025-26: headline -197.2m -> retention-adjusted -112.4m (HMRC -185m)
-  2026-27: headline -120.2m -> retention-adjusted -68.5m (HMRC -125m)
-  2027-28: headline -41.2m -> retention-adjusted -23.5m (HMRC -50m)
+  2024-25: headline -198.2m -> retention-adjusted -113.0m (HMRC -150m)
+  2025-26: headline -202.1m -> retention-adjusted -115.2m (HMRC -185m)
+  2026-27: headline -123.4m -> retention-adjusted -70.3m (HMRC -125m)
+  2027-28: headline -42.3m -> retention-adjusted -24.1m (HMRC -50m)
   2028-29: headline +88.2m -> retention-adjusted +88.2m (HMRC +65m)
 
 Aged-membership sensitivity: turnover aged by the same factor as liability,
 so band membership is evaluated on aged turnover (bunched firms treated as
 crossers):
-  2024-25: aged-membership -518.8m
-  2025-26: aged-membership -677.4m
-  2026-27: aged-membership -401.7m
-  2027-28: aged-membership -122.5m
-  2028-29: aged-membership +241.6m
+  2024-25: aged-membership -322.8m
+  2025-26: aged-membership -375.9m
+  2026-27: aged-membership -216.7m
+  2027-28: aged-membership -65.7m
+  2028-29: aged-membership +129.7m
 
 Released registrants in the headline (in-scope, data-year turnover in
 [baseline, 90k)), weighted firms per year:
-  2024-25: 27,673 firms
-  2025-26: 27,673 firms
-  2026-27: 16,082 firms
-  2027-28: 5,284 firms
+  2024-25: 28,569 firms
+  2025-26: 28,569 firms
+  2026-27: 16,615 firms
+  2027-28: 5,400 firms
   2028-29: 0 firms
 
 Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)
@@ -54,33 +54,33 @@ data-year turnover; voluntary registrants held registered; liabilities
 aged to the fiscal year, membership not aged
 --------------------------------------------------------------------------
  threshold_k  revenue_change_m  firms_change_k
-        70.0       1586.973842      246.262947
-        75.0       1170.968060      175.334792
-        80.0        764.866826      110.893344
-        85.0        376.541462       52.735418
+        70.0        196.750618       30.277546
+        75.0        151.564643       22.645186
+        80.0        103.555610       15.024580
+        85.0         53.711103        7.547150
         90.0          0.000000        0.000000
-        95.0       -197.964785      -28.750106
-       100.0       -404.413539      -57.441210
-       105.0       -625.918950      -86.284036
-       110.0       -845.626981     -113.705188
-       115.0      -1066.006043     -139.554427
-       120.0      -1278.722998     -163.177877
+        95.0       -199.651944      -31.313556
+       100.0       -404.121710      -60.233132
+       105.0       -624.940056      -89.679918
+       110.0       -842.020120     -116.844122
+       115.0      -1057.834386     -141.831586
+       120.0      -1270.245113     -165.232600
 
 
 Cut-row liability sensitivity: newly registered businesses credited at HMRC's
 average below-threshold remittance (GBP 2,152 per registered firm)
 instead of the standard rate on their modelled value added:
-  70k: newly registered 246,263; standard-rate +1,587.0m; at GBP 2,152/firm +530.0m
-  75k: newly registered 175,335; standard-rate +1,171.0m; at GBP 2,152/firm +377.4m
-  80k: newly registered 110,893; standard-rate +764.9m; at GBP 2,152/firm +238.7m
-  85k: newly registered 52,735; standard-rate +376.5m; at GBP 2,152/firm +113.5m
+  70k: newly registered 30,278; standard-rate +196.8m; at GBP 2,152/firm +65.2m
+  75k: newly registered 22,645; standard-rate +151.6m; at GBP 2,152/firm +48.7m
+  80k: newly registered 15,025; standard-rate +103.6m; at GBP 2,152/firm +32.3m
+  85k: newly registered 7,547; standard-rate +53.7m; at GBP 2,152/firm +16.2m
 
-Total VAT revenue at GBP 90k, 2025-26: 184.1bn
-Total VAT revenue at GBP 90k, 2026-27: 188.7bn
+Total VAT revenue at GBP 90k, 2025-26: 183.4bn
+Total VAT revenue at GBP 90k, 2026-27: 188.0bn
 
 Bases and calibration-target comparison
 --------------------------------------------------------------------------
-  2023-24: in-scope base (>= threshold, unaged) = 174.7bn; model-implied voluntary below-threshold remittance = 2.5bn (not calibrated)
-  2024-25: in-scope base (>= threshold, unaged) = 180.5bn; model-implied voluntary below-threshold remittance = 2.6bn (not calibrated)
+  2023-24: in-scope base (>= threshold, unaged) = 175.0bn; model-implied voluntary below-threshold remittance = 2.5bn (not calibrated)
+  2024-25: in-scope base (>= threshold, unaged) = 179.8bn; model-implied voluntary below-threshold remittance = 2.6bn (not calibrated)
 
 Sweep thresholds: [70000, 75000, 80000, 85000, 90000, 95000, 100000, 105000, 110000, 115000, 120000]
