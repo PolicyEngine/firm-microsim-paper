@@ -154,7 +154,8 @@ def plot_turnover_distribution(vintage: str) -> None:
     edges = np.arange(0.5, 300.5, 1.0)
     centres = (edges[:-1] + edges[1:]) / 2.0
     fig, ax = plt.subplots(figsize=(10, 6))
-    if "unregistered" in df.columns:
+    has_stratum = "unregistered" in df.columns and bool(df["unregistered"].astype(bool).any())
+    if has_stratum:
         # OBR-chart universe: frame everywhere, unregistered stratum below the
         # threshold only (above it the stratum is exempt traders outside the
         # chart's registration analysis). Stacked so the two are visible.
@@ -170,6 +171,8 @@ def plot_turnover_distribution(vintage: str) -> None:
                   bbox_to_anchor=(0.98, 0.55))
         counts = c_frame + c_strat
     else:
+        if "in_frame" in df.columns:
+            df = df[df["in_frame"].astype(bool)]
         counts, _ = np.histogram(df["annual_turnover_k"], bins=edges, weights=df["weight"])
         ax.bar(centres, counts, width=1.0, color=PRIMARY, zorder=3)
 
