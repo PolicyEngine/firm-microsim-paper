@@ -444,8 +444,8 @@
     "key": "E_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "8,268",
-    "tex": "8{,}268",
+    "value": "22,407",
+    "tex": "22{,}407",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -453,8 +453,8 @@
     "key": "E_2324_summary",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "8,268",
-    "tex": "8{,}268",
+    "value": "22,407",
+    "tex": "22{,}407",
     "tex_file": "Sections/conclusion.tex",
     "note": ""
   },
@@ -462,8 +462,8 @@
     "key": "bllat_2324_summary",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "1.411",
-    "tex": "1.411",
+    "value": "1.513",
+    "tex": "1.513",
     "tex_file": "Sections/conclusion.tex",
     "note": ""
   },
@@ -471,8 +471,8 @@
     "key": "bllat_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "1.411",
-    "tex": "1.411",
+    "value": "1.513",
+    "tex": "1.513",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -480,8 +480,8 @@
     "key": "E_2425",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "2,475",
-    "tex": "2{,}475",
+    "value": "30,807",
+    "tex": "30{,}807",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -489,8 +489,8 @@
     "key": "bllat_2425",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "1.445",
-    "tex": "1.445",
+    "value": "2.262",
+    "tex": "2.262",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -506,9 +506,27 @@
   {
     "key": "a_delta_share_pos",
     "artifact": "dominated_region_mass.txt",
-    "pattern": "share with a positive dominated width \\(delta < 0\\.5\\) \\.\\. ([\\d.]+)",
-    "value": "0.275",
-    "tex": "27.5\\%",
+    "pattern": "At delta_s = s\\* delta: share of near-threshold firms with a > 0 \\.\\. ([\\d.]+)",
+    "value": "0.544",
+    "tex": "54\\%",
+    "tex_file": "Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "s_star",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "Standard-rated share of inputs s\\* reconciling the two: ([\\d.]+)",
+    "value": "0.778",
+    "tex": "s^{*}=0.78",
+    "tex_file": "Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "implied_voluntary_share_s1",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "preferring registration with delta_s = delta \\(all inputs standard-rated\\): ([\\d.]+)",
+    "value": "0.713",
+    "tex": "71\\%",
     "tex_file": "Sections/model.tex",
     "note": ""
   },
@@ -516,18 +534,135 @@
     "key": "a_delta_mean_pos",
     "artifact": "dominated_region_mass.txt",
     "pattern": "mean width among firms with a positive width \\.+ GBP ([\\d,]+)",
-    "value": "7,538",
-    "tex": "\\pounds7{,}538",
+    "value": "8,077",
+    "tex": "\\pounds8{,}077",
+    "tex_file": "Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "a_delta_mean_all",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "mean width across near-threshold firms \\.+ GBP ([\\d,]+)",
+    "value": "4,397",
+    "tex": "\\pounds4{,}397",
     "tex_file": "Sections/model.tex",
     "note": ""
   },
   {
     "key": "a_delta_own_count",
     "artifact": "dominated_region_mass.txt",
-    "pattern": "inside their OWN dominated region \\.+ ([\\d,]+)",
-    "value": "11,321",
-    "tex": "11{,}300",
+    "pattern": "in-scope firms inside their own region \\.+ ([\\d,]+)",
+    "value": "24,034",
+    "tex": "24{,}000",
     "tex_file": "Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "a_delta_share_created",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "share of near-threshold firms with a\\(delta_s\\) = 0: ([\\d.]+)",
+    "value": "0.456",
+    "tex": "46\\%",
+    "tex_file": "Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "taper_match_m",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Constant marginal rate m\\* = ([\\d.]+) costs the same as the raise to GBP100k \\(([-+\\d.]+) m\\): band top U\\(m\\*\\) = GBP ([\\d,]+), affected firms ([\\d.]+)",
+    "value": "0.713",
+    "tex": "71.3\\%",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "taper_match_top",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Constant marginal rate m\\* = ([\\d.]+) costs the same as the raise to GBP100k \\(([-+\\d.]+) m\\): band top U\\(m\\*\\) = GBP ([\\d,]+), affected firms ([\\d.]+)",
+    "value": "118,128",
+    "tex": "\\pounds118{,}100",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "taper_match_firms",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Constant marginal rate m\\* = ([\\d.]+) costs the same as the raise to GBP100k \\(([-+\\d.]+) m\\): band top U\\(m\\*\\) = GBP ([\\d,]+), affected firms ([\\d.]+)",
+    "value": "184.5",
+    "tex": "184{,}500",
+    "tex_file": "Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "chart_E_net_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "\\[OBR-chart universe[^\\]]*\\]\\] E = ([\\d,]+) \\(gross\\) \\| E_net = ([-\\d,]+) \\| Delta_R = ([\\d,]+) \\| b_llat = ([\\d.]+) \\| b = [-\\d.]+ \\| y_R = ([\\d.]+)",
+    "value": "4,431",
+    "tex": "4{,}431",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "chart_DR_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "\\[OBR-chart universe[^\\]]*\\]\\] E = ([\\d,]+) \\(gross\\) \\| E_net = ([-\\d,]+) \\| Delta_R = ([\\d,]+) \\| b_llat = ([\\d.]+) \\| b = [-\\d.]+ \\| y_R = ([\\d.]+)",
+    "value": "22,700",
+    "tex": "22{,}700",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "chart_yR_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "\\[OBR-chart universe[^\\]]*\\]\\] E = ([\\d,]+) \\(gross\\) \\| E_net = ([-\\d,]+) \\| Delta_R = ([\\d,]+) \\| b_llat = ([\\d.]+) \\| b = [-\\d.]+ \\| y_R = ([\\d.]+)",
+    "value": "93.23",
+    "tex": "\\pounds93{,}200",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "scope_E_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "\\[in-scope VAT firms\\] E = ([\\d,]+)",
+    "value": "38,873",
+    "tex": "38{,}873",
+    "tex_file": "Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "stratum_above_exp",
+    "artifact": "stratum_shape_sensitivity.txt",
+    "pattern": "above GBP85k \\(exempt, out of scope\\): ([\\d,]+)",
+    "value": "409,662",
+    "tex": "410{,}000",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "cut70_exp",
+    "artifact": "stratum_shape_sensitivity.txt",
+    "pattern": "cut to 70k from 85k \\(2025-26\\): \\+([\\d,.]+) m, \\+([\\d.]+)k firms",
+    "value": "1,114.5",
+    "tex": "\\pounds1{,}114m",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "stratum_above_logn",
+    "artifact": "stratum_shape_sensitivity.txt",
+    "pattern": "above GBP85k \\(exempt, out of scope\\): ([\\d,]+)",
+    "value": "353,279",
+    "tex": "353{,}000",
+    "tex_file": "Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "cut70_logn",
+    "artifact": "stratum_shape_sensitivity.txt",
+    "pattern": "cut to 70k from 85k \\(2025-26\\): \\+([\\d,.]+) m, \\+([\\d.]+)k firms",
+    "value": "915.3",
+    "tex": "\\pounds915m",
+    "tex_file": "Appendix/a_data.tex",
     "note": ""
   },
   {

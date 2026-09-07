@@ -65,6 +65,23 @@ generated rather than transcribed, and the test suite verifies source-band
 support, sector-conditional employment assignment, and weighted voluntary
 registration.
 
+\paragraph{Stratum-shape sensitivity.} The exponential draw for the
+unregistered stratum places about 410{,}000 businesses above the
+\pounds85{,}000 threshold (treated as exempt traders outside VAT scope) and
+157{,}000 within \pounds70{,}000--\pounds85{,}000. A mean-preserving
+log-normal draw with log-scale one, rebuilt end to end for 2023--24, places
+353{,}000 above the threshold and 122{,}000 in the same window; because the
+OBR levels pin the all-business density below the threshold, the frame's
+residual density rises to compensate and the near-threshold totals are
+unchanged. The objects the stratum drives move by the share of the window it
+occupies: a cut from \pounds85{,}000 to \pounds70{,}000 in 2025--26 yields
+\pounds1{,}114m under the exponential and \pounds915m under the log-normal;
+the anchor is unchanged to \pounds1m
+(\texttt{results/stratum\_shape\_sensitivity.txt}). DBT itself imputes the
+stratum's turnover from zero-employee registered businesses at sector level,
+so a sector-level size distribution from that source would replace the
+assumption; it is not published.
+
 \paragraph{Counterfactual exclusion window and polynomial degree.} The no-VAT
 counterfactual density of Section~\ref{sec:bunching} is fitted by polynomial
 regression on the observed density outside a manipulation window around the

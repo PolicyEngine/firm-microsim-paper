@@ -177,6 +177,31 @@ def main() -> None:
     own_count = float(wt_all[in_own].sum())
     median_delta = float(np.median(delta[near_all]))
 
+    # Standard-rated input share. Only standard-rated purchases carry
+    # reclaimable VAT; with delta_s = s * delta, a(delta_s) <= 0 (delta_s >= 1/2)
+    # is the model's voluntary-registration mechanism. Find the s at which the
+    # implied share of below-threshold in-scope firms preferring registration
+    # equals LLAT's 43%, and report a(delta_s) at that s.
+    LLAT_SHARE = 0.43
+    below_all = (tk_all > 0) & (tk_all <= t_star)
+    def implied_share(s: float) -> float:
+        return float(wt_all[below_all & (s * delta >= 0.5)].sum() / wt_all[below_all].sum())
+    share_s1 = implied_share(1.0)
+    s_star = float("nan")
+    if implied_share(1.0) > LLAT_SHARE > implied_share(0.05):
+        from scipy.optimize import brentq
+        s_star = float(brentq(lambda s: implied_share(s) - LLAT_SHARE, 0.05, 1.0))
+    delta_s = (s_star if s_star == s_star else 1.0) * delta
+    a_s = np.where(delta_s < 0.5, t_star * TAU * (1 - 2 * delta_s) / ((1 - TAU) * (1 - delta_s)), 0.0)
+    share_pos_s = float(wt_all[near_all & (a_s > 0)].sum() / wt_all[near_all].sum())
+    mean_a_s = float(np.average(a_s[near_all], weights=wt_all[near_all]))
+    mean_a_s_pos = float(np.average(a_s[near_all & (a_s > 0)], weights=wt_all[near_all & (a_s > 0)])) if (near_all & (a_s > 0)).any() else 0.0
+    own_count_s = float(wt_all[(tk_all >= t_star) & (tk_all < t_star + a_s)].sum())
+    # Secondary notch at a reduced-rate band top is delta-invariant (both sides
+    # registered): every firm faces it, so for firms with a(delta_s) = 0 the
+    # reduced rate CREATES a dominated interval.
+    share_created = 1.0 - share_pos_s
+
     # --- Write report -------------------------------------------------------
     lines = []
     W = lines.append
@@ -243,7 +268,20 @@ def main() -> None:
     W(f"  mean width among firms with a positive width ....... GBP {mean_a_pos*1000:,.0f}")
     W(f"  in-scope firms inside their OWN dominated region ... {own_count:,.0f}"
       f"  (vs {base['obs']:,.0f} in the fixed GBP 21,250 band)")
-    W("  The GBP 21,250 width is the B2C / no-input upper bound.")
+    W("  The GBP 21,250 width is the zero-input / zero-pass-through upper bound.")
+    W("")
+    W("STANDARD-RATED INPUT SHARE and voluntary registration:")
+    W("  a(delta_s) <= 0 (delta_s >= 0.5) means registration pays at fixed turnover =")
+    W("  the model's voluntary-registration mechanism. Implied share of below-threshold")
+    W(f"  in-scope firms preferring registration with delta_s = delta (all inputs standard-rated): {share_s1:.3f}")
+    W(f"  LLAT (2021) observed voluntary share: {LLAT_SHARE:.2f}")
+    W(f"  Standard-rated share of inputs s* reconciling the two: {s_star:.3f}" if s_star == s_star else "  No s in [0.05, 1] reconciles the two")
+    W(f"  At delta_s = s* delta: share of near-threshold firms with a > 0 .. {share_pos_s:.3f}")
+    W(f"    mean width across near-threshold firms ............ GBP {mean_a_s*1000:,.0f}")
+    W(f"    mean width among firms with a positive width ...... GBP {mean_a_s_pos*1000:,.0f}")
+    W(f"    in-scope firms inside their own region ............ {own_count_s:,.0f}")
+    W("  Reduced-rate secondary notch (delta-invariant) CREATES a dominated interval for")
+    W(f"  the share of near-threshold firms with a(delta_s) = 0: {share_created:.3f}")
     W("")
     W("REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;")
     W("  NOT the Section 6 headline, which runs on the full ONS-frame density):")

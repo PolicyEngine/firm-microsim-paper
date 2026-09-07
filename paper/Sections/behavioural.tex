@@ -68,10 +68,12 @@ optima across the notch and taper schedules for three deductible shares.
 $\tau=0.20$, $n=\pounds130$k, $e=0.17$, under the registration notch (left) and
 the graduated taper (right), for deductible-input shares
 $\delta\in\{0.0,0.4,0.8\}$. Dots mark local maxima, the star the global
-optimum, and the dashed line the \pounds85{,}000 threshold. A higher $\delta$
-scales the profit curve down and pulls the registered optimum
-$y^{*}=n[(1-\delta)(1-\tau)]^{e}$ toward the threshold, eventually tipping the
-global optimum to bunching at the notch.}
+optimum, and the dashed line the \pounds85{,}000 threshold. Under this reclaim
+formulation a higher $\delta$ scales the profit curve down and pulls the
+registered optimum $y^{*}=n[(1-\delta)(1-\tau)]^{e}$ toward the threshold,
+eventually tipping the global optimum to bunching; under the input-VAT
+formulation of Section~\ref{sec:model} the comparative static reverses (see
+text).}
 \label{fig:formulation_a_optima}
 \end{figure}
 
@@ -135,14 +137,20 @@ bands---measured as the change in revenue relative to the
 \pounds85{,}000-notch baseline, alongside the static figure of
 Table~\ref{tab:schedule_costs}, for each $e$. For context, the marginal
 buncher $n_H(e,\delta)$---the highest ability that still finds bunching at the
-threshold optimal, the extensive-margin object held fixed here---depends on the
-deductible share, because $\delta$ scales revenue but not own-factor cost in
-formulation~A: with $\delta=0$ it sits at \pounds112{,}795, \pounds127{,}382
-and \pounds143{,}527 for $e=0.05, 0.17, 0.32$; at the population-mean input
-share $\delta=0.6$ it rises to about \pounds118{,}100, \pounds148{,}900 and
-\pounds192{,}400 (\texttt{results/dynamic\_reform\_results.txt}). Firms with
-higher input shares find registration less attractive relative to bunching, as
-Figure~\ref{fig:formulation_a_optima} shows.
+threshold optimal, the extensive-margin object held fixed here---depends on
+the deductible share and on how unregistered inputs are treated. Under the
+input-VAT formulation of Section~\ref{sec:model}, in which an unregistered
+firm bears VAT on its standard-rated inputs, $n_H$ falls in $\delta$: at
+$e=0.17$ it is \pounds127{,}400, \pounds124{,}900 and \pounds116{,}800 for
+$\delta=0, 0.2, 0.4$, and no buncher exists for $\delta\ge\tfrac12$,
+where registration pays at any turnover. Under the reclaim formulation of
+equation~\eqref{eq:isoelastic}, in which unregistered firms deduct inputs,
+the comparative static reverses ($n_H$ rises to \pounds148{,}900 at
+$\delta=0.6$); the intensive-margin response ratio~\eqref{eq:rescale} is the
+same under both, because a firm that stays in its region reclaims (or bears)
+input VAT on both sides of the comparison, so no reform number in
+Table~\ref{tab:behavioural_costs} depends on the choice
+(\texttt{results/dynamic\_reform\_results.txt}).
 
 \begin{table}[htbp]
 \centering

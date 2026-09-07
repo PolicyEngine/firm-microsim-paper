@@ -18,6 +18,11 @@ Firms in [85k,105k): 117,281
   Reduced rate 10% [85k,105k]      :  -397.7 m   affected firms -117.3 (000s)
   Reduced rate 15% [85k,105k]      :  -198.8 m   affected firms -117.3 (000s)
 
+--- Revenue-matched taper -------------------------------------------
+  Constant marginal rate m* = 0.713 costs the same as the raise to GBP100k (-582.6 m): band top U(m*) = GBP 118,128, affected firms 184.5 (000s)
+  (linear 0->100% design: band top pinned at GBP 141,667 by continuity;
+   constant-m design: U(m) = m T/(m - tau), narrower as m rises)
+
 ========================================================================
 CORRECTED tab:schedule_costs  (repo-generated GBP85k, 2023-24 unaged)
 ========================================================================

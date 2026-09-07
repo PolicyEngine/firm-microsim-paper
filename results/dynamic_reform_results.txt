@@ -14,6 +14,11 @@ delta=0 is the turnover-tax solve, 0.6 the population mean input share.
   e=0.05  n_H(delta=0)=£ 112.8k  dy*=£ 27.8k   n_H(delta=0.4)=£ 115.7k   n_H(delta=0.6)=£ 118.1k
   e=0.17  n_H(delta=0)=£ 127.4k  dy*=£ 42.4k   n_H(delta=0.4)=£ 138.9k   n_H(delta=0.6)=£ 148.9k
   e=0.32  n_H(delta=0)=£ 143.5k  dy*=£ 58.5k   n_H(delta=0.4)=£ 169.0k   n_H(delta=0.6)=£ 192.4k
+Under the INPUT-VAT formulation (unregistered firms bear VAT on inputs),
+n_H falls with delta and no buncher exists for delta >= 0.5:
+  e=0.05    n_H(delta=0.0)=£ 112.8k   n_H(delta=0.2)=£ 108.3k   n_H(delta=0.4)=£  99.9k   n_H(delta=0.6)=  none 
+  e=0.17    n_H(delta=0.0)=£ 127.4k   n_H(delta=0.2)=£ 124.9k   n_H(delta=0.4)=£ 116.8k   n_H(delta=0.6)=  none 
+  e=0.32    n_H(delta=0.0)=£ 143.5k   n_H(delta=0.2)=£ 144.3k   n_H(delta=0.4)=£ 137.9k   n_H(delta=0.6)=  none 
 
 Reform costs (change vs £85k-notch baseline):
   reform                              static      e=0.05      e=0.17      e=0.32    #reopt(e=0.17)    near-thr Δ

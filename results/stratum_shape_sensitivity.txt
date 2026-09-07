@@ -1,0 +1,23 @@
+STRATUM-SHAPE SENSITIVITY (2023-24 vintage)
+======================================================================
+
+[exponential (headline)]
+  stratum: 2,858,270 businesses; mean turnover GBP 43,834; median GBP 29,066; above GBP85k (exempt, out of scope): 409,662; within GBP70k-85k: 156,991
+  density bin 70k: all 20,067  frame 7,705  stratum 12,362
+  density bin 80k: all 19,420  frame 9,767  stratum 9,653
+  density bin 84k: all 27,318  frame 18,579  stratum 8,739
+  cut to 70k from 85k (2025-26): +1,114.5 m, +172.9k firms
+  cut to 75k from 85k (2025-26): +734.5 m, +110.0k firms
+  cut to 80k from 85k (2025-26): +369.8 m, +53.6k firms
+  anchor: -193, -197, -120, -41, +88
+
+[lognormal (sigma=1.0)]
+  stratum: 2,858,270 businesses; mean turnover GBP 43,410; median GBP 25,649; above GBP85k (exempt, out of scope): 353,279; within GBP70k-85k: 121,783
+  density bin 70k: all 20,041  frame 10,265  stratum 9,776
+  density bin 80k: all 19,361  frame 11,909  stratum 7,452
+  density bin 84k: all 27,325  frame 20,738  stratum 6,587
+  cut to 70k from 85k (2025-26): +915.3 m, +141.6k firms
+  cut to 75k from 85k (2025-26): +602.9 m, +90.0k firms
+  cut to 80k from 85k (2025-26): +303.2 m, +43.7k firms
+  anchor: -194, -198, -121, -42, +87
+
