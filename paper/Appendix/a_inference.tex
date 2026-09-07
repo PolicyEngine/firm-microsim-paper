@@ -43,8 +43,8 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-On the 2023--24 population the baseline gives $E=22{,}407$,
-$\Delta_R=22{,}700$, and
+On the 2023--24 population the baseline gives $E=22{,}081$,
+$\Delta_R=22{,}371$, and
 $y_R=\pounds93{,}200$, interior to the search window, so mass conservation binds on the chart universe (it does not on all rows, where the exempt stratum above the threshold pushes the counterfactual above the observed density). These
 mass-conservation outputs are estimator diagnostics, not evidence of a
 marginal behavioural buncher.
@@ -62,9 +62,9 @@ that does not exist. The specification grids below instead show how point
 estimates move with the estimator's own choices. Generator Monte Carlo error is
 quantified separately, by rebuilding the full 2023--24 population under
 alternative generator seeds (\texttt{results/seed\_sensitivity.txt}): across
-seeds the half-ranges are $\pm198$ on $E$, $\pm0.06$ on
+seeds the half-ranges are $\pm155$ on $E$, $\pm0.06$ on
 $b_{\mathrm{LLAT}}$, $\pm\pounds1.7$m on the raise costing,
-$\pm\pounds3.8$m on the taper costing, and $\pm\pounds0.16$bn
+$\pm\pounds4.1$m on the taper costing, and $\pm\pounds0.17$bn
 on the in-scope base---the last larger than in earlier builds because the
 scope flag is itself a seeded draw within each turnover band. Table~\ref{tab:boot}
 reports the point estimates. Two conventions matter for
@@ -86,9 +86,9 @@ standard errors are not reported---see the text.}
 \toprule
 Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 \midrule
-2023--24 (\pounds85k, OBR fine targets; chart universe) & $22{,}407$ & $22{,}700$ & $1.513$ & $93.2$ \\
-2023--24, all rows & $8{,}268$ & $896$ & $1.411$ & $100.0$ (censored) \\
-2023--24, in-scope firms & $38{,}873$ & $36{,}875$ & $3.355$ & $100.0$ (censored) \\
+2023--24 (\pounds85k, OBR fine targets; chart universe) & $22{,}081$ & $22{,}371$ & $1.505$ & $93.2$ \\
+2023--24, all rows & $8{,}091$ & $798$ & $1.412$ & $100.0$ (censored) \\
+2023--24, in-scope firms & $38{,}626$ & $36{,}827$ & $3.360$ & $100.0$ (censored) \\
 2024--25 (\pounds90k, coarse bands only; chart universe) & $30{,}807$ & $15{,}023$ & $2.262$ & $105.0$ (censored) \\
 \bottomrule
 \end{tabular}
@@ -100,8 +100,8 @@ Table entries for a grid of polynomial degree $\in\{5,6,7,8\}$ and symmetric
 exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
 \texttt{results/bunching\_inference.txt}; the pattern matters more than the
 cells. In the 2023--24 grid, $E$ ranges from zero to about
-186{,}200 firms and $b_{\mathrm{LLAT}}$ from zero to about
-19.9. This specification
+190{,}500 firms and $b_{\mathrm{LLAT}}$ from zero to about
+20.7. This specification
 sensitivity, together with the absence of a location-choice mechanism in the
 generator, precludes interpreting the baseline as a behavioural estimate.
 
@@ -111,7 +111,7 @@ Two constructed-data exercises characterise the estimator itself. On a placebo p
 reweighted to a smooth profile across \pounds85{,}000, the estimator returns
 $E=0$: it produces no false positive on a step-free world. When a
 Kleven--Waseem-consistent relocation of known size is injected into that
-placebo, the estimator recovers 0\%, 11\% and 30\% of injected excess masses
+placebo, the estimator recovers 0\%, 12\% and 31\% of injected excess masses
 of $2{,}000$, $5{,}000$ and $8{,}000$ firms, with mass conservation then
 binding at an interior $y_R$: the counterfactual is fitted on bins that
 include the depressed region beyond the exclusion window, so the estimator

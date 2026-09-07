@@ -356,10 +356,18 @@ def build_target_matrix(
         below_lo = float(below["bin_lo_k"].min())
         above_hi = float(above["bin_lo_k"].max()) + 1.0
         # Below the threshold the OBR chart counts every business in HMRC
-        # records (frame + unregistered); above it, unregistered businesses
-        # can only be exempt traders outside the chart's registration
-        # analysis, so the levels there apply to the frame alone.
-        below_universe = all_business if use_levels else frame_mask
+        # records (frame + unregistered). The frame's within-band shape is a
+        # maintained draw pinned by the coarse ONS/HMRC bands, so the chart's
+        # levels are applied to the UNREGISTERED rows as the residual
+        # (OBR level minus the frame's base-weighted mass in the bin): the
+        # near-threshold geometry the chart reports---the rise into the
+        # threshold and the cliff---is carried by the unregistered stratum,
+        # as in the administrative decomposition (sole traders supply most of
+        # the cliff), and the frame is left undistorted. Above the threshold
+        # unregistered businesses can only be exempt traders outside the
+        # chart's registration analysis, so the levels there apply to the
+        # frame alone.
+        below_universe = unregistered_mask if use_levels else frame_mask
         above_universe = frame_mask
         below_mask = (turnover_values > below_lo) & (turnover_values <= threshold) & below_universe
         above_mask = (turnover_values > threshold) & (turnover_values <= above_hi) & above_universe
@@ -373,10 +381,14 @@ def build_target_matrix(
             universe = below_universe if lo < threshold else above_universe
             mask = (turnover_values > lo) & (turnover_values <= lo + 1.0) & universe
             target_matrix[row, mask] = 1.0
-            if use_levels:
-                # With the unregistered stratum present the modelled universe
-                # matches the OBR chart's (all businesses in HMRC records), so
-                # the chart's LEVELS are the target (issue #25).
+            if use_levels and lo < threshold:
+                # Residual level: chart count minus the frame's own mass in
+                # the bin (floored at 5% of the chart count).
+                frame_in_bin = float(base_weights[
+                    (turnover_values > lo) & (turnover_values <= lo + 1.0) & frame_mask
+                ].sum().item())
+                near_targets.append(max(float(bin_row["count"]) - frame_in_bin, 0.05 * float(bin_row["count"])))
+            elif use_levels:
                 near_targets.append(float(bin_row["count"]))
             elif lo < threshold:
                 near_targets.append(float(bin_row["count"]) / below_total * below_rows)
@@ -385,7 +397,7 @@ def build_target_matrix(
         logger.info(
             "Near-threshold targets applied as %s on %s rows",
             "LEVELS" if use_levels else "frame-scaled shapes",
-            "frame + unregistered below / frame above" if use_levels else "frame",
+            "unregistered (residual to the frame) below / frame above" if use_levels else "frame",
         )
 
     # DBT unregistered stratum: count by SIC division (frame-external

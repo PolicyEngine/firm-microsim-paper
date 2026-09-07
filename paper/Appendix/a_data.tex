@@ -40,8 +40,8 @@ HMRC net liability by band (registered) & 98.4\% & 98.9\% \\
 \midrule
 \textbf{Overall (five calibrated dimensions)} & 98.3\% & 98.2\% \\
 \midrule
-\emph{Diagnostic:} net liability by sector (registered) & 43.1\% & 44.0\% \\
-\emph{Diagnostic:} net liability below threshold & 36.6\% & 0.0\% \\
+\emph{Diagnostic:} net liability by sector (registered) & 43.0\% & 44.0\% \\
+\emph{Diagnostic:} net liability below threshold & 32.2\% & 0.0\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -67,16 +67,14 @@ registration.
 
 \paragraph{Stratum-shape sensitivity.} The exponential draw for the
 unregistered stratum places about 410{,}000 businesses above the
-\pounds85{,}000 threshold (treated as exempt traders outside VAT scope) and
-157{,}000 within \pounds70{,}000--\pounds85{,}000. A mean-preserving
-log-normal draw with log-scale one, rebuilt end to end for 2023--24, places
-353{,}000 above the threshold and 122{,}000 in the same window; because the
-OBR levels pin the all-business density below the threshold, the frame's
-residual density rises to compensate and the near-threshold totals are
-unchanged. The objects the stratum drives move by the share of the window it
-occupies: a cut from \pounds85{,}000 to \pounds70{,}000 in 2025--26 yields
-\pounds1{,}114m under the exponential and \pounds915m under the log-normal;
-the anchor is unchanged to \pounds1m
+\pounds85{,}000 threshold (treated as exempt traders outside VAT scope). A
+mean-preserving log-normal draw with log-scale one, rebuilt end to end for
+2023--24, places 353{,}000 above the threshold. Inside the OBR window the
+stratum is pinned to the chart's residual whichever shape it starts from, so
+the two builds hold the same 139{,}000 businesses within
+\pounds70{,}000--\pounds85{,}000 and a cut from \pounds85{,}000 to
+\pounds70{,}000 in 2025--26 yields \pounds1{,}024m under the exponential and
+\pounds1{,}026m under the log-normal; the anchor is unchanged to \pounds1m
 (\texttt{results/stratum\_shape\_sensitivity.txt}). DBT itself imputes the
 stratum's turnover from zero-employee registered businesses at sector level,
 so a sector-level size distribution from that source would replace the
