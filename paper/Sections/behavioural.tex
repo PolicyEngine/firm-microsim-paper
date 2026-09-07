@@ -1,156 +1,79 @@
 \section{Behavioural reform costs}
 \label{sec:behavioural}
 
-The reforms of Section~\ref{sec:static} are costed \emph{statically}: each
-schedule is re-applied to a fixed turnover distribution, and the revenue change is
-the mechanical reclassification of firms with no response in turnover.
-Section~\ref{sec:bunching} shows that the synthetic data contain no behavioural
-signal from which a response could be estimated, and Section~\ref{sec:model}
-supplies the one object that needs no behavioural calibration at all: the exact
-dominated region. What is missing from this sequence is the behavioural layer
-itself---a costing that lets firms re-optimise turnover when a reform changes the
-effective rate they face. This section supplies that layer for an \emph{assumed}
-turnover elasticity $e$, reported as an $e$-sensitivity range rather than a point
-estimate, and nesting the static costing exactly in its $e\to0$ limit. Its
-headline is deflationary, and usefully so: on the intensive margin the static
-costings are robust. A pure threshold rise has \emph{exactly} zero
-intensive-margin revenue offset at every $e$, and the reduced-rate bands' offsets
-stay under $6\%$ of the static cost across the sweep.
+The costings of Section~\ref{sec:static} hold turnover fixed. This section
+adds an intensive-margin response for an \emph{assumed} turnover elasticity
+$e$, reported as a sensitivity range that nests the static costing exactly at
+$e\to0$. Its result is deflationary: on the intensive margin the static
+numbers are robust.
 
-\subsection{An iso-elastic simulator on the intensive margin}
+\subsection{An iso-elastic response, region-confined}
 \label{ssec:simulator}
 
-I adapt the iso-elastic model of \citet{klevenwaseem2013}, in the
-sufficient-statistics tradition of \citet{saez2010}, writing the tax on
-\emph{value added} rather than on turnover. (\citet{liuetal2021} caution that
-turnover-tax bunching formulae do not carry to VAT unmodified, because input
-costs intervene; the value-added statement below is the adaptation this
-requires.) In this statement---formulation~A---a firm of ability $n_i$ chooses
-turnover $y$ to maximise
+Following \citet{klevenwaseem2013} and \citet{saez2010}, a firm of ability
+$n_i$ chooses turnover $y$ to maximise
 \begin{equation}
   \pi_i(y) \;=\; (1-\delta_i)\,\bigl(1-\tau\,f(y)\bigr)\,y \;-\;
   C(y;n_i,e), \qquad
   C(y;n,e)=\frac{n}{1+1/e}\left(\frac{y}{n}\right)^{1+1/e},
   \label{eq:isoelastic}
 \end{equation}
-where $\delta_i\in[0,1)$ is the firm's \emph{deductible-input share} of turnover,
-so that value added is $(1-\delta_i)\,y$; $\tau$ is the statutory VAT rate; and
-$f(y)\in[0,1]$ is the fraction of $\tau$ that the schedule levies on the firm once
-registered ($f=0$ below the threshold, $f=1$ for a fully registered firm under the
-standard rate). Here $e>0$ is the elasticity of turnover with respect to the
-net-of-tax rate.
-
-It is essential to read $C$ correctly. Because the deductible inputs $\delta_i\,y$
-are already netted out of revenue through the $(1-\delta_i)$ factor,
-$C(y;n_i,e)$ must be understood as the firm's \emph{own-factor production
-cost}---the labour and capital effort the firm itself supplies---and \emph{not} its
-total cost of production. Reading $C$ as total cost would double-count the bought-in
-inputs, which the value-added factor has already removed. Marginal own-factor cost
-is $(y/n)^{1/e}$, so with no tax and no bought-in inputs ($\delta=0$) the
-optimum is $y=n$; with a positive deductible share the untaxed optimum is
-$n(1-\delta)^{e}$, and ability $n$ is the firm's frictionless turnover in the
-own-factor technology. A firm registered under a flat rate ($f\equiv1$) chooses
+where $\delta_i$ is the input share, $f(y)\in[0,1]$ the fraction of the
+statutory rate the schedule levies at $y$, and $C$ the own-factor cost (bought-in
+inputs are already netted out through $1-\delta_i$). Under a flat rate the
+optimum is
 \begin{equation}
   y^{*} \;=\; n\,\bigl[(1-\delta)(1-\tau)\bigr]^{e},
   \label{eq:flat-optimum}
 \end{equation}
-so the retained wedge facing the firm is the product $(1-\delta)(1-\tau)$ of the
-value-added share and the statutory net-of-tax rate, and
-$\mathrm{d}\ln y^{*}/\mathrm{d}\ln\!\bigl[(1-\delta)(1-\tau)\bigr]=e$: $e$ is
-exactly the knob that governs the intensive response.
-Figure~\ref{fig:formulation_a_optima} traces the formulation-A profit and its
-optima across the notch and taper schedules for three deductible shares.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/formulation_a_optima.png}
-\caption{Optima of the formulation-A profit function~\eqref{eq:isoelastic} at
-$\tau=0.20$, $n=\pounds130$k, $e=0.17$, under the registration notch (left) and
-the graduated taper (right), for deductible-input shares
-$\delta\in\{0.0,0.4,0.8\}$. Dots mark local maxima, the star the global
-optimum, and the dashed line the \pounds85{,}000 threshold. Under this reclaim
-formulation a higher $\delta$ scales the profit curve down and pulls the
-registered optimum $y^{*}=n[(1-\delta)(1-\tau)]^{e}$ toward the threshold,
-eventually tipping the global optimum to bunching; under the input-VAT
-formulation of Section~\ref{sec:model} the comparative static reverses (see
-text).}
-\label{fig:formulation_a_optima}
-\end{figure}
-
-\paragraph{The response ratio is free of the deductible share.} The reform
-costing needs each firm's optimal turnover under a counterfactual schedule,
-\emph{given} that its observed turnover is optimal under the baseline notch.
-Formulation~A makes this a one-line object. Inverting~\eqref{eq:flat-optimum}
-at the baseline (fraction $f_0$) and re-solving at the reform (fraction $f_1$
-on the firm's region of the schedule), the ability and the deductible share
-cancel in the ratio:
+so $e$ is the elasticity of turnover with respect to the retained wedge. Each
+firm re-optimises \emph{within the region of the reform schedule that contains
+its observed turnover}, taking that turnover as optimal under the baseline
+notch; inverting~\eqref{eq:flat-optimum} at the baseline fraction $f_0$ and
+re-solving at the reform fraction $f_1$, ability and input share cancel:
 \begin{equation}
   y^{*}_i \;=\; y_{\mathrm{obs},i}\,
-  \left(\frac{1-\tau f_1}{1-\tau f_0}\right)^{e}.
+  \left(\frac{1-\tau f_1}{1-\tau f_0}\right)^{e},
   \label{eq:rescale}
 \end{equation}
-The intensive response depends only on $e$, the statutory rate, and the
-schedule fractions---not on $\delta_i$, not on the firm's net remittance rate,
-and not on the recovered ability level. Ability recovery
-($n_i=y_{\mathrm{obs},i}/(1-\delta_i)^{e}$ below the threshold,
-$n_i=y_{\mathrm{obs},i}/[(1-\delta_i)(1-\tau)]^{e}$ above; the released code
-sets $\delta_i=0$ in this anchor, which is immaterial because no reform number
-depends on it) is an
-\emph{accounting anchor}---it rationalises the observed allocation given
-$e$ and reproduces the baseline by construction---but no reform number below
-depends on it.
-
-\paragraph{Region-confined scope.} The margin priced here is purely
-\emph{intensive}: each firm re-optimises within the region of the reform
-schedule that contains its observed turnover, per~\eqref{eq:rescale}, clipped
-at its region's edges. Relocation across a notch---bunching below a threshold
-from above, or de-registering past a band edge---is the \emph{extensive}
-margin, which is the separate analytic object of Section~\ref{sec:model}
-(the dominated region and the marginal buncher) and is deliberately out of
-scope: the synthetic data contain no information about it
-(Section~\ref{sec:bunching}), and pricing it would require assumptions about
-re-bunching dynamics the paper has declined to make. Confining the response to
-the firm's own region also makes the $e\to0$ limit collapse onto the static
-costing \emph{exactly}, with no solver tolerance.
-
-\paragraph{Conditional on $e$.} The elasticity $e$ is not identified from
-these data, so every behavioural magnitude below is conditional on the assumed
-$e$, and the sweep is a sensitivity analysis rather than a set of forecasts.
-The sweep values $e\in\{0.05,\,0.17,\,0.32\}$ are assumptions: $0.05$ is
-the external anchor---\citet{klevenwaseem2013} find that structural
-elasticities recovered from notches, once optimisation frictions are
-accounted for, are small---and $0.17$ and $0.32$ are chosen to span the range
-used in the threshold literature. \citet{liuetal2021} deliberately do not
-convert their bunching estimate into a turnover elasticity, because the
-Kleven--Waseem formula presumes business-to-consumer sales, price-taking, and
-a fixed-coefficient technology, so no published UK VAT-base elasticity anchors
-the sweep. A reader may substitute any preferred value directly.
-The robust, $e$-free headline objects remain the static costs of
-Section~\ref{sec:static} and the dominated region of Section~\ref{sec:model}.
+clipped at the region's edges. Relocation across a notch is the extensive
+margin, which the synthetic data cannot identify (Section~\ref{sec:bunching})
+and which Section~\ref{sec:model} characterises analytically; it is out of
+scope here, and confining the response to the firm's own region is what makes
+the $e\to0$ limit collapse onto the static costing exactly. The ratio is the
+same under the input-VAT formulation of Section~\ref{sec:model}, because a firm
+that stays in its region reclaims (or bears) input VAT on both sides of the
+comparison; only the marginal buncher $n_H(e,\delta)$ differs between the
+two, and under the input-VAT formulation it falls in $\delta$
+(\pounds127{,}400, \pounds124{,}900 and \pounds116{,}800 at $e=0.17$ for
+$\delta=0,0.2,0.4$) and does not exist for $\delta\ge\tfrac12$
+(\texttt{results/dynamic\_reform\_results.txt}). The elasticity is not
+identified from these data; the sweep $e\in\{0.05,0.17,0.32\}$ spans the range
+used in the threshold literature, with $0.05$ the \citet{klevenwaseem2013}
+anchor. \citet{liuetal2021} deliberately do not convert their bunching
+estimate into a turnover elasticity, so no published UK VAT-base elasticity
+anchors the sweep.
 
 \subsection{Results}
 \label{ssec:behavioural-results}
 
-Table~\ref{tab:behavioural_costs} reports the behavioural cost of each of the
-three flat-rate reforms---the raised threshold and the two reduced-rate
-bands---measured as the change in revenue relative to the
-\pounds85{,}000-notch baseline, alongside the static figure of
-Table~\ref{tab:schedule_costs}, for each $e$. For context, the marginal
-buncher $n_H(e,\delta)$---the highest ability that still finds bunching at the
-threshold optimal, the extensive-margin object held fixed here---depends on
-the deductible share and on how unregistered inputs are treated. Under the
-input-VAT formulation of Section~\ref{sec:model}, in which an unregistered
-firm bears VAT on its standard-rated inputs, $n_H$ falls in $\delta$: at
-$e=0.17$ it is \pounds127{,}400, \pounds124{,}900 and \pounds116{,}800 for
-$\delta=0, 0.2, 0.4$, and no buncher exists for $\delta\ge\tfrac12$,
-where registration pays at any turnover. Under the reclaim formulation of
-equation~\eqref{eq:isoelastic}, in which unregistered firms deduct inputs,
-the comparative static reverses ($n_H$ rises to \pounds148{,}900 at
-$\delta=0.6$); the intensive-margin response ratio~\eqref{eq:rescale} is the
-same under both, because a firm that stays in its region reclaims (or bears)
-input VAT on both sides of the comparison, so no reform number in
-Table~\ref{tab:behavioural_costs} depends on the choice
-(\texttt{results/dynamic\_reform\_results.txt}).
+Table~\ref{tab:behavioural_costs} reports the behavioural cost of the three
+flat-rate reforms at each $e$ alongside the static figure. Two features
+follow directly from the region-confined solve. A level rise has \emph{no}
+intensive-margin offset at any $e$: released firms expand by $(1-\tau)^{-e}$
+(about $+3.9\%$ at $e=0.17$) but have left the VAT base, so the loss is their
+full baseline remittance; firms above the new threshold face $f=1$ before and
+after; and the only candidates for a taxed response---released firms whose
+expansion would carry them across the new notch---are clipped at it by
+construction. The invariance is therefore a property of the maintained status
+convention, not a computed statement about global optima. A reduced-rate band
+scales band firms up by~\eqref{eq:rescale} with $f_1=r/\tau$ (about $+2.0\%$
+at the $10\%$ rate and $e=0.17$), an offset of about \pounds8m against a
+static \pounds398m, reaching \pounds14m at $e=0.32$; Figure~\ref{fig:reform_dist}
+traces the costs across $e$. The released code asserts on every run that the
+baseline solve reproduces observed turnover, that the $e\to0$ cost equals the
+static cost to \pounds0.1m, and that the solved response satisfies
+$\mathrm{d}\ln y^{*}/\mathrm{d}\ln(1-\tau f)=e$.
 
 \begin{table}[htbp]
 \centering
@@ -190,51 +113,6 @@ and~\ref{sec:model}. Firms are in-scope VAT firms with turnover in
 re-optimises.}
 \end{table}
 
-\paragraph{A level rise has no intensive-margin offset.} The raise-to-
-\pounds100{,}000 row is identical to its static cost at every $e$; this follows
-from the region-confined convention rather than from a failure to respond. Partition the firms. Those with observed
-turnover below \pounds85{,}000 face $f=0$ before and after; nothing changes.
-Those released by the raise ($y_{\mathrm{obs}}\in[\pounds85\text{k},
-\pounds100\text{k})$) see their rate fall to zero and expand
-per~\eqref{eq:rescale} by the factor $(1-\tau)^{-e}$ (about $+3.9\%$ at
-$e=0.17$)---but their expansion is \emph{untaxed}: they have left the VAT
-base, so the revenue loss is their full baseline remittance, exactly the
-static figure. Those above \pounds100{,}000 face $f=1$ before and after;
-nothing changes. The only candidates for a taxed response are released firms
-whose expansion would carry them across the new threshold. The region-confined
-solve does not evaluate that discrete choice: it clips such firms at the new
-threshold by construction, so the invariance is a property of the maintained
-status convention---released firms deregister and are not permitted to re-cross
-the new notch---rather than a computed statement about their global optimum.
-Under that convention, base broadening from a threshold rise is real economic
-activity that generates no VAT, and the static costing of a level move
-coincides with the intensive-margin behavioural costing. A released firm whose
-ability exceeded the new marginal buncher would instead register at its taxed
-optimum and remit VAT; that is an extensive-margin case outside this exercise.
-The simulator asserts the conditional invariance programmatically (to
-\pounds0.1m at each swept $e$).
-
-\paragraph{Reduced-rate offsets are second order.} A reduced-rate band lowers
-the rate on band firms from $\tau$ to $r$, so each scales up
-by~\eqref{eq:rescale} with $f_1 = r/\tau$: about $+2.0\%$ at the $10\%$ rate
-and $e=0.17$, and about $+1.0\%$ at $15\%$. Remittance scales with turnover,
-so the offset is roughly the scale gain times the band's (rate-reduced)
-remittance---about \pounds8m against a static \pounds398m at $e=0.17$ for
-the $10\%$ band, reaching about \pounds14m only at $e=0.32$. The direction is
-uniform---a larger $e$ makes the bands slightly cheaper---but the magnitude
-never approaches the static term. Figure~\ref{fig:reform_dist} traces the
-costs across the full range of $e$: the raise is exactly flat, the bands
-nearly so.
-
-\paragraph{Validation.} Three properties are asserted programmatically in the
-released code on every run: the baseline solve reproduces each firm's observed
-turnover exactly (the accounting anchor is internally consistent); the $e\to0$
-behavioural cost equals the static cost to \pounds0.1m for every priced
-reform; and the solved response satisfies
-$\mathrm{d}\ln y^{*}/\mathrm{d}\ln(1-\tau f)=e$ to machine precision. The
-static costing is thus the $e=0$ corner of the same machine, not a separate
-calculation.
-
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.78\textwidth]{figures/dynamic_cost_vs_elasticity.png}
@@ -249,12 +127,9 @@ assumed $e$ (Section~\ref{ssec:simulator}).}
 \label{fig:reform_dist}
 \end{figure}
 
-This section completes the costing framework, and its contribution is a
-robustness statement. Where Section~\ref{sec:static} prices each reform
-mechanically and Section~\ref{sec:model} measures the distortion each removes,
-the intensive-margin layer shows that naming an elasticity barely moves the
-static numbers: not at all for a level move, and by under $6\%$ for the
-reduced-rate bands. The behavioural uncertainty that could move these costings
-materially sits on the \emph{extensive} margin---registration, de-registration,
-and location choice at the notch---which the synthetic data cannot identify
-and which this paper prices only through its exact analytic geometry.
+The intensive-margin layer is a robustness statement: naming an elasticity
+barely moves the static numbers, not at all for a level move and by under
+$6\%$ for the reduced-rate bands. The behavioural uncertainty that could move
+these costings materially sits on the extensive margin---registration,
+deregistration and location choice at the notch---which this paper prices only
+through the analytic geometry of Section~\ref{sec:model}.
