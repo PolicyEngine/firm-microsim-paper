@@ -775,9 +775,16 @@ def generate(
         unregistered_mask=unregistered_mask,
     )
 
+    # The stratum's weights are frozen at their base value except inside the
+    # OBR near-threshold window, where the residual level targets pin them.
+    frozen = unregistered_mask.clone()
+    near = getattr(data, "near_threshold_bins", None)
+    if cfg.include_unregistered_stratum and near is not None and len(near):
+        lo_k = float(near["bin_lo_k"].min())
+        frozen &= ~((final_turnover > lo_k) & (final_turnover <= cfg.vat_threshold))
     final_weights = optimize_weights(
         cfg, target_matrix, target_values, spec, base_weights=final_base_weights,
-        frozen_mask=unregistered_mask,
+        frozen_mask=frozen,
     )
 
     vat_scope, vat_flags = assign_vat_flags(

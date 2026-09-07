@@ -6,46 +6,46 @@ model vs HMRC published costing (Spring Budget 2024), by fiscal year;
 baseline column = counterfactual threshold path (85/85/87/89/92k).
 --------------------------------------------------------------------------
    year  hmrc_impact_m  policyengine_impact_m
-2024-25         -150.0                 -193.3
-2025-26         -185.0                 -197.1
+2024-25         -150.0                 -193.4
+2025-26         -185.0                 -197.2
 2026-27         -125.0                 -120.2
 2027-28          -50.0                  -41.2
-2028-29           65.0                   88.1
+2028-29           65.0                   88.2
 
 Deregistration-threshold sensitivity: the headline releases every in-scope
 registrant in [baseline, 90k) (they no longer need to register). Keeping
 existing registrants above the GBP88k deregistration threshold (gap = 2k):
-  2024-25: gap-protected release -116.3m
-  2025-26: gap-protected release -118.6m
-  2026-27: gap-protected release -121.6m
+  2024-25: gap-protected release -116.4m
+  2025-26: gap-protected release -118.7m
+  2026-27: gap-protected release -121.7m
   2027-28: gap-protected release -40.9m
-  2028-29: gap-protected release +85.3m
+  2028-29: gap-protected release +85.2m
 
 Voluntary-retention sensitivity (anchor, per year): headline assumes
 every released firm deregisters (full liability lost). If the Liu et
 al. (2021) voluntary share (43%) of released-firm liability is
 retained, the impact scales accordingly:
-  2024-25: headline -193.3m -> retention-adjusted -110.2m (HMRC -150m)
-  2025-26: headline -197.1m -> retention-adjusted -112.4m (HMRC -185m)
+  2024-25: headline -193.4m -> retention-adjusted -110.2m (HMRC -150m)
+  2025-26: headline -197.2m -> retention-adjusted -112.4m (HMRC -185m)
   2026-27: headline -120.2m -> retention-adjusted -68.5m (HMRC -125m)
   2027-28: headline -41.2m -> retention-adjusted -23.5m (HMRC -50m)
-  2028-29: headline +88.1m -> retention-adjusted +88.1m (HMRC +65m)
+  2028-29: headline +88.2m -> retention-adjusted +88.2m (HMRC +65m)
 
 Aged-membership sensitivity: turnover aged by the same factor as liability,
 so band membership is evaluated on aged turnover (bunched firms treated as
 crossers):
-  2024-25: aged-membership -522.7m
-  2025-26: aged-membership -683.5m
-  2026-27: aged-membership -405.8m
-  2027-28: aged-membership -123.8m
-  2028-29: aged-membership +244.2m
+  2024-25: aged-membership -518.8m
+  2025-26: aged-membership -677.4m
+  2026-27: aged-membership -401.7m
+  2027-28: aged-membership -122.5m
+  2028-29: aged-membership +241.6m
 
 Released registrants in the headline (in-scope, data-year turnover in
 [baseline, 90k)), weighted firms per year:
-  2024-25: 27,674 firms
-  2025-26: 27,674 firms
+  2024-25: 27,673 firms
+  2025-26: 27,673 firms
   2026-27: 16,082 firms
-  2027-28: 5,285 firms
+  2027-28: 5,284 firms
   2028-29: 0 firms
 
 Threshold sweep (2024-25 vintage, GBP 90k baseline, 2025-26 fiscal year)
@@ -80,7 +80,7 @@ Total VAT revenue at GBP 90k, 2026-27: 188.7bn
 
 Bases and calibration-target comparison
 --------------------------------------------------------------------------
-  2023-24: in-scope base (>= threshold, unaged) = 174.7bn; model-implied voluntary below-threshold remittance = 2.4bn (not calibrated)
+  2023-24: in-scope base (>= threshold, unaged) = 174.7bn; model-implied voluntary below-threshold remittance = 2.5bn (not calibrated)
   2024-25: in-scope base (>= threshold, unaged) = 180.5bn; model-implied voluntary below-threshold remittance = 2.6bn (not calibrated)
 
 Sweep thresholds: [70000, 75000, 80000, 85000, 90000, 95000, 100000, 105000, 110000, 115000, 120000]

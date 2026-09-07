@@ -12,8 +12,8 @@
     "key": "ess_2324",
     "artifact": "calibration_accuracy.txt",
     "pattern": "effective sample size: ([\\d,]+)",
-    "value": "1,091,716",
-    "tex": "1{,}091{,}716",
+    "value": "1,061,764",
+    "tex": "1{,}061{,}764",
     "tex_file": "Sections/data.tex",
     "note": ""
   },
@@ -21,8 +21,8 @@
     "key": "maxw_2324",
     "artifact": "calibration_accuracy.txt",
     "pattern": "max: [\\d.]+ / [\\d.]+ / [\\d.]+ / [\\d.]+ / ([\\d.]+)",
-    "value": "297.722",
-    "tex": "298",
+    "value": "325.239",
+    "tex": "325",
     "tex_file": "Sections/data.tex",
     "note": ""
   },
@@ -66,8 +66,8 @@
     "key": "liab_below_2324",
     "artifact": "calibration_accuracy.txt",
     "pattern": "VAT\\ Liability\\ below\\ Thresh\\.\\s+([\\d.]+)%",
-    "value": "36.6",
-    "tex": "36.6\\%",
+    "value": "32.2",
+    "tex": "32.2\\%",
     "tex_file": "Appendix/a_data.tex",
     "note": ""
   },
@@ -148,11 +148,11 @@
     "artifact": "static_sweep.txt",
     "pattern": "anchor table",
     "value": [
-      -193.3,
-      -197.1,
+      -193.4,
+      -197.2,
       -120.2,
       -41.2,
-      88.1
+      88.2
     ],
     "tex": "$-$193, $-$197, $-$120, $-$41, $+$88",
     "tex_file": "Sections/static.tex",
@@ -167,7 +167,7 @@
       -112.4,
       -68.5,
       -23.5,
-      88.1
+      88.2
     ],
     "tex": "$-$110, $-$112, $-$68, $-$24, $+$88",
     "tex_file": "Sections/static.tex",
@@ -178,11 +178,11 @@
     "artifact": "static_sweep.txt",
     "pattern": "gap-protected release",
     "value": [
-      -116.3,
-      -118.6,
-      -121.6,
+      -116.4,
+      -118.7,
+      -121.7,
       -40.9,
-      85.3
+      85.2
     ],
     "tex": "$-$116, $-$119, $-$122, $-$41, $+$85",
     "tex_file": "Sections/static.tex",
@@ -192,7 +192,7 @@
     "key": "anchor_2526_abs",
     "artifact": "static_sweep.txt",
     "pattern": "anchor 2025-26",
-    "value": -197.1,
+    "value": -197.2,
     "tex": "$-\\pounds197$m",
     "tex_file": "Sections/conclusion.tex",
     "note": ""
@@ -327,8 +327,8 @@
     "key": "menu_taper",
     "artifact": "reform_menu_common_base.txt",
     "pattern": "Graduated taper [85k,141.7k]",
-    "value": -1408,
-    "tex": "$-1{,}408$",
+    "value": -1407,
+    "tex": "$-1{,}407$",
     "tex_file": "Sections/static.tex",
     "note": ""
   },
@@ -363,7 +363,7 @@
     "key": "rel100_text",
     "artifact": "reform_menu_common_base.txt",
     "pattern": "direct band-sum",
-    "value": "-582.6",
+    "value": "-582.9",
     "tex": "\\(-\\)\\pounds583m",
     "tex_file": "Sections/static.tex",
     "note": ""
@@ -372,8 +372,8 @@
     "key": "rel100_firms_text",
     "artifact": "reform_menu_common_base.txt",
     "pattern": "direct band-sum firms",
-    "value": "-87.8",
-    "tex": "87{,}800",
+    "value": "-87.9",
+    "tex": "87{,}900",
     "tex_file": "Sections/static.tex",
     "note": ""
   },
@@ -399,8 +399,8 @@
     "key": "dyn_raise100k_firms",
     "artifact": "dynamic_reform_results.txt",
     "pattern": "Raise threshold to \u00a3100k",
-    "value": "84,893",
-    "tex": "$84{,}893$",
+    "value": "85,061",
+    "tex": "$85{,}061$",
     "tex_file": "Sections/behavioural.tex",
     "note": ""
   },
@@ -408,8 +408,8 @@
     "key": "dyn_rate10_firms",
     "artifact": "dynamic_reform_results.txt",
     "pattern": "Reduced rate 10%",
-    "value": "114,336",
-    "tex": "$114{,}336$",
+    "value": "114,519",
+    "tex": "$114{,}519$",
     "tex_file": "Sections/behavioural.tex",
     "note": ""
   },
@@ -417,8 +417,8 @@
     "key": "sector_diag_2324",
     "artifact": "calibration_accuracy.txt",
     "pattern": "VAT Liability by Sector\\s+([\\d.]+)%",
-    "value": "43.1",
-    "tex": "43.1\\%",
+    "value": "43.0",
+    "tex": "43.0\\%",
     "tex_file": "Appendix/a_data.tex",
     "note": ""
   },
@@ -462,8 +462,8 @@
     "key": "E_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "22,407",
-    "tex": "22{,}407",
+    "value": "22,081",
+    "tex": "22{,}081",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -471,8 +471,8 @@
     "key": "E_2324_summary",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "22,407",
-    "tex": "22{,}407",
+    "value": "22,081",
+    "tex": "22{,}081",
     "tex_file": "Sections/conclusion.tex",
     "note": ""
   },
@@ -480,8 +480,8 @@
     "key": "bllat_2324_summary",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "1.513",
-    "tex": "1.513",
+    "value": "1.505",
+    "tex": "1.505",
     "tex_file": "Sections/conclusion.tex",
     "note": ""
   },
@@ -489,8 +489,8 @@
     "key": "bllat_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "1.513",
-    "tex": "1.513",
+    "value": "1.505",
+    "tex": "1.505",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -525,8 +525,8 @@
     "key": "a_delta_share_pos",
     "artifact": "dominated_region_mass.txt",
     "pattern": "At delta_s = s\\* delta: share of near-threshold firms with a > 0 \\.\\. ([\\d.]+)",
-    "value": "0.544",
-    "tex": "54\\%",
+    "value": "0.545",
+    "tex": "55\\%",
     "tex_file": "Sections/model.tex",
     "note": ""
   },
@@ -552,8 +552,8 @@
     "key": "a_delta_mean_pos",
     "artifact": "dominated_region_mass.txt",
     "pattern": "mean width among firms with a positive width \\.+ GBP ([\\d,]+)",
-    "value": "8,077",
-    "tex": "\\pounds8{,}077",
+    "value": "8,070",
+    "tex": "\\pounds8{,}070",
     "tex_file": "Sections/model.tex",
     "note": ""
   },
@@ -561,8 +561,8 @@
     "key": "a_delta_mean_all",
     "artifact": "dominated_region_mass.txt",
     "pattern": "mean width across near-threshold firms \\.+ GBP ([\\d,]+)",
-    "value": "4,397",
-    "tex": "\\pounds4{,}397",
+    "value": "4,396",
+    "tex": "\\pounds4{,}396",
     "tex_file": "Sections/model.tex",
     "note": ""
   },
@@ -570,7 +570,7 @@
     "key": "a_delta_own_count",
     "artifact": "dominated_region_mass.txt",
     "pattern": "in-scope firms inside their own region \\.+ ([\\d,]+)",
-    "value": "24,034",
+    "value": "24,046",
     "tex": "24{,}000",
     "tex_file": "Sections/model.tex",
     "note": ""
@@ -579,7 +579,7 @@
     "key": "a_delta_share_created",
     "artifact": "dominated_region_mass.txt",
     "pattern": "share of near-threshold firms with a\\(delta_s\\) = 0: ([\\d.]+)",
-    "value": "0.456",
+    "value": "0.455",
     "tex": "46\\%",
     "tex_file": "Sections/model.tex",
     "note": ""
@@ -597,7 +597,7 @@
     "key": "taper_match_top",
     "artifact": "reform_menu_common_base.txt",
     "pattern": "Constant marginal rate m\\* = ([\\d.]+) costs the same as the raise to GBP100k \\(([-+\\d.]+) m\\): band top U\\(m\\*\\) = GBP ([\\d,]+), affected firms ([\\d.]+)",
-    "value": "118,128",
+    "value": "118,137",
     "tex": "\\pounds118{,}100",
     "tex_file": "Sections/static.tex",
     "note": ""
@@ -606,8 +606,8 @@
     "key": "taper_match_firms",
     "artifact": "reform_menu_common_base.txt",
     "pattern": "Constant marginal rate m\\* = ([\\d.]+) costs the same as the raise to GBP100k \\(([-+\\d.]+) m\\): band top U\\(m\\*\\) = GBP ([\\d,]+), affected firms ([\\d.]+)",
-    "value": "184.5",
-    "tex": "184{,}500",
+    "value": "184.7",
+    "tex": "184{,}700",
     "tex_file": "Sections/static.tex",
     "note": ""
   },
@@ -615,8 +615,8 @@
     "key": "chart_E_net_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "\\[OBR-chart universe[^\\]]*\\]\\] E = ([\\d,]+) \\(gross\\) \\| E_net = ([-\\d,]+) \\| Delta_R = ([\\d,]+) \\| b_llat = ([\\d.]+) \\| b = [-\\d.]+ \\| y_R = ([\\d.]+)",
-    "value": "4,431",
-    "tex": "4{,}431",
+    "value": "4,712",
+    "tex": "4{,}712",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -624,8 +624,8 @@
     "key": "chart_DR_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "\\[OBR-chart universe[^\\]]*\\]\\] E = ([\\d,]+) \\(gross\\) \\| E_net = ([-\\d,]+) \\| Delta_R = ([\\d,]+) \\| b_llat = ([\\d.]+) \\| b = [-\\d.]+ \\| y_R = ([\\d.]+)",
-    "value": "22,700",
-    "tex": "22{,}700",
+    "value": "22,371",
+    "tex": "22{,}371",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -642,8 +642,8 @@
     "key": "scope_E_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "\\[in-scope VAT firms\\] E = ([\\d,]+)",
-    "value": "38,873",
-    "tex": "38{,}873",
+    "value": "38,626",
+    "tex": "38{,}626",
     "tex_file": "Sections/bunching.tex",
     "note": ""
   },
@@ -660,8 +660,8 @@
     "key": "cut70_exp",
     "artifact": "stratum_shape_sensitivity.txt",
     "pattern": "cut to 70k from 85k \\(2025-26\\): \\+([\\d,.]+) m, \\+([\\d.]+)k firms",
-    "value": "1,114.5",
-    "tex": "\\pounds1{,}114m",
+    "value": "1,024.5",
+    "tex": "\\pounds1{,}024m",
     "tex_file": "Appendix/a_data.tex",
     "note": ""
   },
@@ -678,8 +678,8 @@
     "key": "cut70_logn",
     "artifact": "stratum_shape_sensitivity.txt",
     "pattern": "cut to 70k from 85k \\(2025-26\\): \\+([\\d,.]+) m, \\+([\\d.]+)k firms",
-    "value": "915.3",
-    "tex": "\\pounds915m",
+    "value": "1,026.5",
+    "tex": "\\pounds1{,}026m",
     "tex_file": "Appendix/a_data.tex",
     "note": ""
   },
@@ -688,13 +688,13 @@
     "artifact": "static_sweep.txt",
     "pattern": "aged-membership",
     "value": [
-      -522.7,
-      -683.5,
-      -405.8,
-      -123.8,
-      244.2
+      -518.8,
+      -677.4,
+      -401.7,
+      -122.5,
+      241.6
     ],
-    "tex": "$-$523, $-$684, $-$406, $-$124, $+$244",
+    "tex": "$-$519, $-$677, $-$402, $-$122, $+$242",
     "tex_file": "Sections/static.tex",
     "note": ""
   },
@@ -711,8 +711,8 @@
     "key": "seed_E",
     "artifact": "seed_sensitivity.txt",
     "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
-    "value": "198",
-    "tex": "\\pm198",
+    "value": "155",
+    "tex": "\\pm155",
     "tex_file": "Appendix/a_inference.tex",
     "note": ""
   },
@@ -720,8 +720,8 @@
     "key": "seed_base",
     "artifact": "seed_sensitivity.txt",
     "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
-    "value": "0.16",
-    "tex": "\\pm\\pounds0.16",
+    "value": "0.17",
+    "tex": "\\pm\\pounds0.17",
     "tex_file": "Appendix/a_inference.tex",
     "note": ""
   }
