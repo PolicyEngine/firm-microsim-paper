@@ -53,7 +53,20 @@ DOMINATED REGION UNDER UNRECLAIMED INPUT VAT (firm-specific width):
   mean width across all near-threshold firms ......... GBP 2,070
   mean width among firms with a positive width ....... GBP 7,538
   in-scope firms inside their OWN dominated region ... 11,321  (vs 124,256 in the fixed GBP 21,250 band)
-  The GBP 21,250 width is the B2C / no-input upper bound.
+  The GBP 21,250 width is the zero-input / zero-pass-through upper bound.
+
+STANDARD-RATED INPUT SHARE and voluntary registration:
+  a(delta_s) <= 0 (delta_s >= 0.5) means registration pays at fixed turnover =
+  the model's voluntary-registration mechanism. Implied share of below-threshold
+  in-scope firms preferring registration with delta_s = delta (all inputs standard-rated): 0.713
+  LLAT (2021) observed voluntary share: 0.43
+  Standard-rated share of inputs s* reconciling the two: 0.778
+  At delta_s = s* delta: share of near-threshold firms with a > 0 .. 0.544
+    mean width across near-threshold firms ............ GBP 4,397
+    mean width among firms with a positive width ...... GBP 8,077
+    in-scope firms inside their own region ............ 24,034
+  Reduced-rate secondary notch (delta-invariant) CREATES a dominated interval for
+  the share of near-threshold firms with a(delta_s) = 0: 0.456
 
 REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;
   NOT the Section 6 headline, which runs on the full ONS-frame density):

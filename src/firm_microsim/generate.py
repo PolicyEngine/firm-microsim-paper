@@ -337,7 +337,8 @@ def assign_employment(
 
 
 def generate_unregistered_firms(
-    bpe_df: pd.DataFrame, threshold: float, device: str
+    bpe_df: pd.DataFrame, threshold: float, device: str,
+    *, shape: str = "exponential", sigma: float = 1.0,
 ) -> tuple[Tensor, Tensor]:
     """Draw the DBT unregistered stratum: businesses registered for neither
     VAT nor PAYE, by SIC division (issue #25).
@@ -354,9 +355,14 @@ def generate_unregistered_firms(
     is a maintained assumption, and the OBR near-threshold levels then pin
     the ONS frame's density as the residual (issue #25).
 
+    With ``shape="lognormal"`` each division is drawn log-normal with the
+    same mean and log-scale ``sigma`` (a right-skewed alternative that puts
+    more businesses near zero and fewer above the threshold), used for the
+    stratum-shape sensitivity.
+
     Returns ``(sic_codes, turnover_k)``.
     """
-    logger.info("Generating DBT unregistered stratum...")
+    logger.info("Generating DBT unregistered stratum (%s)...", shape)
     rows = bpe_df[bpe_df["unregistered_count"].fillna(0) > 0].copy()
     reported = rows[rows["unregistered_turnover_m"].notna()]
     nat_mean = float(reported["unregistered_turnover_m"].sum()) / float(reported["unregistered_count"].sum()) * 1000.0
@@ -369,10 +375,15 @@ def generate_unregistered_firms(
         tm = r["unregistered_turnover_m"]
         mean_k = float(tm) / n * 1000.0 if pd.notna(tm) else nat_mean
         mean_k = max(mean_k, lo + 1.0)
-        u = torch.rand(n, device=device, dtype=torch.float64)
-        # Exp(mean) truncated to [lo, cap] by inverse CDF.
-        a, b = math.exp(-lo / mean_k), math.exp(-cap / mean_k)
-        t = -mean_k * torch.log(a - u * (a - b))
+        if shape == "lognormal":
+            mu = math.log(mean_k) - 0.5 * sigma * sigma  # mean-preserving
+            t = torch.exp(mu + sigma * torch.randn(n, device=device, dtype=torch.float64))
+            t = torch.clamp(t, lo, cap)
+        else:
+            u = torch.rand(n, device=device, dtype=torch.float64)
+            # Exp(mean) truncated to [lo, cap] by inverse CDF.
+            a, b = math.exp(-lo / mean_k), math.exp(-cap / mean_k)
+            t = -mean_k * torch.log(a - u * (a - b))
         all_sic.extend([int(r["SIC Code"])] * n)
         all_t.append(t.float())
     sic = torch.tensor(all_sic, dtype=torch.int64, device=device)
@@ -631,6 +642,7 @@ def generate(
     fast: bool = False,
     write: bool = True,
     return_report: bool = False,
+    unregistered_shape: Optional[str] = None,
 ):
     """Generate the synthetic firm population.
 
@@ -669,6 +681,8 @@ def generate(
         overrides["vat_threshold"] = float(threshold)
     if seed is not None:
         overrides["seed"] = int(seed)
+    if unregistered_shape is not None:
+        overrides["unregistered_shape"] = unregistered_shape
     if fast:
         overrides.update(
             sample_window_fraction=0.30,
@@ -712,7 +726,8 @@ def generate(
     bpe_df = getattr(data, "bpe_unregistered", None)
     if cfg.include_unregistered_stratum and bpe_df is not None:
         unreg_sic, unreg_turnover = generate_unregistered_firms(
-            bpe_df, cfg.vat_threshold, cfg.device
+            bpe_df, cfg.vat_threshold, cfg.device,
+            shape=cfg.unregistered_shape, sigma=cfg.unregistered_lognormal_sigma,
         )
         unreg_input = generate_input_values(unreg_turnover, unreg_sic, cfg.device)
         base_sic = torch.cat([base_sic, unreg_sic])

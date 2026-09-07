@@ -58,3 +58,22 @@ def test_constructed_relocation_is_recovered_with_uncensored_y_r() -> None:
     assert r["y_R_censored"] is False
     assert 85.0 < r["y_R"] <= 100.0
     assert r["Delta_R"] >= r["E"]  # closing bin counted in full; y_R interpolated inside it
+
+
+def test_chart_universe_drops_stratum_above_threshold(tmp_path, monkeypatch) -> None:
+    import pandas as pd
+    from firm_microsim.bunching import model as bm
+    df = pd.DataFrame({
+        "annual_turnover_k": [50.0, 80.0, 90.0, 95.0, 120.0],
+        "weight": [1.0] * 5,
+        "in_frame": [True, False, False, True, False],
+        "unregistered": [False, True, True, False, True],
+        "vat_scope": [True, True, False, True, False],
+    })
+    df.to_csv(tmp_path / "synthetic_firms_2023-24.csv", index=False)
+    monkeypatch.setattr(bm, "SYNTHETIC_DATA_DIR", tmp_path)
+    est = bm.BunchingEstimator("2023-24", universe="chart")
+    kept = sorted(est.firms["annual_turnover_k"].tolist())
+    assert kept == [50.0, 80.0, 95.0]  # stratum kept below 85k only; frame kept everywhere
+    assert bm.BunchingEstimator("2023-24", universe="all").firms.shape[0] == 5
+    assert sorted(bm.BunchingEstimator("2023-24", universe="scope").firms["annual_turnover_k"]) == [50.0, 80.0, 95.0]

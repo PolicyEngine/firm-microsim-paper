@@ -153,15 +153,45 @@ def build_claims() -> list[dict]:
         _tex_int(round(base, -2)), "Sections/model.tex")
 
     # --- dominated region under input VAT --------------------------------------
-    m = re.search(r"share with a positive dominated width \(delta < 0\.5\) \.\. ([\d.]+)", dom)
+    m = re.search(r"At delta_s = s\* delta: share of near-threshold firms with a > 0 \.\. ([\d.]+)", dom)
     add("a_delta_share_pos", "dominated_region_mass.txt", m.re.pattern, m.group(1),
-        f"{float(m.group(1))*100:.1f}\\%", "Sections/model.tex")
-    m = re.search(r"mean width among firms with a positive width \.+ GBP ([\d,]+)", dom)
+        f"{float(m.group(1))*100:.0f}\\%", "Sections/model.tex")
+    m = re.search(r"Standard-rated share of inputs s\* reconciling the two: ([\d.]+)", dom)
+    add("s_star", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        f"s^{{*}}={float(m.group(1)):.2f}", "Sections/model.tex")
+    m = re.search(r"preferring registration with delta_s = delta \(all inputs standard-rated\): ([\d.]+)", dom)
+    add("implied_voluntary_share_s1", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        f"{float(m.group(1))*100:.0f}\\%", "Sections/model.tex")
+    block = dom.split("At delta_s = s* delta")[1]
+    m = re.search(r"mean width among firms with a positive width \.+ GBP ([\d,]+)", block)
     add("a_delta_mean_pos", "dominated_region_mass.txt", m.re.pattern, m.group(1),
         "\\pounds" + m.group(1).replace(",", "{,}"), "Sections/model.tex")
-    m = re.search(r"inside their OWN dominated region \.+ ([\d,]+)", dom)
+    m = re.search(r"mean width across near-threshold firms \.+ GBP ([\d,]+)", block)
+    add("a_delta_mean_all", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        "\\pounds" + m.group(1).replace(",", "{,}"), "Sections/model.tex")
+    m = re.search(r"in-scope firms inside their own region \.+ ([\d,]+)", block)
     add("a_delta_own_count", "dominated_region_mass.txt", m.re.pattern, m.group(1),
-        _tex_int(round(_num(m.group(1)), -2)), "Sections/model.tex")
+        _tex_int(round(_num(m.group(1)), -3)), "Sections/model.tex")
+    m = re.search(r"share of near-threshold firms with a\(delta_s\) = 0: ([\d.]+)", dom)
+    add("a_delta_share_created", "dominated_region_mass.txt", m.re.pattern, m.group(1),
+        f"{float(m.group(1))*100:.0f}\\%", "Sections/model.tex")
+    m = re.search(r"Constant marginal rate m\* = ([\d.]+) costs the same as the raise to GBP100k \(([-+\d.]+) m\): band top U\(m\*\) = GBP ([\d,]+), affected firms ([\d.]+)", menu)
+    add("taper_match_m", "reform_menu_common_base.txt", m.re.pattern, m.group(1), f"{float(m.group(1))*100:.1f}\\%", "Sections/static.tex")
+    add("taper_match_top", "reform_menu_common_base.txt", m.re.pattern, m.group(3), "\\pounds" + f"{round(_num(m.group(3)), -2):,.0f}".replace(",", "{,}"), "Sections/static.tex")
+    add("taper_match_firms", "reform_menu_common_base.txt", m.re.pattern, m.group(4), _tex_int(_num(m.group(4)) * 1000), "Sections/static.tex")
+    m = re.search(r"\[OBR-chart universe[^\]]*\]\] E = ([\d,]+) \(gross\) \| E_net = ([-\d,]+) \| Delta_R = ([\d,]+) \| b_llat = ([\d.]+) \| b = [-\d.]+ \| y_R = ([\d.]+)", bun)
+    add("chart_E_net_2324", "bunching_inference.txt", m.re.pattern, m.group(2), m.group(2).replace(",", "{,}"), "Sections/bunching.tex")
+    add("chart_DR_2324", "bunching_inference.txt", m.re.pattern, m.group(3), m.group(3).replace(",", "{,}"), "Sections/bunching.tex")
+    add("chart_yR_2324", "bunching_inference.txt", m.re.pattern, m.group(5), f"\\pounds{round(float(m.group(5))*1000, -2):,.0f}".replace(",", "{,}"), "Sections/bunching.tex")
+    m = re.search(r"\[in-scope VAT firms\] E = ([\d,]+)", bun)
+    add("scope_E_2324", "bunching_inference.txt", m.re.pattern, m.group(1), m.group(1).replace(",", "{,}"), "Sections/bunching.tex")
+    sens = _read("stratum_shape_sensitivity.txt")
+    for lab, key in (("exponential (headline)", "exp"), ("lognormal (sigma=1.0)", "logn")):
+        blk = sens.split(f"[{lab}]")[1]
+        m = re.search(r"above GBP85k \(exempt, out of scope\): ([\d,]+)", blk)
+        add(f"stratum_above_{key}", "stratum_shape_sensitivity.txt", m.re.pattern, m.group(1), _tex_int(round(_num(m.group(1)), -3)), "Appendix/a_data.tex")
+        m = re.search(r"cut to 70k from 85k \(2025-26\): \+([\d,.]+) m, \+([\d.]+)k firms", blk)
+        add(f"cut70_{key}", "stratum_shape_sensitivity.txt", m.re.pattern, m.group(1), f"\\pounds{_num(m.group(1)):,.0f}m".replace(",", "{,}"), "Appendix/a_data.tex")
     aged = [float(x) for x in re.findall(r"aged-membership ([+-][\d.]+)m", sw)]
     add("anchor_aged_series", "static_sweep.txt", "aged-membership", aged, _series(aged), "Sections/static.tex")
     m = re.search(r"70k: newly registered ([\d,]+); standard-rate \+([\d,.]+)m; at GBP [\d,]+/firm \+([\d,.]+)m", sw)

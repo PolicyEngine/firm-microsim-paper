@@ -165,6 +165,11 @@ class Config:
     # (ONS frame + unregistered) rather than as frame-scaled shapes.
     include_unregistered_stratum: bool = True
     bpe_importance: float = 1.0
+    # Within-stratum turnover shape: "exponential" (maximum entropy given the
+    # BPE mean; headline) or "lognormal" (same mean, sigma below; the
+    # sensitivity build reported in results/stratum_shape_sensitivity.txt).
+    unregistered_shape: str = "exponential"
+    unregistered_lognormal_sigma: float = 1.0
 
     # --- Fast-iteration stratified sampling -------------------------------
     # 1.0 / 1.0 = full synthetic census (release builds). Lower fractions

@@ -83,7 +83,11 @@ boundary of this guaranteed dominated region:
   \label{eq:dominated}
 \end{equation}
 This is the Kleven--Waseem guaranteed dominated-region width
-\citep{klevenwaseem2013}. At
+\citep{klevenwaseem2013}. It holds the firm's VAT-exclusive price fixed and
+lets the firm bear the whole $\tau$; if instead the consumer price is held
+fixed, so that the firm remits $\tau/(1+\tau)$ of its receipts, the width is
+$\tau T^{*}=\pounds17{,}000$. The no-pass-through convention is used
+throughout and every width below scales by $(1-\tau)$ under the other. At
 my parameters it gives $a = \pounds85{,}000\times 0.20/0.80 = \pounds21{,}250$,
 so the dominated region is
 $(T^{*},\,T^{*}+a)=(\pounds85{,}000,\ \pounds106{,}250)$, shown in
@@ -138,26 +142,34 @@ the indifference condition gives
 \end{equation}
 The width is firm-specific, falls in the input share, and vanishes once inputs
 exceed half of turnover, where registration pays for itself through reclaim.
-On the synthetic population the median input share of in-scope firms within
-\pounds15{,}000 below to \pounds45{,}000 above the threshold is $0.61$:
-only 27.5\% of them face a positive dominated width, the mean width across
-all of them is \pounds2{,}070 (\pounds7{,}538 among those with a positive
-width), and about $11{,}300$ weighted firms sit inside their own dominated
-region, against the $124{,}300$ in the fixed \pounds21{,}250 band
+Two things follow. First, $\delta$ must be the \emph{standard-rated} input
+share: labour is not an input carrying VAT and rent, financial and insurance
+purchases are exempt, so only a fraction $s$ of the generator's total input
+share $\delta_i$ bears reclaimable VAT. Second, $a(\delta)\le0$ is the
+model's voluntary-registration mechanism: a firm for which registration pays
+at fixed turnover registers below the threshold. That gives an external test.
+With all inputs standard-rated ($s=1$) the model predicts that 71\% of
+below-threshold in-scope firms prefer registration, against the 43\% that
+\citet{liuetal2021} observe; the two reconcile at $s^{*}=0.78$, a
+standard-rated share of purchases that is plausible for the consumer-service
+firms that dominate the near-threshold population but is not externally
+measured here. At $s^{*}$, 54\% of in-scope firms within \pounds15{,}000
+below to \pounds45{,}000 above the threshold face a positive dominated width
+(mean \pounds8{,}077 among them, \pounds4{,}397 across all of them), and
+about $24{,}000$ weighted firms sit inside their own region, against the
+$124{,}300$ in the fixed \pounds21{,}250 band
 (\texttt{results/dominated\_region\_mass.txt}). The \pounds21{,}250 figure
-is therefore the zero-input, zero-pass-through upper bound---the width facing
-a firm with no reclaimable inputs. The reform comparisons below do \emph{not}
-carry over unchanged: the secondary notch at a reduced-rate band top is a step
-between two registered states, so its width $a'$ is $\delta$-invariant, and
-for the majority of firms whose primary width is zero a banded reduced rate
-\emph{creates} a dominated interval at the band top where none existed,
-while a level rise changes nothing for them. The ordering stated below
-therefore holds for firms with positive $a(\delta)$; for the rest, the
-reduced rate is the only reform among the three that introduces a distortion.
-Section~\ref{sec:behavioural} retains the reclaim formulation, in which
-higher $\delta$ favours bunching; under $a(\delta)$ the comparative static
-reverses, and reconciling the behavioural layer with the input-VAT
-formulation is left for future work.
+is the zero-input, zero-pass-through upper bound. The reform comparisons
+change in one important way: the secondary notch at a reduced-rate band top
+is a step between two \emph{registered} states, so its width $a'$ is
+$\delta$-invariant and every firm faces it. For the 46\% of near-threshold
+firms with $a(\delta_s)=0$, a banded reduced rate therefore \emph{creates}
+a dominated interval at the band top where none existed, while a level rise
+changes nothing for them; the ordering stated below holds for the firms with
+a positive primary width. The behavioural layer of
+Section~\ref{sec:behavioural} adopts the same input-VAT formulation for the
+extensive margin: the marginal buncher falls in $\delta$ and does not exist
+above one half.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.96\textwidth]{figures/dynamic_notch_fit_e017.png}

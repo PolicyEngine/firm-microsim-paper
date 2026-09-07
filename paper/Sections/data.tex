@@ -69,7 +69,8 @@ publishes no size distribution for the stratum, so each division's turnover is
 drawn from an exponential distribution with the division's mean---the
 maximum-entropy density for a positive variable with a known mean---and the
 stratum's weights are held fixed in calibration: its shape is a maintained
-assumption, not a fitted object. Businesses in the stratum below the
+assumption, not a fitted object, and it is bounded by a mean-preserving
+log-normal alternative in Appendix~\ref{app:data}. Businesses in the stratum below the
 threshold are registrable (they would have to register on crossing it);
 those the draw places above it can only be exempt-sector traders and are
 placed outside VAT scope. The stratum changes what the OBR near-threshold
@@ -81,16 +82,16 @@ the frame alone above it, where unregistered businesses are exempt traders
 outside the chart's registration analysis---so that the frame's near-threshold
 density is identified as the residual between the chart and the stratum,
 rather than the frame-scaled shape targets of earlier drafts.
-Each firm is given input expenditure $x_i = \rho_i\,y_i$,
-with the input--output ratio $\rho_i$ drawn from a rescaled Beta distribution
-with sector-specific shifts, clamped to $\rho_i \in [0.1, 0.95]$ (mean about
+Each firm is given input expenditure $x_i = \delta_i\,y_i$,
+with the input share $\delta_i$ drawn from a rescaled Beta distribution
+with sector-specific shifts, clamped to $\delta_i \in [0.1, 0.95]$ (mean about
 0.6, so value added averages about 40\% of turnover, in line with the UK
 non-financial business economy). Its net VAT liability is the standard rate
 applied to its value added,
 \[
   v_i \;=\; \tau\,(y_i - x_i), \qquad \tau = 0.20,
 \]
-so every firm's net rate $v_i/y_i = \tau(1-\rho_i)$ lies in $[1\%, 18\%]$,
+so every firm's net rate $v_i/y_i = \tau(1-\delta_i)$ lies in $[1\%, 18\%]$,
 strictly positive and below the statutory cap of 20\%. The model therefore
 abstracts from net-repayment traders (firms with zero-rated outputs whose input
 reclaim exceeds output VAT---HMRC's negative-liability column); representing
