@@ -432,11 +432,29 @@
     "note": ""
   },
   {
-    "key": "nH_e017_d06",
+    "key": "nH_iv_e017_d0",
     "artifact": "dynamic_reform_results.txt",
-    "pattern": "e=0\\.17\\s+n_H\\(delta=0\\)=\u00a3\\s*([\\d.]+)k.*?n_H\\(delta=0\\.6\\)=\u00a3\\s*([\\d.]+)k",
-    "value": "148.9",
-    "tex": "\\pounds148{,}900",
+    "pattern": "INPUT-VAT formulation.*?e=0\\.17\\s+n_H\\(delta=0\\.0\\)=\u00a3\\s*([\\d.]+)k\\s+n_H\\(delta=0\\.2\\)=\u00a3\\s*([\\d.]+)k\\s+n_H\\(delta=0\\.4\\)=\u00a3\\s*([\\d.]+)k",
+    "value": "127.4",
+    "tex": "\\pounds127{,}400",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "nH_iv_e017_d02",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "INPUT-VAT formulation.*?e=0\\.17\\s+n_H\\(delta=0\\.0\\)=\u00a3\\s*([\\d.]+)k\\s+n_H\\(delta=0\\.2\\)=\u00a3\\s*([\\d.]+)k\\s+n_H\\(delta=0\\.4\\)=\u00a3\\s*([\\d.]+)k",
+    "value": "124.9",
+    "tex": "\\pounds124{,}900",
+    "tex_file": "Sections/behavioural.tex",
+    "note": ""
+  },
+  {
+    "key": "nH_iv_e017_d04",
+    "artifact": "dynamic_reform_results.txt",
+    "pattern": "INPUT-VAT formulation.*?e=0\\.17\\s+n_H\\(delta=0\\.0\\)=\u00a3\\s*([\\d.]+)k\\s+n_H\\(delta=0\\.2\\)=\u00a3\\s*([\\d.]+)k\\s+n_H\\(delta=0\\.4\\)=\u00a3\\s*([\\d.]+)k",
+    "value": "116.8",
+    "tex": "\\pounds116{,}800",
     "tex_file": "Sections/behavioural.tex",
     "note": ""
   },

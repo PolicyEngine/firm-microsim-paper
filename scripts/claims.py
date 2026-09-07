@@ -127,9 +127,10 @@ def build_claims() -> list[dict]:
         block = cal.split(f"Vintage {label}")[1].split("Vintage")[0]
         m = re.search(r"VAT Liability by Sector\s+([\d.]+)%", block)
         add(key, "calibration_accuracy.txt", m.re.pattern, m.group(1), m.group(1) + r"\%", "Appendix/a_data.tex")
-    m = re.search(r"e=0\.17\s+n_H\(delta=0\)=£\s*([\d.]+)k.*?n_H\(delta=0\.6\)=£\s*([\d.]+)k", dyn)
-    add("nH_e017_d06", "dynamic_reform_results.txt", m.re.pattern, m.group(2),
-        f"\\pounds{_num(m.group(2))*1000:,.0f}".replace(",", "{,}"), "Sections/behavioural.tex")
+    m = re.search(r"INPUT-VAT formulation.*?e=0\.17\s+n_H\(delta=0\.0\)=£\s*([\d.]+)k\s+n_H\(delta=0\.2\)=£\s*([\d.]+)k\s+n_H\(delta=0\.4\)=£\s*([\d.]+)k", dyn, re.S)
+    for i, key in ((1, "nH_iv_e017_d0"), (2, "nH_iv_e017_d02"), (3, "nH_iv_e017_d04")):
+        add(key, "dynamic_reform_results.txt", m.re.pattern, m.group(i),
+            f"\\pounds{_num(m.group(i))*1000:,.0f}".replace(",", "{,}"), "Sections/behavioural.tex")
 
     # --- bunching -----------------------------------------------------------
     bun = _read("bunching_inference.txt")
