@@ -147,31 +147,16 @@ def plot_turnover_distribution(vintage: str) -> None:
     if not path.exists():
         print(f"  [skip] synthetic data not found: {path}")
         return
-    header = set(pd.read_csv(path, nrows=0).columns)
-    cols = ["annual_turnover_k", "weight"] + [c for c in ("in_frame", "unregistered") if c in header]
-    df = pd.read_csv(path, usecols=cols)
+    df = pd.read_csv(path, usecols=["annual_turnover_k", "weight"])
 
     edges = np.arange(0.5, 300.5, 1.0)
+    counts, _ = np.histogram(
+        df["annual_turnover_k"], bins=edges, weights=df["weight"]
+    )
     centres = (edges[:-1] + edges[1:]) / 2.0
+
     fig, ax = plt.subplots(figsize=(10, 6))
-    if "unregistered" in df.columns:
-        # OBR-chart universe: frame everywhere, unregistered stratum below the
-        # threshold only (above it the stratum is exempt traders outside the
-        # chart's registration analysis). Stacked so the two are visible.
-        frame = df[df["in_frame"].astype(bool)]
-        strat = df[df["unregistered"].astype(bool) & (df["annual_turnover_k"] <= threshold)]
-        c_frame, _ = np.histogram(frame["annual_turnover_k"], bins=edges, weights=frame["weight"])
-        c_strat, _ = np.histogram(strat["annual_turnover_k"], bins=edges, weights=strat["weight"])
-        ax.bar(centres, c_frame, width=1.0, color=PRIMARY, zorder=3,
-               label="ONS VAT/PAYE frame")
-        ax.bar(centres, c_strat, width=1.0, bottom=c_frame, color=PALETTE[5],
-               zorder=3, label="DBT unregistered stratum (below threshold)")
-        ax.legend(frameon=False, fontsize=TICK_SIZE, loc="center right",
-                  bbox_to_anchor=(0.98, 0.55))
-        counts = c_frame + c_strat
-    else:
-        counts, _ = np.histogram(df["annual_turnover_k"], bins=edges, weights=df["weight"])
-        ax.bar(centres, counts, width=1.0, color=PRIMARY, zorder=3)
+    ax.bar(centres, counts, width=1.0, color=PRIMARY, zorder=3)
 
     ymax = ax.get_ylim()[1]
     for x, label in ((threshold, f"VAT threshold\n(£{int(threshold)}k)"),

@@ -83,11 +83,7 @@ boundary of this guaranteed dominated region:
   \label{eq:dominated}
 \end{equation}
 This is the Kleven--Waseem guaranteed dominated-region width
-\citep{klevenwaseem2013}. It holds the firm's VAT-exclusive price fixed and
-lets the firm bear the whole $\tau$; if instead the consumer price is held
-fixed, so that the firm remits $\tau/(1+\tau)$ of its receipts, the width is
-$\tau T^{*}=\pounds17{,}000$. The no-pass-through convention is used
-throughout and every width below scales by $(1-\tau)$ under the other. At
+\citep{klevenwaseem2013}. At
 my parameters it gives $a = \pounds85{,}000\times 0.20/0.80 = \pounds21{,}250$,
 so the dominated region is
 $(T^{*},\,T^{*}+a)=(\pounds85{,}000,\ \pounds106{,}250)$, shown in
@@ -116,64 +112,19 @@ and net-repayment traders have no positive remittance to jump
 (the Scope paragraph above). Second, the region is an order of magnitude wider
 than the $\sim\pounds1$k region implied by a smoothed \emph{kink}
 approximation, and it spans a populous part of the firm distribution: about
-124{,}400 weighted in-scope firms in the calibrated synthetic population lie
+142{,}800 weighted in-scope firms in the calibrated synthetic population lie
 in the $\pounds85{,}000$--$\pounds106{,}250$ band
 (\texttt{results/dominated\_region\_mass.txt}; out-of-scope enterprises face
 no notch and are excluded). Because the generator has no location choice, this
 counts the firms the data \emph{place} in the band---indexing the size of the
 population exposed to the distortion---rather than firms that optimally locate
-there; the count is conditional on the log--log within-band fill inside the
-coarse ONS bands and on the scope flag (Section~\ref{sec:data}) and would
-shift under a different within-band shape. It is the width $a$, not the
-count, that is exact.
-
-\paragraph{The region under unreclaimed input VAT.} The invariance above
-holds because the value-added formulation lets an unregistered firm deduct
-its inputs. In the UK system an unregistered firm cannot reclaim input VAT:
-it bears $\tau$ on its standard-rated purchases, which is the mechanism
-behind voluntary registration (Section~\ref{sec:background}). With input
-share $\delta$ and inputs fully standard-rated, unregistered net revenue is
-$y(1-\delta-\tau\delta)$ against $(1-\tau)(1-\delta)y$ registered, and
-the indifference condition gives
-\begin{equation}
-  a(\delta) \;=\; T^{*}\,\frac{\tau\,(1-2\delta)}{(1-\tau)(1-\delta)},
-  \qquad a(\delta)=0 \text{ for } \delta\ge\tfrac12 .
-  \label{eq:dominated-input}
-\end{equation}
-The width is firm-specific, falls in the input share, and vanishes once inputs
-exceed half of turnover, where registration pays for itself through reclaim.
-Two things follow. First, $\delta$ must be the \emph{standard-rated} input
-share: labour is not an input carrying VAT and rent, financial and insurance
-purchases are exempt, so only a fraction $s$ of the generator's total input
-share $\delta_i$ bears reclaimable VAT. Second, $a(\delta)\le0$ is the
-model's voluntary-registration mechanism: a firm for which registration pays
-at fixed turnover registers below the threshold. That gives an external test.
-With all inputs standard-rated ($s=1$) the model predicts that 71\% of
-below-threshold in-scope firms prefer registration, against the 43\% that
-\citet{liuetal2021} observe; the two reconcile at $s^{*}=0.78$, a
-standard-rated share of purchases that is plausible for the consumer-service
-firms that dominate the near-threshold population but is not externally
-measured here. At $s^{*}$, 55\% of in-scope firms within \pounds15{,}000
-below to \pounds45{,}000 above the threshold face a positive dominated width
-(mean \pounds8{,}070 among them, \pounds4{,}396 across all of them), and
-about $24{,}000$ weighted firms sit inside their own region, against the
-$124{,}400$ in the fixed \pounds21{,}250 band
-(\texttt{results/dominated\_region\_mass.txt}). The \pounds21{,}250 figure
-is the zero-input, zero-pass-through upper bound. The reform comparisons
-change in one important way: the secondary notch at a reduced-rate band top
-is a step between two \emph{registered} states, so its width $a'$ is
-$\delta$-invariant and every firm faces it. For the 46\% of near-threshold
-firms with $a(\delta_s)=0$, a banded reduced rate therefore \emph{creates}
-a dominated interval at the band top where none existed, while a level rise
-changes nothing for them; the ordering stated below holds for the firms with
-a positive primary width. The behavioural layer of
-Section~\ref{sec:behavioural} adopts the same input-VAT formulation for the
-extensive margin: the marginal buncher falls in $\delta$ and does not exist
-above one half.
+there; the count is conditional on the uniform within-band fill inside the
+coarse ONS bands (Section~\ref{sec:data}) and would shift under a different
+within-band shape. It is the width $a$, not the count, that is exact.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.96\textwidth]{figures/dynamic_notch_fit_e017.png}
-\caption{The VAT notch and the firm distribution. Panel (a) shows net revenue before production costs: immediately above \pounds85{,}000, VAT reduces it from $y$ to $0.8y$, making turnover in $(\pounds85{,}000,\,\pounds106{,}250)$ strictly dominated. Panel (b) shows the three-bin moving mean of weighted 2023--24 in-scope synthetic firm counts, with the same interval shaded. The distribution is descriptive and target-inherited, not the outcome of behavioural optimisation; its drop at \pounds85{,}000 reflects the scope flag---every frame business below the threshold is registrable, while about half of frame enterprises above it are VAT traders---not an empty turnover interval. The vertical lines mark the marginal-buncher \emph{ability} $n_H$ at $e=0.17$ for deductible shares $\delta=0$ and $\delta=0.6$ (Section~\ref{sec:behavioural}); a firm of that ability registers at $n_H[(1-\delta)(1-\tau)]^{e}$, so the lines are not observed-turnover locations. The exact dominated width is $a=\pounds21{,}250$.}
+\caption{The VAT notch and the firm distribution. Panel (a) shows net revenue before production costs: immediately above \pounds85{,}000, VAT reduces it from $y$ to $0.8y$, making turnover in $(\pounds85{,}000,\,\pounds106{,}250)$ strictly dominated. Panel (b) shows the three-bin moving mean of weighted 2023--24 in-scope synthetic firm counts, with the same interval shaded. The distribution is descriptive and target-inherited, not the outcome of behavioural optimisation; its step at \pounds100{,}000 reflects the boundary between coarse ONS source bands, not an empty turnover interval. The vertical lines mark the marginal-buncher \emph{ability} $n_H$ at $e=0.17$ for deductible shares $\delta=0$ and $\delta=0.6$ (Section~\ref{sec:behavioural}); a firm of that ability registers at $n_H[(1-\delta)(1-\tau)]^{e}$, so the lines are not observed-turnover locations. The exact dominated width is $a=\pounds21{,}250$.}
 \label{fig:notch_fit}
 \end{figure}
 
@@ -213,12 +164,13 @@ narrower ones rather than shrinking the total: it lowers the largest single notc
 (to $\pounds12{,}750$ at $15\%$) at the price of adding a secondary notch of
 $(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this
 (\texttt{results/dominated\_region\_mass.txt}): the primary regions hold about
-87{,}800 ($15\%$) and 54{,}500 ($10\%$) weighted in-scope firms, the
-secondary regions add about 35{,}300 and 67{,}200, and the
-totals---123{,}200 and 121{,}800---lie within 2.2\% of the 124{,}400-firm
-baseline band. The total dominated \emph{width} is larger under both reduced
-rates and the exposed population is essentially unchanged: the reduced rate
-relocates the distortion, it does not remove it. A graduated taper, by contrast, can remove the
+117{,}900 ($15\%$) and 74{,}400 ($10\%$) weighted in-scope firms, the
+secondary regions add about 26{,}300 and 51{,}400, and the
+totals---144{,}200 and 125{,}800---lie 0.9\% above and 11.9\%
+below the 142{,}800-firm baseline band. The total dominated \emph{width} is
+larger under both reduced rates; the firm count is lower at $10\%$ only because
+the density declines across the wider secondary band, not because any part of
+the distortion is removed. A graduated taper, by contrast, can remove the
 dominated region entirely---provided its schedule keeps net revenue monotone,
 and that condition is restrictive. Any band-confined schedule whose effective
 rate reaches the full $\tau$ by \pounds105{,}000 leaves net revenue

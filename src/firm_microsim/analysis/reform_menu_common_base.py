@@ -45,9 +45,7 @@ from firm_microsim.dynamic.model import (
     E_HEADLINE,
     TAPER_WIDE_TOP,
     build_reforms,
-    make_schedule_taper_flat,
     reform_revenue,
-    taper_band_top,
 )
 
 DATA_CANDIDATES = [
@@ -138,21 +136,6 @@ def main():
             "firms_k": -result["n_affected"] / 1000.0,
         }
 
-    # --- Revenue-matched constant-marginal taper --------------------------
-    # Find the constant marginal rate m whose band-confined taper costs the
-    # same as the raise to £100k; its band top U(m) = m T/(m - tau) then
-    # answers "how wide a taper buys the raise's revenue loss".
-    from scipy.optimize import brentq
-    target_cost = static_rows["raise100k"]["cost_m"]
-
-    def taper_cost(m):
-        sched = make_schedule_taper_flat(m)
-        return reform_revenue(reform_df, sched, E_HEADLINE, behavioural=False)["d_rev"] / 1e6
-
-    m_star = brentq(lambda m: taper_cost(m) - target_cost, 0.25, 0.99)
-    top_star = taper_band_top(m_star)
-    matched = reform_revenue(reform_df, make_schedule_taper_flat(m_star), E_HEADLINE, behavioural=False)
-
     # --- (A) DIRECT relocation 85k -> 100k -------------------------------
     rel_band = (t >= T_STAR) & (t < T_NEW)
     rev_direct_m = -(liab[rel_band] * w[rel_band]).sum() / 1e6
@@ -192,13 +175,6 @@ def main():
         row = static_rows[key]
         p(f"  {TABLE_LABELS[key]:<33}:  {row['cost_m']:+.1f} m   "
           f"affected firms {row['firms_k']:+.1f} (000s)")
-    p("")
-    p("--- Revenue-matched taper -------------------------------------------")
-    p(f"  Constant marginal rate m* = {m_star:.3f} costs the same as the raise to GBP100k "
-      f"({matched['d_rev']/1e6:+.1f} m): band top U(m*) = GBP {top_star:,.0f}, "
-      f"affected firms {matched['n_affected']/1000:.1f} (000s)")
-    p("  (linear 0->100% design: band top pinned at GBP 141,667 by continuity;")
-    p("   constant-m design: U(m) = m T/(m - tau), narrower as m rises)")
     p("")
     p("=" * 72)
     p("CORRECTED tab:schedule_costs  (repo-generated GBP85k, 2023-24 unaged)")

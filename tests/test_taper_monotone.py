@@ -110,18 +110,3 @@ def test_flat_marginal_taper_shares_band_top_and_is_monotone():
     liab = TAU_MAX * sched(y) * y
     band = y <= sched.band_top
     assert np.max(np.diff(liab[band]) / np.diff(y[band])) == pytest.approx(0.5, abs=1e-6)
-
-
-def test_input_vat_buncher_falls_with_delta_and_vanishes_above_half():
-    import math
-    from firm_microsim.dynamic.model import marginal_buncher_iso
-    n0, _ = marginal_buncher_iso(0.17, delta=0.0, formulation="input_vat")
-    n2, _ = marginal_buncher_iso(0.17, delta=0.2, formulation="input_vat")
-    n4, _ = marginal_buncher_iso(0.17, delta=0.4, formulation="input_vat")
-    n6, _ = marginal_buncher_iso(0.17, delta=0.6, formulation="input_vat")
-    assert n0 > n2 > n4 > 85_000.0
-    assert math.isnan(n6)
-    # Reclaim formulation keeps the opposite comparative static.
-    r0, _ = marginal_buncher_iso(0.17, delta=0.0)
-    r4, _ = marginal_buncher_iso(0.17, delta=0.4)
-    assert r4 > r0 and abs(r0 - n0) < 1.0

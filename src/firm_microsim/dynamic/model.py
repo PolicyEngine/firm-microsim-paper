@@ -475,7 +475,7 @@ def marginal_buncher(e, vintage="2023-24"):
     return nH_k * 1000.0, dy_k * 1000.0
 
 
-def marginal_buncher_iso(e, T=T_STAR, tau=TAU_MAX, delta=0.0, formulation="reclaim"):
+def marginal_buncher_iso(e, T=T_STAR, tau=TAU_MAX, delta=0.0):
     """Iso-elastic indifference solve for the marginal buncher (£).
 
     Solves ``pi_bunch(T*; n) = pi_register(y1; n)`` for ``n`` under
@@ -490,20 +490,12 @@ def marginal_buncher_iso(e, T=T_STAR, tau=TAU_MAX, delta=0.0, formulation="recla
 
     va = 1.0 - delta
     net_reg = va * (1.0 - tau)
-    # Unregistered net revenue per £: (1-delta) under the reclaim formulation
-    # (inputs deductible); (1 - delta - tau*delta) under the input-VAT
-    # formulation, where the unregistered firm bears VAT on its inputs. In the
-    # latter, registering pays for itself once delta >= 1/2 and no marginal
-    # buncher exists (returns (nan, nan)).
-    net_unreg = va if formulation == "reclaim" else 1.0 - delta * (1.0 + tau)
-    if net_unreg <= net_reg:
-        return float("nan"), float("nan")
 
     def gap(n):
         # Best unregistered choice: the untaxed optimum, capped at the
         # threshold (a firm cannot stay unregistered above T*).
-        y_u = min(T, n * net_unreg ** e)
-        u_bunch = iso_profit(y_u, n, e, net=net_unreg)
+        y_u = min(T, n * va ** e)
+        u_bunch = iso_profit(y_u, n, e, net=va)
         # Registered optimum; registering with y1 < T* is never chosen (it is
         # dominated by staying unregistered at y1), so the branch starts at T*.
         y1 = max(T, n * net_reg ** e)

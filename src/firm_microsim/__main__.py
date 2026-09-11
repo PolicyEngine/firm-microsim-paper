@@ -67,13 +67,6 @@ def build_parser() -> argparse.ArgumentParser:
         f"Default: {DEFAULT_CONFIG.output_file}",
     )
     parser.add_argument(
-        "--unregistered-shape",
-        choices=["exponential", "lognormal"],
-        default=None,
-        help="Within-stratum turnover shape for the DBT unregistered businesses "
-        "(default: config, exponential). Use lognormal for the sensitivity build.",
-    )
-    parser.add_argument(
         "--log-level",
         type=str,
         default="INFO",
@@ -105,7 +98,6 @@ def main() -> None:
         args.vintage is not None
         or args.threshold is not None
         or args.output is not None
-        or args.unregistered_shape is not None
     )
     if single:
         generate(
@@ -114,7 +106,6 @@ def main() -> None:
             seed=args.seed,
             output=args.output,
             fast=args.fast,
-            unregistered_shape=args.unregistered_shape,
         )
     else:
         run_pipeline(seed=args.seed, fast=args.fast)

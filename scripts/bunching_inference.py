@@ -31,20 +31,19 @@ results/seed_sensitivity.txt for generator-seed dispersion.
 def main() -> None:
     lines = [HEADER]
     for vintage in sorted(VINTAGES):
+        est = BunchingEstimator(vintage)
+        res = est.estimate()
         threshold = VINTAGES[vintage]["threshold"]
-        lines += ["", f"--- Vintage {vintage} (threshold GBP {threshold:.0f}k) ---"]
-        for universe, label in (("chart", "OBR-chart universe (frame + stratum below, frame above) [HEADLINE]"),
-                                ("all", "all rows (incl. exempt stratum above threshold)"),
-                                ("scope", "in-scope VAT firms")):
-            r = BunchingEstimator(vintage, universe=universe).estimate()
-            lines.append(
-                f"[{label}] E = {r['E']:,.0f} (gross) | E_net = {r['E_net']:,.0f} | "
-                f"Delta_R = {r['Delta_R']:,.0f} | b_llat = {r['b_llat']:.3f} | b = {r['b']:.4f} | "
-                f"y_R = {r['y_R']:.2f}" + (" [CENSORED]" if r['y_R_censored'] else ""))
-        est = BunchingEstimator(vintage, universe="chart")
         lines += [
             "",
-            "Degree x window sensitivity (point estimates; OBR-chart universe):",
+            f"--- Vintage {vintage} (threshold GBP {threshold:.0f}k) ---",
+            f"E = {res['E']:,.0f} (gross) | E_net = {res['E_net']:,.0f} | "
+            f"Delta_R = {res['Delta_R']:,.0f} | b_llat = {res['b_llat']:.3f} | "
+            f"b = {res['b']:.4f} | y_R = {res['y_R']:.2f}"
+            + (" [CENSORED at search cap: mass conservation does not bind]"
+               if res['y_R_censored'] else ""),
+            "",
+            "Degree x window sensitivity (point estimates):",
             est.sensitivity()["degree_window"].to_string(index=False),
         ]
     lines.append("")
