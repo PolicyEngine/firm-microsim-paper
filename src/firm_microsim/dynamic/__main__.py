@@ -103,16 +103,6 @@ def main(argv=None):
         row = "   ".join(parts)
         print(row)
         lines.append(row)
-    lines.append("Under the INPUT-VAT formulation (unregistered firms bear VAT on inputs),")
-    lines.append("n_H falls with delta and no buncher exists for delta >= 0.5:")
-    for e in elasticities:
-        parts = [f"  e={e:<5}"]
-        for d in (0.0, 0.2, 0.4, 0.6):
-            nH_d, _ = marginal_buncher_iso(e, delta=d, formulation="input_vat")
-            parts.append(f"n_H(delta={d})=" + (f"£{nH_d/1000:6.1f}k" if nH_d == nH_d else "  none "))
-        row = "   ".join(parts)
-        print(row)
-        lines.append(row)
 
     # --- Results table: static + behavioural(e) per reform. -----------------
     lines.append("\nReform costs (change vs £85k-notch baseline):")

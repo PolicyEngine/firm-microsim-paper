@@ -350,18 +350,15 @@ class BunchingEstimator:
     :meth:`estimate`, :meth:`bootstrap`, :meth:`summary`, or :meth:`sensitivity`.
     """
 
-    def __init__(
-        self, vintage: str = "2023-24", *, scope_only: bool = False, universe: str | None = None
-    ) -> None:
+    def __init__(self, vintage: str = "2023-24", *, scope_only: bool = False) -> None:
         """Load the synthetic population for ``vintage``.
 
         The threshold ``t_star`` is taken from
         ``firm_microsim.config.VINTAGES[vintage]["threshold"]`` -- never
         hardcoded. The population is filtered to ``[RANGE_LO, RANGE_HI]``.
-        ``universe`` selects the density: ``"all"`` (every row; the default),
-        ``"chart"`` (the OBR Chart C universe: frame plus unregistered stratum
-        below the threshold, frame alone above it), or ``"scope"`` (in-scope
-        VAT firms). ``scope_only=True`` is shorthand for ``"scope"``.
+        With ``scope_only`` the density is that of in-scope VAT firms
+        (``vat_scope``); by default it is the whole ONS-frame density, the
+        universe on which the near-threshold shape targets are applied.
         """
         self.vintage = vintage
         if vintage not in VINTAGES:
@@ -376,19 +373,11 @@ class BunchingEstimator:
                 f"  python -m firm_microsim --vintage {vintage} "
                 f"--output synthetic_firms_{vintage}.csv"
             )
-        universe = universe or ("scope" if scope_only else "all")
-        header = set(pd.read_csv(path, nrows=0).columns)
-        extra = {"scope": ["vat_scope"], "chart": ["in_frame", "unregistered"], "all": []}[universe]
-        cols = ["annual_turnover_k", "weight"] + [c for c in extra if c in header]
+        cols = ["annual_turnover_k", "weight"] + (["vat_scope"] if scope_only else [])
         firms = pd.read_csv(path, usecols=cols)
-        if universe == "scope":
+        if scope_only:
             firms = firms[firms["vat_scope"].astype(bool)]
-        elif universe == "chart" and "unregistered" in firms.columns:
-            below = firms["annual_turnover_k"] <= self.t_star
-            keep = firms["in_frame"].astype(bool) | (firms["unregistered"].astype(bool) & below)
-            firms = firms[keep]
-        self.universe = universe
-        self.scope_only = universe == "scope"
+        self.scope_only = scope_only
         firms = firms[
             (firms["annual_turnover_k"] >= RANGE_LO)
             & (firms["annual_turnover_k"] <= RANGE_HI)
