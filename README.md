@@ -63,8 +63,8 @@ Because the population is calibrated **to** the HMRC aggregates, agreement
 with them is an internal consistency check, not external validation.
 
 The official target surface is also being mirrored into PolicyEngine Ledger and
-Populace. This repository keeps the paper's archived CSV inputs and generator for
-reproducibility, and includes a Populace/Ledger comparison command so the pinned
+Microcosm. This repository keeps the paper's archived CSV inputs and generator for
+reproducibility, and includes a Microcosm/Ledger comparison command so the pinned
 migration snapshot can be audited without silently changing the published paper
 population.
 
@@ -101,7 +101,7 @@ firm-microsim --vintage 2024-25             # one vintage only (£90k)
 firm-microsim --threshold 88 --seed 7 --output my_run.csv
 firm-microsim-report                        # calibration report only
 firm-microsim-figures                       # descriptive figures only
-firm-microsim-populace-ledger               # Populace/Ledger comparison
+firm-microsim-populace-ledger               # Microcosm/Ledger comparison
 ```
 
 ```python
@@ -214,17 +214,17 @@ full-size. Generator-seed sensitivity of the full build is recorded in
 ±£0.63bn across seeds — the scope flag is a seeded draw; reproduce with
 `scripts/seed_sensitivity.py`).
 
-## Populace/Ledger migration check
+## Microcosm/Ledger migration check
 
 `firm-microsim-populace-ledger` reports the current migration comparison. The
 checked reference run used the 2024-25 Ledger target surface from
 [PolicyEngine/ledger#67](https://github.com/PolicyEngine/ledger/pull/67)
-at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Populace's experimental UK
+at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Microcosm's experimental UK
 firm generator from
-[PolicyEngine/populace#223](https://github.com/PolicyEngine/populace/pull/223)
+[PolicyEngine/microcosm#223](https://github.com/PolicyEngine/microcosm/pull/223)
 at `fa20daf75ff023e5e88731a140f456f58e0b864e`. Both upstream PRs merged on
 June 30, 2026: Ledger at merge commit
-`ac643afa0c1d45fc4abd0268dc5aa7c843440b38`, and Populace at merge commit
+`ac643afa0c1d45fc4abd0268dc5aa7c843440b38`, and Microcosm at merge commit
 `8271d767244161631253ad1d9ad792a82e2b96b4`. The reference population uses
 1,000 calibration iterations:
 
@@ -234,7 +234,7 @@ firm-microsim-populace-ledger \
   --json-output results/populace_ledger_provenance.json
 ```
 
-When `populace-build` is installed from the Populace source tree, the same command
+When `populace-build` is installed from the Microcosm source tree, the same command
 can recompute the table and paper-CSV parity from Ledger consumer facts:
 
 ```bash
@@ -248,18 +248,18 @@ firm-microsim-populace-ledger \
 The current reference comparison shows exact parity between the Ledger-backed
 targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
-replicate the paper's generated synthetic population: Populace's shared optimizer
+replicate the paper's generated synthetic population: Microcosm's shared optimizer
 landed at 93.8% overall accuracy under its own validator versus the paper's
 then-90.5% (2024-25 scores 98.0% on the current two-universe build,
 `results/calibration_accuracy.txt`), but that overall pair is **not
 like-for-like**: HMRC turnover-band accuracy uses different band sets, and sector
 distribution reflects different calibration-target definitions. The directly
 comparable rows are ONS population, employment bands, and VAT liability by
-turnover band. **Note:** the pinned Populace snapshot predates this repo's
+turnover band. **Note:** the pinned Microcosm snapshot predates this repo's
 net-liability correction (issue #15) and inherits the same `v = turnover − input`
 mis-scaling; the target-parity result is unaffected (it concerns input tables,
-not generated rows), but the Populace generator needs the same fix upstream. The
-Populace/Ledger path remains a migration check rather than a silent replacement
+not generated rows), but the Microcosm generator needs the same fix upstream. The
+Microcosm/Ledger path remains a migration check rather than a silent replacement
 for the paper's archived generator/results.
 
 ## Figures

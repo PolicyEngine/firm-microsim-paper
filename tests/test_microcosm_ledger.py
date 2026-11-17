@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from firm_microsim.populace_ledger import (
+from firm_microsim.microcosm_ledger import (
     ParitySummary,
     ParityTable,
-    REFERENCE_POPULACE_LEDGER_2024_25,
+    REFERENCE_MICROCOSM_LEDGER_2024_25,
     REFERENCE_PARITY,
     comparison_rows,
     format_comparison_report,
@@ -29,7 +29,7 @@ def test_comparison_rows_include_truth_for_official_targets() -> None:
     assert rows["Overall"].comparability == "Not like-for-like"
 
 
-def test_reference_report_records_populace_calibration_tradeoff() -> None:
+def test_reference_report_records_microcosm_calibration_tradeoff() -> None:
     report = format_comparison_report()
 
     assert "Paper 2024-25" in report
@@ -117,7 +117,25 @@ def test_reference_provenance_records_pinned_pr_snapshot() -> None:
     ]
 
 
-def test_reference_snapshot_uses_full_populace_run() -> None:
-    assert REFERENCE_POPULACE_LEDGER_2024_25.rows == 2_946_015
-    assert round(REFERENCE_POPULACE_LEDGER_2024_25.weighted_population) == 2_945_777
-    assert round(REFERENCE_POPULACE_LEDGER_2024_25.hmrc_bands, 1) == 99.9
+def test_reference_snapshot_uses_full_microcosm_run() -> None:
+    assert REFERENCE_MICROCOSM_LEDGER_2024_25.rows == 2_946_015
+    assert round(REFERENCE_MICROCOSM_LEDGER_2024_25.weighted_population) == 2_945_777
+    assert round(REFERENCE_MICROCOSM_LEDGER_2024_25.hmrc_bands, 1) == 99.9
+
+
+def test_populace_ledger_alias_still_works() -> None:  # compat: populace alias, remove after 1.1.0
+    import importlib
+    import sys
+    import warnings
+
+    sys.modules.pop("firm_microsim.populace_ledger", None)  # compat: populace alias, remove after 1.1.0
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        alias = importlib.import_module("firm_microsim.populace_ledger")  # compat: populace alias, remove after 1.1.0
+    assert any(issubclass(w.category, DeprecationWarning) for w in caught)
+    assert alias.REFERENCE_POPULACE_LEDGER_2024_25 is REFERENCE_MICROCOSM_LEDGER_2024_25  # compat: populace alias, remove after 1.1.0
+    assert alias.format_comparison_report() == format_comparison_report()
+    assert callable(alias.load_populace_source_data)  # compat: populace alias, remove after 1.1.0
+    assert callable(alias.run_populace_from_ledger_facts)  # compat: populace alias, remove after 1.1.0
+    row = comparison_rows()[0]
+    assert row.populace_value == row.microcosm_value  # compat: populace alias, remove after 1.1.0
