@@ -71,7 +71,8 @@ def test_console_script_help_entry_points() -> None:
         "firm-microsim-placebo",
         "firm-microsim-dominated-region",
         "firm-microsim-reform-menu",
-        "firm-microsim-populace-ledger",
+        "firm-microsim-microcosm-ledger",
+        "firm-microsim-populace-ledger",  # compat: populace alias, remove after 1.1.0
     ]
     bin_dir = Path(sys.executable).parent
     for script in scripts:
