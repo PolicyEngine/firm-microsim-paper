@@ -101,7 +101,7 @@ firm-microsim --vintage 2024-25             # one vintage only (£90k)
 firm-microsim --threshold 88 --seed 7 --output my_run.csv
 firm-microsim-report                        # calibration report only
 firm-microsim-figures                       # descriptive figures only
-firm-microsim-populace-ledger               # Microcosm/Ledger comparison
+firm-microsim-microcosm-ledger              # Microcosm/Ledger comparison
 ```
 
 ```python
@@ -216,7 +216,7 @@ full-size. Generator-seed sensitivity of the full build is recorded in
 
 ## Microcosm/Ledger migration check
 
-`firm-microsim-populace-ledger` reports the current migration comparison. The
+`firm-microsim-microcosm-ledger` reports the current migration comparison. The
 checked reference run used the 2024-25 Ledger target surface from
 [PolicyEngine/ledger#67](https://github.com/PolicyEngine/ledger/pull/67)
 at `cd98b5cb7b1604fbf7750689a429bbc356e5603a` and Microcosm's experimental UK
@@ -229,7 +229,7 @@ June 30, 2026: Ledger at merge commit
 1,000 calibration iterations:
 
 ```bash
-firm-microsim-populace-ledger \
+firm-microsim-microcosm-ledger \
   --output results/populace_ledger_comparison.txt \
   --json-output results/populace_ledger_provenance.json
 ```
@@ -238,7 +238,7 @@ When `populace-build` is installed from the Microcosm source tree, the same comm
 can recompute the table and paper-CSV parity from Ledger consumer facts:
 
 ```bash
-firm-microsim-populace-ledger \
+firm-microsim-microcosm-ledger \
   --facts-jsonl /path/to/uk_firm_consumer_facts.jsonl \
   --iterations 1000 \
   --output results/populace_ledger_comparison.txt \

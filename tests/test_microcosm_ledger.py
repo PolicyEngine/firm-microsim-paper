@@ -3,11 +3,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest  # compat: populace alias, remove after 1.1.0
+
 from firm_microsim.microcosm_ledger import (
     ParitySummary,
     ParityTable,
     REFERENCE_MICROCOSM_LEDGER_2024_25,
     REFERENCE_PARITY,
+    TargetSummary,  # compat: populace alias, remove after 1.1.0
     comparison_rows,
     format_comparison_report,
     provenance_payload,
@@ -139,3 +142,41 @@ def test_populace_ledger_alias_still_works() -> None:  # compat: populace alias,
     assert callable(alias.run_populace_from_ledger_facts)  # compat: populace alias, remove after 1.1.0
     row = comparison_rows()[0]
     assert row.populace_value == row.microcosm_value  # compat: populace alias, remove after 1.1.0
+    assert alias.comparison_rows is comparison_rows  # compat: populace alias, remove after 1.1.0
+    assert alias.TargetSummary is TargetSummary  # compat: populace alias, remove after 1.1.0
+
+
+def test_old_keywords_still_work() -> None:  # compat: populace alias, remove after 1.1.0
+    reference = REFERENCE_MICROCOSM_LEDGER_2024_25  # compat: populace alias, remove after 1.1.0
+    with pytest.warns(DeprecationWarning):  # compat: populace alias, remove after 1.1.0
+        rows = comparison_rows(populace=reference)  # compat: populace alias, remove after 1.1.0
+    assert rows == comparison_rows(microcosm=reference)  # compat: populace alias, remove after 1.1.0
+    with pytest.warns(DeprecationWarning):  # compat: populace alias, remove after 1.1.0
+        report = format_comparison_report(populace=reference)  # compat: populace alias, remove after 1.1.0
+    assert report == format_comparison_report()  # compat: populace alias, remove after 1.1.0
+    with pytest.warns(DeprecationWarning):  # compat: populace alias, remove after 1.1.0
+        payload = provenance_payload(populace=reference)  # compat: populace alias, remove after 1.1.0
+    assert payload == provenance_payload()  # compat: populace alias, remove after 1.1.0
+    with pytest.warns(DeprecationWarning):  # compat: populace alias, remove after 1.1.0
+        row = TargetSummary("Rows", "Descriptive", "N/A", "1", populace_value="2")  # compat: populace alias, remove after 1.1.0
+    assert row == TargetSummary("Rows", "Descriptive", "N/A", "1", "2")  # compat: populace alias, remove after 1.1.0
+
+
+@pytest.mark.parametrize(  # compat: populace alias, remove after 1.1.0
+    "call",  # compat: populace alias, remove after 1.1.0
+    [  # compat: populace alias, remove after 1.1.0
+        lambda ref: comparison_rows(ref, populace=ref),  # compat: populace alias, remove after 1.1.0
+        lambda ref: comparison_rows(microcosm=ref, populace=ref),  # compat: populace alias, remove after 1.1.0
+        lambda ref: format_comparison_report(ref, populace=ref),  # compat: populace alias, remove after 1.1.0
+        lambda ref: format_comparison_report(microcosm=ref, populace=ref),  # compat: populace alias, remove after 1.1.0
+        lambda ref: provenance_payload(ref, populace=ref),  # compat: populace alias, remove after 1.1.0
+        lambda ref: provenance_payload(microcosm=ref, populace=ref),  # compat: populace alias, remove after 1.1.0
+        lambda ref: TargetSummary("a", "b", "c", "d", "e", populace_value="f"),  # compat: populace alias, remove after 1.1.0
+        lambda ref: TargetSummary(  # compat: populace alias, remove after 1.1.0
+            "a", "b", "c", "d", microcosm_value="e", populace_value="f"  # compat: populace alias, remove after 1.1.0
+        ),  # compat: populace alias, remove after 1.1.0
+    ],  # compat: populace alias, remove after 1.1.0
+)  # compat: populace alias, remove after 1.1.0
+def test_old_and_new_keyword_together_raise(call) -> None:  # compat: populace alias, remove after 1.1.0
+    with pytest.raises(TypeError, match="both"):  # compat: populace alias, remove after 1.1.0
+        call(REFERENCE_MICROCOSM_LEDGER_2024_25)  # compat: populace alias, remove after 1.1.0

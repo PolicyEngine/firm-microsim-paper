@@ -14,12 +14,39 @@ auditable from the paper repository:
 from __future__ import annotations
 
 import argparse
+import functools  # compat: populace alias, remove after 1.1.0
 import hashlib
 import json
+import warnings  # compat: populace alias, remove after 1.1.0
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from .config import PROCESSED_DATA_DIR
+
+
+def _renamed_keyword(old: str, new: str, position: int):  # compat: populace alias, remove after 1.1.0
+    """Accept ``old=`` for ``new=`` (at ``position``) one more release."""  # compat: populace alias, remove after 1.1.0
+
+    def decorate(func):  # compat: populace alias, remove after 1.1.0
+        @functools.wraps(func)  # compat: populace alias, remove after 1.1.0
+        def wrapper(*args, **kwargs):  # compat: populace alias, remove after 1.1.0
+            if old in kwargs:  # compat: populace alias, remove after 1.1.0
+                if new in kwargs or len(args) > position:  # compat: populace alias, remove after 1.1.0
+                    raise TypeError(  # compat: populace alias, remove after 1.1.0
+                        f"{func.__qualname__}() got values for both {new!r} and {old!r}"  # compat: populace alias, remove after 1.1.0
+                    )  # compat: populace alias, remove after 1.1.0
+                warnings.warn(  # compat: populace alias, remove after 1.1.0
+                    f"{func.__qualname__}({old}=...) is now {new}=...; "  # compat: populace alias, remove after 1.1.0
+                    "the old name goes in the next release",  # compat: populace alias, remove after 1.1.0
+                    DeprecationWarning,  # compat: populace alias, remove after 1.1.0
+                    stacklevel=2,  # compat: populace alias, remove after 1.1.0
+                )  # compat: populace alias, remove after 1.1.0
+                kwargs[new] = kwargs.pop(old)  # compat: populace alias, remove after 1.1.0
+            return func(*args, **kwargs)  # compat: populace alias, remove after 1.1.0
+
+        return wrapper  # compat: populace alias, remove after 1.1.0
+
+    return decorate  # compat: populace alias, remove after 1.1.0
 
 
 @dataclass(frozen=True)
@@ -50,6 +77,11 @@ class TargetSummary:
     @property
     def populace_value(self) -> str:  # compat: populace alias, remove after 1.1.0
         return self.microcosm_value  # compat: populace alias, remove after 1.1.0
+
+
+TargetSummary.__init__ = _renamed_keyword(  # compat: populace alias, remove after 1.1.0
+    "populace_value", "microcosm_value", 5  # compat: populace alias, remove after 1.1.0
+)(TargetSummary.__init__)  # compat: populace alias, remove after 1.1.0
 
 
 @dataclass(frozen=True)
@@ -167,6 +199,7 @@ REFERENCE_MIGRATION = {
 }
 
 
+@_renamed_keyword("populace", "microcosm", 0)  # compat: populace alias, remove after 1.1.0
 def comparison_rows(
     microcosm: CalibrationSnapshot = REFERENCE_MICROCOSM_LEDGER_2024_25,
 ) -> list[TargetSummary]:
@@ -239,6 +272,7 @@ def comparison_rows(
     ]
 
 
+@_renamed_keyword("populace", "microcosm", 0)  # compat: populace alias, remove after 1.1.0
 def format_comparison_report(
     microcosm: CalibrationSnapshot = REFERENCE_MICROCOSM_LEDGER_2024_25,
     parity: ParitySummary = REFERENCE_PARITY,
@@ -329,6 +363,7 @@ def format_comparison_report(
     return "\n".join(lines)
 
 
+@_renamed_keyword("populace", "microcosm", 0)  # compat: populace alias, remove after 1.1.0
 def provenance_payload(
     microcosm: CalibrationSnapshot = REFERENCE_MICROCOSM_LEDGER_2024_25,
     parity: ParitySummary = REFERENCE_PARITY,
