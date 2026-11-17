@@ -74,7 +74,7 @@ class TargetSummary:
     paper_value: str
     microcosm_value: str
 
-    @property
+    @property  # compat: populace alias, remove after 1.1.0
     def populace_value(self) -> str:  # compat: populace alias, remove after 1.1.0
         return self.microcosm_value  # compat: populace alias, remove after 1.1.0
 

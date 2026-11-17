@@ -127,20 +127,20 @@ def test_reference_snapshot_uses_full_microcosm_run() -> None:
 
 
 def test_populace_ledger_alias_still_works() -> None:  # compat: populace alias, remove after 1.1.0
-    import importlib
-    import sys
-    import warnings
+    import importlib  # compat: populace alias, remove after 1.1.0
+    import sys  # compat: populace alias, remove after 1.1.0
+    import warnings  # compat: populace alias, remove after 1.1.0
 
     sys.modules.pop("firm_microsim.populace_ledger", None)  # compat: populace alias, remove after 1.1.0
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
+    with warnings.catch_warnings(record=True) as caught:  # compat: populace alias, remove after 1.1.0
+        warnings.simplefilter("always")  # compat: populace alias, remove after 1.1.0
         alias = importlib.import_module("firm_microsim.populace_ledger")  # compat: populace alias, remove after 1.1.0
-    assert any(issubclass(w.category, DeprecationWarning) for w in caught)
+    assert any(issubclass(w.category, DeprecationWarning) for w in caught)  # compat: populace alias, remove after 1.1.0
     assert alias.REFERENCE_POPULACE_LEDGER_2024_25 is REFERENCE_MICROCOSM_LEDGER_2024_25  # compat: populace alias, remove after 1.1.0
-    assert alias.format_comparison_report() == format_comparison_report()
+    assert alias.format_comparison_report() == format_comparison_report()  # compat: populace alias, remove after 1.1.0
     assert callable(alias.load_populace_source_data)  # compat: populace alias, remove after 1.1.0
     assert callable(alias.run_populace_from_ledger_facts)  # compat: populace alias, remove after 1.1.0
-    row = comparison_rows()[0]
+    row = comparison_rows()[0]  # compat: populace alias, remove after 1.1.0
     assert row.populace_value == row.microcosm_value  # compat: populace alias, remove after 1.1.0
     assert alias.comparison_rows is comparison_rows  # compat: populace alias, remove after 1.1.0
     assert alias.TargetSummary is TargetSummary  # compat: populace alias, remove after 1.1.0
