@@ -98,6 +98,7 @@ def main() -> None:
     c2, fobs2 = bin_density(
         est.firms["annual_turnover_k"].to_numpy(),
         est.firms["weight"].to_numpy(),
+        t_star,
     )
     fcf2 = fit_counterfactual(c2, fobs2, t_star, DEFAULT_DEGREE, DEFAULT_WINDOW, DEFAULT_WINDOW)
     assert np.allclose(f_cf, fcf2), "counterfactual density mismatch"
