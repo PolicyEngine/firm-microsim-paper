@@ -50,8 +50,8 @@ def main() -> None:
                   f"net {res['E_net']:,.0f})   Delta_R = {res['Delta_R']:,.0f}   "
                   f"y_R = {res['y_R']:.2f}"
                   + ("  [censored]" if res['y_R_censored'] else ""))
-            print(f"  b (LLAT normalisation) = {res['b_llat']:.3f}  "
-                  f"(cf. LLAT 2021: 1.361)")
+            print(f"  b_llat (LLAT 2021 eq. 20, signed) = {res['b_llat']:.3f}  "
+                  f"(not a replication of LLAT's administrative estimate)")
 
 
 if __name__ == "__main__":

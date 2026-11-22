@@ -27,7 +27,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from firm_microsim.bunching.model import RANGE_HI, RANGE_LO, _run_estimator
+from firm_microsim.bunching.model import _run_estimator, in_range_mask
 from firm_microsim.config import DEFAULT_CONFIG, RESULTS_DIR, SYNTHETIC_DATA_DIR
 from firm_microsim.dynamic.model import E_HEADLINE, build_reforms, reform_revenue
 from firm_microsim.generate import generate
@@ -49,8 +49,8 @@ def headline_stats(df: pd.DataFrame) -> dict:
     w = df["weight"].to_numpy()
 
     # Same population filter as BunchingEstimator.__init__ — the headline
-    # E/b_llat are defined on the [RANGE_LO, RANGE_HI] estimation range.
-    in_range = (tk >= RANGE_LO) & (tk <= RANGE_HI)
+    # E/b_llat are defined on the (RANGE_LO, RANGE_HI] threshold-aligned range.
+    in_range = in_range_mask(tk, T_STAR / 1000.0)
     est = _run_estimator(tk[in_range], w[in_range], T_STAR / 1000.0)
 
     band = (t >= T_STAR) & (t < T_NEW)
