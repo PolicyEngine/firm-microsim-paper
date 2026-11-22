@@ -66,8 +66,9 @@ enterprises are registered, largely because small businesses enter the
 register \emph{through} VAT registration. HMRC also reports about 216{,}500
 traders with negative or zero turnover who are not identifiable in the ONS
 turnover bands; I append them as an out-of-frame stratum before calibration.
-Neither universe is the full business population of roughly 5.6 million in the
-DBT business population estimates; the difference is concentrated below the
+Neither universe is the full business population of roughly 5.5 million
+private-sector businesses at the start of 2024 in the DBT business population
+estimates; the difference is concentrated below the
 threshold and matters for threshold \emph{cuts}, which I flag where relevant.
 Each firm is given input expenditure $x_i = \rho_i\,y_i$,
 with the input--output ratio $\rho_i$ drawn from a rescaled Beta distribution
@@ -79,7 +80,7 @@ applied to its value added,
   v_i \;=\; \tau\,(y_i - x_i), \qquad \tau = 0.20,
 \]
 so every firm's net rate $v_i/y_i = \tau(1-\rho_i)$ lies in $[1\%, 18\%]$,
-strictly positive and below the statutory cap of 20\%. The model therefore
+strictly positive and below the 20\% standard rate. The model therefore
 abstracts from net-repayment traders (firms with zero-rated outputs whose input
 reclaim exceeds output VAT---HMRC's negative-liability column); representing
 them requires rated-structure detail (zero, reduced, and exempt output shares)
@@ -177,8 +178,8 @@ below it, a seeded weighted selection reaching the HMRC \pounds1--threshold
 count; appended negative-or-zero traders are in scope and registered.
 Registration above the threshold is thus certain for in-scope firms. This is an
 approximation to the statutory test, which is a
-rolling 12-month test on \emph{taxable} turnover with a roughly two-month
-registration lag, a forward-looking 30-day test, and an exception for temporary
+rolling 12-month test on \emph{taxable} turnover with registration effective
+from the first day of the second month after the threshold is exceeded, a forward-looking 30-day test, and an exception for temporary
 breaches (Section~\ref{sec:background}); exempt-sector businesses are
 represented only through the out-of-scope share, not identified individually.
 For a single-year cross-section calibrated to registered-population totals these
