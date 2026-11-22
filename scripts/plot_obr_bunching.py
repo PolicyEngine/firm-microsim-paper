@@ -1,7 +1,7 @@
 """Reproduce OBR Chart 3.C: bunching in the VAT turnover distribution at the
 registration threshold (EFO March 2023, "The impact of the frozen VAT
 registration threshold"). Source data: OBR March 2023 EFO charts-and-tables
-workbook, sheet C3.C (OBR processing of HMRC VAT trader microdata; Open
+workbook, sheet C3.C (OBR tabulation, universe not stated; Open
 Government Licence v3.0). Counts are number of businesses (thousands) in
 GBP 1,000 turnover bins.
 """

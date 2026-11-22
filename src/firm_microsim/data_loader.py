@@ -8,9 +8,10 @@ Sources:
       employment-size band, per SIC sector.
     * HMRC VAT Annual Statistics — VAT-registered firm counts and net VAT
       liability, both by turnover band and by trade sector.
-    * OBR Economic and Fiscal Outlook (March 2023), Chart C — HMRC counts of
-      businesses by £1,000 turnover band around the £85k threshold, used as
-      near-threshold shape targets for the 2023-24 vintage.
+    * OBR Economic and Fiscal Outlook (March 2023), Chart C — OBR tabulation
+      (universe not stated) of businesses by £1,000 turnover band around the
+      £85k threshold, used as near-threshold shape targets for the 2023-24
+      vintage.
 """
 
 from __future__ import annotations
@@ -92,12 +93,13 @@ def _near_threshold_targets(config: Config) -> Optional[pd.DataFrame]:
     """OBR Chart C £1,000-band counts, interpolated to the 2023-24 data year.
 
     Source: OBR Economic and Fiscal Outlook, March 2023, Chart C ("Bunching in
-    the VAT turnover distribution at the registration threshold") — HMRC counts
-    of businesses by £1,000 turnover band over £65,000-£90,000, with outturn
-    years to 2019-20 and a 2025-26 projection under the then-assumed frozen
-    £85,000 threshold. The 2023-24 profile is a linear interpolation
-    four-sixths of the way from the 2019-20 outturn to the 2025-26 projection,
-    matching the OBR's own expected deepening of bunching under the freeze.
+    the VAT turnover distribution at the registration threshold") — OBR
+    tabulation (universe not stated) of businesses by £1,000 turnover band
+    over £65,000-£90,000, with outturn years to 2019-20 and a 2025-26
+    projection under the then-assumed frozen £85,000 threshold. The 2023-24
+    profile is a linear interpolation four-sixths of the way from the 2019-20
+    outturn to the 2025-26 projection, matching the OBR's own expected
+    deepening of bunching under the freeze.
     Values are thousands of businesses, converted to firm counts.
 
     Applied only at the £85,000 threshold (the chart's threshold era): the

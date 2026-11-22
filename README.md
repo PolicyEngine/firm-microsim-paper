@@ -44,7 +44,9 @@ threshold:
    relative-error loss) on **two declared universes** (issue #37):
    - the **ONS VAT/PAYE enterprise frame** (~2.72M enterprises): the population
      total, the employment-band totals and the OBR near-threshold shape;
-   - the **HMRC VAT-registered subset** (~2.18M traders): trader counts by
+   - the **HMRC VAT-registered subset** (~2.18M traders in the provisional
+     2023-24 release; revised to 2.32M, including 141,300 of unknown turnover,
+     in the December 2025 release): trader counts by
      turnover band and by trade sector, and net VAT liability by band. Each
      frame firm enters these rows with a *registration propensity* — the HMRC
      count in its turnover band divided by the frame's mass in that band
@@ -58,7 +60,8 @@ threshold:
    selection per band so registered totals match HMRC to within one weight.
 
 The result is ~2.94M firm rows (2.72M frame draws plus 0.22M appended traders)
-weighted to ~2.72M frame enterprises, of which ~2.18M are VAT-registered.
+weighted to ~2.72M frame enterprises, of which ~2.18M are VAT-registered
+(2023-24, provisional HMRC release; see `data/README.md`).
 Because the population is calibrated **to** the HMRC aggregates, agreement
 with them is an internal consistency check, not external validation.
 
