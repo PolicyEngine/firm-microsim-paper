@@ -74,9 +74,10 @@ def build_smooth_baseline(df: pd.DataFrame) -> np.ndarray:
     Identical construction to ``placebo_bunching.build_reweight_placebo``: fit a
     log-quadratic density trend on the wings (|y-85| > half), replace the
     in-window density with that smooth fit, rescale each firm's weight by
-    (smooth / observed) in its bin, and renormalise total mass. Yields b≈0,
-    E≈0 — the clean null baseline onto which the known signal is grafted, so
-    recovered mass is attributable entirely to the injection.
+    (smooth / observed) in its bin, and renormalise total mass. Yields E = 0
+    (no gross excess at £85k), but the reweighted window meets the untouched
+    wings with density steps at T* +/- 20k (see ``seam_steps``), so the null
+    is not free of discontinuities and its net excess is not zero.
     """
     half = 20.0
     turnover = df["annual_turnover_k"].to_numpy()
@@ -155,6 +156,21 @@ def estimate(turnover, weight, label, verbose=True) -> dict:
     return r
 
 
+def seam_steps(t: np.ndarray, w: np.ndarray, half: float = 20.0) -> list[tuple]:
+    """Density either side of the two seams where the Placebo-A window
+    (|centre - T*| <= half) meets the untouched wings: (seam, outside, inside)."""
+    centres, density = bin_density(t, w, T_STAR)
+    out = []
+    for seam, outside_c, inside_c in (
+        (T_STAR - half, T_STAR - half - 0.5, T_STAR - half + 0.5),
+        (T_STAR + half, T_STAR + half + 0.5, T_STAR + half - 0.5),
+    ):
+        o = float(density[np.isclose(centres, outside_c)][0])
+        i = float(density[np.isclose(centres, inside_c)][0])
+        out.append((seam, o, i))
+    return out
+
+
 def reading_lines(res: pd.DataFrame, r_base: dict) -> list[str]:
     """Plain-language reading generated from the results (nothing asserted)."""
     recov = res["recovery"].to_numpy()
@@ -165,15 +181,27 @@ def reading_lines(res: pd.DataFrame, r_base: dict) -> list[str]:
         f"Recovery of the injected excess ranges from {np.nanmin(recov):.1%} to "
         f"{np.nanmax(recov):.1%} across the {n} injections."
     ]
-    if np.all(recov < 1.0):
+    net = res["net_recovery"].to_numpy()
+    short = (res["E_true"] - res["E_hat"]).to_numpy()
+    lo, hi = f"{np.nanmin(net):.0%}", f"{np.nanmax(net):.0%}"
+    out.append(
+        "Measured as the change in net excess over the null baseline, the "
+        f"estimator returns {lo if lo == hi else lo + ' to ' + hi} of each injection."
+    )
+    if np.all(recov < 1.0) and np.all(net > 1.0):
         out.append(
-            "Every recovery is below 100%: the estimator attenuates a genuine "
-            "response rather than inflating it."
+            f"The gross shortfall is roughly constant ({short.min():,.0f} to "
+            f"{short.max():,.0f} firms) and reflects the null baseline's negative "
+            "net offset, so the exercise does not sign the estimator's bias."
         )
-    elif np.all(recov > 1.0):
-        out.append("Every recovery exceeds 100%: the estimator overstates the response.")
+    elif np.all(recov < 1.0) and np.all(net < 1.0):
+        out.append("Both gross and net recovery are below 100%: the estimator "
+                   "attenuates the injected response.")
+    elif np.all(recov > 1.0) and np.all(net > 1.0):
+        out.append("Both gross and net recovery exceed 100%: the estimator "
+                   "overstates the injected response.")
     else:
-        out.append("Recovery is above 100% in some injections and below in others.")
+        out.append("Gross and net recovery disagree in direction across injections.")
     if n_cens == n:
         out.append(
             f"y_R_hat is censored at the search cap ({cap:.0f}) in every injection, "
@@ -206,7 +234,7 @@ def main() -> None:
     df = load_firms(VINTAGE)
     t = df["annual_turnover_k"].to_numpy()
 
-    # --- Clean step-free baseline (the null world) -----------------------
+    # --- Null baseline with no step at £85k ------------------------------
     w_base = build_smooth_baseline(df)
     r_base = estimate(t, w_base, "BASELINE (smoothed, null)")
 
@@ -220,6 +248,8 @@ def main() -> None:
                 "E_true": e_act,
                 "E_hat": r["E"],
                 "recovery": r["E"] / e_act if e_act > 0 else np.nan,
+                "net_recovery": (r["E_net"] - r_base["E_net"]) / e_act
+                if e_act > 0 else np.nan,
                 "b_hat": r["b"],
                 "E_net_hat": r["E_net"],
                 "b_llat": r["b_llat"],
@@ -254,7 +284,8 @@ def main() -> None:
     lines.append("------")
     lines.append(
         "1. Baseline: the £85k synthetic firms under the Placebo-A reweighting\n"
-        "   (smooth log-quadratic density across £85k), a step-free null world:\n"
+        "   (smooth log-quadratic density across £85k), a null world with no\n"
+        "   step at £85k:\n"
         f"   b={r_base['b']:+.4f}, E={r_base['E']:,.0f}, y_R={r_base['y_R']:.2f}.\n"
         "2. Injection (Kleven–Waseem-consistent): firms in the donor region\n"
         f"   (85, {Y_R_TRUE:.0f}] relocate to ({T_STAR - W_SPIKE:.0f}, 85] with probability\n"
@@ -271,7 +302,7 @@ def main() -> None:
     hdr = (
         f"{'E_true':>10s} {'E_hat':>10s} {'recovery':>9s} "
         f"{'y_R_hat':>8s} {'censored':>9s} {'b_hat':>8s} {'E_net_hat':>10s} "
-        f"{'b_llat':>8s}"
+        f"{'net_rec':>8s} {'b_llat':>8s}"
     )
     lines.append(hdr)
     lines.append("-" * len(hdr))
@@ -281,12 +312,20 @@ def main() -> None:
             f"{row['recovery']:>8.1%} {row['y_R_hat']:>8.2f} "
             f"{('yes' if row['censored'] else 'no'):>9s} "
             f"{row['b_hat']:>+8.4f} {row['E_net_hat']:>+10,.0f} "
-            f"{row['b_llat']:>+8.3f}"
+            f"{row['net_recovery']:>7.1%} {row['b_llat']:>+8.3f}"
         )
     lines.append("")
     lines.append(
         f"Baseline (null, no injection): b={r_base['b']:+.4f}  "
         f"E={r_base['E']:,.0f}  y_R={r_base['y_R']:.2f}"
+    )
+    for seam, o, i in seam_steps(t, w_base):
+        lines.append(
+            f"Placebo-A seam at £{seam:.0f}k: wing bin {o:,.0f} per £1k, "
+            f"window bin {i:,.0f} per £1k ({i / o - 1:+.1%} into the window)."
+        )
+    lines.append(
+        "net_rec = (E_net_hat - baseline E_net) / E_true."
     )
     lines.append(
         f"True marginal buncher: y_R = {Y_R_TRUE:.0f}. "

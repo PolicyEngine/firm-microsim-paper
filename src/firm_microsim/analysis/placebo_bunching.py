@@ -87,7 +87,7 @@ def build_reweight_placebo(df: pd.DataFrame) -> np.ndarray:
     """Placebo A: reweight firms so the per-£1k density is smooth across £85k.
 
     Fit a log-linear density trend on the wings (outside a +/-`half` window
-    around the threshold), evaluate the smooth (step-free) target density inside
+    around the threshold), evaluate the smooth target density (no step at the threshold) inside
     the window, and rescale each firm's weight by (smooth target density /
     observed density) in its £1k bin (the estimator's threshold-aligned
     ``(e, e+1]`` bins, so a firm at exactly £85k is in the bin below). Mass over the whole estimation range is

@@ -4,7 +4,8 @@ RECOVERY / POWER TEST — £85k UK VAT bunching estimator (vintage 2023-24)
 Design
 ------
 1. Baseline: the £85k synthetic firms under the Placebo-A reweighting
-   (smooth log-quadratic density across £85k), a step-free null world:
+   (smooth log-quadratic density across £85k), a null world with no
+   step at £85k:
    b=-0.0783, E=0, y_R=85.00.
 2. Injection (Kleven–Waseem-consistent): firms in the donor region
    (85, 112] relocate to (80, 85] with probability
@@ -17,21 +18,27 @@ Design
 
 Results
 -------
-    E_true      E_hat  recovery  y_R_hat  censored    b_hat  E_net_hat   b_llat
--------------------------------------------------------------------------------
-     2,000        687    34.3%   100.00       yes  -0.0634     -9,623   -1.051
-     5,000      3,404    68.1%   100.00       yes  -0.0410     -6,196   -0.679
-     8,000      6,510    81.4%   100.00       yes  -0.0183     -2,765   -0.304
+    E_true      E_hat  recovery  y_R_hat  censored    b_hat  E_net_hat  net_rec   b_llat
+----------------------------------------------------------------------------------------
+     2,000        687    34.3%   100.00       yes  -0.0634     -9,623  114.1%   -1.051
+     5,000      3,404    68.1%   100.00       yes  -0.0410     -6,196  114.2%   -0.679
+     8,000      6,510    81.4%   100.00       yes  -0.0183     -2,765  114.2%   -0.304
 
 Baseline (null, no injection): b=-0.0783  E=0  y_R=85.00
+Placebo-A seam at £65k: wing bin 11,508 per £1k, window bin 9,645 per £1k (-16.2% into the window).
+Placebo-A seam at £105k: wing bin 6,527 per £1k, window bin 7,847 per £1k (+20.2% into the window).
+net_rec = (E_net_hat - baseline E_net) / E_true.
 True marginal buncher: y_R = 112. Mean recovery: 61.3% (monotone in E_true: True).
 
 Reading
 -------
 Recovery of the injected excess ranges from 34.3% to 81.4% across the 3
-injections. Every recovery is below 100%: the estimator attenuates a
-genuine response rather than inflating it. y_R_hat is censored at the
-search cap (100) in every injection, below the true marginal buncher
-(112): mass conservation does not bind inside the search window. Null
-baseline (no injection): E=0, E_net=-11,904, b_llat=-1.297.
+injections. Measured as the change in net excess over the null baseline,
+the estimator returns 114% of each injection. The gross shortfall is
+roughly constant (1,313 to 1,596 firms) and reflects the null baseline's
+negative net offset, so the exercise does not sign the estimator's bias.
+y_R_hat is censored at the search cap (100) in every injection, below the
+true marginal buncher (112): mass conservation does not bind inside the
+search window. Null baseline (no injection): E=0, E_net=-11,904,
+b_llat=-1.297.
 

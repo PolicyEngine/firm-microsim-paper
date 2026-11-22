@@ -145,7 +145,7 @@ on a recent laptop. It does not regenerate three things:
   `results/populace_ledger_provenance.json` (see
   [Microcosm/Ledger migration check](#microcosmledger-migration-check));
 - the heavy artifacts `results/seed_sensitivity.txt` and
-  `results/placebo_bunching.txt`, which `make reproduce-heavy` adds (two extra
+  `results/placebo_bunching.txt`, which `make reproduce-heavy` adds (three
   full builds for the seed sensitivity, one for placebo B).
 
 The PDF is rendered by the Paper workflow in CI (see `paper/README.md`).

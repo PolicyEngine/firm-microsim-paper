@@ -632,6 +632,19 @@
     "note": ""
   },
   {
+    "key": "recovery_net_pct",
+    "artifact": "recovery_bunching.txt",
+    "pattern": "net recovery column",
+    "value": [
+      114.1,
+      114.2,
+      114.2
+    ],
+    "tex": "returns about 114\\% of each injection",
+    "tex_file": "paper/Sections/bunching.tex",
+    "note": ""
+  },
+  {
     "key": "recovery_pcts",
     "artifact": "recovery_bunching.txt",
     "pattern": "recovery table",

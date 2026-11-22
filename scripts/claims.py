@@ -202,6 +202,11 @@ def build_claims() -> list[dict]:
     # --- recovery -------------------------------------------------------------
     rec = _read("recovery_bunching.txt")
     pcts = [float(x) for x in re.findall(r"^\s+[\d,]+\s+[\d,]+\s+([\d.]+)%", rec, re.M)]
+    net = [float(x) for x in re.findall(r"^\s+[\d,]+\s+[\d,]+\s+[\d.]+%.*?([\d.]+)%\s+[+-][\d.]+$", rec, re.M)]
+    if max(net) - min(net) >= 1.0:
+        raise ValueError("net recovery varies across injections; update the prose claim")
+    add("recovery_net_pct", "recovery_bunching.txt", "net recovery column", net,
+        f"returns about {sum(net) / len(net):.0f}\\% of each injection", "Sections/bunching.tex")
     add("recovery_pcts", "recovery_bunching.txt", "recovery table", pcts,
         ", ".join(f"{p:.0f}\\%" for p in pcts[:-1]) + f" and {pcts[-1]:.0f}\\%",
         "Sections/bunching.tex")

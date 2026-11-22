@@ -25,7 +25,7 @@ paper:
 #     and results/populace_ledger_provenance.json
 #     (firm-microsim-microcosm-ledger; see README.md);
 #   - the heavy artifacts seed_sensitivity.txt and placebo_bunching.txt, which
-#     `reproduce-heavy` adds (seed sensitivity = two extra full builds;
+#     `reproduce-heavy` adds (seed sensitivity = three full builds;
 #     placebo B = one extra build).
 # The PDF is rendered by the Paper workflow in CI (quarto is not required
 # locally); see paper/README.md.

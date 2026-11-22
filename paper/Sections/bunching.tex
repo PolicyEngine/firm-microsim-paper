@@ -94,15 +94,19 @@ Table~\ref{tab:static_revenue} are flagged as conditional on the within-band
 allocation. Two constructed-data exercises in the replication repository
 characterise the estimator itself. On a placebo population whose density is
 reweighted to a smooth profile across \pounds85{,}000, the estimator returns
-$E=0$, so it produces no false positive in gross excess; the net excess there
-is negative ($b_{\mathrm{LLAT}}\approx-1.3$), because the polynomial
-overshoots the smooth density below the threshold, and that offset is larger
-in size than the headline's net excess. When a Kleven--Waseem-consistent
-relocation of known size is injected into that placebo, the estimator
-recovers 34\%, 68\% and 81\% of injected excess masses of $2{,}000$,
-$5{,}000$ and $8{,}000$ firms and censors $y_R$ at the search cap, below the
-true marginal buncher at \pounds112{,}000: it attenuates a genuine response
-rather than inflating it
+$E=0$ on this placebo; the net excess there is negative
+($b_{\mathrm{LLAT}}\approx-1.3$), because the reweighted window joins the
+untouched wings with density steps of about 16\% at \pounds65{,}000 and
+\pounds105{,}000, which the polynomial fit carries into the window, and that
+offset is larger in size than the headline's net excess. When a
+Kleven--Waseem-consistent relocation of known size is injected into that
+placebo, the estimator recovers 34\%, 68\% and 81\% of injected excess masses
+of $2{,}000$, $5{,}000$ and $8{,}000$ firms in gross $E$, and censors $y_R$ at
+the search cap, below the true marginal buncher at \pounds112{,}000. The
+shortfall is roughly constant (about 1{,}300 to 1{,}600 firms) and reflects
+the placebo's negative offset; measured as the change in net excess the
+estimator returns about 114\% of each injection, so in this design the
+exercise does not sign the estimator's bias
 (\texttt{results/placebo\_bunching.txt}, \texttt{results/recovery\_bunching.txt}).
 
 \begin{figure}[htbp]
