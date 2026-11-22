@@ -549,8 +549,8 @@
     "key": "E_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "5,496",
-    "tex": "5{,}496",
+    "value": "9,652",
+    "tex": "9{,}652",
     "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
@@ -558,17 +558,30 @@
     "key": "bllat_2324",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "5.350",
-    "tex": "5.350",
+    "value": "0.363",
+    "tex": "0.363",
     "tex_file": "paper/Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "boot_row_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline row",
+    "value": [
+      "9,652",
+      "3,431",
+      "0.363"
+    ],
+    "tex": "$9{,}652$ & $+3{,}431$ & $0$ & $0.363$",
+    "tex_file": "paper/Appendix/a_inference.tex",
     "note": ""
   },
   {
     "key": "E_2425",
     "artifact": "bunching_inference.txt",
     "pattern": "headline E",
-    "value": "10,269",
-    "tex": "10{,}269",
+    "value": "13,802",
+    "tex": "13{,}802",
     "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
@@ -576,8 +589,58 @@
     "key": "bllat_2425",
     "artifact": "bunching_inference.txt",
     "pattern": "headline b_llat",
-    "value": "4.978",
-    "tex": "4.978",
+    "value": "1.636",
+    "tex": "1.636",
+    "tex_file": "paper/Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "boot_row_2425",
+    "artifact": "bunching_inference.txt",
+    "pattern": "headline row",
+    "value": [
+      "13,802",
+      "13,802",
+      "1.636"
+    ],
+    "tex": "$13{,}802$ & $+13{,}802$ & $5{,}394$ & $1.636$",
+    "tex_file": "paper/Appendix/a_inference.tex",
+    "note": ""
+  },
+  {
+    "key": "grid_E_range_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "grid E range",
+    "value": [
+      3460.896415,
+      13717.722558
+    ],
+    "tex": "$E$ ranges from about 3{,}500 to about 13{,}700 firms",
+    "tex_file": "paper/Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "grid_neg_net_2324",
+    "artifact": "bunching_inference.txt",
+    "pattern": "grid negative net cells",
+    "value": [
+      8,
+      16
+    ],
+    "tex": "negative in 8 of the 16 cells",
+    "tex_file": "paper/Sections/bunching.tex",
+    "note": ""
+  },
+  {
+    "key": "recovery_pcts",
+    "artifact": "recovery_bunching.txt",
+    "pattern": "recovery table",
+    "value": [
+      34.3,
+      68.1,
+      81.4
+    ],
+    "tex": "34\\%, 68\\% and 81\\%",
     "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
@@ -693,8 +756,8 @@
     "key": "seed_E",
     "artifact": "seed_sensitivity.txt",
     "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
-    "value": "165",
-    "tex": "\\pm165",
+    "value": "401",
+    "tex": "\\pm401",
     "tex_file": "paper/Appendix/a_inference.tex",
     "note": ""
   },

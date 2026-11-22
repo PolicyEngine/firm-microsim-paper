@@ -13,24 +13,27 @@ so any density discontinuity is inherited from this target.
 PLACEBO A (reweight): rescale the existing synthetic firms' weights so
 the per-£1k turnover density follows a single smooth log-quadratic trend
 across £85k (fit on the wings, |y-85|>20k, then applied inside the
-window). Total mass over [20k,140k] preserved. No regeneration.
+window). Total mass over (20k,140k] preserved. No regeneration.
 
 PLACEBO B (regenerate): replace the two HMRC band counts straddling £85k
 with a split implied by a SINGLE common per-£1k density (combined mass
-spread uniformly over £1-£150k), so the calibration target has NO step,
-then re-run the full generator + multi-objective calibration and the
-estimator on the resulting weighted population.
+spread uniformly over £1-£150k), so the HMRC band target has NO step,
+AND drop the OBR near-threshold shape rows; then re-run the full
+generator + multi-objective calibration and the estimator on the
+resulting weighted population. Both changes are made together, so
+Placebo B does not separate the HMRC band step from the OBR shape
+rows as the source of the excess mass.
 
 
 Results
 -------
-population                         b            E   b_llat     y_R
-------------------------------------------------------------------
-ACTUAL (control)             -0.0340        5,496    5.350  100.00
-PLACEBO A (reweight)         -0.1050            0    0.000   84.00
-PLACEBO B (regenerate)       -0.0511            0    0.455   85.00
+population                         b            E        E_net   b_llat     y_R
+-------------------------------------------------------------------------------
+ACTUAL (control)             +0.0219        9,652       +3,431   +0.363  100.00 censored
+PLACEBO A (reweight)         -0.0783            0      -11,904   -1.297   85.00
+PLACEBO B (regenerate)       -0.0182          384       -2,919   -0.292  100.00 censored
 
-Density step at £85k (80-85 vs 85-90 per £1k):
-  ACTUAL   below=11,821 above=10,792 step=+9.5%
-  PLACEBO A below=9,523 above=8,945 step=+6.5%
+Density step at £85k ((80,85] vs (85,90] per £1k):
+  ACTUAL   below=11,821 above=10,791 step=+9.5%
+  PLACEBO A below=9,159 above=8,920 step=+2.7%
 

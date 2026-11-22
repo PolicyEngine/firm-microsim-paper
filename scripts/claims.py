@@ -175,11 +175,36 @@ def build_claims() -> list[dict]:
     # --- bunching -----------------------------------------------------------
     bun = _read("bunching_inference.txt")
     for v, tag in (("2023-24", "2324"), ("2024-25", "2425")):
-        m = re.search(rf"Vintage {v}.*?E = ([\d,]+) \(gross\).*?b_llat = ([\d.]+)", bun, re.S)
+        m = re.search(rf"Vintage {v}.*?E = ([\d,]+) \(gross\) \| E_net = (-?[\d,]+) \| "
+                      rf"Delta_R = ([\d,]+) \| b_llat = (-?[\d.]+)", bun, re.S)
         add(f"E_{tag}", "bunching_inference.txt", "headline E", m.group(1),
             m.group(1).replace(",", "{,}"), "Sections/bunching.tex")
-        add(f"bllat_{tag}", "bunching_inference.txt", "headline b_llat", m.group(2),
-            f"{float(m.group(2)):.3f}", "Sections/bunching.tex")
+        bl = float(m.group(4))
+        add(f"bllat_{tag}", "bunching_inference.txt", "headline b_llat", m.group(4),
+            f"{bl:.3f}" if bl >= 0 else f"$-${abs(bl):.3f}", "Sections/bunching.tex")
+        add(f"boot_row_{tag}", "bunching_inference.txt", "headline row",
+            [m.group(1), m.group(2), m.group(4)],
+            f"${m.group(1).replace(',', '{,}')}$ & {_signed(_num(m.group(2)))} & "
+            f"${m.group(3).replace(',', '{,}')}$ & ${bl:.3f}$",
+            "Appendix/a_inference.tex", allow_zero=True)
+    # 2023-24 degree x window grid: E range and the count of negative net cells
+    grid = bun.split("Vintage 2023-24")[1].split("Vintage")[0]
+    cells = re.findall(r"^\s+\d\s+[\d.]+\s+-?[\d.]+\s+(-?[\d.]+)\s+([\d.]+)\s+(-?[\d.]+)\s",
+                       grid, re.M)
+    Es = [float(c[1]) for c in cells]
+    neg = sum(float(c[2]) < 0 for c in cells)
+    add("grid_E_range_2324", "bunching_inference.txt", "grid E range", [min(Es), max(Es)],
+        f"$E$ ranges from about {_tex_int(round(min(Es), -2))} to about "
+        f"{_tex_int(round(max(Es), -2))} firms", "Sections/bunching.tex")
+    add("grid_neg_net_2324", "bunching_inference.txt", "grid negative net cells", [neg, len(cells)],
+        f"negative in {neg} of the {len(cells)} cells", "Sections/bunching.tex", allow_short=True)
+
+    # --- recovery -------------------------------------------------------------
+    rec = _read("recovery_bunching.txt")
+    pcts = [float(x) for x in re.findall(r"^\s+[\d,]+\s+[\d,]+\s+([\d.]+)%", rec, re.M)]
+    add("recovery_pcts", "recovery_bunching.txt", "recovery table", pcts,
+        ", ".join(f"{p:.0f}\\%" for p in pcts[:-1]) + f" and {pcts[-1]:.0f}\\%",
+        "Sections/bunching.tex")
 
     # --- dominated region ---------------------------------------------------
     dom = _read("dominated_region_mass.txt")
