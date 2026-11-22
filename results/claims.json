@@ -640,7 +640,7 @@
     "artifact": "dominated_region_mass.txt",
     "pattern": "primary OBS [\\d,]+ \\+ secondary OBS [\\d,]+ = TOTAL ([\\d,]+)\\s+\\(baseline [\\d,]+, ([+-][\\d.]+)%\\)",
     "value": 0.9,
-    "tex": "0.9\\%",
+    "tex": "0.9\\% above",
     "tex_file": "paper/Sections/model.tex",
     "note": ""
   },
@@ -666,8 +666,8 @@
     "key": "dominated_total_10_pct",
     "artifact": "dominated_region_mass.txt",
     "pattern": "primary OBS [\\d,]+ \\+ secondary OBS [\\d,]+ = TOTAL ([\\d,]+)\\s+\\(baseline [\\d,]+, ([+-][\\d.]+)%\\)",
-    "value": 11.9,
-    "tex": "11.9\\%",
+    "value": -11.9,
+    "tex": "11.9\\% below",
     "tex_file": "paper/Sections/model.tex",
     "note": ""
   },

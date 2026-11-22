@@ -203,8 +203,9 @@ def build_claims() -> list[dict]:
                       dom.split(lab + "  secondary")[1])
         add(f"dominated_total_{tag}", "dominated_region_mass.txt", m.re.pattern, _num(m.group(1)),
             _tex_int(round(_num(m.group(1)), -2)), "Sections/model.tex")
+        pct = float(m.group(2))
         add(f"dominated_total_{tag}_pct", "dominated_region_mass.txt", m.re.pattern,
-            abs(float(m.group(2))), f"{abs(float(m.group(2))):.1f}\\%", "Sections/model.tex",
+            pct, f"{abs(pct):.1f}\\% {'above' if pct > 0 else 'below'}", "Sections/model.tex",
             allow_short=True)
     menu_txt = _read("reform_menu_common_base.txt")
     m = re.search(r"Raise-to-100k band \[85k,100k\): ([\d,]+) firms released", menu_txt)

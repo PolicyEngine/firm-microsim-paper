@@ -52,8 +52,11 @@ def _mutate(path: Path, old: str, new: str) -> None:
         ("reform_menu_common_base.txt", "Location                            -742",
          "Location                            +742", "menu_raise100k"),
         # the dominated-band count (previously checked against the string "0")
-        ("dominated_region_mass.txt", "142,834     131,752", "152,834     131,752",
+        ("dominated_region_mass.txt", " 142,834 ", " 152,834 ",
          "dominated_base_obs"),
+        # direction of the 15% reduced-rate total relative to the baseline band
+        ("dominated_region_mass.txt", "baseline 142,834, +0.9%", "baseline 142,834, -0.9%",
+         "dominated_total_15_pct"),
         # one firm-count cell of the threshold sweep table
         ("static_sweep.txt", "-27.381047", "-28.381047", "sweep_95k"),
     ],
