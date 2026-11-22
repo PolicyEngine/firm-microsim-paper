@@ -5,7 +5,7 @@
     "pattern": "Overall \\(5 calibrated dims\\)\\s+([\\d.]+)%",
     "value": "98.0",
     "tex": "98.0\\%",
-    "tex_file": "Sections/data.tex",
+    "tex_file": "paper/Sections/data.tex",
     "note": ""
   },
   {
@@ -14,7 +14,7 @@
     "pattern": "effective sample size: ([\\d,]+)",
     "value": "132,165",
     "tex": "132{,}165",
-    "tex_file": "Sections/data.tex",
+    "tex_file": "paper/Sections/data.tex",
     "note": ""
   },
   {
@@ -23,7 +23,7 @@
     "pattern": "max: [\\d.]+ / [\\d.]+ / [\\d.]+ / [\\d.]+ / ([\\d.]+)",
     "value": "2417.013",
     "tex": "2{,}417",
-    "tex_file": "Sections/data.tex",
+    "tex_file": "paper/Sections/data.tex",
     "note": ""
   },
   {
@@ -32,7 +32,7 @@
     "pattern": "Sector\\ Distribution\\s+([\\d.]+)%",
     "value": "93.3",
     "tex": "93.3\\%",
-    "tex_file": "Appendix/a_data.tex",
+    "tex_file": "paper/Appendix/a_data.tex",
     "note": ""
   },
   {
@@ -41,7 +41,7 @@
     "pattern": "VAT\\ Liability\\ by\\ Band\\s+([\\d.]+)%",
     "value": "96.9",
     "tex": "96.9\\%",
-    "tex_file": "Appendix/a_data.tex",
+    "tex_file": "paper/Appendix/a_data.tex",
     "note": ""
   },
   {
@@ -50,7 +50,7 @@
     "pattern": "Overall \\(5 calibrated dims\\)\\s+([\\d.]+)%",
     "value": "98.1",
     "tex": "98.1\\%",
-    "tex_file": "Sections/data.tex",
+    "tex_file": "paper/Sections/data.tex",
     "note": ""
   },
   {
@@ -59,7 +59,7 @@
     "pattern": "effective sample size: ([\\d,]+)",
     "value": "180,070",
     "tex": "180{,}070",
-    "tex_file": "Sections/data.tex",
+    "tex_file": "paper/Sections/data.tex",
     "note": ""
   },
   {
@@ -68,7 +68,7 @@
     "pattern": "max: [\\d.]+ / [\\d.]+ / [\\d.]+ / [\\d.]+ / ([\\d.]+)",
     "value": "1857.241",
     "tex": "1{,}857",
-    "tex_file": "Sections/data.tex",
+    "tex_file": "paper/Sections/data.tex",
     "note": ""
   },
   {
@@ -77,7 +77,7 @@
     "pattern": "Sector\\ Distribution\\s+([\\d.]+)%",
     "value": "92.5",
     "tex": "92.5\\%",
-    "tex_file": "Appendix/a_data.tex",
+    "tex_file": "paper/Appendix/a_data.tex",
     "note": ""
   },
   {
@@ -86,7 +86,139 @@
     "pattern": "VAT\\ Liability\\ by\\ Band\\s+([\\d.]+)%",
     "value": "98.1",
     "tex": "98.1\\%",
-    "tex_file": "Appendix/a_data.tex",
+    "tex_file": "paper/Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "caltable_hmrc_bands",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "HMRC Turnover Bands",
+    "value": [
+      "100.0",
+      "100.0"
+    ],
+    "tex": "HMRC turnover bands (registered) & 100.0\\% & 100.0\\% \\\\",
+    "tex_file": "paper/Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "readme_hmrc_bands",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "HMRC Turnover Bands",
+    "value": [
+      "100.0",
+      "100.0"
+    ],
+    "tex": "| HMRC turnover bands (registered rows; hold by construction) | 100.0% | 100.0% |",
+    "tex_file": "README.md",
+    "note": ""
+  },
+  {
+    "key": "caltable_ons_pop",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "ONS Population",
+    "value": [
+      "99.7",
+      "99.9"
+    ],
+    "tex": "ONS enterprise total (frame) & 99.7\\% & 99.9\\% \\\\",
+    "tex_file": "paper/Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "readme_ons_pop",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "ONS Population",
+    "value": [
+      "99.7",
+      "99.9"
+    ],
+    "tex": "| ONS population (frame rows) | 99.7% | 99.9% |",
+    "tex_file": "README.md",
+    "note": ""
+  },
+  {
+    "key": "caltable_employment",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Employment Bands",
+    "value": [
+      "99.8",
+      "99.9"
+    ],
+    "tex": "ONS employment bands (frame) & 99.8\\% & 99.9\\% \\\\",
+    "tex_file": "paper/Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "readme_employment",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Employment Bands",
+    "value": [
+      "99.8",
+      "99.9"
+    ],
+    "tex": "| Employment bands (frame rows) | 99.8% | 99.9% |",
+    "tex_file": "README.md",
+    "note": ""
+  },
+  {
+    "key": "caltable_sector",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Sector Distribution",
+    "value": [
+      "93.3",
+      "92.5"
+    ],
+    "tex": "HMRC sector counts (registered) & 93.3\\% & 92.5\\% \\\\",
+    "tex_file": "paper/Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "readme_sector",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Sector Distribution",
+    "value": [
+      "93.3",
+      "92.5"
+    ],
+    "tex": "| Sector distribution (registered rows) | 93.3% | 92.5% |",
+    "tex_file": "README.md",
+    "note": ""
+  },
+  {
+    "key": "caltable_liab",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT Liability by Band",
+    "value": [
+      "96.9",
+      "98.1"
+    ],
+    "tex": "HMRC net liability by band (registered) & 96.9\\% & 98.1\\% \\\\",
+    "tex_file": "paper/Appendix/a_data.tex",
+    "note": ""
+  },
+  {
+    "key": "readme_liab",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "VAT Liability by Band",
+    "value": [
+      "96.9",
+      "98.1"
+    ],
+    "tex": "| VAT liability by band (6 calibrated bands, registered rows) | 96.9% | 98.1% |",
+    "tex_file": "README.md",
+    "note": ""
+  },
+  {
+    "key": "readme_overall",
+    "artifact": "calibration_accuracy.txt",
+    "pattern": "Overall",
+    "value": [
+      "98.0",
+      "98.1"
+    ],
+    "tex": "| **Overall (5 calibrated dimensions)** | **98.0%** | **98.1%** |",
+    "tex_file": "README.md",
     "note": ""
   },
   {
@@ -101,7 +233,7 @@
       122.9
     ],
     "tex": "$-$250, $-$234, $-$200, $-$65, $+$123",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -116,7 +248,7 @@
       122.9
     ],
     "tex": "$-$142, $-$134, $-$114, $-$37, $+$123",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -131,7 +263,7 @@
       130.1
     ],
     "tex": "$-$346, $-$382, $-$218, $-$65, $+$130",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -146,7 +278,7 @@
       13.5
     ],
     "tex": "$-$43, $-$38, $-$24, $-$7, $+$14",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -155,7 +287,7 @@
     "pattern": "anchor 2025-26",
     "value": -234.4,
     "tex": "$-\\pounds234$m",
-    "tex_file": "Sections/conclusion.tex",
+    "tex_file": "paper/Sections/conclusion.tex",
     "note": ""
   },
   {
@@ -164,7 +296,7 @@
     "pattern": "retention 2025-26",
     "value": -133.6,
     "tex": "$-\\pounds134$m",
-    "tex_file": "Sections/conclusion.tex",
+    "tex_file": "paper/Sections/conclusion.tex",
     "note": ""
   },
   {
@@ -173,7 +305,7 @@
     "pattern": "Total VAT revenue at GBP 90k, 2025-26: ([\\d.]+)bn",
     "value": "185.2",
     "tex": "\\pounds185.2bn",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -182,97 +314,127 @@
     "pattern": "2023-24: in-scope base .*?= ([\\d.]+)bn",
     "value": "175.1",
     "tex": "\\pounds175.1bn",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_70k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": 186.774792,
-    "tex": "$+186.8$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      186.774792,
+      29.355067
+    ],
+    "tex": "\\pounds70{,}000 & $+186.8$ & $+0.10$ & $+29.4$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_75k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": 143.598059,
-    "tex": "$+143.6$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      143.598059,
+      21.880113
+    ],
+    "tex": "\\pounds75{,}000 & $+143.6$ & $+0.08$ & $+21.9$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_80k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": 97.738237,
-    "tex": "$+97.7$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      97.738237,
+      14.448804
+    ],
+    "tex": "\\pounds80{,}000 & $+97.7$ & $+0.05$ & $+14.4$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_85k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": 50.356711,
-    "tex": "$+50.4$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      50.356711,
+      7.244102
+    ],
+    "tex": "\\pounds85{,}000 & $+50.4$ & $+0.03$ & $+7.2$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_95k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": -190.89162,
-    "tex": "$-190.9$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      -190.89162,
+      -27.381047
+    ],
+    "tex": "\\pounds95{,}000 & $-190.9$ & $-0.10$ & $-27.4$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_100k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": -445.123111,
-    "tex": "$-445.1$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      -445.123111,
+      -65.909644
+    ],
+    "tex": "\\pounds100{,}000 & $-445.1$ & $-0.24$ & $-65.9$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_105k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": -687.688868,
-    "tex": "$-687.7$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      -687.688868,
+      -99.897289
+    ],
+    "tex": "\\pounds105{,}000 & $-687.7$ & $-0.37$ & $-99.9$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_110k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": -847.887547,
-    "tex": "$-847.9$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      -847.887547,
+      -120.897448
+    ],
+    "tex": "\\pounds110{,}000 & $-847.9$ & $-0.46$ & $-120.9$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_115k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": -1014.211759,
-    "tex": "$-1{,}014.2$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      -1014.211759,
+      -141.037416
+    ],
+    "tex": "\\pounds115{,}000 & $-1{,}014.2$ & $-0.55$ & $-141.0$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
     "key": "sweep_120k",
     "artifact": "static_sweep.txt",
-    "pattern": "sweep table",
-    "value": -1190.137379,
-    "tex": "$-1{,}190.1$",
-    "tex_file": "Sections/static.tex",
+    "pattern": "sweep table row (revenue, %, firms)",
+    "value": [
+      -1190.137379,
+      -161.691908
+    ],
+    "tex": "\\pounds120{,}000 & $-1{,}190.1$ & $-0.64$ & $-161.7$ \\\\",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -281,7 +443,7 @@
     "pattern": "Raise threshold to GBP100,000",
     "value": -742,
     "tex": "$-742$",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -290,7 +452,7 @@
     "pattern": "Graduated taper [85k,141.7k]",
     "value": -1406,
     "tex": "$-1{,}406$",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -299,7 +461,7 @@
     "pattern": "Flat 50% marginal taper [85k,141.7k]",
     "value": -968,
     "tex": "$-968$",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -308,7 +470,7 @@
     "pattern": "Reduced rate 10% [85k,105k]",
     "value": -446,
     "tex": "$-446$",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -317,7 +479,7 @@
     "pattern": "Reduced rate 15% [85k,105k]",
     "value": -223,
     "tex": "$-223$",
-    "tex_file": "Sections/static.tex",
+    "tex_file": "paper/Sections/static.tex",
     "note": ""
   },
   {
@@ -326,7 +488,7 @@
     "pattern": "Reduced rate 10%",
     "value": -437,
     "tex": "$-\\pounds437$m",
-    "tex_file": "Sections/behavioural.tex",
+    "tex_file": "paper/Sections/behavioural.tex",
     "note": ""
   },
   {
@@ -335,7 +497,7 @@
     "pattern": "Reduced rate 15%",
     "value": -216,
     "tex": "$-\\pounds216$m",
-    "tex_file": "Sections/behavioural.tex",
+    "tex_file": "paper/Sections/behavioural.tex",
     "note": ""
   },
   {
@@ -344,7 +506,7 @@
     "pattern": "Raise threshold to \u00a3100k",
     "value": "114,418",
     "tex": "$114{,}418$",
-    "tex_file": "Sections/behavioural.tex",
+    "tex_file": "paper/Sections/behavioural.tex",
     "note": ""
   },
   {
@@ -353,7 +515,7 @@
     "pattern": "Reduced rate 10%",
     "value": "136,084",
     "tex": "$136{,}084$",
-    "tex_file": "Sections/behavioural.tex",
+    "tex_file": "paper/Sections/behavioural.tex",
     "note": ""
   },
   {
@@ -362,7 +524,7 @@
     "pattern": "VAT Liability by Sector\\s+([\\d.]+)%",
     "value": "40.4",
     "tex": "40.4\\%",
-    "tex_file": "Appendix/a_data.tex",
+    "tex_file": "paper/Appendix/a_data.tex",
     "note": ""
   },
   {
@@ -371,7 +533,7 @@
     "pattern": "VAT Liability by Sector\\s+([\\d.]+)%",
     "value": "44.2",
     "tex": "44.2\\%",
-    "tex_file": "Appendix/a_data.tex",
+    "tex_file": "paper/Appendix/a_data.tex",
     "note": ""
   },
   {
@@ -380,7 +542,7 @@
     "pattern": "e=0\\.17\\s+n_H\\(delta=0\\)=\u00a3\\s*([\\d.]+)k.*?n_H\\(delta=0\\.6\\)=\u00a3\\s*([\\d.]+)k",
     "value": "148.9",
     "tex": "\\pounds148{,}900",
-    "tex_file": "Sections/behavioural.tex",
+    "tex_file": "paper/Sections/behavioural.tex",
     "note": ""
   },
   {
@@ -389,7 +551,7 @@
     "pattern": "headline E",
     "value": "5,496",
     "tex": "5{,}496",
-    "tex_file": "Sections/bunching.tex",
+    "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
   {
@@ -398,7 +560,7 @@
     "pattern": "headline b_llat",
     "value": "5.350",
     "tex": "5.350",
-    "tex_file": "Sections/bunching.tex",
+    "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
   {
@@ -407,7 +569,7 @@
     "pattern": "headline E",
     "value": "10,269",
     "tex": "10{,}269",
-    "tex_file": "Sections/bunching.tex",
+    "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
   {
@@ -416,16 +578,115 @@
     "pattern": "headline b_llat",
     "value": "4.978",
     "tex": "4.978",
-    "tex_file": "Sections/bunching.tex",
+    "tex_file": "paper/Sections/bunching.tex",
     "note": ""
   },
   {
     "key": "dominated_base_obs",
     "artifact": "dominated_region_mass.txt",
-    "pattern": "20% \\(baseline notch\\)\\s+[\\d,]+\\s+\\[[^\\]]+\\)\\s+([\\d,]+)",
-    "value": 10.0,
-    "tex": "0",
-    "tex_file": "Sections/model.tex",
+    "pattern": "^20% \\(baseline notch\\)\\s+[\\d,]+\\s+\\[[\\d., ]+\\)\\s+([\\d,]+)",
+    "value": 142834.0,
+    "tex": "142{,}800",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_15_obs",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "^15%\\ band\\s+[\\d,]+\\s+\\[[\\d., ]+\\)\\s+([\\d,]+)",
+    "value": 117846.0,
+    "tex": "117{,}800",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_10_obs",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "^10%\\ band\\s+[\\d,]+\\s+\\[[\\d., ]+\\)\\s+([\\d,]+)",
+    "value": 74398.0,
+    "tex": "74{,}400",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "secondary_width_15",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "15%\\ band\\s+secondary \\[[^)]+\\) width GBP ([\\d,]+)\\s+OBS = ([\\d,]+)",
+    "value": 6563.0,
+    "tex": "\\pounds6{,}563",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "secondary_15_obs",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "15%\\ band\\s+secondary \\[[^)]+\\) width GBP ([\\d,]+)\\s+OBS = ([\\d,]+)",
+    "value": 26316.0,
+    "tex": "26{,}300",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_total_15",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "primary OBS [\\d,]+ \\+ secondary OBS [\\d,]+ = TOTAL ([\\d,]+)\\s+\\(baseline [\\d,]+, ([+-][\\d.]+)%\\)",
+    "value": 144161.0,
+    "tex": "144{,}200",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_total_15_pct",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "primary OBS [\\d,]+ \\+ secondary OBS [\\d,]+ = TOTAL ([\\d,]+)\\s+\\(baseline [\\d,]+, ([+-][\\d.]+)%\\)",
+    "value": 0.9,
+    "tex": "0.9\\%",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "secondary_10_obs",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "10%\\ band\\s+secondary \\[[^)]+\\) width GBP ([\\d,]+)\\s+OBS = ([\\d,]+)",
+    "value": 51435.0,
+    "tex": "51{,}400",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_total_10",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "primary OBS [\\d,]+ \\+ secondary OBS [\\d,]+ = TOTAL ([\\d,]+)\\s+\\(baseline [\\d,]+, ([+-][\\d.]+)%\\)",
+    "value": 125833.0,
+    "tex": "125{,}800",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "dominated_total_10_pct",
+    "artifact": "dominated_region_mass.txt",
+    "pattern": "primary OBS [\\d,]+ \\+ secondary OBS [\\d,]+ = TOTAL ([\\d,]+)\\s+\\(baseline [\\d,]+, ([+-][\\d.]+)%\\)",
+    "value": 11.9,
+    "tex": "11.9\\%",
+    "tex_file": "paper/Sections/model.tex",
+    "note": ""
+  },
+  {
+    "key": "released_100k_static",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Raise-to-100k band \\[85k,100k\\): ([\\d,]+) firms released",
+    "value": 117846.0,
+    "tex": "117{,}800",
+    "tex_file": "paper/Sections/static.tex",
+    "note": ""
+  },
+  {
+    "key": "released_100k_model",
+    "artifact": "reform_menu_common_base.txt",
+    "pattern": "Raise-to-100k band \\[85k,100k\\): ([\\d,]+) firms released",
+    "value": 117846.0,
+    "tex": "117{,}800",
+    "tex_file": "paper/Sections/model.tex",
     "note": ""
   },
   {
@@ -434,7 +695,7 @@
     "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
     "value": "165",
     "tex": "\\pm165",
-    "tex_file": "Appendix/a_inference.tex",
+    "tex_file": "paper/Appendix/a_inference.tex",
     "note": ""
   },
   {
@@ -443,7 +704,7 @@
     "pattern": "half-range across seeds: E \u00b1(\\d+) \\| b_llat \u00b1([\\d.]+) \\| raise \u00b1\u00a3([\\d.]+)m \\| taper \u00b1\u00a3([\\d.]+)m \\| base \u00b1\u00a3([\\d.]+)bn",
     "value": "0.63",
     "tex": "\\pm\\pounds0.63",
-    "tex_file": "Appendix/a_inference.tex",
+    "tex_file": "paper/Appendix/a_inference.tex",
     "note": ""
   }
 ]
