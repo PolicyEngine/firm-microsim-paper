@@ -100,11 +100,11 @@ generates `synthetic_firms_<vintage>.csv` for every vintage, writes
 steps are still available:
 
 ```bash
-firm-microsim --vintage 2024-25             # one vintage only (£90k)
-firm-microsim --threshold 88 --seed 7 --output my_run.csv
-firm-microsim-report                        # calibration report only
-firm-microsim-figures                       # descriptive figures only
-firm-microsim-microcosm-ledger              # Microcosm/Ledger comparison
+uv run firm-microsim --vintage 2024-25      # one vintage only (£90k)
+uv run firm-microsim --threshold 88 --seed 7 --output my_run.csv
+uv run firm-microsim-report                 # calibration report only
+uv run firm-microsim-figures                # descriptive figures only
+uv run firm-microsim-microcosm-ledger       # Microcosm/Ledger comparison
 ```
 
 ```python
@@ -114,12 +114,41 @@ df = firm_microsim.generate(vintage="2024-25")     # latest
 df, report = firm_microsim.generate(return_report=True)
 ```
 
-Output is written to `data/synthetic/synthetic_firms.csv`
+The full build writes `data/synthetic/synthetic_firms_2023-24.csv` and
+`data/synthetic/synthetic_firms_2024-25.csv`; a single-vintage call without
+`--output` writes `data/synthetic/synthetic_firms.csv`. Columns:
 (`sic_code, annual_turnover_k, annual_input_k, vat_liability_k, employment,
 weight, vat_scope, vat_registered, in_frame`). `in_frame` marks ONS-frame
 enterprises; `vat_scope` marks firms in the VAT net (registered above the
 threshold, registrable below it); `vat_registered` marks HMRC-count-matched
 traders. Static and behavioural costings use in-scope firms only.
+
+### Reproducing the paper's results
+
+```bash
+make sync              # install the locked environment
+make reproduce         # rebuild both vintages (seed 42) and the checked artifacts
+make reproduce-heavy   # reproduce, plus seed sensitivity and placebo B
+```
+
+`make reproduce` runs the ONS extract, builds both synthetic vintages with seed
+42, regenerates the `results/*.txt` and `results/*.png` artifacts the paper
+reads, copies the figures into `paper/figures/` and runs
+`scripts/claims.py --check` against the manuscript. It takes about five minutes
+on a recent laptop. It does not regenerate three things:
+
+- the OBR chart `paper/figures/obr_vat_bunching_85k.png` and
+  `data/processed/obr_vat_bunching.csv` (run
+  `uv run python scripts/plot_obr_bunching.py`; `figures-sync` reports
+  `no results/obr_vat_bunching_85k.png` for this figure, which is expected);
+- the Microcosm/Ledger comparison `results/populace_ledger_comparison.txt` and
+  `results/populace_ledger_provenance.json` (see
+  [Microcosm/Ledger migration check](#microcosmledger-migration-check));
+- the heavy artifacts `results/seed_sensitivity.txt` and
+  `results/placebo_bunching.txt`, which `make reproduce-heavy` adds (two extra
+  full builds for the seed sensitivity, one for placebo B).
+
+The PDF is rendered by the Paper workflow in CI (see `paper/README.md`).
 
 The processed ONS tables are rebuilt from the raw workbooks by
 `scripts/etl_ons_tables.py` (Table 8 for turnover sizebands, Table 3 for
@@ -172,17 +201,17 @@ is the simple mean over the five calibrated dimensions below.
 Reproduce with:
 
 ```bash
-firm-microsim-report
+uv run firm-microsim-report
 ```
 
 | Calibrated dimension | 85k (2023-24) | 90k (2024-25) |
 | --- | ---: | ---: |
 | HMRC turnover bands (registered rows; hold by construction) | 100.0% | 100.0% |
-| ONS population (frame rows) | 99.7% | 99.8% |
+| ONS population (frame rows) | 99.7% | 99.9% |
 | Employment bands (frame rows) | 99.8% | 99.9% |
-| Sector distribution (registered rows) | 93.3% | 92.2% |
-| VAT liability by band (6 calibrated bands, registered rows) | 97.1% | 98.0% |
-| **Overall (5 calibrated dimensions)** | **98.0%** | **98.0%** |
+| Sector distribution (registered rows) | 93.3% | 92.5% |
+| VAT liability by band (6 calibrated bands, registered rows) | 96.9% | 98.1% |
+| **Overall (5 calibrated dimensions)** | **98.0%** | **98.1%** |
 
 **VAT liability by *sector*** is **not** a calibration target — it is reported as
 an informational diagnostic only, and neither is the **below-threshold
@@ -206,16 +235,18 @@ paper's Section 5.
 
 ## Fast iteration builds
 
-`firm-microsim --fast` runs the full pipeline on a stratified sample (~20% of
+`uv run firm-microsim --fast` runs the full pipeline on a stratified sample (~20% of
 rows: 30% inside the £15k–£150k analysis window, 5% outside, per-stratum
 floors), carrying the thinned mass as base weights so every calibration target
-remains a true total. A vintage builds in ~15 seconds instead of ~13 minutes;
+remains a true total. A vintage builds in ~15 seconds instead of one to three
+minutes per vintage on a recent laptop (`make reproduce` takes about five
+minutes);
 headline aggregates reproduce the full build within ~0.3% and local bunching
 statistics within ~5%. Use for development only — release artifacts are
 full-size. Generator-seed sensitivity of the full build is recorded in
 `results/seed_sensitivity.txt` (E ±165, raise ±£1.1m / taper ±£1.1m, base
 ±£0.63bn across seeds — the scope flag is a seeded draw; reproduce with
-`scripts/seed_sensitivity.py`).
+`uv run python scripts/seed_sensitivity.py`).
 
 ## Microcosm/Ledger migration check
 
@@ -232,7 +263,7 @@ June 30, 2026: Ledger at merge commit
 1,000 calibration iterations:
 
 ```bash
-firm-microsim-microcosm-ledger \
+uv run firm-microsim-microcosm-ledger \
   --output results/populace_ledger_comparison.txt \
   --json-output results/populace_ledger_provenance.json
 ```
@@ -241,7 +272,7 @@ When `populace-build` is installed from the Microcosm source tree, the same comm
 can recompute the table and paper-CSV parity from Ledger consumer facts:
 
 ```bash
-firm-microsim-microcosm-ledger \
+uv run firm-microsim-microcosm-ledger \
   --facts-jsonl /path/to/uk_firm_consumer_facts.jsonl \
   --iterations 1000 \
   --output results/populace_ledger_comparison.txt \
@@ -253,7 +284,7 @@ targets and the paper's processed 2024-25 numeric inputs: six normalized source
 tables checked, zero mismatches, max numeric difference 0. It does **not** exactly
 replicate the paper's generated synthetic population: Microcosm's shared optimizer
 landed at 93.8% overall accuracy under its own validator versus the paper's
-then-90.5% (2024-25 scores 98.0% on the current two-universe build,
+then-90.5% (2024-25 scores 98.1% on the current two-universe build,
 `results/calibration_accuracy.txt`), but that overall pair is **not
 like-for-like**: HMRC turnover-band accuracy uses different band sets, and sector
 distribution reflects different calibration-target definitions. The directly
@@ -274,7 +305,7 @@ produced by the in-package `firm_microsim.figures` module and generated for
 **both vintages** (two full sets, suffixed `_85k` / `_90k`):
 
 ```bash
-firm-microsim-figures          # regenerate every figure, both vintages
+uv run firm-microsim-figures   # regenerate every figure, both vintages
 ```
 
 `results/` then contains:
@@ -287,7 +318,7 @@ firm-microsim-figures          # regenerate every figure, both vintages
 
 The turnover-distribution figures require the matching synthetic CSV
 (`data/synthetic/synthetic_firms_<vintage>.csv`); generate it first with
-`firm-microsim --vintage <vintage> --output synthetic_firms_<vintage>.csv`.
+`uv run firm-microsim --vintage <vintage> --output synthetic_firms_<vintage>.csv`.
 
 > **Note on ONS counts:** firm-count figures sum the per-SIC rows only — the ONS
 > band tables include a `Total` summary row that must be excluded, or every firm
@@ -300,7 +331,7 @@ fixed; only registration status changes), reproducing the paper's static
 results. Run:
 
 ```bash
-firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue_impact_2025_26,firms_impact_2025_26}.png
+uv run firm-microsim-static   # -> results/{vat_threshold_revenue_impact,revenue_impact_2025_26,firms_impact_2025_26}.png
 ```
 
 - `vat_threshold_revenue_impact.png` — the £85k→£90k anchor reform vs HMRC's
@@ -318,9 +349,12 @@ firm-microsim-static          # -> results/{vat_threshold_revenue_impact,revenue
   **on the £90k / 2024-25 vintage**.
 
 **Two vintages, two exercises, one convention.** The anchor reform uses the
-£85k vintage, where the affected `[85,90)k` band sits *above* the £85k
-registration threshold and is cleanly populated with in-scope registered firms,
-so a direct band-sum suffices. The forward sweep uses the current £90k vintage
+£85k vintage. Its headline releases only in-scope firms in `[85,88)k`, below
+the new £88k deregistration threshold. Because turnover is aged forward, that
+band is populated mainly by firms whose data-year turnover was *below* £85k and
+which nominal growth carries into it: 84% of the 2025-26 released liability
+belongs to firms that were voluntary registrants at the data year. The forward
+sweep uses the current £90k vintage
 and is likewise a direct mechanical reclassification of in-scope firms
 (`StaticVATModel.threshold_sweep`); voluntary registrants below the data-year
 threshold stay registered, firms aged across it are released by a rise unless

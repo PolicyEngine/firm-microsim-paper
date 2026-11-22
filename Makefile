@@ -15,10 +15,18 @@ paper:
 	cd paper && TEXMFVAR=/tmp/firm-microsim-tex-cache latexmk -lualatex -interaction=nonstopmode -halt-on-error main.tex
 
 # ---------------------------------------------------------------------------
-# Reproduction (issue #40). `reproduce` regenerates both synthetic vintages and
-# every checked results/*.txt and figure the paper reads, then syncs figures
-# into paper/figures/. `reproduce-heavy` adds the two multi-build artifacts
-# (seed sensitivity = two extra full builds; placebo B = one extra build).
+# Reproduction (issue #40). `reproduce` regenerates both synthetic vintages
+# (seed 42) and the results/*.txt and figures built by the steps below, then
+# syncs figures into paper/figures/. It does NOT regenerate three things:
+#   - the OBR figure paper/figures/obr_vat_bunching_85k.png and
+#     data/processed/obr_vat_bunching.csv (scripts/plot_obr_bunching.py;
+#     figures-sync prints "no results/obr_vat_bunching_85k.png" for it);
+#   - the Microcosm/Ledger comparison results/populace_ledger_comparison.txt
+#     and results/populace_ledger_provenance.json
+#     (firm-microsim-microcosm-ledger; see README.md);
+#   - the heavy artifacts seed_sensitivity.txt and placebo_bunching.txt, which
+#     `reproduce-heavy` adds (seed sensitivity = two extra full builds;
+#     placebo B = one extra build).
 # The PDF is rendered by the Paper workflow in CI (quarto is not required
 # locally); see paper/README.md.
 # ---------------------------------------------------------------------------
