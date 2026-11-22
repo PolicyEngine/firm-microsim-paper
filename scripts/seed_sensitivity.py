@@ -13,9 +13,9 @@ The paper reports point estimates with no standard errors (the construction
 is deterministic given the seed; there is no sampling estimand), so this
 dispersion across seeds is the honest scale of generator Monte Carlo noise.
 
-The first seed listed is read from the canonical CSV if it matches the
-config default (that CSV *is* the paper build); other seeds are full
-generate+calibrate runs held in memory (several minutes each).
+Every seed, including the config default, is a full generate+calibrate run
+held in memory (a few minutes each). The canonical CSV is never reused: it
+carries no record of the seed, fast/full mode or inputs that built it.
 
 Run:  .venv/bin/python scripts/seed_sensitivity.py --seeds 42 7 99
 Writes: results/seed_sensitivity.txt
@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 from firm_microsim.bunching.model import _run_estimator, in_range_mask
-from firm_microsim.config import DEFAULT_CONFIG, RESULTS_DIR, SYNTHETIC_DATA_DIR
+from firm_microsim.config import DEFAULT_CONFIG, RESULTS_DIR
 from firm_microsim.dynamic.model import E_HEADLINE, build_reforms, reform_revenue
 from firm_microsim.generate import generate
 
@@ -74,11 +74,8 @@ def headline_stats(df: pd.DataFrame) -> dict:
 
 
 def build_for_seed(seed: int) -> pd.DataFrame:
-    """Return the full-size 2023-24 build for ``seed`` (canonical CSV if it
-    is the config-default seed, else a fresh in-memory generate run)."""
-    canonical = SYNTHETIC_DATA_DIR / f"synthetic_firms_{VINTAGE}.csv"
-    if seed == DEFAULT_CONFIG.seed and canonical.exists():
-        return pd.read_csv(canonical, usecols=COLS)
+    """Return the full-size 2023-24 build for ``seed``: always a fresh
+    in-memory generate run, never a cached CSV of unknown provenance."""
     df = generate(vintage=VINTAGE, seed=seed, write=False)
     return df[COLS]
 
