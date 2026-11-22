@@ -183,6 +183,16 @@ def schedule_notch(y, T=T_STAR):
 schedule_notch.regions = [(0.0, T_STAR, 0.0), (T_STAR, np.inf, 1.0)]
 
 
+def make_schedule_notch(T=T_STAR):
+    """Hard notch at threshold ``T`` (piecewise flat, with ``.regions``)."""
+
+    def sched(y):
+        return schedule_notch(y, T=T)
+
+    sched.regions = [(0.0, T, 0.0), (T, np.inf, 1.0)]
+    return sched
+
+
 def make_schedule_raise(T_new=100_000.0):
     """Raise the threshold to ``T_new``: the notch simply moves to ``T_new``."""
 
@@ -543,7 +553,8 @@ def reform_revenue(
     is ``liab * (y/y_obs) * f(y)``: net VAT stays proportional to turnover
     (value added a fixed share) and the schedule fraction is applied.
 
-    BASELINE (£85k notch) and REFORM are evaluated SYMMETRICALLY through the
+    BASELINE (a notch at ``T``, £85k by default) and REFORM are evaluated
+    SYMMETRICALLY through the
     same region-confined forward solve:
 
     * STATIC (``behavioural=False``): turnover fixed at observed; only the
@@ -573,15 +584,20 @@ def reform_revenue(
     band = (t_obs >= band_lo) & (t_obs <= band_hi)
     idx = np.where(band)[0]
 
+    # Baseline notch at the caller's threshold T (not the module default).
+    notch = make_schedule_notch(T)
+
     if behavioural:
         t_new = t_obs.copy()
         t_new[idx] = forward_solve_iso_batch(
-            None, e, schedule, tau0[idx], T=T, y_obs=t_obs[idx])
+            None, e, schedule, tau0[idx], T=T, y_obs=t_obs[idx],
+            base_schedule=notch)
         # Baseline turnover under the £85k notch via the SAME machinery — this
         # must reproduce observed turnover exactly (accounting anchor).
         t_notch = t_obs.copy()
         t_notch[idx] = forward_solve_iso_batch(
-            None, e, schedule_notch, tau0[idx], T=T, y_obs=t_obs[idx])
+            None, e, notch, tau0[idx], T=T, y_obs=t_obs[idx],
+            base_schedule=notch)
         anchor_gap = float(np.max(np.abs(t_notch - t_obs))) if idx.size else 0.0
         if anchor_gap > 1e-6:
             raise AssertionError(
@@ -596,7 +612,7 @@ def reform_revenue(
         scale_new = np.where(t_obs > 0, t_new / t_obs, 1.0)
         scale_notch = np.where(t_obs > 0, t_notch / t_obs, 1.0)
     frac_new = np.asarray(schedule(t_new), dtype=float)
-    frac_notch = np.asarray(schedule_notch(t_notch), dtype=float)
+    frac_notch = np.asarray(notch(t_notch), dtype=float)
 
     rev_baseline = float(np.sum(liab * scale_notch * frac_notch * w))
     rev_reform = float(np.sum(liab * scale_new * frac_new * w))
@@ -604,7 +620,7 @@ def reform_revenue(
     d_rev = rev_reform - rev_baseline
 
     # Firms affected: facing a changed effective rate at observed y, or moving.
-    frac_notch_at_obs = np.asarray(schedule_notch(t_obs), dtype=float)
+    frac_notch_at_obs = np.asarray(notch(t_obs), dtype=float)
     frac_reform_at_obs = np.asarray(schedule(t_obs), dtype=float)
     rate_changed = np.abs(frac_reform_at_obs - frac_notch_at_obs) > 1e-9
     moved = np.abs(t_new - t_notch) > move_tol
