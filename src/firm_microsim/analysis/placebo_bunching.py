@@ -8,8 +8,10 @@ location-choice. The density step at £85k that the bunching estimator reads as
 coarse — one count for everything in ``£1_to_Threshold`` (<= £85k) and one for
 ``£Threshold_to_£150k`` (£85k-£150k). Those two bands have very different
 average per-£1k densities (7,981 vs 4,697 firms per £1k in 2023-24), so the
-weight optimiser produces a mechanical step at exactly £85k. If so, the
-estimator is just reading back the calibration target, not behaviour.
+weight optimiser produces a mechanical step at exactly £85k. The calibration
+also carries OBR near-threshold shape rows, which change at the threshold too.
+If so, the estimator is just reading back the calibration targets, not
+behaviour.
 
 The test
 --------
@@ -31,9 +33,12 @@ Two independent placebo constructions are run for robustness:
 
   B. REGENERATE placebo (heavy, definitive). Replace the two HMRC band counts
      straddling £85k with a smooth split implied by a single common per-£1k
-     density (the combined mass spread uniformly across £1-£150k), then re-run
-     the full generator + multi-objective calibration with those placebo
-     targets, and run the estimator on the resulting weighted population.
+     density (the combined mass spread uniformly across £1-£150k), AND drop
+     the OBR near-threshold shape rows, then re-run the full generator +
+     multi-objective calibration with those placebo targets, and run the
+     estimator on the resulting weighted population. Because both changes are
+     made together, Placebo B does not separate the HMRC band step from the
+     OBR shape rows as the source of the excess mass.
 
 The ACTUAL population is also run as a control (should reproduce b=0.060).
 
@@ -48,9 +53,12 @@ import numpy as np
 import pandas as pd
 
 from firm_microsim.bunching.model import (
-    RANGE_LO,
-    RANGE_HI,
+    BIN_WIDTH,
     _run_estimator,
+    bin_density,
+    bin_edges,
+    bin_index,
+    in_range_mask,
 )
 from firm_microsim.config import SYNTHETIC_DATA_DIR, RESULTS_DIR, VINTAGES
 
@@ -61,17 +69,16 @@ T_STAR = float(VINTAGES[VINTAGE]["threshold"])  # 85.0
 def load_firms(vintage: str) -> pd.DataFrame:
     path = SYNTHETIC_DATA_DIR / f"synthetic_firms_{vintage}.csv"
     df = pd.read_csv(path, usecols=["annual_turnover_k", "weight"])
-    df = df[
-        (df["annual_turnover_k"] >= RANGE_LO) & (df["annual_turnover_k"] <= RANGE_HI)
-    ].reset_index(drop=True)
-    return df
+    df = df[in_range_mask(df["annual_turnover_k"].to_numpy(), T_STAR)]
+    return df.reset_index(drop=True)
 
 
 def estimate(turnover: np.ndarray, weight: np.ndarray, label: str) -> dict:
     r = _run_estimator(turnover, weight, T_STAR)
     print(
         f"  {label:<28s} b={r['b']:+.4f}  E={r['E']:>10,.0f}  "
-        f"b_llat={r['b_llat']:.3f}  y_R={r['y_R']:.2f}"
+        f"E_net={r['E_net']:>+10,.0f}  b_llat={r['b_llat']:+.3f}  "
+        f"y_R={r['y_R']:.2f}" + (" [censored]" if r["y_R_censored"] else "")
     )
     return r
 
@@ -80,20 +87,18 @@ def build_reweight_placebo(df: pd.DataFrame) -> np.ndarray:
     """Placebo A: reweight firms so the per-£1k density is smooth across £85k.
 
     Fit a log-linear density trend on the wings (outside a +/-`half` window
-    around the threshold), evaluate the smooth (step-free) target density inside
+    around the threshold), evaluate the smooth target density (no step at the threshold) inside
     the window, and rescale each firm's weight by (smooth target density /
-    observed density) in its £1k bin. Mass over the whole estimation range is
+    observed density) in its £1k bin (the estimator's threshold-aligned
+    ``(e, e+1]`` bins, so a firm at exactly £85k is in the bin below). Mass over the whole estimation range is
     rescaled back to the original total so the only thing changed is the SHAPE
     across the threshold, not the aggregate.
     """
     half = 20.0  # exclusion half-window for fitting the smooth trend (£k)
-    bin_width = 1.0
-    edges = np.arange(RANGE_LO - 0.5, RANGE_HI + 0.5 + bin_width, bin_width)
-    centres = (edges[:-1] + edges[1:]) / 2.0
-    counts, _ = np.histogram(
-        df["annual_turnover_k"], bins=edges, weights=df["weight"]
-    )
-    density = counts / bin_width  # firms per £1k
+    turnover = df["annual_turnover_k"].to_numpy()
+    edges = bin_edges(T_STAR)
+    centres, density = bin_density(turnover, df["weight"].to_numpy(), T_STAR)
+    # density: firms per £1k (BIN_WIDTH = 1)
 
     # Fit log-linear density on the wings (outside the manipulation window),
     # so the fit is NOT informed by the step we are trying to remove.
@@ -113,7 +118,7 @@ def build_reweight_placebo(df: pd.DataFrame) -> np.ndarray:
     factor[nz] = target_density[nz] / density[nz]
 
     # Map each firm to its bin and apply the factor.
-    bin_idx = np.clip(np.digitize(df["annual_turnover_k"], edges) - 1, 0, len(centres) - 1)
+    bin_idx = np.clip(bin_index(turnover, edges), 0, len(centres) - 1)
     new_weight = df["weight"].to_numpy() * factor[bin_idx]
 
     # Preserve total mass over the estimation range.
@@ -172,9 +177,8 @@ def build_regenerate_placebo() -> dict:
     finally:
         gen_mod.load_data = orig_loader_in_gen
 
-    df = df[
-        (df["annual_turnover_k"] >= RANGE_LO) & (df["annual_turnover_k"] <= RANGE_HI)
-    ].reset_index(drop=True)
+    df = df[in_range_mask(df["annual_turnover_k"].to_numpy(), T_STAR)]
+    df = df.reset_index(drop=True)
     r = estimate(
         df["annual_turnover_k"].to_numpy(),
         df["weight"].to_numpy(),
@@ -199,18 +203,19 @@ def main() -> None:
     w_placebo = build_reweight_placebo(df)
     r_pa = estimate(t, w_placebo, "PLACEBO A (reweight)")
 
-    # Diagnostic: density step just below vs just above £85k, before/after.
+    # Diagnostic: density step just below vs just above £85k, before/after,
+    # on the estimator's convention (a firm at exactly T* is below it).
     def step(turnover, weight):
-        below = ((turnover >= 80) & (turnover < 85))
-        above = ((turnover >= 85) & (turnover < 90))
-        db = weight[below].sum() / 5.0
-        da = weight[above].sum() / 5.0
+        below = (turnover > T_STAR - 5) & (turnover <= T_STAR)
+        above = (turnover > T_STAR) & (turnover <= T_STAR + 5)
+        db = weight[below].sum() / (5.0 / BIN_WIDTH)
+        da = weight[above].sum() / (5.0 / BIN_WIDTH)
         return db, da, (db - da) / da
 
     db0, da0, st0 = step(t, w)
     db1, da1, st1 = step(t, w_placebo)
     print()
-    print("  Density step at £85k (firms per £1k, 80-85 vs 85-90):")
+    print("  Density step at £85k (firms per £1k, (80,85] vs (85,90]):")
     print(f"    ACTUAL  : below={db0:,.0f}  above={da0:,.0f}  step={st0:+.1%}")
     print(f"    PLACEBO A: below={db1:,.0f}  above={da1:,.0f}  step={st1:+.1%}")
     print()
@@ -237,19 +242,23 @@ def main() -> None:
         "PLACEBO A (reweight): rescale the existing synthetic firms' weights so\n"
         "the per-£1k turnover density follows a single smooth log-quadratic trend\n"
         "across £85k (fit on the wings, |y-85|>20k, then applied inside the\n"
-        "window). Total mass over [20k,140k] preserved. No regeneration.\n"
+        "window). Total mass over (20k,140k] preserved. No regeneration.\n"
     )
     lines.append(
         "PLACEBO B (regenerate): replace the two HMRC band counts straddling £85k\n"
         "with a split implied by a SINGLE common per-£1k density (combined mass\n"
-        "spread uniformly over £1-£150k), so the calibration target has NO step,\n"
-        "then re-run the full generator + multi-objective calibration and the\n"
-        "estimator on the resulting weighted population.\n"
+        "spread uniformly over £1-£150k), so the HMRC band target has NO step,\n"
+        "AND drop the OBR near-threshold shape rows; then re-run the full\n"
+        "generator + multi-objective calibration and the estimator on the\n"
+        "resulting weighted population. Both changes are made together, so\n"
+        "Placebo B does not separate the HMRC band step from the OBR shape\n"
+        "rows as the source of the excess mass.\n"
     )
     lines.append("")
     lines.append("Results")
     lines.append("-------")
-    hdr = f"{'population':<26s} {'b':>9s} {'E':>12s} {'b_llat':>8s} {'y_R':>7s}"
+    hdr = (f"{'population':<26s} {'b':>9s} {'E':>12s} {'E_net':>12s} "
+           f"{'b_llat':>8s} {'y_R':>7s}")
     lines.append(hdr)
     lines.append("-" * len(hdr))
     for label, r in [
@@ -259,11 +268,12 @@ def main() -> None:
     ]:
         lines.append(
             f"{label:<26s} {r['b']:>+9.4f} {r['E']:>12,.0f} "
-            f"{r['b_llat']:>8.3f} {r['y_R']:>7.2f}"
+            f"{r['E_net']:>+12,.0f} {r['b_llat']:>+8.3f} {r['y_R']:>7.2f}"
+            + (" censored" if r["y_R_censored"] else "")
         )
     lines.append("")
     lines.append(
-        f"Density step at £85k (80-85 vs 85-90 per £1k):\n"
+        f"Density step at £85k ((80,85] vs (85,90] per £1k):\n"
         f"  ACTUAL   below={db0:,.0f} above={da0:,.0f} step={st0:+.1%}\n"
         f"  PLACEBO A below={db1:,.0f} above={da1:,.0f} step={st1:+.1%}\n"
     )

@@ -32,7 +32,7 @@ and no endogenous location of the marginal buncher. I impose the constraint in
 two ways. First, the counterfactual polynomial in $(y-T^{*})$ is fit by an
 iterated procedure in which the density of the bins above the excluded region
 is rescaled until the fitted counterfactual integrates to the observed total
-mass over the estimation range $[\pounds20\text{k},\pounds140\text{k}]$ (the
+mass over the estimation range $(\pounds20\text{k},\pounds140\text{k}]$ (the
 regressor is normalised to $[-1,1]$ for numerical stability of the
 high-degree basis). Second, the upper edge of the manipulation region---the
 marginal buncher $y_{R}$---is located endogenously by integrating missing mass
@@ -43,7 +43,7 @@ upward from $T^{*}$ until it equals the excess mass below,
   \int_{T^{*}-W}^{T^{*}} \bigl[f^{\mathrm{obs}}(y)-f^{\mathrm{cf}}(y)\bigr]_{+}\,dy
   \;=\; E .
 \]
-On the 2023--24 population the baseline gives $E=5{,}496$,
+On the 2023--24 population the baseline gives $E=9{,}652$,
 $\Delta_R=0$, and
 $y_R=\pounds100$k, the search cap. These
 mass-conservation outputs are estimator diagnostics, not evidence of a
@@ -62,19 +62,20 @@ that does not exist. The specification grids below instead show how point
 estimates move with the estimator's own choices. Generator Monte Carlo error is
 quantified separately, by rebuilding the full 2023--24 population under
 alternative generator seeds (\texttt{results/seed\_sensitivity.txt}): across
-seeds the half-ranges are $\pm165$ on $E$, $\pm0.21$ on
+seeds the half-ranges are $\pm401$ on $E$, $\pm0.10$ on
 $b_{\mathrm{LLAT}}$, $\pm\pounds1.1$m on the raise costing,
 $\pm\pounds1.1$m on the taper costing, and $\pm\pounds0.63$bn
 on the in-scope base---the last larger than in earlier builds because the
 scope flag is itself a seeded draw within each turnover band. Table~\ref{tab:boot}
 reports the point estimates. Two conventions matter for
-reading them. Bins are centred on integer \pounds k values (edges at
-half-integers), so the bin containing the threshold spans
-\pounds84.5k--\pounds85.5k and its mass is attributed to the above side,
-attenuating $E$ and $\Delta_R$ relative to edge-aligned binning. And $E$ sums
-the \emph{positive part} of the observed-minus-counterfactual gap in the
-excluded window below the threshold, so the statistic reads gross rather than
-net excess.
+reading them. Bins are \pounds1k wide with edges aligned to the threshold,
+$(e,\,e+\pounds1\text{k}]$, so the bin just below it is
+$(T^{*}-\pounds1\text{k},\,T^{*}]$ and no bin straddles $T^{*}$; when $y_R$
+is not censored it is interpolated linearly inside its closing bin, and with
+no excess ($E=0$) it is $T^{*}$. And $E$ sums the \emph{positive part} of the
+observed-minus-counterfactual gap in the excluded window below the threshold,
+so it reads gross excess, while the net excess $E_{\mathrm{net}}$ and
+$b_{\mathrm{LLAT}}$ are signed.
 
 \begin{table}[t]
 \centering
@@ -82,12 +83,12 @@ net excess.
 $\pm\pounds15$k window). The specification grid characterises sensitivity;
 standard errors are not reported---see the text.}
 \label{tab:boot}
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
+Vintage & $E$ & $E_{\mathrm{net}}$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 \midrule
-2023--24 (\pounds85k, OBR fine targets) & $5{,}496$ & $0$ & $5.350$ & $100.0$ (censored) \\
-2024--25 (\pounds90k, coarse bands only) & $10{,}269$ & $4{,}895$ & $4.978$ & $105.0$ (censored) \\
+2023--24 (\pounds85k, OBR fine targets) & $9{,}652$ & $+3{,}431$ & $0$ & $0.363$ & $100.0$ (censored) \\
+2024--25 (\pounds90k, coarse bands only) & $13{,}802$ & $+13{,}802$ & $5{,}394$ & $1.636$ & $105.0$ (censored) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -97,8 +98,8 @@ Vintage & $E$ & $\Delta_R$ & $b_{\mathrm{LLAT}}$ & $y_R$ (\pounds k) \\
 Table entries for a grid of polynomial degree $\in\{5,6,7,8\}$ and symmetric
 exclusion window $\in\{\pounds10\text{k},\ldots,\pounds25\text{k}\}$ are in
 \texttt{results/bunching\_inference.txt}; the pattern matters more than the
-cells. In the 2023--24 grid, $E$ ranges from about 560 to about
-20{,}700 firms and $b_{\mathrm{LLAT}}$ from about 0.06 to about
-8.39. This specification
+cells. In the 2023--24 grid, $E$ ranges from about 3{,}500 to about
+13{,}700 firms, the net excess is negative in 8 of the 16 cells, and
+$b_{\mathrm{LLAT}}$ runs from about $-3.83$ to about $+1.17$. This specification
 sensitivity, together with the absence of a location-choice mechanism in the
 generator, precludes interpreting the baseline as a behavioural estimate.

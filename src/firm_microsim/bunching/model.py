@@ -24,19 +24,30 @@ data produce, no elasticity is identified from the density alone (see the
 paper's placebo), and earlier wedge-normalised "elasticity" outputs inherited
 an ad hoc ``tau/2`` normalisation from a deleted smoothed-schedule model.
 
+Binning convention
+------------------
+Bins are £1k wide with edges aligned to the threshold ``t_star`` and closed on
+the right, ``(e, e + bw]``, so ``t_star`` is a bin edge and a firm at exactly
+``t_star`` (not required to register) falls in the bin below it. The
+estimation range is ``(RANGE_LO, RANGE_HI]`` taken from the same edges
+(:func:`bin_edges`); every caller filters firms with :func:`in_range_mask`, so
+both end bins are full. The excluded window and the search cap are defined on
+bin centres: below ``(t_star - W, t_star)``, above ``(t_star, t_star + W)``.
+
 Normalisation note (literature comparability)
 ---------------------------------------------
 The headline bunching ratio ``b`` reported here is a *width-style* ratio: excess
 mass in the below-threshold window expressed relative to the counterfactual mass
-**in that same window** (``b = (q_N_obs - q_N_cf) / q_N_cf``). This is convenient
-internally but is NOT the normalisation used by Liu, Lockwood, Almunia & Tam
-(2021, "VAT Notches, Voluntary Registration, and Bunching"), who report excess
-bunching ``b_LLAT = 1.361`` defined as the total excess mass just below the
-threshold divided by the **average counterfactual density** (the mean height of
-``f_cf``) over the excluded range. To compare like-for-like with their 1.361,
-:func:`excess_bunching_llat` (also returned as ``"b_llat"`` from
-:meth:`BunchingEstimator.estimate`) divides the excess mass by the average
-counterfactual height rather than by the integrated counterfactual mass.
+**in that same window** (``b = (q_N_obs - q_N_cf) / q_N_cf``).
+
+``b_llat`` (:func:`excess_bunching_llat`) follows equation (20) of Liu,
+Lockwood, Almunia & Tam (2021): the SIGNED excess of observed over
+counterfactual bin counts summed over the excluded bins below the threshold,
+divided by the mean counterfactual bin count over the excluded window. It
+differs from theirs in one respect: the upper edge of the excluded range is the
+symmetric window ``t_star + W`` here, whereas LLAT estimate it. Because the
+synthetic population is calibrated to coarse administrative bands, ``b_llat``
+is not a replication of LLAT's 1.361 and should not be read as one.
 """
 
 from __future__ import annotations
@@ -66,22 +77,71 @@ RNG_SEED = 20240617
 # Binning
 # ---------------------------------------------------------------------------
 
+def bin_edges(
+    t_star: float,
+    lo: float = RANGE_LO,
+    hi: float = RANGE_HI,
+    bin_width: float = BIN_WIDTH,
+) -> np.ndarray:
+    """Threshold-aligned bin edges covering ``(lo, hi]``.
+
+    Edges are ``t_star + k * bin_width`` for every integer ``k`` with the edge
+    inside ``[lo, hi]``, so ``t_star`` is always an edge. Bins are ``(e, e+bw]``.
+    This is the single source of the estimation range: filter firms with
+    :func:`in_range_mask` so the end bins are never partially populated.
+    """
+    eps = 1e-9
+    k_lo = int(np.ceil((lo - t_star) / bin_width - eps))
+    k_hi = int(np.floor((hi - t_star) / bin_width + eps))
+    return t_star + bin_width * np.arange(k_lo, k_hi + 1, dtype=float)
+
+
+def bin_index(turnover: np.ndarray, edges: np.ndarray) -> np.ndarray:
+    """Index of the right-closed bin ``(edges[i], edges[i+1]]`` holding each value.
+
+    Values outside ``(edges[0], edges[-1]]`` get ``-1`` or ``len(edges) - 1``;
+    callers mask them out with :func:`in_range_mask`.
+    """
+    return np.searchsorted(edges, np.asarray(turnover, dtype=float), side="left") - 1
+
+
+def in_range_mask(
+    turnover: np.ndarray,
+    t_star: float,
+    lo: float = RANGE_LO,
+    hi: float = RANGE_HI,
+    bin_width: float = BIN_WIDTH,
+) -> np.ndarray:
+    """Boolean mask of firms inside the estimation range ``(edges[0], edges[-1]]``."""
+    edges = bin_edges(t_star, lo, hi, bin_width)
+    t = np.asarray(turnover, dtype=float)
+    return (t > edges[0]) & (t <= edges[-1])
+
+
 def bin_density(
     turnover: np.ndarray,
     weight: np.ndarray,
+    t_star: float,
     lo: float = RANGE_LO,
     hi: float = RANGE_HI,
     bin_width: float = BIN_WIDTH,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Weighted £1k histogram of turnover -> ``(centres, density)``.
+    """Weighted threshold-aligned histogram of turnover -> ``(centres, density)``.
 
-    ``density`` is counts per unit of turnover (counts / ``bin_width``), so the
-    integral ``sum(density) * bin_width`` recovers total weighted mass.
+    Bins are ``(e, e + bin_width]`` on :func:`bin_edges`, so a firm at exactly
+    ``t_star`` is counted in the bin below the threshold. Firms outside
+    ``(edges[0], edges[-1]]`` are dropped. ``density`` is counts per unit of
+    turnover (counts / ``bin_width``), so ``sum(density) * bin_width``
+    recovers total weighted mass in range.
     """
-    edges = np.arange(lo - 0.5, hi + 0.5 + bin_width, bin_width)
+    edges = bin_edges(t_star, lo, hi, bin_width)
     centres = (edges[:-1] + edges[1:]) / 2.0
-    counts, _ = np.histogram(turnover, bins=edges, weights=weight)
-    return centres, counts / bin_width
+    t = np.asarray(turnover, dtype=float)
+    w = np.asarray(weight, dtype=float)
+    idx = bin_index(t, edges)
+    keep = (idx >= 0) & (idx < len(centres))
+    counts = np.bincount(idx[keep], weights=w[keep], minlength=len(centres))
+    return centres, counts.astype(float) / bin_width
 
 
 # ---------------------------------------------------------------------------
@@ -102,7 +162,8 @@ def fit_counterfactual(
     """Mass-conserving Kleven--Waseem / Chetty counterfactual density.
 
     Fit a polynomial in ``(y - t_star)`` to the observed density on bins OUTSIDE
-    the excluded (manipulation) region ``[t_star - window_lo, t_star + window_hi]``,
+    the excluded (manipulation) region, the bins whose centres lie in
+    ``(t_star - window_lo, t_star + window_hi)``,
     then iterate: scale the bins above the excluded region up by an absorption
     factor so the fitted counterfactual integrates to the same total mass as the
     observed density over the estimation range (the excess bunching mass is
@@ -119,8 +180,8 @@ def fit_counterfactual(
     scale = max(np.abs(y_raw).max(), 1.0)
     y = y_raw / scale
 
-    excl = (centres >= t_star - window_lo) & (centres <= t_star + window_hi)
-    above_excl = centres > t_star + window_hi
+    excl = (centres > t_star - window_lo) & (centres < t_star + window_hi)
+    above_excl = centres >= t_star + window_hi
     inc = ~excl
 
     total_obs = np.sum(f_obs) * bin_width
@@ -163,14 +224,16 @@ def locate_marginal_buncher(
 
     Integrate cumulative excess mass below ``t_star`` (``E``) and walk up from
     ``t_star`` accumulating missing mass; the marginal buncher ``y_R`` is the
-    turnover at which cumulative missing mass above first equals ``E``
-    (with linear interpolation inside the closing bin).
+    turnover at which cumulative missing mass above first equals ``E``, with
+    linear interpolation from the closing bin's lower edge.
 
     ``E`` is the GROSS positive-part excess below the threshold. The search
     for ``y_R`` stops at ``t_star + window_hi``: if cumulative missing mass
-    never reaches ``E`` inside the window, ``y_R`` is CENSORED at the window
-    edge and ``Delta_R < E``. Use :func:`locate_marginal_buncher_full` for the
-    censoring flag and the signed net excess.
+    never reaches ``E`` inside the window, ``y_R`` is CENSORED at
+    ``t_star + window_hi`` and ``Delta_R < E``. If ``E <= 0`` there is nothing
+    to balance: ``y_R = t_star`` and ``Delta_R = 0``, uncensored. Use
+    :func:`locate_marginal_buncher_full` for the censoring flag and the signed
+    net excess.
 
     Returns ``(E, Delta_R, y_R, dyR)`` where ``dyR = y_R - t_star`` is the
     excess turnover span of the marginal buncher (Method B input).
@@ -192,40 +255,52 @@ def locate_marginal_buncher_full(
 ) -> dict:
     """Marginal-buncher search returning every diagnostic (issue #38).
 
-    Keys: ``E`` (gross positive-part excess below ``t_star`` over the window),
-    ``E_net`` (signed excess over the same window), ``Delta_R`` (cumulative
-    missing mass above ``t_star`` up to ``y_R``), ``y_R``, ``dyR``, and
-    ``y_R_censored`` (True when the missing mass inside the search window is
-    insufficient to balance ``E``, so ``y_R`` sits at the window edge and mass
-    conservation does NOT bind).
+    Keys: ``E`` (gross positive-part excess below ``t_star`` over the bins with
+    centres in ``(t_star - window_lo, t_star)``), ``E_net`` (signed excess over
+    the same bins), ``Delta_R`` (cumulative missing mass above ``t_star`` up to
+    ``y_R``, equal to ``min(cumulative missing mass, E)``), ``y_R``, ``dyR``,
+    and ``y_R_censored`` (True when the missing mass in the bins with centres
+    in ``(t_star, t_star + window_hi)`` is insufficient to balance ``E``, so
+    ``y_R`` is set to ``t_star + window_hi`` and mass conservation does NOT
+    bind).
+
+    In the closing bin ``j`` (the first where cumulative missing mass reaches
+    ``E``), ``y_R = lower_edge_j + (E - cum_before) / deficit_j * bin_width``.
+    With ``E <= 0`` the search is skipped: ``y_R = t_star``, ``Delta_R = 0``,
+    not censored.
     """
-    below = (centres >= t_star - window_lo) & (centres < t_star)
+    below = (centres > t_star - window_lo) & (centres < t_star)
     gap_below = f_obs[below] - f_cf[below]
     E = float(np.sum(np.maximum(gap_below, 0.0)) * bin_width)
     E_net = float(np.sum(gap_below) * bin_width)
 
-    above_idx = np.where(centres >= t_star)[0]
+    if E <= 0.0:
+        return {
+            "E": E,
+            "E_net": E_net,
+            "Delta_R": 0.0,
+            "y_R": float(t_star),
+            "dyR": 0.0,
+            "y_R_censored": False,
+        }
+
+    search = np.where((centres > t_star) & (centres < t_star + window_hi))[0]
     cum_missing = 0.0
-    y_R = t_star
+    y_R = float(t_star + window_hi)
     censored = True
-    for j in above_idx:
-        if centres[j] > t_star + window_hi:
-            break
+    for j in search:
         deficit = max(f_cf[j] - f_obs[j], 0.0) * bin_width
-        cum_missing += deficit
-        y_R = centres[j]
-        if cum_missing >= E:
-            over = cum_missing - E
-            if deficit > 0:
-                y_R = centres[j] - over / deficit * bin_width
+        if deficit > 0.0 and cum_missing + deficit >= E:
+            lower_edge = centres[j] - bin_width / 2.0
+            y_R = float(lower_edge + (E - cum_missing) / deficit * bin_width)
+            cum_missing += deficit
             censored = False
             break
-    if E <= 0.0:
-        censored = False  # nothing to balance
+        cum_missing += deficit
     return {
         "E": E,
         "E_net": E_net,
-        "Delta_R": float(cum_missing),
+        "Delta_R": float(min(cum_missing, E)),
         "y_R": float(y_R),
         "dyR": float(max(y_R - t_star, 0.0)),
         "y_R_censored": bool(censored),
@@ -247,14 +322,14 @@ def bunching_stats(
 ) -> tuple[float, float, float, float, float]:
     """Bunching ratio ``b`` and window masses.
 
-    ``b = (q_N_obs - q_N_cf) / q_N_cf`` over the below-threshold window
-    ``[t_star - window_lo, t_star)``; the above-threshold window runs up to the
-    endogenous marginal buncher ``y_R``.
+    ``b = (q_N_obs - q_N_cf) / q_N_cf`` over the below-threshold bins (centres
+    in ``(t_star - window_lo, t_star)``); the above-threshold window covers the
+    bins with centres in ``(t_star, y_R]``.
 
     Returns ``(b, q_N_obs, q_R_obs, q_N_cf, q_R_cf)``.
     """
-    mask_N = (centres >= t_star - window_lo) & (centres < t_star)
-    mask_R = (centres >= t_star) & (centres <= y_R)
+    mask_N = (centres > t_star - window_lo) & (centres < t_star)
+    mask_R = (centres > t_star) & (centres <= y_R)
 
     q_N_obs = float(np.sum(f_obs[mask_N]) * bin_width)
     q_R_obs = float(np.sum(f_obs[mask_R]) * bin_width)
@@ -270,30 +345,35 @@ def excess_bunching_llat(
     f_obs: np.ndarray,
     f_cf: np.ndarray,
     t_star: float,
-    window_lo: float,
-    y_R: float,
+    window_lo: float = DEFAULT_WINDOW,
+    window_hi: float = DEFAULT_WINDOW,
     bin_width: float = BIN_WIDTH,
 ) -> float:
-    """Literature-comparable excess bunching, LLAT (2021) normalisation.
+    """Normalised excess bunching following LLAT (2021), equation (20).
 
-    Liu, Lockwood, Almunia & Tam (2021) report excess bunching
-    ``b_LLAT = 1.361``, defined as the total excess mass just below the
-    threshold divided by the **average counterfactual density** (the mean height
-    of ``f_cf``) over the excluded range. This differs from the width-style
-    ``b`` of :func:`bunching_stats`, which divides by the integrated
-    counterfactual *mass* in the window.
+    Liu, Lockwood, Almunia & Tam (2021, eq. 20) define
+    ``b = sum_{j below the notch} (c_j - c_hat_j) / (mean c_hat over the
+    excluded range)``, with ``c`` and ``c_hat`` bin counts. Here:
 
-    Here the excess mass is taken over the manipulation region
-    ``[t_star - window_lo, y_R]`` (below-threshold excess plus the displaced mass
-    just above), and the average counterfactual height is the mean of ``f_cf``
-    over that same range, so the result is directly comparable to LLAT's 1.361.
+    * numerator: the SIGNED excess ``E_net`` of observed over counterfactual
+      counts summed over the excluded bins BELOW the threshold (centres in
+      ``(t_star - window_lo, t_star)``); it can be negative;
+    * denominator: the mean counterfactual bin count over the whole excluded
+      window (centres in ``(t_star - window_lo, t_star + window_hi)``).
+
+    The one difference from LLAT is the upper edge of the excluded range: they
+    estimate it, while this uses the symmetric window ``t_star + window_hi``.
+    The statistic is not a replication of LLAT's 1.361 on administrative data.
     """
-    region = (centres >= t_star - window_lo) & (centres <= y_R)
-    excess_mass = float(np.sum(np.maximum(f_obs[region] - f_cf[region], 0.0)) * bin_width)
-    avg_cf_height = float(np.mean(f_cf[region])) if np.any(region) else np.nan
-    if not avg_cf_height or avg_cf_height <= 0:
+    below = (centres > t_star - window_lo) & (centres < t_star)
+    excl = (centres > t_star - window_lo) & (centres < t_star + window_hi)
+    if not np.any(excl):
         return np.nan
-    return excess_mass / avg_cf_height
+    e_net = float(np.sum(f_obs[below] - f_cf[below]) * bin_width)
+    mean_cf_count = float(np.mean(f_cf[excl]) * bin_width)
+    if mean_cf_count <= 0:
+        return np.nan
+    return e_net / mean_cf_count
 
 
 # ---------------------------------------------------------------------------
@@ -313,7 +393,7 @@ def _run_estimator(
     Reports density geometry only (``b``, ``b_llat``, ``E``, ``Delta_R``,
     ``y_R``, ``dyR``); no elasticity is identified from these data.
     """
-    centres, f_obs = bin_density(turnover, weight)
+    centres, f_obs = bin_density(turnover, weight, t_star)
     f_cf = fit_counterfactual(centres, f_obs, t_star, degree, window_lo, window_hi)
     mb = locate_marginal_buncher_full(
         centres, f_obs, f_cf, t_star, window_lo, window_hi
@@ -322,7 +402,9 @@ def _run_estimator(
     b, q_N_obs, q_R_obs, q_N_cf, q_R_cf = bunching_stats(
         centres, f_obs, f_cf, t_star, window_lo, y_R
     )
-    b_llat = excess_bunching_llat(centres, f_obs, f_cf, t_star, window_lo, y_R)
+    b_llat = excess_bunching_llat(
+        centres, f_obs, f_cf, t_star, window_lo, window_hi
+    )
     return {
         "b": b,
         "b_llat": b_llat,
@@ -355,7 +437,9 @@ class BunchingEstimator:
 
         The threshold ``t_star`` is taken from
         ``firm_microsim.config.VINTAGES[vintage]["threshold"]`` -- never
-        hardcoded. The population is filtered to ``[RANGE_LO, RANGE_HI]``.
+        hardcoded. The population is filtered to the estimation range
+        ``(RANGE_LO, RANGE_HI]`` on threshold-aligned edges
+        (:func:`in_range_mask`).
         With ``scope_only`` the density is that of in-scope VAT firms
         (``vat_scope``); by default it is the whole ONS-frame density, the
         universe on which the near-threshold shape targets are applied.
@@ -379,8 +463,7 @@ class BunchingEstimator:
             firms = firms[firms["vat_scope"].astype(bool)]
         self.scope_only = scope_only
         firms = firms[
-            (firms["annual_turnover_k"] >= RANGE_LO)
-            & (firms["annual_turnover_k"] <= RANGE_HI)
+            in_range_mask(firms["annual_turnover_k"].to_numpy(), self.t_star)
         ].reset_index(drop=True)
         self.firms = firms
 

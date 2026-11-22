@@ -33,25 +33,29 @@ Writes results/recovery_bunching.txt.
 
 from __future__ import annotations
 
+import textwrap
+
 import numpy as np
 import pandas as pd
 
 from firm_microsim.bunching.model import (
-    RANGE_LO,
-    RANGE_HI,
+    BIN_WIDTH,
     DEFAULT_WINDOW,
     _run_estimator,
+    bin_density,
+    bin_edges,
+    bin_index,
+    in_range_mask,
 )
 from firm_microsim.config import SYNTHETIC_DATA_DIR, RESULTS_DIR, VINTAGES
 
 VINTAGE = "2023-24"
 T_STAR = float(VINTAGES[VINTAGE]["threshold"])  # 85.0
-BIN_WIDTH = 1.0
-
 # Injection geometry (£1,000 units).
 Y_R_TRUE = 112.0   # true marginal buncher: missing mass spans (85, 112],
                    # extending 12k BEYOND the exclusion window top (100).
-W_SPIKE = 5.0      # relocated firms land in [T*-W_SPIKE, T*), spike toward T*.
+W_SPIKE = 5.0      # relocated firms land in (T*-W_SPIKE, T*], spike toward T*
+                   # (the estimator's bins are (e, e+1], so T* itself is below).
 
 # Known injected magnitudes (weighted firms relocated = true excess mass).
 E_TRUE_TARGETS = (2000.0, 5000.0, 8000.0)
@@ -60,16 +64,8 @@ E_TRUE_TARGETS = (2000.0, 5000.0, 8000.0)
 def load_firms(vintage: str) -> pd.DataFrame:
     path = SYNTHETIC_DATA_DIR / f"synthetic_firms_{vintage}.csv"
     df = pd.read_csv(path, usecols=["annual_turnover_k", "weight"])
-    df = df[
-        (df["annual_turnover_k"] >= RANGE_LO) & (df["annual_turnover_k"] <= RANGE_HI)
-    ].reset_index(drop=True)
-    return df
-
-
-def _bins():
-    edges = np.arange(RANGE_LO - 0.5, RANGE_HI + 0.5 + BIN_WIDTH, BIN_WIDTH)
-    centres = (edges[:-1] + edges[1:]) / 2.0
-    return edges, centres
+    df = df[in_range_mask(df["annual_turnover_k"].to_numpy(), T_STAR)]
+    return df.reset_index(drop=True)
 
 
 def build_smooth_baseline(df: pd.DataFrame) -> np.ndarray:
@@ -78,16 +74,15 @@ def build_smooth_baseline(df: pd.DataFrame) -> np.ndarray:
     Identical construction to ``placebo_bunching.build_reweight_placebo``: fit a
     log-quadratic density trend on the wings (|y-85| > half), replace the
     in-window density with that smooth fit, rescale each firm's weight by
-    (smooth / observed) in its bin, and renormalise total mass. Yields b≈0,
-    E≈0 — the clean null baseline onto which the known signal is grafted, so
-    recovered mass is attributable entirely to the injection.
+    (smooth / observed) in its bin, and renormalise total mass. Yields E = 0
+    (no gross excess at £85k), but the reweighted window meets the untouched
+    wings with density steps at T* +/- 20k (see ``seam_steps``), so the null
+    is not free of discontinuities and its net excess is not zero.
     """
     half = 20.0
-    edges, centres = _bins()
-    counts, _ = np.histogram(
-        df["annual_turnover_k"], bins=edges, weights=df["weight"]
-    )
-    density = counts / BIN_WIDTH
+    turnover = df["annual_turnover_k"].to_numpy()
+    edges = bin_edges(T_STAR)
+    centres, density = bin_density(turnover, df["weight"].to_numpy(), T_STAR)
 
     wing = (np.abs(centres - T_STAR) > half) & (density > 0)
     coef = np.polyfit(centres[wing], np.log(density[wing]), deg=2)
@@ -101,9 +96,7 @@ def build_smooth_baseline(df: pd.DataFrame) -> np.ndarray:
     nz = density > 0
     factor[nz] = target_density[nz] / density[nz]
 
-    bin_idx = np.clip(
-        np.digitize(df["annual_turnover_k"], edges) - 1, 0, len(centres) - 1
-    )
+    bin_idx = np.clip(bin_index(turnover, edges), 0, len(centres) - 1)
     new_weight = df["weight"].to_numpy() * factor[bin_idx]
     new_weight *= df["weight"].sum() / new_weight.sum()
     return new_weight
@@ -122,7 +115,8 @@ def inject_kw_bunching(
     threshold to zero at the true marginal buncher — with the intensity ``s``
     chosen so the relocated mass equals ``e_true`` (capped at s=1 if the donor
     region cannot supply it). Relocated mass is deposited into
-    [T*-W_SPIKE, T*) with a profile spiking toward T*. Total mass over the
+    (T*-W_SPIKE, T*] with a profile spiking toward T*, i.e. entirely in the
+    estimator's below-threshold bins. Total mass over the
     estimation range is conserved; the missing-mass region extends beyond the
     exclusion window top, as with genuine bunching.
 
@@ -138,10 +132,10 @@ def inject_kw_bunching(
     e_actual = float(removed.sum())
     w[donor] = w[donor] - removed
 
-    bunch = (turnover >= T_STAR - W_SPIKE) & (turnover < T_STAR)
+    bunch = (turnover > T_STAR - W_SPIKE) & (turnover <= T_STAR)
     if not np.any(bunch):
         return w, 0.0
-    dist = T_STAR - turnover[bunch]              # in (0, W_SPIKE]
+    dist = T_STAR - turnover[bunch]              # in [0, W_SPIKE)
     kernel = np.maximum(W_SPIKE + BIN_WIDTH - dist, 0.0)  # peaks just below T*
     alloc = kernel * weight_base[bunch]
     if alloc.sum() <= 0:
@@ -156,9 +150,80 @@ def estimate(turnover, weight, label, verbose=True) -> dict:
     if verbose:
         print(
             f"  {label:<30s} b={r['b']:+.4f}  E={r['E']:>10,.0f}  "
-            f"b_llat={r['b_llat']:.3f}  y_R={r['y_R']:.2f}"
+            f"E_net={r['E_net']:>+10,.0f}  b_llat={r['b_llat']:+.3f}  "
+            f"y_R={r['y_R']:.2f}" + (" [censored]" if r["y_R_censored"] else "")
         )
     return r
+
+
+def seam_steps(t: np.ndarray, w: np.ndarray, half: float = 20.0) -> list[tuple]:
+    """Density either side of the two seams where the Placebo-A window
+    (|centre - T*| <= half) meets the untouched wings: (seam, outside, inside)."""
+    centres, density = bin_density(t, w, T_STAR)
+    out = []
+    for seam, outside_c, inside_c in (
+        (T_STAR - half, T_STAR - half - 0.5, T_STAR - half + 0.5),
+        (T_STAR + half, T_STAR + half + 0.5, T_STAR + half - 0.5),
+    ):
+        o = float(density[np.isclose(centres, outside_c)][0])
+        i = float(density[np.isclose(centres, inside_c)][0])
+        out.append((seam, o, i))
+    return out
+
+
+def reading_lines(res: pd.DataFrame, r_base: dict) -> list[str]:
+    """Plain-language reading generated from the results (nothing asserted)."""
+    recov = res["recovery"].to_numpy()
+    cap = T_STAR + DEFAULT_WINDOW
+    n = len(res)
+    n_cens = int(res["censored"].sum())
+    out = [
+        f"Recovery of the injected excess ranges from {np.nanmin(recov):.1%} to "
+        f"{np.nanmax(recov):.1%} across the {n} injections."
+    ]
+    net = res["net_recovery"].to_numpy()
+    short = (res["E_true"] - res["E_hat"]).to_numpy()
+    lo, hi = f"{np.nanmin(net):.0%}", f"{np.nanmax(net):.0%}"
+    out.append(
+        "Measured as the change in net excess over the null baseline, the "
+        f"estimator returns {lo if lo == hi else lo + ' to ' + hi} of each injection."
+    )
+    if np.all(recov < 1.0) and np.all(net > 1.0):
+        out.append(
+            f"The gross shortfall is roughly constant ({short.min():,.0f} to "
+            f"{short.max():,.0f} firms) and reflects the null baseline's negative "
+            "net offset, so the exercise does not sign the estimator's bias."
+        )
+    elif np.all(recov < 1.0) and np.all(net < 1.0):
+        out.append("Both gross and net recovery are below 100%: the estimator "
+                   "attenuates the injected response.")
+    elif np.all(recov > 1.0) and np.all(net > 1.0):
+        out.append("Both gross and net recovery exceed 100%: the estimator "
+                   "overstates the injected response.")
+    else:
+        out.append("Gross and net recovery disagree in direction across injections.")
+    if n_cens == n:
+        out.append(
+            f"y_R_hat is censored at the search cap ({cap:.0f}) in every injection, "
+            f"below the true marginal buncher ({Y_R_TRUE:.0f}): mass conservation "
+            "does not bind inside the search window."
+        )
+    elif n_cens == 0:
+        out.append(
+            "Mass conservation binds at an interior y_R_hat in every injection "
+            f"(true marginal buncher {Y_R_TRUE:.0f}, search cap {cap:.0f})."
+        )
+    else:
+        out.append(
+            f"y_R_hat is censored at the search cap ({cap:.0f}) in {n_cens} of {n} "
+            f"injections and interior in the rest (true marginal buncher "
+            f"{Y_R_TRUE:.0f})."
+        )
+    out.append(
+        f"Null baseline (no injection): E={r_base['E']:,.0f}, "
+        f"E_net={r_base['E_net']:+,.0f}, b_llat={r_base['b_llat']:+.3f}."
+    )
+    return textwrap.wrap(" ".join(out), width=74)
 
 
 def main() -> None:
@@ -169,7 +234,7 @@ def main() -> None:
     df = load_firms(VINTAGE)
     t = df["annual_turnover_k"].to_numpy()
 
-    # --- Clean step-free baseline (the null world) -----------------------
+    # --- Null baseline with no step at £85k ------------------------------
     w_base = build_smooth_baseline(df)
     r_base = estimate(t, w_base, "BASELINE (smoothed, null)")
 
@@ -183,9 +248,13 @@ def main() -> None:
                 "E_true": e_act,
                 "E_hat": r["E"],
                 "recovery": r["E"] / e_act if e_act > 0 else np.nan,
+                "net_recovery": (r["E_net"] - r_base["E_net"]) / e_act
+                if e_act > 0 else np.nan,
                 "b_hat": r["b"],
+                "E_net_hat": r["E_net"],
                 "b_llat": r["b_llat"],
                 "y_R_hat": r["y_R"],
+                "censored": bool(r["y_R_censored"]),
             }
         )
 
@@ -196,7 +265,8 @@ def main() -> None:
         print(
             f"    E_true={row['E_true']:>8,.0f}  E_hat={row['E_hat']:>8,.0f}  "
             f"recovery={row['recovery']:.1%}  y_R_hat={row['y_R_hat']:.1f} "
-            f"(true {Y_R_TRUE:.0f})  b_hat={row['b_hat']:+.4f}"
+            f"(true {Y_R_TRUE:.0f}){' [censored]' if row['censored'] else ''}  "
+            f"b_hat={row['b_hat']:+.4f}"
         )
 
     mean_recov = float(res["recovery"].mean())
@@ -214,10 +284,11 @@ def main() -> None:
     lines.append("------")
     lines.append(
         "1. Baseline: the £85k synthetic firms under the Placebo-A reweighting\n"
-        "   (smooth log-quadratic density across £85k), a step-free null world:\n"
+        "   (smooth log-quadratic density across £85k), a null world with no\n"
+        "   step at £85k:\n"
         f"   b={r_base['b']:+.4f}, E={r_base['E']:,.0f}, y_R={r_base['y_R']:.2f}.\n"
         "2. Injection (Kleven–Waseem-consistent): firms in the donor region\n"
-        f"   (85, {Y_R_TRUE:.0f}] relocate to [{T_STAR - W_SPIKE:.0f}, 85) with probability\n"
+        f"   (85, {Y_R_TRUE:.0f}] relocate to ({T_STAR - W_SPIKE:.0f}, 85] with probability\n"
         "   declining linearly from the threshold to zero at the true marginal\n"
         f"   buncher y_R = {Y_R_TRUE:.0f} — so the missing-mass region extends\n"
         f"   {Y_R_TRUE - T_STAR - DEFAULT_WINDOW:.0f}k BEYOND the ±{DEFAULT_WINDOW:.0f}k exclusion window, as with\n"
@@ -230,7 +301,8 @@ def main() -> None:
     lines.append("-------")
     hdr = (
         f"{'E_true':>10s} {'E_hat':>10s} {'recovery':>9s} "
-        f"{'y_R_hat':>8s} {'b_hat':>8s} {'b_llat':>8s}"
+        f"{'y_R_hat':>8s} {'censored':>9s} {'b_hat':>8s} {'E_net_hat':>10s} "
+        f"{'net_rec':>8s} {'b_llat':>8s}"
     )
     lines.append(hdr)
     lines.append("-" * len(hdr))
@@ -238,12 +310,22 @@ def main() -> None:
         lines.append(
             f"{row['E_true']:>10,.0f} {row['E_hat']:>10,.0f} "
             f"{row['recovery']:>8.1%} {row['y_R_hat']:>8.2f} "
-            f"{row['b_hat']:>+8.4f} {row['b_llat']:>8.3f}"
+            f"{('yes' if row['censored'] else 'no'):>9s} "
+            f"{row['b_hat']:>+8.4f} {row['E_net_hat']:>+10,.0f} "
+            f"{row['net_recovery']:>7.1%} {row['b_llat']:>+8.3f}"
         )
     lines.append("")
     lines.append(
         f"Baseline (null, no injection): b={r_base['b']:+.4f}  "
         f"E={r_base['E']:,.0f}  y_R={r_base['y_R']:.2f}"
+    )
+    for seam, o, i in seam_steps(t, w_base):
+        lines.append(
+            f"Placebo-A seam at £{seam:.0f}k: wing bin {o:,.0f} per £1k, "
+            f"window bin {i:,.0f} per £1k ({i / o - 1:+.1%} into the window)."
+        )
+    lines.append(
+        "net_rec = (E_net_hat - baseline E_net) / E_true."
     )
     lines.append(
         f"True marginal buncher: y_R = {Y_R_TRUE:.0f}. "
@@ -252,17 +334,8 @@ def main() -> None:
     lines.append("")
     lines.append("Reading")
     lines.append("-------")
-    lines.append(
-        "Recovery below 100% is genuine estimator attenuation, now measured\n"
-        "rather than asserted: the counterfactual is fitted on bins that include\n"
-        "the depressed (100, 112] missing-mass region outside the exclusion\n"
-        "window, pulling the fitted counterfactual down and truncating the\n"
-        "measured missing mass; the mass-conservation search then places y_R_hat\n"
-        "accordingly. The estimator under-states a true response and does not\n"
-        "over-state one; together with the placebo's null result (no false\n"
-        "positive on a step-free world) this characterises the estimator as\n"
-        "specific and, with quantified attenuation, sensitive."
-    )
+    lines += reading_lines(res, r_base)
+    lines.append("")
 
     out = RESULTS_DIR / "recovery_bunching.txt"
     out.write_text("\n".join(lines) + "\n")

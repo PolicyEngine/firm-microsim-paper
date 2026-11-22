@@ -61,8 +61,8 @@ REDUCED_RATE_BAND_WIDTH = 20.0  # £k (band [85k, 105k] in the paper)
 def mass_in_band(centres, density, lo, hi, bin_width=BIN_WIDTH):
     """Integrate a binned density over [lo, hi) -> weighted firm count.
 
-    Each bin spans [centre - bin_width/2, centre + bin_width/2); its
-    contribution is its density times its overlap with [lo, hi), so partial
+    Each bin spans (centre - bin_width/2, centre + bin_width/2], on the
+    estimator's threshold-aligned edges; its contribution is its density times its overlap with [lo, hi), so partial
     bins at the band edges count fractionally. (An earlier version used
     bin-centre membership, which shifted every band by half a bin.)
     """
@@ -98,6 +98,7 @@ def main() -> None:
     c2, fobs2 = bin_density(
         est.firms["annual_turnover_k"].to_numpy(),
         est.firms["weight"].to_numpy(),
+        t_star,
     )
     fcf2 = fit_counterfactual(c2, fobs2, t_star, DEFAULT_DEGREE, DEFAULT_WINDOW, DEFAULT_WINDOW)
     assert np.allclose(f_cf, fcf2), "counterfactual density mismatch"
@@ -215,9 +216,9 @@ def main() -> None:
           f" {100*(s['total_obs']/base['obs']-1):+.1f}%)")
     W("")
     W("REDUCED-FORM BUNCHING on the IN-SCOPE density (context for the masses above;")
-    W("  NOT the Section 6 headline, which runs on the full ONS-frame density):")
+    W("  NOT the paper's bunching headline, which runs on the full ONS-frame density):")
     frame_res = BunchingEstimator(VINTAGE).estimate()
-    W(f"  frame-density headline (Section 6): E = {frame_res['E']:,.0f} (gross), "
+    W(f"  frame-density headline: E = {frame_res['E']:,.0f} (gross), "
       f"E_net = {frame_res['E_net']:,.0f}, Delta_R = {frame_res['Delta_R']:,.0f}, "
       f"y_R = GBP {frame_res['y_R']*1000:,.0f}"
       + (" [censored]" if frame_res['y_R_censored'] else ""))

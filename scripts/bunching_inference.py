@@ -18,10 +18,14 @@ OUT = RESULTS_DIR / "bunching_inference.txt"
 
 HEADER = """BUNCHING INFERENCE — definitive build (OBR shape targets, side-consistent
 frame scaling; no below-threshold liability calibration). Definitions:
-E = gross positive-part excess below T* over the window; E_net = signed
-excess over the same window; Delta_R = missing mass above T* up to y_R;
-y_R is searched only up to the window top and is CENSORED there when
-Delta_R < E. b_llat = positive-part gap over [T*-W, y_R] / mean f_cf.
+bins are GBP 1k wide, (e, e+1], with edges aligned to T* (a firm at exactly
+T* counts below it); estimation range (20k, 140k]; excluded window W either
+side of T*. E = gross positive-part excess below T* over the window;
+E_net = signed excess over the same window; Delta_R = missing mass above T*
+up to y_R (= min(cumulative missing mass, E)); y_R is searched only up to
+T*+W and is CENSORED there when Delta_R < E; E <= 0 gives y_R = T*.
+b_llat = E_net / mean counterfactual bin count over (T*-W, T*+W), after
+LLAT (2021) eq. 20 (signed; symmetric upper edge instead of an estimated one).
 Points + grids
 only; see 'Why no standard errors are reported' in the paper appendix and
 results/seed_sensitivity.txt for generator-seed dispersion.

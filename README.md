@@ -145,7 +145,7 @@ on a recent laptop. It does not regenerate three things:
   `results/populace_ledger_provenance.json` (see
   [Microcosm/Ledger migration check](#microcosmledger-migration-check));
 - the heavy artifacts `results/seed_sensitivity.txt` and
-  `results/placebo_bunching.txt`, which `make reproduce-heavy` adds (two extra
+  `results/placebo_bunching.txt`, which `make reproduce-heavy` adds (three
   full builds for the seed sensitivity, one for placebo B).
 
 The PDF is rendered by the Paper workflow in CI (see `paper/README.md`).
@@ -244,7 +244,7 @@ minutes);
 headline aggregates reproduce the full build within ~0.3% and local bunching
 statistics within ~5%. Use for development only — release artifacts are
 full-size. Generator-seed sensitivity of the full build is recorded in
-`results/seed_sensitivity.txt` (E ±165, raise ±£1.1m / taper ±£1.1m, base
+`results/seed_sensitivity.txt` (E ±401, raise ±£1.1m / taper ±£1.1m, base
 ±£0.63bn across seeds — the scope flag is a seeded draw; reproduce with
 `uv run python scripts/seed_sensitivity.py`).
 
