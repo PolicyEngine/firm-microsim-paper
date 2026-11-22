@@ -13,7 +13,10 @@ level. The generator takes the registration threshold as a parameter and is
 documented in Appendix~\ref{app:data}; I build one population for 2023--24
 (threshold \pounds85{,}000), the paper's primary data year, and one for
 2024--25 (threshold \pounds90{,}000), used for the forward sweep of
-Section~\ref{sec:static}.
+Section~\ref{sec:static}. The ONS turnover data lag the vintage label by a
+year: the 2024 edition's turnover refers to the financial year 2022/23 and the
+2025 edition's to 2023/24, so the 2024--25 vintage's frame distribution
+predates the \pounds90{,}000 threshold.
 
 The archived CSV inputs in this repository remain the reproduction source for
 the paper's reported numbers; a pinned migration snapshot also represents the
@@ -50,7 +53,9 @@ declares which one each calibration target describes. The \emph{frame} is the
 ONS register of enterprises operating VAT and/or PAYE---about 2.72 million in
 2024---which the population, employment, and near-threshold shape targets
 describe. The \emph{registered subset} is the population of HMRC VAT
-traders---about 2.18 million in 2023--24---which the HMRC counts by turnover
+traders---about 2.18 million in 2023--24 (provisional November 2024 release;
+the December 2025 release revises 2023--24 to 2.32 million, including
+141{,}300 traders of unknown turnover)---which the HMRC counts by turnover
 band and by trade sector and the net-liability totals describe. The two differ
 in both directions. Above the threshold only about two-thirds of frame
 enterprises are VAT traders (from 51\% in the \pounds150{,}000--\pounds300{,}000
@@ -66,8 +71,9 @@ enterprises are registered, largely because small businesses enter the
 register \emph{through} VAT registration. HMRC also reports about 216{,}500
 traders with negative or zero turnover who are not identifiable in the ONS
 turnover bands; I append them as an out-of-frame stratum before calibration.
-Neither universe is the full business population of roughly 5.6 million in the
-DBT business population estimates; the difference is concentrated below the
+Neither universe is the full business population of roughly 5.5 million
+private-sector businesses at the start of 2024 in the DBT business population
+estimates; the difference is concentrated below the
 threshold and matters for threshold \emph{cuts}, which I flag where relevant.
 Each firm is given input expenditure $x_i = \rho_i\,y_i$,
 with the input--output ratio $\rho_i$ drawn from a rescaled Beta distribution
@@ -79,7 +85,7 @@ applied to its value added,
   v_i \;=\; \tau\,(y_i - x_i), \qquad \tau = 0.20,
 \]
 so every firm's net rate $v_i/y_i = \tau(1-\rho_i)$ lies in $[1\%, 18\%]$,
-strictly positive and below the statutory cap of 20\%. The model therefore
+strictly positive and below the 20\% standard rate. The model therefore
 abstracts from net-repayment traders (firms with zero-rated outputs whose input
 reclaim exceeds output VAT---HMRC's negative-liability column); representing
 them requires rated-structure detail (zero, reduced, and exempt output shares)
@@ -120,9 +126,9 @@ negative-or-zero band) and by trade sector, the HMRC net VAT liability by
 turnover band, the ONS enterprise total and employment-band totals, and---for
 the 2023--24 vintage---the OBR's published near-threshold profile. HMRC's
 sector table includes traders whose turnover band is ``Unknown''
-(159{,}300 in 2024--25, none in 2023--24); I allocate them proportionally so
+(159{,}300 in 2024--25, none in the provisional 2023--24 release used here); I allocate them proportionally so
 the sector and band rows count the same registered population. Chart~C of the
-March 2023 \emph{Economic and Fiscal Outlook} reports HMRC business counts in
+March 2023 \emph{Economic and Fiscal Outlook} reports business counts in
 \pounds1{,}000 turnover bands from \pounds65{,}000 to \pounds90{,}000
 \citep{obr2023vat}. I interpolate these counts to 2023--24 between the
 2019--20 outturn and the OBR's 2025--26 frozen-threshold projection. The final
@@ -132,21 +138,21 @@ All 25 retained bins enter as \emph{shape} targets. I apply them separately on
 each side of the threshold: the below-threshold profile is normalised over
 \pounds65{,}000--\pounds85{,}000 and the above-threshold profile over
 \pounds85{,}000--\pounds90{,}000. Each is then scaled to the synthetic
-population's mass in its respective window. Chart~C counts HMRC traders, a
-different unit and, below the threshold, a substantially narrower population
-than the ONS business frame, so its levels
+population's mass in its respective window. Chart~C does not state its universe,
+and its below-threshold counts (about 20{,}000 businesses per \pounds1{,}000)
+are roughly twice the frame's, so its levels
 are not imported on either side. An earlier build that mixed conventions
 (direct counts above the threshold, frame-scaled shape below) placed more
 mass just above the threshold than just below it, inverting the
 administrative profile's cross-threshold ordering; under side-consistent
-scaling the cross-threshold step comes from the frame's own band structure
+scaling the level on each side is the frame's own mass in its window
 and the OBR data supply only the within-side geometry---the rise into the
 threshold and the decline beyond it. These fine targets pin the
 near-threshold density to the OBR profile's within-side geometry at
 frame-implied levels---the region that coarse bands alone leave to the weight
 optimiser (Section~\ref{sec:bunching}); the resulting cross-threshold step
-(about $-21\%$ between the two bins adjoining the threshold) is about a third of the OBR chart's own ($-60\%$), because the chart's
-below-threshold universe is narrower than the frame. No fine bands are published for the
+(about $-20\%$ between the two bins adjoining the threshold) is about a third of the OBR chart's own ($-60\%$), because the chart's
+levels are not imported: each side is scaled to the frame's own mass in its window, so the step here reflects only the chart's within-side profiles, not its fall in level across the threshold. No fine bands are published for the
 \pounds90{,}000 threshold era, so the 2024--25 vintage keeps coarse bands
 only. Turnover-band and near-threshold targets carry the largest $\lambda_k$,
 followed by VAT liability by band. Two liability dimensions are reported as
@@ -156,7 +162,7 @@ distribution with sector shifts rather than calibrating the input/output tax
 structure by sector. The below-threshold liability band
 (\pounds1--threshold, \pounds1.46bn in 2023--24) is excluded because that
 total is remitted by voluntary registrants---input-reclaim traders averaging
-about \pounds2{,}150 of net remittance---whom the model's
+about \pounds2{,}150 of net remittance in 2023--24---whom the model's
 standard-rate-on-value-added liability does not represent
 (Section~\ref{sec:background}); imposing it on the whole below-threshold
 population would force the optimiser to suppress weights in the
@@ -177,8 +183,8 @@ below it, a seeded weighted selection reaching the HMRC \pounds1--threshold
 count; appended negative-or-zero traders are in scope and registered.
 Registration above the threshold is thus certain for in-scope firms. This is an
 approximation to the statutory test, which is a
-rolling 12-month test on \emph{taxable} turnover with a roughly two-month
-registration lag, a forward-looking 30-day test, and an exception for temporary
+rolling 12-month test on \emph{taxable} turnover with registration effective
+from the first day of the second month after the threshold is exceeded, a forward-looking 30-day test, and an exception for temporary
 breaches (Section~\ref{sec:background}); exempt-sector businesses are
 represented only through the out-of-scope share, not identified individually.
 For a single-year cross-section calibrated to registered-population totals these
@@ -192,7 +198,9 @@ composition remains a modelling assumption. The resulting dataset comprises
 approximately $2.94$~million firm records per vintage (2.72 million frame
 draws plus 0.22 million appended traders), weighted to represent
 about 2.72 million frame enterprises in 2023--24, of which about 2.18 million are
-VAT-registered traders. Checked against the official sources along every
+VAT-registered traders (provisional November 2024 release; the December 2025
+release revises 2023--24 to 2.32 million, including 141{,}300 traders of
+unknown turnover). Checked against the official sources along every
 calibrated dimension, the vintages attain overall calibration accuracies of
 98.0\% (2023--24) and 98.1\% (2024--25);
 Appendix~\ref{app:data} reports the full table. The headline is the mean of

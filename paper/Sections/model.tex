@@ -21,8 +21,9 @@ elasticity; nothing in this section depends on that assumption.
 
 \paragraph{Scope.} The model prices the registration margin for firms that
 remit positive net VAT. Two populations are outside its scope and are treated
-as such throughout: below-threshold \emph{voluntary} registrants (roughly 43\%
-of eligible firms in \citealp{liuetal2021}), who have chosen registration and
+as such throughout: below-threshold \emph{voluntary} registrants ($43\%$
+of companies with turnover below the threshold were VAT-registered in
+\citet{liuetal2021}'s sample of incorporated firms, 2004--05 to 2014--15), who have chosen registration and
 so face no notch at the threshold, and net-repayment traders (zero-rated
 exporters and similar), whose remittance is negative for rated-structure
 reasons the generator does not represent (Section~\ref{sec:data}).
@@ -59,11 +60,19 @@ value-added share of 40\%). This drop---absent from a kink, where only the
 \emph{marginal} rate changes at the threshold while average liability moves
 continuously---is the defining feature of a notch: it makes locating just
 below the cutoff strictly attractive and creates the empty band derived next.
-Throughout, the firm is assumed to bear the full statutory rate on its value
-added---no pass-through to prices---so the notch geometry is stated in terms
-of the firm's own net revenue; with partial pass-through the cash size of the
-jump, and the width derived next, would shrink in proportion to the share
-borne by the firm.
+Throughout, the firm is assumed to bear the tax itself, with no pass-through
+to prices, and $\tau$ is applied to the firm's receipts $y$, the tax-inclusive
+form of \citet{klevenwaseem2013}. This is a convention, and it overstates the
+statutory wedge: UK VAT is charged at 20\% of the VAT-exclusive price, so with
+the customer price held fixed a registered firm remits $\tau/(1+\tau)=1/6$ of
+receipts. On that statutory base the whole-turnover jump at $T^{*}$ is
+$\tau T^{*}/(1+\tau)$, or \pounds14{,}167 rather than \pounds17{,}000, and the
+dominated width derived next is $\tau T^{*}$, or \pounds17{,}000 rather than
+\pounds21{,}250; the receipts
+convention makes the primary width larger by the factor $1/(1-\tau)$, and
+every width, marginal-buncher value and response factor below is stated on the
+same convention. With partial pass-through the jump and the width would be
+smaller still.
 
 \subsection{The dominated region}
 \label{ssec:dominated}
@@ -103,11 +112,9 @@ depends on $\tau$ and $T^{*}$ alone---not on the cost specification beyond
 monotonicity, any
 behavioural elasticity, or any smoothing parameter. Who escapes the notch is a
 matter of scope, not of input shares (the invariance is a property of the
-formulation: unregistered profit carries the same deductible share, so no
-input VAT goes unreclaimed below the threshold; if deregistered firms instead
-bore VAT on their inputs, the width would shrink in the input share and
-vanish for shares above one half---the input-reclaim margin that drives
-voluntary registration, Section~\ref{sec:background}): voluntary registrants escape by choice,
+formulation: $x_i$ is the firm's input spend including VAT, so an
+unregistered firm's irrecoverable input VAT is already inside its costs, and
+registration adds the credit $\tau x_i$ against output VAT $\tau y_i$): voluntary registrants escape by choice,
 and net-repayment traders have no positive remittance to jump
 (the Scope paragraph above). Second, the region is an order of magnitude wider
 than the $\sim\pounds1$k region implied by a smoothed \emph{kink}
@@ -124,7 +131,7 @@ within-band shape. It is the width $a$, not the count, that is exact.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.96\textwidth]{figures/dynamic_notch_fit_e017.png}
-\caption{The VAT notch and the firm distribution. Panel (a) shows net revenue before production costs: immediately above \pounds85{,}000, VAT reduces it from $y$ to $0.8y$, making turnover in $(\pounds85{,}000,\,\pounds106{,}250)$ strictly dominated. Panel (b) shows the three-bin moving mean of weighted 2023--24 in-scope synthetic firm counts, with the same interval shaded. The distribution is descriptive and target-inherited, not the outcome of behavioural optimisation; its step at \pounds100{,}000 reflects the boundary between coarse ONS source bands, not an empty turnover interval. The vertical lines mark the marginal-buncher \emph{ability} $n_H$ at $e=0.17$ for deductible shares $\delta=0$ and $\delta=0.6$ (Section~\ref{sec:behavioural}); a firm of that ability registers at $n_H[(1-\delta)(1-\tau)]^{e}$, so the lines are not observed-turnover locations. The exact dominated width is $a=\pounds21{,}250$.}
+\caption{The VAT notch and the firm distribution. Panel (a) shows net revenue before production costs: immediately above \pounds85{,}000, VAT reduces it from $y$ to $0.8y$, making turnover in $(\pounds85{,}000,\,\pounds106{,}250)$ strictly dominated. Panel (b) shows the three-bin moving mean of weighted 2023--24 in-scope synthetic firm counts, with the same interval shaded. The distribution is descriptive and target-inherited, not the outcome of behavioural optimisation; its step at \pounds100{,}000 reflects the boundary between coarse ONS source bands, not an empty turnover interval. The vertical lines mark the marginal-buncher \emph{ability} $n_H$ at $e=0.17$ for deductible shares $\delta=0$ and $\delta=0.6$ (Section~\ref{sec:behavioural}); a firm of that ability registers at $n_H[(1-\delta)(1-\tau)]^{e}$, so the lines are not observed-turnover locations. The model-implied dominated width is $a=\pounds21{,}250$.}
 \label{fig:notch_fit}
 \end{figure}
 
@@ -155,7 +162,7 @@ turnover---has width
   a' \;=\; T_{1}\,\frac{\tau-r}{1-\tau},
   \label{eq:dominated-secondary}
 \end{equation}
-giving $\pounds105{,}000\times0.05/0.80=\pounds6{,}562$ at $15\%$ and
+giving $\pounds105{,}000\times0.05/0.80=\pounds6{,}563$ at $15\%$ and
 $\pounds105{,}000\times0.10/0.80=\pounds13{,}125$ at $10\%$. The \emph{total}
 dominated-turnover width is therefore $a+a'=\pounds21{,}563$ at $15\%$ and
 $\pounds22{,}569$ at $10\%$---both marginally \emph{above} the $\pounds21{,}250$
@@ -164,7 +171,7 @@ narrower ones rather than shrinking the total: it lowers the largest single notc
 (to $\pounds12{,}750$ at $15\%$) at the price of adding a secondary notch of
 $(\tau-r)\,T_{1}=\pounds5{,}250$. The firm counts confirm this
 (\texttt{results/dominated\_region\_mass.txt}): the primary regions hold about
-117{,}900 ($15\%$) and 74{,}400 ($10\%$) weighted in-scope firms, the
+117{,}800 ($15\%$) and 74{,}400 ($10\%$) weighted in-scope firms, the
 secondary regions add about 26{,}300 and 51{,}400, and the
 totals---144{,}200 and 125{,}800---lie 0.9\% above and 11.9\%
 below the 142{,}800-firm baseline band. The total dominated \emph{width} is

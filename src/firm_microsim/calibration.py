@@ -324,8 +324,8 @@ def build_target_matrix(
     # the coarse-band edge conventions). SHAPE-ONLY targets on BOTH sides of
     # the threshold: each side takes the OBR profile's within-side shape,
     # scaled to the synthetic frame's own base-weighted mass on that side.
-    # The OBR chart counts HMRC traders (a different unit and, below the
-    # threshold, a different universe than the ONS business frame), so its
+    # The OBR chart does not state its universe, and its below-threshold
+    # counts are roughly twice the frame's, so its
     # LEVELS are not imported on either side; mixing direct counts on one
     # side with frame-scaled shape on the other inverted the cross-threshold
     # ordering. With side-consistent scaling the cross-threshold ratio is the
